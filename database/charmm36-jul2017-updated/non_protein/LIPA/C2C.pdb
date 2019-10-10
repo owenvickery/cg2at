@@ -1,0 +1,15 @@
+ATOM     74  C85 LIPA    1       8.586   4.942  48.529  1.00  0.00      LPSA C  
+ATOM     77  C86 LIPA    1       9.161   3.482  48.461  1.00  0.00      LPSA C  
+ATOM     78 H86R LIPA    1       9.460   3.290  49.493  1.00  0.00      LPSA H  
+ATOM     79 H86S LIPA    1      10.168   3.484  48.003  1.00  0.00      LPSA H  
+ATOM     80  C87 LIPA    1       8.218   2.388  47.819  1.00  0.00      LPSA C  
+ATOM     81 H87R LIPA    1       7.881   2.838  46.865  1.00  0.00      LPSA H  
+ATOM     82 H87S LIPA    1       7.354   2.308  48.511  1.00  0.00      LPSA H  
+ATOM     83  C88 LIPA    1       8.537   0.876  47.508  1.00  0.00      LPSA C  
+ATOM     84 H88R LIPA    1       8.960   0.347  48.390  1.00  0.00      LPSA H  
+ATOM     85 H88S LIPA    1       9.219   0.650  46.675  1.00  0.00      LPSA H  
+ATOM     86  C89 LIPA    1       7.493   0.099  46.767  1.00  0.00      LPSA C  
+ATOM     87 H89R LIPA    1       7.459   0.550  45.765  1.00  0.00      LPSA H  
+ATOM     88 H89S LIPA    1       6.510   0.210  47.293  1.00  0.00      LPSA H  
+ATOM     89 C810 LIPA    1       7.871  -1.399  46.731  1.00  0.00      LPSA C  
+END

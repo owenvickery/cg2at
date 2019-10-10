@@ -1,0 +1,9 @@
+ATOM    183  C54 LIPA    1      12.979  -0.393  52.747  1.00  0.00      LPSA C  
+ATOM    186  C55 LIPA    1      12.671  -0.357  51.226  1.00  0.00      LPSA C  
+ATOM    187 H55R LIPA    1      13.286   0.454  50.787  1.00  0.00      LPSA H  
+ATOM    188 H55S LIPA    1      11.590  -0.134  51.090  1.00  0.00      LPSA H  
+ATOM    189  C56 LIPA    1      13.126  -1.499  50.325  1.00  0.00      LPSA C  
+ATOM    190 H56R LIPA    1      12.883  -2.405  50.864  1.00  0.00      LPSA H  
+ATOM    191 H56S LIPA    1      14.218  -1.418  50.154  1.00  0.00      LPSA H  
+ATOM    192  C57 LIPA    1      12.440  -1.550  48.954  1.00  0.00      LPSA C  
+END

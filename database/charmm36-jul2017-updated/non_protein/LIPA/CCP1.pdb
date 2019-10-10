@@ -1,0 +1,14 @@
+ATOM     22  CB3 LIPA    1      15.212   2.290  57.118  1.00  0.00      LPSA C  
+ATOM     30  CB2 LIPA    1      14.129   1.255  57.429  1.00  0.00      LPSA C  
+ATOM     32  NB2 LIPA    1      13.846   0.254  56.391  1.00  0.00      LPSA N  
+ATOM     33 HNB2 LIPA    1      14.513  -0.471  56.359  1.00  0.00      LPSA H  
+ATOM    139  C51 LIPA    1      12.685   0.147  55.706  1.00  0.00      LPSA C  
+ATOM    140  O51 LIPA    1      11.828   0.997  55.604  1.00  0.00      LPSA O  
+ATOM    141  C52 LIPA    1      12.375  -1.208  55.137  1.00  0.00      LPSA C  
+ATOM    142 H52R LIPA    1      13.253  -1.863  55.292  1.00  0.00      LPSA H  
+ATOM    143 H52S LIPA    1      11.495  -1.548  55.725  1.00  0.00      LPSA H  
+ATOM    144  C53 LIPA    1      11.985  -1.169  53.643  1.00  0.00      LPSA C  
+ATOM    145 H53R LIPA    1      10.968  -0.733  53.497  1.00  0.00      LPSA H  
+ATOM    146  O53 LIPA    1      11.991  -2.492  53.172  1.00  0.00      LPSA O  
+ATOM    183  C54 LIPA    1      12.979  -0.393  52.747  1.00  0.00      LPSA C  
+END
