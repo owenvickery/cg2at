@@ -216,6 +216,40 @@ def gromacs(cmd):
 		elif 'Fatal error:' in out:
 			sys.exit('\n'+out)
 
+def rotate_atom(coord, center,xyz_rot_apply):
+	coord =  coord-center  #### centers COM coordinates to 0,0,0
+	coord =  coord.dot(eulerAnglesToRotationMatrix([xyz_rot_apply[0],0,0]))  #### rotates coord around x
+	coord =  coord.dot(eulerAnglesToRotationMatrix([0,xyz_rot_apply[1],0]))  #### rotates coord around y
+	coord =  coord.dot(eulerAnglesToRotationMatrix([0,0,xyz_rot_apply[2]]))  #### rotates coord around z
+	coord =  coord+center #### translates coord back by original offset
+	return coord
+
+
+
+def rotate(at_connections, cg_connections):
+	xyz_rot_apply=[]
+#### iterates through rotation matrices
+	for xyz_rot in [x_rot,y_rot,z_rot]:
+		min_dist=[]
+	#### iterates through rotation matrices 
+		for rot_val, rotation in enumerate(xyz_rot):
+		#### applies matrix to coordinates saved as check
+			check = at_connections.dot(rotation)
+		#### for each connection the distance is calculated and added to list
+			individual_connections=[]
+			for connect in range(len(cg_connections)):
+				individual_connections.append(np.sqrt(((check[connect][0]-cg_connections[connect][0])**2)+((check[connect][1]-cg_connections[connect][1])**2)+((check[connect][2]-cg_connections[connect][2])**2)))
+		#### for each rotation the connection distances are added to min_dist list 
+			min_dist.append(individual_connections)
+		inter=np.array([])
+	#### the RMS is calculated for each rotation	
+		for mdist in np.array(min_dist):
+			inter = np.append(inter, np.sqrt(np.mean(mdist**2)))
+	#### the rotation with the lowest RMS applied to the at_connections
+		at_connections = at_connections.dot(xyz_rot[int(np.where(inter==np.min(inter))[0])])
+	#### the optimal rotation is added to xyz_rot_apply list as radians
+		xyz_rot_apply.append(np.radians(int(np.where(inter==np.min(inter))[0])*5))
+	return xyz_rot_apply
 
 def pdbatom(line):
 ### get information from pdb file
@@ -232,6 +266,93 @@ def groatom(line):
 		return dict([('atom_name',str(line[10:15]).replace(" ", "")),('residue_name',str(line[5:10]).replace(" ", "")),('chain',line[21]),('residue_id',int(line[:5])), ('x',float(line[20:28])*10),('y',float(line[28:36])*10),('z',float(line[36:44])*10)])
 	except:
 		sys.exit('\ngro line is wrong:\t'+line) 
+
+def fragment_location(residue, fragment):  
+#### runs through dirctories looking for the atomistic fragments returns the correct location
+	if residue in p_residues:
+		for directory in range(len(p_directories)):
+			if os.path.exists(p_directories[directory][0]+residue+'/'+fragment):
+				return p_directories[directory][0]+residue+'/'+fragment
+	else:
+		for directory in range(len(np_directories)):
+			if os.path.exists(np_directories[directory][0]+residue+'/'+fragment):
+				return np_directories[directory][0]+residue+'/'+fragment
+	sys.exit('cannot find fragment: '+residue+'/'+fragment)
+
+def get_atomistic(residue,cg_fragment, cg_coord,resid):
+#### find atomistic residues
+	residue_list={} ## a dictionary of bead in each residue eg residue_list[atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
+	frag_location=fragment_location(residue, cg_fragment+'.pdb') ### get fragment location from database
+	fragment_masses=[] ### list [[coord, mass],[coord, mass]]
+#### read in atomistic fragments into dictionary	
+	with open(frag_location, 'r') as pdb_input:
+		for line_nr, line in enumerate(pdb_input.readlines()):
+			if line.startswith('ATOM'):
+				line_sep = pdbatom(line) ## splits up pdb line
+				residue_list[line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'], 'connect':line_sep['connect'], 'frag_mass':1}
+#### updates fragment mass   
+				if 'H' not in line_sep['atom_name']:
+					for atom in line_sep['atom_name']:
+						if atom in mass:
+							residue_list[line_sep['atom_number']]['frag_mass']=mass[atom]  ### updates atom masses with crude approximations
+							fragment_masses.append([line_sep['x'],line_sep['y'],line_sep['z'],mass[atom]])
+				else:
+					fragment_masses.append([line_sep['x'],line_sep['y'],line_sep['z'],1])
+#### aligns atomistic fragment to cg bead
+	COM_vector=np.average(np.array(fragment_masses)[:,:3], axis=0, weights=np.array(fragment_masses)[:,3])-np.array(cg_coord['coord']) ### gets vector between COM of atoms in fragment and cg bead 
+	for at_id, residue in enumerate(residue_list): ### runs through atoms in fragments and centers on the cg bead 
+		residue_list[residue]['coord']=residue_list[residue]['coord']-COM_vector
+	return residue_list
+
+def connectivity(bead_number, cg_bead, connect, at_residues, cg_residues, resid):
+	at_connections,cg_connections=[],[]
+#### finds all beads that the cg_bead is connected to
+	try:
+		run=np.where(connect[:,0]==cg_bead)
+	except:
+		if cg_bead == 'BB':
+			return [],[], cg_residues[resid][cg_bead]['coord']
+		sys.exit('cannot find connectivity for :'+str(cg_bead))
+#### center of mass of cg_bead
+	center=cg_residues[resid][cg_bead]['coord']
+#### loop through bead connections from bead of interest
+	for con_test in connect[run]:
+		cg_temp=[]
+	#### fetch connections which have more than one bead 1 to 2 beads and not self  	
+		cg=connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]!=cg_bead))]
+	#### for each connecting bead 
+		for con_bead in cg[:,0]:
+			cg_temp.append(cg_residues[resid][con_bead]['coord']-center)
+	#### average position of connecting bead
+		cg_connections.append(np.mean(cg_temp, axis=0))
+	#### all atoms with bead connections and self. should only ever be one. 
+		at = int(connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]==cg_bead))][:,1])
+		at_connections.append(at_residues[cg_bead][str(at)]['coord']-center)
+	return at_connections, cg_connections, center
+
+def get_atomistic_fragments(cg_residue_type,cg_residue, cg_resid):
+	at_residues={}
+	connect=[]
+#### runs through every in bead in residue 
+	for cg_bead in cg_residue:
+	#### gets atoms from database for each bead 
+		at_residues[cg_bead]=get_atomistic(cg_residue_type,cg_bead, cg_residue[cg_bead], cg_resid+1)
+	#### if not SOL/ION the connectivity is read from the fragment dictionary key (connect)
+		if cg_residue_type not in ['SOL', 'ION']:
+			for atom_num, atom in enumerate(at_residues[cg_bead]):
+			#### if atom has a connection which is not zero (0 = does not connect)
+				if at_residues[cg_bead][atom]['connect'] > 0:
+					connect.append([cg_bead,atom, at_residues[cg_bead][atom]['connect']]) 
+	connect=np.array(connect)	
+	return at_residues, connect
+
+def create_pdb(file_name):
+	pdb_output = open(file_name, 'w')
+	pdb_output.write('REMARK    GENERATED BY sys_setup_script\nTITLE     SELF-ASSEMBLY-MAYBE\nREMARK    Good luck\n\
+'+box_vec+'MODEL        1\n')
+	return pdb_output
+
+############################################################ Read in CG file Section ################################################################
 
 def read_initial_pdb():
 #### initialisation of dictionaries etc
@@ -304,42 +425,8 @@ def read_initial_pdb():
 
 	return cg_residues, box_vec
 
-def fragment_location(residue, fragment):  
-#### runs through dirctories looking for the atomistic fragments returns the correct location
-	if residue in p_residues:
-		for directory in range(len(p_directories)):
-			if os.path.exists(p_directories[directory][0]+residue+'/'+fragment):
-				return p_directories[directory][0]+residue+'/'+fragment
-	else:
-		for directory in range(len(np_directories)):
-			if os.path.exists(np_directories[directory][0]+residue+'/'+fragment):
-				return np_directories[directory][0]+residue+'/'+fragment
-	sys.exit('cannot find fragment: '+residue+'/'+fragment)
 
-def get_atomistic(residue,cg_fragment, cg_coord,resid):
-#### find atomistic residues
-	residue_list={} ## a dictionary of bead in each residue eg residue_list[atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
-	frag_location=fragment_location(residue, cg_fragment+'.pdb') ### get fragment location from database
-	fragment_masses=[] ### list [[coord, mass],[coord, mass]]
-#### read in atomistic fragments into dictionary	
-	with open(frag_location, 'r') as pdb_input:
-		for line_nr, line in enumerate(pdb_input.readlines()):
-			if line.startswith('ATOM'):
-				line_sep = pdbatom(line) ## splits up pdb line
-				residue_list[line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'], 'connect':line_sep['connect'], 'frag_mass':1}
-#### updates fragment mass   
-				if 'H' not in line_sep['atom_name']:
-					for atom in line_sep['atom_name']:
-						if atom in mass:
-							residue_list[line_sep['atom_number']]['frag_mass']=mass[atom]  ### updates atom masses with crude approximations
-							fragment_masses.append([line_sep['x'],line_sep['y'],line_sep['z'],mass[atom]])
-				else:
-					fragment_masses.append([line_sep['x'],line_sep['y'],line_sep['z'],1])
-#### aligns atomistic fragment to cg bead
-	COM_vector=np.average(np.array(fragment_masses)[:,:3], axis=0, weights=np.array(fragment_masses)[:,3])-np.array(cg_coord['coord']) ### gets vector between COM of atoms in fragment and cg bead 
-	for at_id, residue in enumerate(residue_list): ### runs through atoms in fragments and centers on the cg bead 
-		residue_list[residue]['coord']=residue_list[residue]['coord']-COM_vector
-	return residue_list
+############################################################ Build Non Protein Section ################################################################
 
 def build_atomistic_system(cg_residues, box_vec):
 	system={}
@@ -375,9 +462,7 @@ def build_atomistic_system(cg_residues, box_vec):
 		for resid in atomistic_fragments[residue_type]:
 		#### if the residue type is not in ['SOL', 'ION'] a individual pdbs are created for each resid
 			if residue_type not in ['SOL', 'ION']:
-				pdb_output = open(working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb', 'w')
-				pdb_output.write('REMARK    GENERATED BY sys_setup_script\nTITLE     SELF-ASSEMBLY-MAYBE\nREMARK    Good luck\n\
-'+box_vec+'MODEL        1\n')
+				pdb_output = create_pdb(working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')
 		#### for every fragment in that resid
 			for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
 			#### creates fragment index of the residue for the removal of COM translation of the fragment
@@ -442,7 +527,7 @@ def atomistic_non_protein(cg_residue_type,cg_residues):
 
 	for cg_resid, cg_residue in enumerate(cg_residues):
 	#### get atomistic fragments for each bead and connectivity with other beads
-		at_residues, connect = get_atomistic_non_protein(cg_residue_type,cg_residues[cg_residue], cg_resid)	
+		at_residues, connect = get_atomistic_fragments(cg_residue_type,cg_residues[cg_residue], cg_resid)	
 		atomistic_fragments[cg_resid]={}  #### creats key in atomistic_fragments for each residue eg atomistic_fragments[1]
 	#### runs through all beads in each resid
 		for bead_number, cg_bead in enumerate(cg_residues[cg_residue]):
@@ -464,53 +549,6 @@ def atomistic_non_protein(cg_residue_type,cg_residues):
 			#### adds atomistic fragment to new dictionary atomistic_fragments[resid][atom number] allows reordering of atoms by atom number in fragment database
 				atomistic_fragments[cg_resid][int(atom)]=at_residues[cg_bead][atom]
 	return atomistic_fragments
-
-
-def connectivity(bead_number, cg_bead, connect, at_residues, cg_residues, cg_residue):
-	at_connections,cg_connections=[],[]
-#### finds all beads that the cg_bead is connected to
-	try:
-		run=np.where(connect[:,0]==cg_bead)
-	except:
-		sys.exit('cannot find connectivity for :'+str(cg_bead))
-#### center of mass of cg_bead
-	center=cg_residues[cg_residue][cg_bead]['coord']
-	cg_temp=[]
-#### runs through every connection in connect	
-	for val,con in enumerate(connect):
-	#### number of repeating connections eg one atom connects to 2 beads
-		repeat = len(np.where(connect[:,2]==con[2])[0])
-	#### if bead connection is in list of connecting beads and is not itself
-		if con[2] in connect[run][:,2] and connect[val][0] != cg_bead:
-		#### appends the coordinates of connecting bead to cg_temp, coord are centered to 0,0,0 realtive to the cg_bead of interest 
-			cg_temp.append(cg_residues[cg_residue][connect[val][0]]['coord']-center)
-		#### if length of the cg_temp is the same as the number of connecting bead - self
-			if len(cg_temp) == repeat-1:
-				cg_temp=np.array(cg_temp)
-			#### the center of mass of all the connecting beads are taken as the connecting point 
-				cg_connections.append(np.mean(cg_temp, axis=0))
-				cg_temp=[]
-	#### if connection bead is the same as cg_bead as well as connection number in connection list
-		if con[0] == cg_bead and con[2] in connect[run][:,2]:
-		#### add connecting atom to at_connections
-			at_connections.append(at_residues[con[0]][con[1]]['coord']-center)
-	return at_connections, cg_connections, center
-
-def get_atomistic_non_protein(cg_residue_type,cg_residue, cg_resid):
-	at_residues={}
-	connect=[]
-#### runs through every in bead in residue 
-	for cg_bead in cg_residue:
-	#### gets atoms from database for each bead 
-		at_residues[cg_bead]=get_atomistic(cg_residue_type,cg_bead, cg_residue[cg_bead], cg_resid+1)
-	#### if not SOL/ION the connectivity is read from the fragment dictionary key (connect)
-		if cg_residue_type not in ['SOL', 'ION']:
-			for atom_num, atom in enumerate(at_residues[cg_bead]):
-			#### if atom has a connection which is not zero (0 = does not connect)
-				if at_residues[cg_bead][atom]['connect'] > 0:
-					connect.append([cg_bead,atom, at_residues[cg_bead][atom]['connect']]) 
-	connect=np.array(connect)	
-	return at_residues, connect
 
 def non_protein_minimise(resid, residue_type, fragment_names):
 #### in the case of SOL all residues are minimised, whilst in all other cases individual residues are minimised separately
@@ -543,263 +581,250 @@ for rid in range(0, resid)]).get()			## minimisation grompp parallised
 	pool.map_async(gromacs, [(gmx+' mdrun -v -nt 1 -s '+residue_type+'_'+str(rid)+' -deffnm '+residue_type+'_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb') \
 for rid in range(0, resid)]).get()
 	pool.close()
-#### close mdrun multiprocessing and spin up editconf multprocessing to convert all  
-# 	pool = mp.Pool(mp.cpu_count())
-# 	pool.map_async(gromacs, [(gmx+' editconf -f '+residue_type+'_'+str(rid)+'.gro \
-# -o '+residue_type+'_'+str(rid)+'.pdb -pbc') for rid in range(0, resid)]).get()
-# 	pool.close()
 	os.chdir(working_dir)
 
 
+############################################################ Build Protein Section ################################################################
 
+
+def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center):
+	try:
+		cg_connections.append(cg_residues[residue_number-1]['BB']['coord']-center)
+		at_connections.append(at_residues[residue_number]['BB'][BB_connect[0]]['coord']-center)
+	except:
+		res=residue_number
+		pass
+	try:
+		cg_connections.append(cg_residues[residue_number+1]['BB']['coord']-center)
+		at_connections.append(at_residues[residue_number]['BB'][BB_connect[1]]['coord']-center)
+	except:
+		pass
+	return at_connections,cg_connections, res
 
 def build_protein_atomistic_system(cg_residues, box_vec):
+#### initisation of counters
 	chain_count=0
-	backbone_coords={} 
 	at_counter=1
 	system={}
-	ion_sep={}
-	atomistic_fragments={}
-	print('Converting Protein')
-	mkdir_directory(working_dir+'PROTEIN')	
-	pdb_output = open(working_dir+'PROTEIN/PROTEIN_novo_'+str(chain_count)+'.pdb', 'w')
-	pdb_output.write('REMARK    GENERATED BY sys_setup_script\nTITLE     SELF-ASSEMBLY-MAYBE\nREMARK    Good luck\n\
-'+box_vec+'MODEL        1\n')
 	at_residues={}
+	backbone_coords={}
 	backbone_coords[chain_count]=[]
+	res=0
+	print('Converting Protein')
+	mkdir_directory(working_dir+'PROTEIN')	### make and change to protein directory
+#### create new pdb file for chain 0 
+	pdb_output = create_pdb(working_dir+'PROTEIN/PROTEIN_novo_'+str(chain_count)+'.pdb')
+#### for each residue in protein
+	initial=True
 	for residue_number in cg_residues:
-		connect=[]
-		BB_connect=[]
-		final_at_residues={}
+	#### temporary index/dictionaries	
+		
+		final_at_residues={}  
 		at_residues[residue_number]={}
-		for cg_fragments in cg_residues[residue_number]:
-			at_residues[residue_number][cg_fragments]=get_atomistic(cg_residues[residue_number][cg_fragments]['residue_name'],cg_fragments, cg_residues[residue_number][cg_fragments], residue_number)
-			for atom_num, atom in enumerate(at_residues[residue_number][cg_fragments]):
-				if at_residues[residue_number][cg_fragments][atom]['connect'] > 0:
-					connect.append([cg_fragments,atom, at_residues[residue_number][cg_fragments][atom]['connect']]) 
-				if cg_fragments=='BB' and at_residues[residue_number][cg_fragments][atom]['atom'] in backbone[cg_residues[residue_number][cg_fragments]['residue_name']]['b_connect']:
+	#### fetch fragments in residue and connectivity
+		at_residues[residue_number], connect=get_atomistic_fragments(cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name'],cg_residues[residue_number], residue_number)
+	#### if residue contains BB bead a index of the BB connectivity is collected
+		if 'BB' in at_residues[residue_number]:
+			BB_connect=[] ### backbone connectivity
+			for atom_num, atom in enumerate(at_residues[residue_number]['BB']):
+				if at_residues[residue_number]['BB'][atom]['atom'] in backbone[cg_residues[residue_number]['BB']['residue_name']]['b_connect']:
 					BB_connect.append(str(atom))
-		terminal_residue=False
+		
+	#### for each bead in residue
 		for frag_val,cg_fragments in enumerate(cg_residues[residue_number]):
-			center=cg_residues[residue_number][cg_fragments]['coord']
-			at_connections,cg_connections=[],[]
-			if len(connect)>0:
-				connect=np.array(connect)
-				connect=connect[connect[:,2].argsort()]
-				run=np.where(connect[:,0]==str(cg_fragments))
-				count=0
-				cg_con={}
-				repeat=[]
-				cg_temp=[]
-				for val,con in enumerate(connect):
-					repeat = len(np.where(connect[:,2]==con[2])[0])
-					if con[2] in connect[run][:,2] and connect[val][0] != cg_fragments:
-						cg_temp.append(cg_residues[residue_number][connect[val][0]]['coord']-center)
-						if len(cg_temp) == repeat-1:
-							cg_temp=np.array(cg_temp)
-							cg_connections.append(np.mean(cg_temp, axis=0))
-							cg_temp=[]
-					if con[0] == cg_fragments and con[2] in connect[run][:,2]:
-						at_connections.append(at_residues[residue_number][con[0]][con[1]]['coord']-center)
+		#### gets connectivity between fragents	
+			at_connections, cg_connections, center=connectivity(frag_val, cg_fragments, connect, at_residues[residue_number], cg_residues, residue_number)
+		#### if BB bead adds the N and C terminal atoms to connectivity
 			if cg_fragments=='BB':
-				try:
-					cg_connections.append(cg_residues[residue_number-1]['BB']['coord']-center)
-					at_connections.append(at_residues[residue_number]['BB'][BB_connect[0]]['coord']-center)
-				except:
-					res=residue_number
-					pass
-				try:
-					cg_connections.append(cg_residues[residue_number+1]['BB']['coord']-center)
-					at_connections.append(at_residues[residue_number]['BB'][BB_connect[1]]['coord']-center)
-				except:
-					pass
-				try:
+#####################################
+				# if len(at_connections) == 0:
+					#####write a function to a add a artifial sidechain
+#####################################
+				at_connections, cg_connections, res = BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center)
+			#### measures the distance between BB beads. 
+				if not initial:
 					xyz_prev=[cg_residues[residue_number-1]['BB']['coord'][0],cg_residues[residue_number-1]['BB']['coord'][1],cg_residues[residue_number-1]['BB']['coord'][2]]				
 					xyz_cur=[cg_residues[residue_number]['BB']['coord'][0],cg_residues[residue_number]['BB']['coord'][1],cg_residues[residue_number]['BB']['coord'][2]]
 					dist=np.sqrt(((xyz_prev[0]-xyz_cur[0])**2)+((xyz_prev[1]-xyz_cur[1])**2)+((xyz_prev[2]-xyz_cur[2])**2))
+				#### if distance between BB beads is more than 5 A then it is considered a new chain.
 					if dist > 5:
-						terminal_residue=True
-						chain_count+=1
-						backbone_coords[chain_count]=[]
-						backbone_coords[chain_count].append(xyz_cur+[1])
+						chain_count+=1  ### adds to to the protein count
+						backbone_coords[chain_count]=[]   #### creates another dictionary key for bb fragments 
+						backbone_coords[chain_count].append(xyz_cur+[1])  #### adds xyz coord and mass of 1 to list
 						if args.v:
 							print('\nchain number\tresidue no in pdb\tlength of chain')
 							print('\n',chain_count,'\t',dist,'\t',residue_number,'\t',residue_number-res)
-						res=residue_number-1
-						pdb_output.write('TER\n')
-						pdb_output = open(working_dir+'PROTEIN/PROTEIN_novo_'+str(chain_count)+'.pdb', 'w')
-						pdb_output.write('REMARK    GENERATED BY sys_setup_script\nTITLE     SELF-ASSEMBLY-MAYBE\nREMARK    Good luck\n\
-'+box_vec+'MODEL        1\n')
-						at_counter=1
+						res=residue_number-1 #### updates residue
+					#### creates a new protein pdb 
+						pdb_output = create_pdb(working_dir+'PROTEIN/PROTEIN_novo_'+str(chain_count)+'.pdb')
+						at_counter=1  ### resets protein_chain atom count
 					else:
+					#### the xyz coord of the BB bead are added to the backbone_coords dictionary
 						backbone_coords[chain_count].append(xyz_cur+[1])
-				except:
+				#### if not prev residue the xyz coord of the cg_bead are added to the backbone_coords dictionary
+				else:
 					xyz_cur=[cg_residues[residue_number]['BB']['coord'][0],cg_residues[residue_number]['BB']['coord'][1],cg_residues[residue_number]['BB']['coord'][2]]
 					backbone_coords[chain_count].append(xyz_cur+[1])
-					pass
+					initial=False
+		#### finds optimum rotation of fragement
 			xyz_rot_apply=rotate(np.array(at_connections), np.array(cg_connections))
+		#### applies rotation to each atom
 			for atom in at_residues[residue_number][cg_fragments]:
 				at_residues[residue_number][cg_fragments][atom]['coord'] = rotate_atom(at_residues[residue_number][cg_fragments][atom]['coord'], center, xyz_rot_apply)
 				final_at_residues[atom]=at_residues[residue_number][cg_fragments][atom]
+	#### writes fragment to pdb
 		for at_val, atom in enumerate(final_at_residues):
 			pdb_output.write(pdbline%((int(at_counter),final_at_residues[str(at_val+1)]['atom'],final_at_residues[str(at_val+1)]['res_type'],ascii_uppercase[chain_count],int(residue_number),\
 final_at_residues[str(at_val+1)]['coord'][0],final_at_residues[str(at_val+1)]['coord'][1],final_at_residues[str(at_val+1)]['coord'][2],1,0))+'\n')
-			at_counter+=1
-		terminal_residue=False
-	
-	pdb_output.close()
-	if args.a != None:
-		read_in_atomistic(backbone_coords, chain_count+1)
+			at_counter+=1  #### adds 1 to atom counter
+	pdb_output.close()   #### close file write
 	system['PROTEIN']=chain_count+1
-	return system
+	return system, backbone_coords
 
 
+############################################################ Processes atomistic protein input ################################################################
 
-def read_in_atomistic(cg_coords, chain_count):
+
+def read_in_atomistic(chain_count):
+#### reset location and check if pdb exists  
 	os.chdir(start_dir)
 	if not os.path.exists(args.a):
 		sys.exit('cannot find atomistic protein : '+args.a)
 #### read in atomistic fragments into dictionary residue_list[0]=x,y,z,atom_name	
 	atomistic_protein_input={}
 	chain_count=0
-
+#### read in pdb
 	with open(args.a, 'r') as pdb_input:
 		atomistic_protein_input[chain_count]={}
 		for line_nr, line in enumerate(pdb_input.readlines()):
-			if line.startswith('ATOM'):
+			#### separate line dependant on gro or pdb
+			run=False ## turns to true is line is a bead/atom
+			if args.c.endswith('gro') and len(line.split())==6:
+				line_sep = groatom(line)
+				run=True
+			elif args.c.endswith('pdb') and line.startswith('ATOM'):
 				line_sep = pdbatom(line)
+				run=True
+			#### if line is correct
+			if run: 
+			#### sorts out wrong atoms in terminal residues
 				if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
 					line_sep['atom_name']='O'
+			#### makes C_terminal connecting atom variable  
 				if line_sep['atom_name'] == backbone[line_sep['residue_name']]['b_connect'][1]:
 					C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
 					C_resid=line_sep['residue_id']
 					C=True
 				try:
+				#### tries to make a N_terminal connecting atom variable
 					if line_sep['atom_name'] == backbone[line_sep['residue_name']]['b_connect'][0]:
 						N_resid=line_sep['residue_id']
 						N_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
 						N=True
+				#### measures distance between N and C atoms. if the bond is over 3 A it counts as a new protein
 					dist=np.sqrt(((N_ter[0]-C_ter[0])**2)+((N_ter[1]-C_ter[1])**2)+((N_ter[2]-C_ter[2])**2))
 					if N and C and C_resid != N_resid and dist > 3:
 						N_ter, C_ter=False, False
 						chain_count+=1
-						atomistic_protein_input[chain_count]={}
+						atomistic_protein_input[chain_count]={} ### new chain key
 				except:
 					pass
-#### get COM of fragment 
-				atomistic_protein_input[chain_count][line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'frag_mass':0, 'resid':line_sep['residue_id']}
-				if 'H' not in line_sep['atom_name'] and line_sep['atom_name'] in backbone[line_sep['residue_name']]['atoms']:
+				if line_sep['residue_id'] not in atomistic_protein_input[chain_count]:  ## if protein does not exist add to dict
+					atomistic_protein_input[chain_count][line_sep['residue_id']]={}
+			#### adds atom to dictionary, every atom is given a initial mass of zero 
+				atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'frag_mass':0, 'resid':line_sep['residue_id']}
+			#### if atom is in the backbone list then its mass is updated to the correct one
+				if line_sep['atom_name'] in backbone[line_sep['residue_name']]['atoms']:
 					for atom in line_sep['atom_name']:
 						if atom in mass:
-							atomistic_protein_input[chain_count][line_sep['atom_number']]['frag_mass']=mass[atom]
-	atomistic_protein_centered, cg_coords_mass = center_atomistic(atomistic_protein_input, cg_coords, chain_count+1)
+							atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=mass[atom]
+#### check if number of monomers is the same
+	if chain_count+1 != system['PROTEIN']:
+		sys.exit('number of chains in atomistic protein input ('+str(chain_count+1)+') does not match CG representation ('+str(system['PROTEIN']))
+	return atomistic_protein_input
 
-	for chain in range(chain_count+1):
-		pdb_output = open(working_dir+'PROTEIN/PROTEIN_at-input_'+str(chain)+'.pdb', 'w')
-		pdb_output.write('REMARK    GENERATED BY sys_setup_script\nTITLE     SELF-ASSEMBLY-MAYBE\nREMARK    Good luck\n\
-'+box_vec+'MODEL        1\n')
-		at_centers, at_centers_iter=[],[]
-		initial=True
-		for atoms in atomistic_protein_input[chain]:
+def center_atomistic(atomistic_protein_input): 
+	cg_com=[]
+#### for each protein chain center on cg representation 
+	for chain in range(system['PROTEIN']):
+		protein_mass=[]
+		for residue in atomistic_protein_input[chain]:
+		#### creates a list of all coordinates and masses [[coord, mass],[coord, mass]]
+			for atom in atomistic_protein_input[chain][residue]:
+				# print(atomistic_protein_input[chain][residue][at])
+				protein_mass.append([atomistic_protein_input[chain][residue][atom]['coord'][0],atomistic_protein_input[chain][residue][atom]['coord'][1],\
+					atomistic_protein_input[chain][residue][atom]['coord'][2],atomistic_protein_input[chain][residue][atom]['frag_mass']])
+	#### returns the COM of the atomistic protein
+		# print(protein_mass)
+		atomistic_protein_mass=np.average(np.array(protein_mass)[:,:3], axis=0, weights=np.array(protein_mass)[:,3])#### add center of mass of CG_proteins
+	#### for each chain the COM of the CG representation is stored (only cg is needed)
+		cg_com.append(np.average(np.array(backbone_coords[chain])[:,:3], axis=0, weights=np.array(backbone_coords[chain])[:,3]))
+	#### each atoms coord is updated so the monomer COM is the same as the CG
+		for residue in atomistic_protein_input[chain]:
+			for atom in atomistic_protein_input[chain][residue]:
+				atomistic_protein_input[chain][residue][atom]['coord']=atomistic_protein_input[chain][residue][atom]['coord']-(atomistic_protein_mass-cg_com[chain])
+	return atomistic_protein_input, cg_com
 
-			if initial:
-				resid_prev=atomistic_protein_input[chain][atoms]['resid']
-				at_centers_iter.append(np.append(atomistic_protein_input[chain][atoms]['coord'],atomistic_protein_input[chain][atoms]['frag_mass']))
-				initial=False				
-			elif atomistic_protein_input[chain][atoms]['resid'] != resid_prev:
-				at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
-
-				at_centers_iter=[]
-				at_centers_iter.append(np.append(atomistic_protein_input[chain][atoms]['coord'],atomistic_protein_input[chain][atoms]['frag_mass']))
-				resid_prev=atomistic_protein_input[chain][atoms]['resid']
-			else:
-				at_centers_iter.append(np.append(atomistic_protein_input[chain][atoms]['coord'],atomistic_protein_input[chain][atoms]['frag_mass']))
-				resid_prev=atomistic_protein_input[chain][atoms]['resid']
-		at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
-
-		if len(at_centers) != len(cg_coords[chain]):
+def rotate_protein_monomers():
+#### run through each chain in proteins
+	for chain in range(system['PROTEIN']):
+	#### creates atomistic pdb
+		pdb_output = create_pdb(working_dir+'PROTEIN/PROTEIN_at-input_'+str(chain)+'.pdb')
+		at_centers=[]
+	#### runs through every residue and atom  
+		for residue in atomistic_protein_input[chain]:
+		#### gets center of mass of each residue (note only backbone heavy atoms have a mass)
+			at_centers_iter=[]
+			for atom in atomistic_protein_input[chain][residue]:
+				at_centers_iter.append(np.append(atomistic_protein_centered[chain][residue][atom]['coord'],atomistic_protein_centered[chain][residue][atom]['frag_mass']))
+			at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
+	#### checks that the number of residues in the chain are the same between CG and AT
+		if len(at_centers) != len(backbone_coords[chain]):
 			os.exit('In chain '+str(chain)+' the atommistic input does not match the CG. \n\
-number of CG residues '+str(len(cg_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
-		xyz_rot_apply = rotate(np.array(at_centers)-cg_coords_mass[chain], np.array(cg_coords[chain])[:,:3]-cg_coords_mass[chain])
+number of CG residues '+str(len(backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
+	#### finds optimal rotation of each monomer  
+		xyz_rot_apply = rotate(np.array(at_centers)-cg_com[chain], np.array(backbone_coords[chain])[:,:3]-cg_com[chain])
 		if args.v:
 			print('\nThe proteins chains are rotated around the COM of all the backbone heavy atoms.\n')
 			print('rotating chain ', chain, 'by ',np.round(np.degrees(xyz_rot_apply[0]),2),', ',np.round(np.degrees(xyz_rot_apply[1]),2),', ',np.round(np.degrees(xyz_rot_apply[2]),2))
-		for atom in atomistic_protein_input[chain]:
-			atomistic_protein_input[chain][atom]['coord'] = rotate_atom(atomistic_protein_input[chain][atom]['coord'], cg_coords_mass[chain], xyz_rot_apply)
-		for at_val, atom in enumerate(atomistic_protein_input[chain]):
-			pdb_output.write(pdbline%((int(atom),atomistic_protein_input[chain][atom]['atom'],atomistic_protein_input[chain][atom]['res_type'],ascii_uppercase[chain],atomistic_protein_input[chain][atom]['resid'],\
-atomistic_protein_input[chain][atom]['coord'][0],atomistic_protein_input[chain][atom]['coord'][1],atomistic_protein_input[chain][atom]['coord'][2],1,0))+'\n')
+	#### applies optimal rotation to each atom 
+		for residue in atomistic_protein_centered[chain]:
+			for atom in atomistic_protein_centered[chain][residue]:
+				atomistic_protein_centered[chain][residue][atom]['coord'] = rotate_atom(atomistic_protein_centered[chain][residue][atom]['coord'], cg_com[chain], xyz_rot_apply)
+			#### writes out new pdb for each optimised chain
+				pdb_output.write(pdbline%((int(atom),atomistic_protein_centered[chain][residue][atom]['atom'],atomistic_protein_centered[chain][residue][atom]['res_type'],\
+					ascii_uppercase[chain],atomistic_protein_centered[chain][residue][atom]['resid'],atomistic_protein_centered[chain][residue][atom]['coord'][0],\
+					atomistic_protein_centered[chain][residue][atom]['coord'][1],atomistic_protein_centered[chain][residue][atom]['coord'][2],1,0))+'\n')
+	return atomistic_protein_centered
 
+######################################################################## GROMACS protein ###################################################################
 
-def center_atomistic(atomistic_protein_input, cg_coords, chain_count): 
-	cg_masses=[]
-	for chain in range(chain_count):
-		protein_mass=[]
-		for at in atomistic_protein_input[chain]:
-			protein_mass.append([atomistic_protein_input[chain][at]['coord'][0],atomistic_protein_input[chain][at]['coord'][1],atomistic_protein_input[chain][at]['coord'][2],atomistic_protein_input[chain][at]['frag_mass']])
-		atomistic_protein_mass=np.average(np.array(protein_mass)[:,:3], axis=0, weights=np.array(protein_mass)[:,3])#### add center of mass of CG_proteins
-		cg_masses.append(np.average(np.array(cg_coords[chain])[:,:3], axis=0, weights=np.array(cg_coords[chain])[:,3]))
-		for at_id, atom in enumerate(atomistic_protein_input[chain]):
-			atomistic_protein_input[chain][atom]['coord']=atomistic_protein_input[chain][atom]['coord']-(atomistic_protein_mass-cg_masses[chain])
-	return atomistic_protein_input, cg_masses
-
-def minimise_protein(chain_count):
+def minimise_protein():
 	os.chdir(working_dir+'/PROTEIN')
 	mkdir_directory(working_dir+'FORCEFIELD')
 	copy_tree(forcefield_location+forcefield+'.ff', working_dir+'PROTEIN/'+forcefield+'.ff/.')
-	if not os.path.exists('min'):
-		os.mkdir('min')
-	for chain in range(chain_count):
+	mkdir_directory('min')
+	for chain in range(system['PROTEIN']):
 		with open('em_'+str(chain)+'.mdp','w') as em:
 			em.write('define = -DPROTEIN_'+str(chain)+'_CA_posre.itp\nintegrator = steep\nnsteps = 10000\nemtol = 1000\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 		if args.a != None:
 			minimise_protein_chain(chain, 'at-input_')
 		minimise_protein_chain(chain, 'novo_')
 	os.chdir('..')
+	merge_protein(system['PROTEIN'], '_novo')
 	if args.a != None:
-		merge_residues('PROTEIN', chain_count, '_at-input')
-	merge_residues('PROTEIN', chain_count, '_novo')
+		merge_protein(system['PROTEIN'], '_at-input')
 
 def minimise_protein_chain(chain, input):
 	gromacs(gmx+' pdb2gmx -f PROTEIN_'+input+str(chain)+'.pdb -o PROTEIN_'+input+str(chain)+'_gmx.pdb -ignh -water none \
--p PROTEIN_'+input+str(chain)+'.top  -i PROTEIN_'+str(chain)+'_posre.itp << EOF \n1\nEOF') ### single chains
+-p PROTEIN_'+input+str(chain)+'.top  -i PROTEIN_'+input+str(chain)+'_posre.itp << EOF \n1\nEOF') ### single chains
 	convert_topology('PROTEIN_'+input, chain)
-	write_topol('PROTEIN_'+input, chain, 1, str(chain))
+	write_topol('PROTEIN_'+input, 1, str(chain))
 	gromacs(gmx+' grompp -f em_'+str(chain)+'.mdp -p PROTEIN_'+input+str(chain)+'.top -c PROTEIN_'+input+str(chain)+'_gmx.pdb -o min/PROTEIN_'+input+str(chain)+' -maxwarn 1')
 	os.chdir('min')
 	gromacs(gmx+' mdrun -v -nt 10 -deffnm PROTEIN_'+input+str(chain))
 	gromacs(gmx+' editconf -f PROTEIN_'+input+str(chain)+'.gro -o PROTEIN_'+input+str(chain)+'.pdb -pbc')
 	os.chdir('..')	
-
-
-
-def rotate_atom(coord, center,xyz_rot_apply):
-	coord =  coord-center
-	coord =  coord.dot(eulerAnglesToRotationMatrix([xyz_rot_apply[0],0,0])) 
-	coord =  coord.dot(eulerAnglesToRotationMatrix([0,xyz_rot_apply[1],0])) 
-	coord =  coord.dot(eulerAnglesToRotationMatrix([0,0,xyz_rot_apply[2]])) 
-	coord =  coord+center
-	return coord
-
-
-
-def rotate(at_connections, cg_connections):
-	xyz_rot_apply=[]
-	for xyz_rot in [x_rot,y_rot,z_rot]:
-		min_dist=[]
-		for rot_val, rotation in enumerate(xyz_rot):
-			check = at_connections.dot(rotation)
-			individual_connections=[]
-			for connect in range(len(cg_connections)):
-				individual_connections.append(np.sqrt(((check[connect][0]-cg_connections[connect][0])**2)+((check[connect][1]-cg_connections[connect][1])**2)+((check[connect][2]-cg_connections[connect][2])**2)))
-			min_dist.append(individual_connections)
-		inter=np.array([])
-		for mdist in np.array(min_dist):
-			inter = np.append(inter, np.sqrt(np.mean(mdist**2)))
-		at_connections = at_connections.dot(xyz_rot[int(np.where(inter==np.min(inter))[0])])
-		xyz_rot_apply.append(np.radians(int(np.where(inter==np.min(inter))[0])*5))
-	return xyz_rot_apply
-
 
 def write_topol(residue_type, residue_number, chain):
 	found=False
@@ -819,33 +844,33 @@ def write_topol(residue_type, residue_number, chain):
 		topol_write.write('\n\n[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
 		topol_write.write(residue_type+chain+'    '+str(residue_number))
 
-
-
-def merge_residues(residue_type, resid, protein):
+def merge_protein(resid, protein):
 	merge=[]
+	print(p_directories)
 	for res_val in range(0,resid):
-		if os.path.exists(working_dir+residue_type+'/min/'+residue_type+protein+'_'+str(res_val)+'.pdb'):
-			if residue_type == 'PROTEIN':
-				posres_output = open(working_dir+'PROTEIN/PROTEIN_'+str(res_val)+'_CA_posre.itp', 'w')
-				posres_output.write('[ position_restraints ]\n; atom  type      fx      fy      fz\n')
-			with open(working_dir+residue_type+'/min/'+residue_type+protein+'_'+str(res_val)+'.pdb', 'r') as pdb_input:
+		if os.path.exists(working_dir+'PROTEIN/min/PROTEIN'+protein+'_'+str(res_val)+'.pdb'):
+			posres_output = open(working_dir+'PROTEIN/PROTEIN_'+str(res_val)+'_CA_posre.itp', 'w')
+			posres_output.write('[ position_restraints ]\n; atom  type      fx      fy      fz\n')
+			with open(working_dir+'PROTEIN/min/PROTEIN'+protein+'_'+str(res_val)+'.pdb', 'r') as pdb_input:
 				at_counter=0
 				for line in pdb_input.readlines():
 					if line.startswith('ATOM'):
 						merge.append(line)
 						line_sep = pdbatom(line)
 						at_counter+=1
-						if line_sep['atom_name'] in ['CA','CB']:
+						if line_sep['atom_name'] in ['CA']:
 							posres_output.write(str(at_counter)+'     1  1000  1000  1000\n')
-			if residue_type == 'PROTEIN':
-				posres_output.close()
+
+						if line_sep['residue_name'] in ['x']:
+							posres_output.write(str(at_counter)+'     1  1000  1000  1000\n')
+
+			posres_output.close()
 		else:
-			sys.exit('cannot find minimised residue: \n'+residue_type+'/min/'+residue_type+protein+'_'+str(res_val)+'.pdb')	
-	with open(working_dir+residue_type+'/min/'+residue_type+protein+'_merged.pdb', 'w') as pdb_output:
-		pdb_output.write('REMARK    GENERATED BY sys_setup_script\nTITLE     SELF-ASSEMBLY-MAYBE\nREMARK    Good luck\n\
-'+box_vec+'MODEL        1\n')
-		for line in merge:
-			pdb_output.write(line)
+			sys.exit('cannot find minimised residue: \n'+'PROTEIN/min/PROTEIN'+protein+'_'+str(res_val)+'.pdb')	
+	pdb_output=create_pdb(working_dir+'PROTEIN/min/PROTEIN'+protein+'_merged.pdb')
+	for line in merge:
+		pdb_output.write(line)
+	pdb_output.close()
 
 def convert_topology(topol, protein_number):
 	if Path(topol+str(protein_number)+'.top').exists():
@@ -865,6 +890,9 @@ def convert_topology(topol, protein_number):
 			itp_write.write('; Include CA Position restraint file\n#ifdef POSRES_CA\n#include \"PROTEIN_'+str(protein_number)+'_CA_posre.itp\"\n#endif')
 	else:
 		sys.exit('cannot find : '+topol+'_'+str(protein_number)+'.top')
+
+
+#################################################################### GROMACS non protein ###################################################################
 
 
 def merge_system_pdbs(system, box_vec, protein):
@@ -890,13 +918,12 @@ def merge_system_pdbs(system, box_vec, protein):
 							system_input[res_val][1].append(line)
 		else:
 			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type[0]+'/min/'+residue_type[0]+prot_input+'_merged.pdb')	
-	with open(working_dir+'MERGED/merged_cg2at'+protein+'.pdb', 'w') as pdb_output:
-		pdb_output.write('REMARK    GENERATED BY sys_setup_script\nTITLE     SELF-ASSEMBLY-MAYBE\nREMARK    Good luck\n\
-'+box_vec+'MODEL        1\n')
-		for residue_type in system_input:
-			for line in residue_type[1]:
-				pdb_output.write(line)
-		pdb_output.write('TER\nENDMDL')
+	pdb_output=create_pdb(working_dir+'MERGED/merged_cg2at'+protein+'.pdb')
+	for residue_type in system_input:
+		for line in residue_type[1]:
+			pdb_output.write(line)
+	pdb_output.write('TER\nENDMDL')
+	pdb_output.close()
 
 def write_merged_topol(system, box_vec, protein):
 	for topology in ['topol_final', 'topol_alchembed']:
@@ -935,6 +962,9 @@ def write_merged_topol(system, box_vec, protein):
 					else:
 						for protein_unit in range(residue_type[1]):
 							 topol_write.write('PROTEIN_'+str(protein_unit)+'    1\n')	
+
+
+############################################################################  GROMACS system ############################################################							 
 
 def minimise_merged_pdbs(system, box_vec, protein):
 	print('Minising merged atomistic files')
@@ -1065,9 +1095,15 @@ system={}
 print('Converting CG into a atomistic representation')
 if 'protein' in cg_residues:
 	if len(cg_residues['protein'])>0:
-		p_system=build_protein_atomistic_system(cg_residues['protein'], box_vec)
-		minimise_protein(p_system[0][1])
+		p_system, backbone_coords=build_protein_atomistic_system(cg_residues['protein'], box_vec)
 		system.update(p_system)
+		if args.a != None:
+		#### reads in atomistic structure	
+			atomistic_protein_input = read_in_atomistic(system['PROTEIN'])	
+			atomistic_protein_centered, cg_com = center_atomistic(atomistic_protein_input)
+			atomistic_protein_rotated = rotate_protein_monomers()
+		minimise_protein()
+		
 sort_protein_time=time.time()
 
 #### converts non protein residues into atomistic and minimises 
@@ -1099,15 +1135,20 @@ if len(np_system)>0:
 		merge_system_pdbs(system, box_vec,'_at-input' )
 		minimise_merged_pdbs(system, box_vec, '_at-input')
 		alchembed(p_system, box_vec, '_at-input')
+	#### runs steered MD on atomistic structure on CA and CB atoms
+		steered_md_atomistic_to_cg_coord()
 #### merges de novo protein and residues types into a single pdb file into merged directory
 	# merge_system_pdbs(system, box_vec,'_novo' )
 	# minimise_merged_pdbs(system, box_vec, '_novo')
 	# copyfile('merged_cg2at_novo_minimised.pdb', final_dir+'final_cg2at_novo_minimised.pdb')
 
-#### runs steered MD on atomistic structure on CA and CB atoms
+
+#### if atomistic structure has been supplies 
 merge_time=time.time()
-if args.a != None:
-	steered_md_atomistic_to_cg_coord()
+
+
+
+
 pull_time=time.time()
 
 #### prints out system information
