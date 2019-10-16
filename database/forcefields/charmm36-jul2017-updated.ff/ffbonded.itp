@@ -4,7 +4,6 @@
 
 
 
-
 [ bondtypes ]
 ;      i        j  func           b0           kb
 NH2       CA     1   0.14550000    200832.00 ; NPH
@@ -1360,6 +1359,8 @@ CC322       HCP1   2     0.103264 ; B:OC311
 ; owen
 CG321       HGP3   2     0.012408 ;  B:SG311
 ;CG202       HGP1   2     0.200439 ;  B:OG311
+
+
 ;added by karina 2017
 CRL1	 HOL  2     0.192081 ; cholesterol
 PL	 HOL  2     0.217710 ; PA
