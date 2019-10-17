@@ -15,7 +15,7 @@ from string import ascii_uppercase
 from pathlib import Path
 import re
 import datetime
-import random
+# import random
 
 parser = argparse.ArgumentParser(description='Converts CG representation into atomistic', epilog='Enjoy the program and best of luck!', allow_abbrev=True)
 parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro',type=str, required=True)
@@ -160,42 +160,48 @@ def fetch_residues():
 		np_residues+=np_directories[directory][1:]
 #### if verbose prints all fragments found
 	if args.v >= 1:
-		print('\n---------------------------------------------->  Verbose level 1 start')
+		print('\n{:-<75}'.format('>  Verbose level 1 start'))
 		for directory in range(len(np_directories)):
 			print('\nnon protein residues fragment directories found: \n\nroot file system\n')
 			print(np_directories[directory][0],'\n\nresidues\n\n',np_directories[directory][1:], '\n')
 		for directory in range(len(p_directories)):
 			print('\nprotein residues fragment directories found: \n\nroot file system\n')
 			print(p_directories[directory][0],'\n\nresidues\n\n',p_directories[directory][1:], '\n')
-		print('\n---------------------------------------------->  Verbose level 1 end\n')
+		print('\n{:-<75}'.format('>  Verbose level 1 end\n'))
 
 	return np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories, water
 
 def fetch_fragment(p_directories):
 #### fetches the Backbone heavy atoms and the connectivity with pre/proceeding residues 
-	atom_list, bb_list=[], []
-	backbone={}     ### dictionary of backbone heavy atoms and connecting atoms eg backbone['ASP'][atoms/b_connect]
+	atom_list, bb_list, restraint=[], [], []
+	processing={}     ### dictionary of backbone heavy atoms and connecting atoms eg backbone['ASP'][atoms/b_connect]
 	for directory in range(len(p_directories)):
 		for residue in p_directories[directory][1:]:	
-			with open(p_directories[directory][0]+residue+'/BB.pdb', 'r') as pdb_input:
-				for line_nr, line in enumerate(pdb_input.readlines()):
-					if line.startswith('ATOM'):
-						line_sep = pdbatom(line)
-						if 'H' not in line_sep['atom_name']:
-							atom_list.append(line_sep['atom_name'])    ### list of heavy atoms
-							if line_sep['backbone'] != 0:
-								bb_list.append(line_sep['atom_name'])  ### connecting atoms
-			backbone[residue]={'atoms':atom_list,'b_connect':bb_list}  ### adds heavy atoms and connecting atoms to backbone dictionary 
-			atom_list, bb_list=[], []  ### resets residue lists of heavy atoms and connecting atoms 
+			for file_name in os.listdir(p_directories[directory][0]+residue):
+				if file_name.endswith('.pdb'):
+					with open(p_directories[directory][0]+residue+'/'+file_name, 'r') as pdb_input:
+						for line_nr, line in enumerate(pdb_input.readlines()):
+							if line.startswith('ATOM'):
+								line_sep = pdbatom(line)
+								if 'H' not in line_sep['atom_name']:
+									if file_name.startswith('B'):
+										atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
+									if line_sep['backbone'] == 2:
+										bb_list.append(line_sep['atom_name'])  ### connecting atoms
+									if line_sep['backbone'] > 2:
+										restraint.append(line_sep['atom_name'])  ### connecting atoms
+			processing[residue]={'atoms':atom_list,'b_connect':bb_list,'restraint':restraint}  ### adds heavy atoms and connecting atoms to backbone dictionary 
+			atom_list, bb_list, restraint=[], [], []  ### resets residue lists of heavy atoms, connecting atoms and restraint 
 #### if verbose prints out all heavy atoms and connecting atoms for each backbone
 	if args.v >= 2:
-		print('\n---------------------------------------------->  Verbose level 2 start')
+		print('\n{:-<75}'.format('>  Verbose level 2 start'))
 		print('backbone atoms for each residue and connecting atoms:\n')
-		for residue in backbone:
-			print(residue, '\tbackbone atoms:', backbone[residue]['atoms'], '\n\tbackbone connecting atoms:', backbone[residue]['b_connect'],'\n')
-		print('\n---------------------------------------------->  Verbose level 2 end\n')
+		for residue in processing:
+			print(residue, '\tbackbone atoms:', processing[residue]['atoms'], '\n\tbackbone connecting atoms:', processing[residue]['b_connect'], \
+				'\n\trestrained atoms:', processing[residue]['restraint'],'\n')
+		print('\n{:-<75}'.format('>  Verbose level 2 end\n'))
 
-	return backbone
+	return processing
 
 def make_min(residue):#, fragments):
 #### makes minimisation folder
@@ -203,7 +209,7 @@ def make_min(residue):#, fragments):
 #### makes em.mdp file for each residue
 	if not os.path.exists('em_'+residue+'.mdp'):
 		with open('em_'+residue+'.mdp','w') as em:
-			em.write('define = \n integrator = steep\nnsteps = 10000\nemtol = 1500\nemstep = 0.001\ncutoff-scheme = Verlet\n')
+			em.write('define = \n integrator = steep\nnsteps = 10000\nemtol = 1000\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 
 ### runs gromacs commands
 def gromacs(cmd):
@@ -227,6 +233,8 @@ def gromacs(cmd):
 		elif 'Segmentation fault (core dumped):' in out:
 			sys.exit('\n'+out)
 		elif 'Fatal error:' in out:
+			sys.exit('\n'+out)
+		elif 'but did not reach the requested Fmax' in out:
 			sys.exit('\n'+out)
 
 def rotate_atom(coord, center,xyz_rot_apply):
@@ -479,6 +487,7 @@ def build_atomistic_system(cg_residues, box_vec):
 			if residue_type not in ['SOL', 'ION']:
 				pdb_output = create_pdb(working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')
 		#### for every fragment in that resid
+			coord=[]
 			for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
 			#### separates out the water molecules from the ion in the fragment
 				if residue_type in ['ION', 'SOL']:
@@ -498,8 +507,15 @@ def build_atomistic_system(cg_residues, box_vec):
 					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2],1,0))+'\n')
 			#### if residue_type not in ['ION', 'SOL'] write out to separate pdb
 				else:
+					####### coordinate kick #######
+					if len(coord) > 0:
+						atomistic_fragments[residue_type][resid][at_id+1]['coord']=kick(atomistic_fragments[residue_type][resid][at_id+1]['coord'], coord)
+						coord.append(atomistic_fragments[residue_type][resid][at_id+1]['coord'])
+					else:
+						coord.append(atomistic_fragments[residue_type][resid][at_id+1]['coord'])
 					pdb_output.write(pdbline%((int(atom),atomistic_fragments[residue_type][resid][at_id+1]['atom'],atomistic_fragments[residue_type][resid][at_id+1]['res_type'],' ',1,\
 					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2],1,0))+'\n')
+
 	#### if restype ION add ion to system dictionary and add solvent molecules
 		if residue_type == 'ION':
 			system['SOL']+=water_count
@@ -511,6 +527,15 @@ def build_atomistic_system(cg_residues, box_vec):
 			#### adds retype to system dictionary
 				system[residue_type]=int(resid)+1
 	return system 
+
+# @njit
+def kick(xyz_check, prev_coord):
+	for xyz in prev_coord:
+		dist=np.sqrt(((xyz_check[0]-xyz[0])**2)+((xyz_check[1]-xyz[1])**2)+((xyz_check[2]-xyz[2])**2))
+		while dist < 0.15:
+			xyz_check = [xyz_check[0]+np.random.uniform(-0.2, 0.2), xyz_check[1]+np.random.uniform(-0.2, 0.2),xyz_check[2]+np.random.uniform(-0.2, 0.2)]
+			dist=np.sqrt(((xyz_check[0]-xyz[0])**2)+((xyz_check[1]-xyz[1])**2)+((xyz_check[2]-xyz[2])**2))
+	return xyz_check
 
 def atomistic_non_protein(cg_residue_type,cg_residues):
 	atomistic_fragments={}  #### residue dictionary
@@ -530,7 +555,7 @@ def atomistic_non_protein(cg_residue_type,cg_residues):
 		#### if ION/SOL a random rotation is applied to the cluster 
 			else:
 				center=cg_residues[cg_residue][cg_bead]['coord']
-				xyz_rot_apply=[random.uniform(0, math.pi*2), random.uniform(0, math.pi*2), random.uniform(0, math.pi*2)]
+				xyz_rot_apply=[np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2)]
 			#### applies optimum rotation to each atom in the fragment 
 			for atom in at_residues[cg_bead]:
 				at_residues[cg_bead][atom]['coord']=rotate_atom(at_residues[cg_bead][atom]['coord'], center, xyz_rot_apply)  ### applies rotation
@@ -567,7 +592,7 @@ for rid in range(0, resid)]).get()			## minimisation grompp parallised
 #### close grompp multiprocessing and change to min directory and spin up mdrun multiprocessing
 	os.chdir('min')
 	pool = mp.Pool(mp.cpu_count())
-	pool.map_async(gromacs, [(gmx+' mdrun -v -nt 1 -s '+residue_type+'_'+str(rid)+' -deffnm '+residue_type+'_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb') \
+	pool.map_async(gromacs, [(gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb') \
 for rid in range(0, resid)]).get()
 	pool.close()
 	os.chdir(working_dir)
@@ -576,7 +601,7 @@ def merge_minimised(residue_type):
 	os.chdir(working_dir+residue_type+'/min')
 	print('\nMerging non protein atomistic files')
 #### create merged pdb in min folder
-	pdb_output=create_pdb(working_dir+residue_type+'/'+residue_type+'_merged.pdb')	
+	pdb_output=create_pdb(working_dir+residue_type+'/min/'+residue_type+'_merged.pdb')	
 	if residue_type =='SOL':
 		resid_range=1
 	else:
@@ -595,8 +620,18 @@ def merge_minimised(residue_type):
 	pdb_output.write('TER\nENDMDL')
 	pdb_output.close()
 
-
-
+def minimise_merged(residue_type):
+	os.chdir(working_dir+residue_type)
+	write_topol(residue_type, np_system[residue_type], '')
+	gromacs(gmx+' grompp \
+-po md_out-'+residue_type+' \
+-f em_'+residue_type+'.mdp \
+-p topol_'+residue_type+'.top \
+-c '+working_dir+residue_type+'/min/'+residue_type+'_merged.pdb \
+-o '+working_dir+residue_type+'/min/'+residue_type+'_merged_min -maxwarn 1')
+	os.chdir('min')	
+	gromacs(gmx+' mdrun -v -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb')
+	os.chdir(working_dir)
 ############################################################ Build Protein Section ################################################################
 
 
@@ -691,7 +726,7 @@ final_at_residues[str(at_val+1)]['coord'][0],final_at_residues[str(at_val+1)]['c
 			at_counter+=1  #### adds 1 to atom counter
 	pdb_output.close()   #### close file write
 	if args.v >=1:
-		print('\n---------------------------------------------->  Verbose level 1 start')
+		print('\n{:-<75}'.format('>  Verbose level 1 start'))
 		print('\nchain number\tDelta A\tno in pdb\tlength of chain')
 		print('------------\t-------\t---------\t---------------')
 		for chain in range(chain_count):
@@ -701,7 +736,7 @@ final_at_residues[str(at_val+1)]['coord'][0],final_at_residues[str(at_val+1)]['c
 		else:
 			print('\t', chain_count,'\tN/A\t',res+1,'-',residue_number+1,'\t\t',residue_number-res+1)
 
-		print('\n---------------------------------------------->  Verbose level 1 end\n')
+		print('\n{:-<75}'.format('>  Verbose level 2 end\n'))
 
 	system['PROTEIN']=chain_count+1
 	return system, backbone_coords
@@ -724,10 +759,10 @@ def read_in_atomistic(chain_count):
 		for line_nr, line in enumerate(pdb_input.readlines()):
 			#### separate line dependant on gro or pdb
 			run=False ## turns to true is line is a bead/atom
-			if args.c.endswith('gro') and len(line.split())==6:
+			if args.a.endswith('gro') and len(line.split())==6:
 				line_sep = groatom(line)
 				run=True
-			elif args.c.endswith('pdb') and line.startswith('ATOM'):
+			elif args.a.endswith('pdb') and line.startswith('ATOM'):
 				line_sep = pdbatom(line)
 				run=True
 			#### if line is correct
@@ -861,7 +896,7 @@ def minimise_protein_chain(chain, input):
 -maxwarn 1 ')
 	gromacs(grompp)
 	os.chdir('min')
-	gromacs(gmx+' mdrun -v -nt 10 -deffnm PROTEIN_'+input+str(chain)+' -c PROTEIN_'+input+str(chain)+'.pdb')
+	gromacs(gmx+' mdrun -v -deffnm PROTEIN_'+input+str(chain)+' -c PROTEIN_'+input+str(chain)+'.pdb')
 	os.chdir('..')	
 
 def write_posres_ca(chain):
@@ -874,12 +909,8 @@ def write_posres_ca(chain):
 				if line.startswith('ATOM'):
 					line_sep = pdbatom(line)
 					at_counter+=1
-					if line_sep['atom_name'] not in backbone[line_sep['residue_name']]['atoms']:#['CA', 'CB', 'CG']:
+					if line_sep['atom_name'] in backbone[line_sep['residue_name']]['restraint']:#['CA', 'CB', 'CG']:
 						posres_output.write(str(at_counter)+'     1  1000  1000  1000\n')
-					if line_sep['residue_name'] in mod_residues:
-						if 'H' not in line_sep['atom_name'] and line_sep['atom_name'] not in backbone[line_sep['residue_name']]['atoms']:
-							posres_output.write(str(at_counter)+'     1  1000  1000  1000\n')
-
 
 def steered_md_atomistic_to_cg_coord(chain):
 	os.chdir(working_dir+'PROTEIN')
@@ -897,7 +928,7 @@ pbc = xyz\nDispCorr	= no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')
 -o steered_md/PROTEIN_at-input_'+str(chain)+' -maxwarn 1 ')
 
 	os.chdir('steered_md')
-	gromacs(gmx+' mdrun -v -nt 10 -deffnm PROTEIN_at-input_'+str(chain)+' -c PROTEIN_at-input_'+str(chain)+'.pdb')
+	gromacs(gmx+' mdrun -v -deffnm PROTEIN_at-input_'+str(chain)+' -c PROTEIN_at-input_'+str(chain)+'.pdb')
 	if os.path.exists('PROTEIN_at-input_'+str(chain)+'.pdb'):
 		pass
 	else:
@@ -1033,9 +1064,7 @@ def minimise_merged_pdbs(system, box_vec, protein):
 	gromacs(gmx+' grompp -po md_out-merged_cg2at -f em_merged_cg2at.mdp -p topol_final.top \
 -r merged_cg2at'+protein+'.pdb -c merged_cg2at'+protein+'.pdb -o min/merged_cg2at'+protein+'_minimised')
 	os.chdir('min')
-	gromacs(gmx+' mdrun -v -nt 10 -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb')
-	# gromacs(gmx+' editconf -f merged_cg2at'+protein+'_minimised.gro -o merged_cg2at'+protein+'_minimised.pdb -pbc')
-
+	gromacs(gmx+' mdrun -v -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb')
 def alchembed(system, box_vec, protein):
 	print('Running alchembed')
 	os.chdir(working_dir+'MERGED')
@@ -1043,7 +1072,7 @@ def alchembed(system, box_vec, protein):
 	for chain in range(system['PROTEIN']):
 		with open('alchembed_'+str(chain)+'.mdp', 'w') as alchembed:
 			alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 1000\ndt = 0.0005\ncontinuation = no\nconstraint_algorithm = lincs\nconstraints	= h-bonds\nns_type = grid\nnstlist = 25\n\
-rlist = 1\nrcoulomb	= 1\nrvdw = 1\ncoulombtype	= PME\npme_order = 4\nfourierspacing = 0.16\ntcoupl	= V-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl	= no\n\
+rlist = 1\nrcoulomb	= 1\nrvdw = 1\ncoulombtype	= PME\npme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl	= no\ncutoff-scheme = Verlet\n\
 pbc = xyz\nDispCorr	= no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00\ndelta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6\n\
 couple-moltype = protein_'+str(chain)+'\ncouple-lambda0 = none\ncouple-lambda1 = vdw')
 		if chain == 0:
@@ -1052,11 +1081,10 @@ couple-moltype = protein_'+str(chain)+'\ncouple-lambda0 = none\ncouple-lambda1 =
 		else:
 			gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at-input_minimised.pdb \
 -c alchembed/merged_cg2at_at-input_alchembed_'+str(chain-1)+'.pdb -o alchembed/merged_cg2at_at-input_alchembed_'+str(chain)+' -maxwarn 1')			
-
 		os.chdir('alchembed')
-		gromacs(gmx+' mdrun -v -nt 10 -deffnm merged_cg2at_at-input_alchembed_'+str(chain)+' -c merged_cg2at_at-input_alchembed.pdb')
+		gromacs(gmx+' mdrun -v -deffnm merged_cg2at_at-input_alchembed_'+str(chain)+' -c merged_cg2at_at-input_alchembed_'+str(chain)+'.pdb')
 		os.chdir('..')
-	copyfile('alchembed/merged_cg2at_at-input_alchembed.pdb', final_dir+'merged_cg2at_at-input_alchembed.pdb')
+	copyfile('alchembed/merged_cg2at_at-input_alchembed_'+str(chain)+'.pdb', final_dir+'merged_cg2at_at-input_alchembed.pdb')
 
 		
 
@@ -1149,12 +1177,11 @@ if 'PROTEIN' in cg_residues:
 		minimise_protein()
 		merge_protein(system['PROTEIN'], '_novo')
 		if args.a != None:
-			print('Running steered MD on input atomistic structure')
+			print('Running steered MD on input atomistic structure\n')
 		#### runs steered MD on atomistic structure on CA and CB atoms
 			for chain in range(system['PROTEIN']):
 				steered_md_atomistic_to_cg_coord(chain)
 			merge_protein(system['PROTEIN'], '_at-input')
-			steered_md_time=time.time()
 		
 final_protein_time=time.time()
 
@@ -1163,12 +1190,15 @@ final_protein_time=time.time()
 if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]) > 0:
 	np_system=build_atomistic_system(cg_residues, box_vec)
 	for residue_type in cg_residues:
+		print('Minimising individual residues: '+residue_type)
 		if residue_type =='ION' and 'SOL' not in cg_residues:
 			non_protein_minimise(np_system['SOL'], 'SOL')
 		elif residue_type in np_system:
 			non_protein_minimise(np_system[residue_type], residue_type)
 		if residue_type not in ['PROTEIN', 'ION']:
 			merge_minimised(residue_type)
+			print('Minimising merged: '+residue_type)
+			minimise_merged(residue_type)
 	system.update(np_system)
 	build_non_protein_time=time.time()
 
@@ -1210,18 +1240,19 @@ print('{0:^20}{1:^10}'.format('---------','------'))
 for section in system:
 	print('{0:^20}{1:^10}'.format(section, system[section]))
 
+
+
 #### prints out script timings for each section
-print('\nInitialisation: ', str(datetime.timedelta(minutes=np.round(initialisation_time-start_time, 2))).rsplit(':', 1)[0], ' min',\
-'\nFragment selection: ', str(datetime.timedelta(minutes=np.round(fragment_selection_time-initialisation_time, 2))).rsplit(':', 1)[0], ' min' ,\
-'\nRead in CG system: ', str(datetime.timedelta(minutes=np.round(read_in_time-fragment_selection_time, 2))).rsplit(':', 1)[0], ' min')
-if args.a != None:
-	print('Build de novo protein system: ', str(datetime.timedelta(minutes=np.round(protein_de_novo_time-read_in_time, 2))).rsplit(':', 1)[0], ' min',\
-	'\nBuild protein system from provided structure: ', str(datetime.timedelta(minutes=np.round(final_protein_time-protein_de_novo_time, 2))).rsplit(':', 1)[0], ' min', \
-	'\nTotal protein system build: ', str(datetime.timedelta(minutes=np.round(final_protein_time-read_in_time, 2))).rsplit(':', 1)[0], ' min')
-else:
-	print('Build de novo protein system: ', str(datetime.timedelta(minutes=np.round(final_protein_time-read_in_time, 2))).rsplit(':', 1)[0], ' min')
-print('Build non protein system: ', str(datetime.timedelta(minutes=np.round(non_protein_time-final_protein_time, 2))).rsplit(':', 1)[0], ' min', \
-'\nMerge protein and non protein system: ', str(datetime.timedelta(minutes=np.round(merge_time-non_protein_time, 2))).rsplit(':', 1)[0], ' min')
-if args.a != None:
-	print('Steered MD atomistic input to match CG: ', str(datetime.timedelta(minutes=np.round(steered_md_time-merge_time, 2))).rsplit(':', 1)[0], ' min')
-print('Total run time: ', str(datetime.timedelta(minutes=np.round(final_time-start_time, 2))).rsplit(':', 1)[0], ' min')
+if args.v ==1:
+	print('\nInitialisation: ', str(datetime.timedelta(minutes=np.round(initialisation_time-start_time, 2))).rsplit(':', 1)[0], ' min',\
+	'\nFragment selection: ', str(datetime.timedelta(minutes=np.round(fragment_selection_time-initialisation_time, 2))).rsplit(':', 1)[0], ' min' ,\
+	'\nRead in CG system: ', str(datetime.timedelta(minutes=np.round(read_in_time-fragment_selection_time, 2))).rsplit(':', 1)[0], ' min')
+	if args.a != None:
+		print('Build de novo protein system: ', str(datetime.timedelta(minutes=np.round(protein_de_novo_time-read_in_time, 2))).rsplit(':', 1)[0], ' min',\
+		'\nBuild protein system from provided structure: ', str(datetime.timedelta(minutes=np.round(final_protein_time-protein_de_novo_time, 2))).rsplit(':', 1)[0], ' min', \
+		'\nTotal protein system build: ', str(datetime.timedelta(minutes=np.round(final_protein_time-read_in_time, 2))).rsplit(':', 1)[0], ' min')
+	else:
+		print('Build de novo protein system: ', str(datetime.timedelta(minutes=np.round(final_protein_time-read_in_time, 2))).rsplit(':', 1)[0], ' min')
+	print('Build non protein system: ', str(datetime.timedelta(minutes=np.round(non_protein_time-final_protein_time, 2))).rsplit(':', 1)[0], ' min', \
+	'\nMerge protein and non protein system: ', str(datetime.timedelta(minutes=np.round(merge_time-non_protein_time, 2))).rsplit(':', 1)[0], ' min')
+	print('Total run time: ', str(datetime.timedelta(minutes=np.round(final_time-start_time, 2))).rsplit(':', 1)[0], ' min')
