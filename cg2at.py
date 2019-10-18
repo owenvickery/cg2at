@@ -599,7 +599,7 @@ for rid in range(0, resid)]).get()
 
 def merge_minimised(residue_type):
 	os.chdir(working_dir+residue_type+'/min')
-	print('\nMerging non protein atomistic files')
+	print('Merging individual residues : '+residue_type)
 #### create merged pdb in min folder
 	pdb_output=create_pdb(working_dir+residue_type+'/min/'+residue_type+'_merged.pdb')	
 	if residue_type =='SOL':
@@ -732,7 +732,7 @@ final_at_residues[str(at_val+1)]['coord'][0],final_at_residues[str(at_val+1)]['c
 		for chain in range(chain_count):
 			print('\t',chain,'\t',np.round(chain_information[chain][0], 1),'\t',chain_information[chain][1]-chain_information[chain][2]+1,'-',chain_information[chain][1],'\t\t',chain_information[chain][2])
 		if chain_count >1:
-			print('\t', chain_count,'\tN/A\t',chain_information[chain][1]+1,'-',residue_number+1,'\t\t',residue_number-res)
+			print('\t', chain_count,'\tN/A\t',chain_information[chain][1]+2,'-',residue_number+1,'\t\t',residue_number-res)
 		else:
 			print('\t', chain_count,'\tN/A\t',res+1,'-',residue_number+1,'\t\t',residue_number-res+1)
 
@@ -745,60 +745,61 @@ final_at_residues[str(at_val+1)]['coord'][0],final_at_residues[str(at_val+1)]['c
 ############################################################ Processes atomistic protein input ################################################################
 
 
-def read_in_atomistic(chain_count):
+def read_in_atomistic(protein, chain_count):
 #### reset location and check if pdb exists  
 	os.chdir(start_dir)
-	if not os.path.exists(args.a):
-		sys.exit('cannot find atomistic protein : '+args.a)
+	if not os.path.exists(protein):
+		sys.exit('cannot find atomistic protein : '+protein)
 #### read in atomistic fragments into dictionary residue_list[0]=x,y,z,atom_name	
 	atomistic_protein_input={}
 	chain_count=0
 #### read in pdb
-	with open(args.a, 'r') as pdb_input:
+	with open(protein, 'r') as pdb_input:
 		atomistic_protein_input[chain_count]={}
 		for line_nr, line in enumerate(pdb_input.readlines()):
 			#### separate line dependant on gro or pdb
 			run=False ## turns to true is line is a bead/atom
-			if args.a.endswith('gro') and len(line.split())==6:
+			if protein.endswith('gro') and len(line.split())==6:
 				line_sep = groatom(line)
 				run=True
-			elif args.a.endswith('pdb') and line.startswith('ATOM'):
+			elif protein.endswith('pdb') and line.startswith('ATOM'):
 				line_sep = pdbatom(line)
 				run=True
 			#### if line is correct
 			if run:
-				if 'H' not in line_sep['atom_name'][0] or line_sep['residue_name'] in mod_residues:  
-				#### sorts out wrong atoms in terminal residues
-					if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
-						line_sep['atom_name']='O'
-				#### makes C_terminal connecting atom variable  
-					if line_sep['atom_name'] == backbone[line_sep['residue_name']]['b_connect'][1]:
-						C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
-						C_resid=line_sep['residue_id']
-						C=True
-					try:
-					#### tries to make a N_terminal connecting atom variable
-						if line_sep['atom_name'] == backbone[line_sep['residue_name']]['b_connect'][0]:
-							N_resid=line_sep['residue_id']
-							N_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
-							N=True
-					#### measures distance between N and C atoms. if the bond is over 3 A it counts as a new protein
-						dist=np.sqrt(((N_ter[0]-C_ter[0])**2)+((N_ter[1]-C_ter[1])**2)+((N_ter[2]-C_ter[2])**2))
-						if N and C and C_resid != N_resid and dist > 3:
-							N_ter, C_ter=False, False
-							chain_count+=1
-							atomistic_protein_input[chain_count]={} ### new chain key
-					except:
-						pass
-					if line_sep['residue_id'] not in atomistic_protein_input[chain_count]:  ## if protein does not exist add to dict
-						atomistic_protein_input[chain_count][line_sep['residue_id']]={}
-				#### adds atom to dictionary, every atom is given a initial mass of zero 
-					atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'frag_mass':0, 'resid':line_sep['residue_id']}
-				#### if atom is in the backbone list then its mass is updated to the correct one
-					if line_sep['atom_name'] in backbone[line_sep['residue_name']]['atoms']:
-						for atom in line_sep['atom_name']:
-							if atom in mass:
-								atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=mass[atom]
+				if line_sep['residue_name'] in p_residues or line_sep['residue_name'] in mod_residues:
+					if 'H' not in line_sep['atom_name'][0] or line_sep['residue_name'] in mod_residues:  
+					#### sorts out wrong atoms in terminal residues
+						if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
+							line_sep['atom_name']='O'
+					#### makes C_terminal connecting atom variable  
+						if line_sep['atom_name'] == backbone[line_sep['residue_name']]['b_connect'][1]:
+							C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
+							C_resid=line_sep['residue_id']
+							C=True
+						try:
+						#### tries to make a N_terminal connecting atom variable
+							if line_sep['atom_name'] == backbone[line_sep['residue_name']]['b_connect'][0]:
+								N_resid=line_sep['residue_id']
+								N_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
+								N=True
+						#### measures distance between N and C atoms. if the bond is over 3 A it counts as a new protein
+							dist=np.sqrt(((N_ter[0]-C_ter[0])**2)+((N_ter[1]-C_ter[1])**2)+((N_ter[2]-C_ter[2])**2))
+							if N and C and C_resid != N_resid and dist > 3:
+								N_ter, C_ter=False, False
+								chain_count+=1
+								atomistic_protein_input[chain_count]={} ### new chain key
+						except:
+							pass
+						if line_sep['residue_id'] not in atomistic_protein_input[chain_count]:  ## if protein does not exist add to dict
+							atomistic_protein_input[chain_count][line_sep['residue_id']]={}
+					#### adds atom to dictionary, every atom is given a initial mass of zero 
+						atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'frag_mass':0, 'resid':line_sep['residue_id']}
+					#### if atom is in the backbone list then its mass is updated to the correct one
+						if line_sep['atom_name'] in backbone[line_sep['residue_name']]['atoms']:
+							for atom in line_sep['atom_name']:
+								if atom in mass:
+									atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=mass[atom]
 #### check if number of monomers is the same
 	if chain_count+1 != system['PROTEIN']:
 		sys.exit('number of chains in atomistic protein input ('+str(chain_count+1)+') does not match CG representation ('+str(system['PROTEIN']))
@@ -864,6 +865,33 @@ number of CG residues '+str(len(backbone_coords[chain]))+'\nnumber of AT residue
 					atomistic_protein_centered[chain][residue][atom]['coord'][1],atomistic_protein_centered[chain][residue][atom]['coord'][2],1,0))+'\n')
 	return atomistic_protein_centered
 
+def RMSD_measure(structure_atoms):
+	RMSD_dict = {}
+	for chain in range(system['PROTEIN']):
+		at_centers=[]
+	#### runs through every residue and atom  
+		for residue in structure_atoms[chain]:
+		#### gets center of mass of each residue (note only backbone heavy atoms have a mass)
+			at_centers_iter=[]
+			for atom in structure_atoms[chain][residue]:
+				at_centers_iter.append(np.append(structure_atoms[chain][residue][atom]['coord'],structure_atoms[chain][residue][atom]['frag_mass']))
+			
+			try:
+				at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
+			except:
+				for atom in structure_atoms[chain][residue]:
+					print(structure_atoms[chain][residue][atom])
+				sys.exit()
+	#### checks that the number of residues in the chain are the same between CG and AT
+		if len(at_centers) != len(backbone_coords[chain]):
+			sys.exit('In chain '+str(chain)+' the atommistic input does not match the CG. \n\
+	number of CG residues '+str(len(backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
+		#### finds distance between backbone COM and cg backbone beads
+		dist=np.sqrt((np.array(at_centers) - np.array(backbone_coords[chain])[:,:3])**2)
+		RMSD_val = np.sqrt(np.mean(dist**2)) #### RMSD calculation
+		RMSD_dict[chain]=np.round(RMSD_val, 3)  #### stores RMSD in dictionary
+	return RMSD_dict
+
 ######################################################################## GROMACS protein ###################################################################
 
 def minimise_protein():
@@ -877,7 +905,6 @@ def minimise_protein():
 		minimise_protein_chain(chain, 'novo_')
 		if args.a != None:
 			minimise_protein_chain(chain, 'at-input_')
-		
 	os.chdir('..')
 
 
@@ -1065,6 +1092,7 @@ def minimise_merged_pdbs(system, box_vec, protein):
 -r merged_cg2at'+protein+'.pdb -c merged_cg2at'+protein+'.pdb -o min/merged_cg2at'+protein+'_minimised')
 	os.chdir('min')
 	gromacs(gmx+' mdrun -v -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb')
+
 def alchembed(system, box_vec, protein):
 	print('Running alchembed')
 	os.chdir(working_dir+'MERGED')
@@ -1084,7 +1112,7 @@ couple-moltype = protein_'+str(chain)+'\ncouple-lambda0 = none\ncouple-lambda1 =
 		os.chdir('alchembed')
 		gromacs(gmx+' mdrun -v -deffnm merged_cg2at_at-input_alchembed_'+str(chain)+' -c merged_cg2at_at-input_alchembed_'+str(chain)+'.pdb')
 		os.chdir('..')
-	copyfile('alchembed/merged_cg2at_at-input_alchembed_'+str(chain)+'.pdb', final_dir+'merged_cg2at_at-input_alchembed.pdb')
+	copyfile('alchembed/merged_cg2at_at-input_alchembed_'+str(chain)+'.pdb', final_dir+'final_cg2at_at-input.pdb')
 
 		
 
@@ -1163,7 +1191,6 @@ read_in_time=time.time()
 
 system={}
 #### converts protein into atomistic and minimises
-print('\nConverting CG into a atomistic representation')
 if 'PROTEIN' in cg_residues:
 	if len(cg_residues['PROTEIN'])>0:
 		p_system, backbone_coords=build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec)
@@ -1171,13 +1198,13 @@ if 'PROTEIN' in cg_residues:
 		protein_de_novo_time=time.time()
 		if args.a != None:
 		#### reads in atomistic structure	
-			atomistic_protein_input = read_in_atomistic(system['PROTEIN'])	
+			atomistic_protein_input = read_in_atomistic(args.a, system['PROTEIN'])	
 			atomistic_protein_centered, cg_com = center_atomistic(atomistic_protein_input)
 			atomistic_protein_rotated = rotate_protein_monomers()
 		minimise_protein()
 		merge_protein(system['PROTEIN'], '_novo')
 		if args.a != None:
-			print('Running steered MD on input atomistic structure\n')
+			print('\tRunning steered MD on input atomistic structure\n')
 		#### runs steered MD on atomistic structure on CA and CB atoms
 			for chain in range(system['PROTEIN']):
 				steered_md_atomistic_to_cg_coord(chain)
@@ -1190,7 +1217,8 @@ final_protein_time=time.time()
 if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]) > 0:
 	np_system=build_atomistic_system(cg_residues, box_vec)
 	for residue_type in cg_residues:
-		print('Minimising individual residues: '+residue_type)
+		if residue_type not in  ['PROTEIN', 'SOL', 'ION']:
+			print('\nMinimising individual residues: '+residue_type)
 		if residue_type =='ION' and 'SOL' not in cg_residues:
 			non_protein_minimise(np_system['SOL'], 'SOL')
 		elif residue_type in np_system:
@@ -1217,14 +1245,29 @@ if len(system)>0:
 #### merges de novo protein and residues types into a single pdb file into merged directory
 	merge_system_pdbs(system, box_vec,'_novo' )
 	minimise_merged_pdbs(system, box_vec, '_novo')
-	copyfile('merged_cg2at_novo_minimised.pdb', final_dir+'final_cg2at_novo_minimised.pdb')
+	copyfile('merged_cg2at_novo_minimised.pdb', final_dir+'final_cg2at_de_novo.pdb')
 	merge_time=time.time()
 
 #### copies all itp files and topologies from whereever they are stored
 	for file_name in os.listdir(working_dir+'MERGED'):
-		if file_name.endswith('.itp') or file_name.endswith('.top'):
+		if file_name.endswith('.itp') or file_name.endswith('final.top'):
 			copyfile(working_dir+'MERGED/'+file_name, final_dir+file_name)
-#### if atomistic structure has been supplies 
+#### calculates final RMS
+if 'PROTEIN' in cg_residues:
+	RMSD={}
+	if len(cg_residues['PROTEIN'])>0:
+		de_novo_atoms = read_in_atomistic(final_dir+'final_cg2at_de_novo.pdb', system['PROTEIN'])
+		RMSD['de novo '] = RMSD_measure(de_novo_atoms)
+		if args.a != None:
+			at_input_atoms = read_in_atomistic(final_dir+'final_cg2at_at-input.pdb', system['PROTEIN'])
+			RMSD['at input'] = RMSD_measure(at_input_atoms)			
+	print('\n{0:^10}{1:^25}{2:^10}'.format('output ','chain','RMSD ('+chr(197)+')'))
+	print('{0:^10}{1:^25}{2:^10}'.format('-------','-----','---------'))
+	for rmsd in RMSD:
+		for chain in RMSD[rmsd]:
+			print('{0:^10}{1:^25}{2:^10}'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
+
+
 
 final_time=time.time()
 
