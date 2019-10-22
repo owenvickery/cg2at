@@ -14,13 +14,14 @@ from string import ascii_uppercase
 from pathlib import Path
 import re
 import datetime
+import glob
 
 parser = argparse.ArgumentParser(description='Converts CG representation into atomistic', epilog='Enjoy the program and best of luck!', allow_abbrev=True)
 parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str, required=True)
 parser.add_argument('-a', help='atomistic coordinates',metavar='pdb/gro/tpr',type=str)
 parser.add_argument('-d', help='additional database location',metavar='../test',type=str)
 parser.add_argument('-v', action="count", default=0, help="increase output verbosity (eg -vv, 3 levels)")
-# parser.add_argument('-steer', help='do not run steered MD on atomistic structure (requires atomistic structure)', action='store_false')
+parser.add_argument('-clean', help='removes all part files from build', action='store_false')
 args = parser.parse_args()
 options = vars(args)
 
@@ -659,18 +660,17 @@ def non_protein_minimise(resid, residue_type):
 #### spin up multiprocessing for grompp 
 	pool = mp.Pool(mp.cpu_count())
 	pool_process = pool.map_async(gromacs, [(gmx+' grompp \
-		-po md_out-'+residue_type+'_'+str(rid)+' \
+		-po md_out-'+residue_type+'_temp_'+str(rid)+' \
 		-f em_'+residue_type+'.mdp \
 		-p topol_'+residue_type+'.top \
-		-r '+residue_type+'_'+str(rid)+'.pdb \
 		-c '+residue_type+'_'+str(rid)+'.pdb \
-		-o min/'+residue_type+'_'+str(rid)+' -maxwarn 1') \
-		for rid in range(0, resid)]).get()			## minimisation grompp parallised
+		-o min/'+residue_type+'_temp_'+str(rid)+' -maxwarn 1') \
+		for rid in range(0, resid)]).get()			## minimisation grompp parallised  #		-r '+residue_type+'_'+str(rid)+'.pdb \
 	pool.close()
 #### close grompp multiprocessing and change to min directory and spin up mdrun multiprocessing
 	os.chdir('min')
 	pool = mp.Pool(mp.cpu_count())
-	pool.map_async(gromacs, [(gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb') \
+	pool.map_async(gromacs, [(gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb') \
 		for rid in range(0, resid)]).get()
 	pool.close()
 	os.chdir(working_dir)
@@ -694,7 +694,7 @@ def merge_minimised(residue_type):
 					if line.startswith('ATOM'):
 						pdb_output.write(line)
 		else:
-			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/min/'+residue_type+'_'+str(resid)+'.pdb')		
+			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/min/'+residue_type+'_temp_'+str(resid)+'.pdb')		
 	pdb_output.write('TER\nENDMDL')
 	pdb_output.close()
 
@@ -939,7 +939,7 @@ def rotate_protein_monomers():
 #### run through each chain in proteins
 	for chain in range(system['PROTEIN']):
 	#### creates atomistic pdb
-		pdb_output = create_pdb(working_dir+'PROTEIN/PROTEIN_at-input_'+str(chain)+'.pdb')
+		pdb_output = create_pdb(working_dir+'PROTEIN/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb')
 		at_centers=[]
 	#### runs through every residue and atom  
 		for residue in atomistic_protein_input[chain]:
@@ -955,7 +955,7 @@ def rotate_protein_monomers():
 					print(atomistic_protein_input[chain][residue][atom])
 				sys.exit()
 	#### finds optimal rotation of each monomer  
-		if len(at_centers) == len(backbone_coords[chain][:,:3]):
+		if len(at_centers) == len(np.array(backbone_coords[chain])[:,:3]):
 			xyz_rot_apply = rotate(np.array(at_centers)-cg_com[chain], np.array(backbone_coords[chain])[:,:3]-cg_com[chain])
 		else:
 			sys.exit('In chain '+str(chain)+' the atommistic input does not match the CG. \n\
@@ -1070,15 +1070,15 @@ pbc = xyz\nDispCorr	= no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')
 #### run grompp on chain 
 	gromacs(gmx+' grompp \
 -f steered_md.mdp \
--p topol_PROTEIN_at-input_'+str(chain)+'.top \
--c min/PROTEIN_at-input_'+str(chain)+'.pdb \
+-p topol_PROTEIN_at_rep_user_supplied_'+str(chain)+'.top \
+-c min/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb \
 -r min/PROTEIN_novo_'+str(chain)+'.pdb \
--o steered_md/PROTEIN_at-input_'+str(chain)+' -maxwarn 1 ')
+-o steered_md/PROTEIN_at_rep_user_supplied_'+str(chain)+' -maxwarn 1 ')
 #### run mdrun on steered MD
 	os.chdir('steered_md')
-	gromacs(gmx+' mdrun -v -deffnm PROTEIN_at-input_'+str(chain)+' -c PROTEIN_at-input_'+str(chain)+'.pdb')
+	gromacs(gmx+' mdrun -v -deffnm PROTEIN_at_rep_user_supplied_'+str(chain)+' -c PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb')
 #### if no pdb file is created stop script with error message
-	if os.path.exists('PROTEIN_at-input_'+str(chain)+'.pdb'):
+	if os.path.exists('PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb'):
 		pass
 	else:
 		sys.exit('steered MD failed! Starting atomistic input may be too far from CG structure')
@@ -1137,104 +1137,121 @@ def convert_topology(topol, protein_number):
 
 #################################################################### GROMACS system ###################################################################
 
-def merge_system_pdbs(system, box_vec, protein):
+def merge_system_pdbs(system, protein):
 	os.chdir(working_dir+'MERGED')
 #### create merged pdb 
 	pdb_output=create_pdb(working_dir+'MERGED/merged_cg2at'+protein+'.pdb')	
-#### run through every residue type in cg_residues
+#### using updated dictionary for the edge case of ions and no waters, eg. converting a protein with only its bound ions.
 	if 'ION' in cg_residues and 'SOL' not in cg_residues:
 		cg_updated={}
 		cg_updated['SOL']=[]
 		cg_updated.update(cg_residues)
 	else:
 		cg_updated=cg_residues
+#### run through every residue type in cg_residues
 	for residue_type in cg_updated:
+	#### if file contains user input identifier
 		if residue_type != 'PROTEIN':
-			protein=''
-		if os.path.exists(working_dir+residue_type+'/'+residue_type+protein+'_merged.pdb'):
-			with open(working_dir+residue_type+'/'+residue_type+protein+'_merged.pdb', 'r') as pdb_input:
+			input_type=''
+		else:
+			input_type=protein
+		if os.path.exists(working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb'):
+		#### opens pdb files and writes straight to merged_cg2at pdb
+			with open(working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb', 'r') as pdb_input:
 				for line in pdb_input.readlines():
 					if line.startswith('ATOM'):
 						pdb_output.write(line)
 		else:
-			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/'+residue_type+protein+'_merged.pdb')		
+			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')		
 	pdb_output.write('TER\nENDMDL')
 	pdb_output.close()
 
 
-def write_merged_topol(system, box_vec, protein):
+def write_merged_topol(system, protein):
 	os.chdir(working_dir+'MERGED')
-	for topology in ['topol_final', 'topol_alchembed']:
-		with open(topology+'.top', 'w') as topol_write:
-			topol_write.write('; Include forcefield parameters\n#include \"'+working_dir+'FORCEFIELD/'+forcefield+'.ff/forcefield.itp\"\n')
-			topol_write.write('#include \"'+working_dir+'/FORCEFIELD/'+forcefield+'.ff/tip3p.itp\"\n\n#include \"'+working_dir+'/FORCEFIELD/'+forcefield+'.ff/ions.itp\"\n\n')
-			for residue_type in system:
-				found=False
-				if residue_type not in ['ION','SOL']:
-					for directory in np_directories:
-						if os.path.exists(directory[0]+residue_type+'/'+residue_type+'.itp'):		
-							topol_write.write('#include \"'+residue_type+'.itp\"\n')
-							copyfile(directory[0]+residue_type+'/'+residue_type+'.itp', residue_type+'.itp')
-							found=True
-							break
-					if residue_type == 'PROTEIN':
-						if topology == 'topol_alchembed':
-							topol_write.write('#include \"PROTEIN.itp\"\n')
-						else:
-							for protein_unit in range(system[residue_type]): 
-								topol_write.write('#include \"PROTEIN_'+str(protein_unit)+'.itp\"\n')
-								copyfile(working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'.itp', 'PROTEIN_'+str(protein_unit)+'.itp')
-								copyfile(working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_steered_posre.itp', 'PROTEIN_'+str(protein_unit)+'_steered_posre.itp')
-								copyfile(working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'_posre.itp', 'PROTEIN_'+str(protein_unit)+'_posre.itp')
-			topol_write.write('[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
-
-
-			for residue_type in system:
-				if residue_type not in  ['PROTEIN']:
-					topol_write.write(residue_type+'    '+str(system[residue_type])+'\n')	
+	with open('topol_final.top', 'w') as topol_write:
+	#### writes topology headers (will probably need updating with other forcefields)
+		topol_write.write('; Include forcefield parameters\n#include \"'+working_dir+'FORCEFIELD/'+forcefield+'.ff/forcefield.itp\"\n')
+		topol_write.write('#include \"'+working_dir+'FORCEFIELD/'+forcefield+'.ff/tip3p.itp\"\n\n#include \"'+working_dir+'FORCEFIELD/'+forcefield+'.ff/ions.itp\"\n\n')
+	#### runs through residue types and copies to MERGED directory and simplifies the names
+		for residue_type in system:
+			if residue_type not in ['ION','SOL']:
+			#### copies 1st itp file it comes across 
+				for directory in np_directories:
+					if os.path.exists(directory[0]+residue_type+'/'+residue_type+'.itp'):		
+						topol_write.write('#include \"'+residue_type+'.itp\"\n')
+						copyfile(directory[0]+residue_type+'/'+residue_type+'.itp', residue_type+'.itp')
+						break
+			#### copies across protein itp files and simplifies the names 
 				if residue_type == 'PROTEIN':
-					if topology == 'topol_alchembed':
-						topol_write.write('PROTEIN    1\n')	
-					else:
-						for protein_unit in range(system[residue_type]):
-							 topol_write.write('PROTEIN_'+str(protein_unit)+'    1\n')	
+					for protein_unit in range(system[residue_type]): 
+						topol_write.write('#include \"PROTEIN_'+str(protein_unit)+'.itp\"\n')
+						copyfile(working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'.itp', 'PROTEIN_'+str(protein_unit)+'.itp')
+						copyfile(working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_steered_posre.itp', 'PROTEIN_'+str(protein_unit)+'_steered_posre.itp')
+						copyfile(working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'_posre.itp', 'PROTEIN_'+str(protein_unit)+'_posre.itp')
 
+		topol_write.write('[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
+	#### adds number of residues to the topology
+		for residue_type in system:
+			if residue_type not in  ['PROTEIN']:
+				topol_write.write(residue_type+'    '+str(system[residue_type])+'\n')	
+		#### adds monomers separately
+			if residue_type == 'PROTEIN':
+				for protein_unit in range(system[residue_type]):
+					topol_write.write('PROTEIN_'+str(protein_unit)+'    1\n')					 
 
-						 
-
-def minimise_merged_pdbs(system, box_vec, protein):
+def minimise_merged_pdbs(system, protein):
 	print('Minimising merged atomistic files : '+protein[1:])
 	os.chdir(working_dir+'MERGED')
-	write_merged_topol(system, box_vec, protein)
-	make_min('merged_cg2at')#, [])
+#### grompps final merged systems
 	gromacs(gmx+' grompp -po md_out-merged_cg2at -f em_merged_cg2at.mdp -p topol_final.top \
 -r merged_cg2at'+protein+'.pdb -c merged_cg2at'+protein+'.pdb -o min/merged_cg2at'+protein+'_minimised')
 	os.chdir('min')
+#### runs minimises final systems
 	gromacs(gmx+' mdrun -v -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb')
 
-def alchembed(system, box_vec, protein):
+def alchembed(system):
 	print('Running alchembed')
 	os.chdir(working_dir+'MERGED')
 	mkdir_directory('alchembed')
+#### runs through each chain and run alchembed on each sequentially
 	for chain in range(system['PROTEIN']):
+	#### creates a alchembed mdp for each chain 
 		with open('alchembed_'+str(chain)+'.mdp', 'w') as alchembed:
 			alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 1000\ndt = 0.0005\ncontinuation = no\nconstraint_algorithm = lincs\nconstraints	= h-bonds\nns_type = grid\nnstlist = 25\n\
 rlist = 1\nrcoulomb	= 1\nrvdw = 1\ncoulombtype	= PME\npme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl	= no\ncutoff-scheme = Verlet\n\
 pbc = xyz\nDispCorr	= no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00\ndelta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6\n\
 couple-moltype = protein_'+str(chain)+'\ncouple-lambda0 = none\ncouple-lambda1 = vdw')
+	#### if 1st chain use minimised structure for coordinate input
 		if chain == 0:
-			gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at-input_minimised.pdb \
--c min/merged_cg2at_at-input_minimised.pdb -o alchembed/merged_cg2at_at-input_alchembed_'+str(chain)+' -maxwarn 1')
+			gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at_rep_user_supplied_minimised.pdb \
+-c min/merged_cg2at_at_rep_user_supplied_minimised.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 1')
+	#### if not 1st chain use the previous output of alchembed tfor the input of the next chain 
 		else:
-			gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at-input_minimised.pdb \
--c alchembed/merged_cg2at_at-input_alchembed_'+str(chain-1)+'.pdb -o alchembed/merged_cg2at_at-input_alchembed_'+str(chain)+' -maxwarn 1')			
+			gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at_rep_user_supplied_minimised.pdb \
+-c alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain-1)+'.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 1')			
 		os.chdir('alchembed')
-		gromacs(gmx+' mdrun -v -deffnm merged_cg2at_at-input_alchembed_'+str(chain)+' -c merged_cg2at_at-input_alchembed_'+str(chain)+'.pdb')
+	#### run alchembed on the chain of interest
+		gromacs(gmx+' mdrun -v -deffnm merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -c merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+'.pdb')
 		os.chdir('..')
-	copyfile('alchembed/merged_cg2at_at-input_alchembed_'+str(chain)+'.pdb', final_dir+'final_cg2at_at-input.pdb')
+#### copy final output to the FINAL folder
+	copyfile('alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+'.pdb', final_dir+'final_cg2at_at_rep_user_supplied.pdb')
 
+############################################################################## Clean up ######################################################################
 
-
+def clean():
+#### cleans temp files from residue_types
+	for residue_type in cg_residues:
+		if residue_type not in ['SOL', 'ION']:
+			print('cleaning temp files from : '+residue_type)
+			os.chdir(working_dir+residue_type)
+			file_list = glob.glob('*temp*', recursive=True)
+			for file in file_list:
+				os.remove(file)
+			os.chdir(working_dir+residue_type+'/min')
+			file_list = glob.glob('*temp*', recursive=True)
+			for file in file_list:
+				os.remove(file)	
 
 start_time=time.time()
 
@@ -1270,9 +1287,6 @@ script_dir=os.path.dirname(os.path.realpath(__file__))+'/'
 
 user_at_input = collect_input()
 
-
-
-
 initialisation_time=time.time()
 
 ### read in and sort forcefield info
@@ -1281,7 +1295,6 @@ forcefield_number = database_selection(forcefield_available_prov, forcefield_ava
 forcefield_location, forcefield=sort_forcefield(forcefield_available_prov, forcefield_available_user, forcefield_number)
 
 ### reads in and sorts fragment information
-# fragments_available_prov, fragments_available_user = read_database_directories(args.d, 'fragments')
 np_residues, p_residues, mod_residues,np_directories, p_directories, mod_directories, water=fetch_residues(fragments_available_prov, fragments_available_user)
 backbone=fetch_fragment(p_directories)
 
@@ -1298,6 +1311,7 @@ system={}
 #### converts protein into atomistic and minimises
 if 'PROTEIN' in cg_residues:
 	if len(cg_residues['PROTEIN'])>0:
+	#### biulds 
 		p_system, backbone_coords=build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec)
 		system.update(p_system)
 		protein_de_novo_time=time.time()
@@ -1313,7 +1327,7 @@ if 'PROTEIN' in cg_residues:
 		#### runs steered MD on atomistic structure on CA and CB atoms
 			for chain in range(system['PROTEIN']):
 				steered_md_atomistic_to_cg_coord(chain)
-			merge_protein(system['PROTEIN'], '_at-input')
+			merge_protein(system['PROTEIN'], '_at_rep_user_supplied')
 		
 final_protein_time=time.time()
 
@@ -1339,20 +1353,23 @@ if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']])
 
 non_protein_time=time.time()
 
-print(system)
 #### creates merged folder
 print('Merging all residue types to single file')
 
 if len(system)>0:
 	mkdir_directory(working_dir+'MERGED')
+#### make final topology in merged directory
+	write_merged_topol(system, '_novo')
+#### make minimisation directory
+	make_min('merged_cg2at')
 #### merges provided atomistic protein and residues types into a single pdb file into merged directory
 	if user_at_input:
-		merge_system_pdbs(system, box_vec,'_at-input' )
-		minimise_merged_pdbs(system, box_vec, '_at-input')
-		alchembed(p_system, box_vec, '_at-input')
+		merge_system_pdbs(system, '_at_rep_user_supplied' )
+		minimise_merged_pdbs(system, '_at_rep_user_supplied')
+		alchembed(p_system)
 #### merges de novo protein and residues types into a single pdb file into merged directory
-	merge_system_pdbs(system, box_vec,'_novo' )
-	minimise_merged_pdbs(system, box_vec, '_novo')
+	merge_system_pdbs(system, '_novo' )
+	minimise_merged_pdbs(system, '_novo')
 	copyfile('merged_cg2at_novo_minimised.pdb', final_dir+'final_cg2at_de_novo.pdb')
 	merge_time=time.time()
 
@@ -1367,7 +1384,7 @@ if 'PROTEIN' in cg_residues:
 		de_novo_atoms = read_in_atomistic(final_dir+'final_cg2at_de_novo.pdb', system['PROTEIN'])
 		RMSD['de novo '] = RMSD_measure(de_novo_atoms)
 		if user_at_input:
-			at_input_atoms = read_in_atomistic(final_dir+'final_cg2at_at-input.pdb', system['PROTEIN'])
+			at_input_atoms = read_in_atomistic(final_dir+'final_cg2at_at_rep_user_supplied.pdb', system['PROTEIN'])
 			RMSD['at input'] = RMSD_measure(at_input_atoms)			
 	print('\n{0:^10}{1:^25}{2:^10}'.format('output ','chain','RMSD ('+chr(197)+')'))
 	print('{0:^10}{1:^25}{2:^10}'.format('-------','-----','---------'))
@@ -1375,7 +1392,8 @@ if 'PROTEIN' in cg_residues:
 		for chain in RMSD[rmsd]:
 			print('{0:^10}{1:^25}{2:^10}'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
 
-
+if args.clean:
+	clean()
 
 final_time=time.time()
 
