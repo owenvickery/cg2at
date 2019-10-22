@@ -1,0 +1,87 @@
+Once upon a time in the database there were 2 folders one liked all things forcefield related, whilst the other hoarded all the fragments.
+
+
+
+An additional database can be provided using the -d flag but has to conform to the following database structure.
+
+The Database directories has a file structure of:
+
+Database
+   --  forcefields 
+       --  forcefield directory from gromacs (eg. charmm36.ff)
+   --  fragments
+       --  forcefield type (eg. charmm36)
+           --  protein
+               --  Aminoacids (eg. cg residue name [ASP])
+                   --  fragment pdb called the same as bead names (eg. BB.pdb)
+               --  MOD
+                   --  modified residues (eg. cg residue name [CYSD])
+                       --  fragment pdb called the same as bead names (eg. BB.pdb)
+           --  non_protein
+               --  non protein molecules (eg. lipids [POPC])
+                   --  fragment pdb called the same as bead names (eg. PO4.pdb)
+                   --  SOL 
+                       --  fragment pdb called the same as bead names (eg. W.pdb), all pdb file names are used to find out what is solvent (martini 3 water=WN, martini 2 water=W) 
+                   --  ION
+                       --  fragment pdb called the same as bead names (eg. NA+.pdb), all pdb file names are used to find out what are ions, as both Na+ and Cl- have the resname ION
+
+
+each fragment has to be exactly correct else the script fails
+
+
+for example the fragments of the Phenylalanine bead.
+
+1) The atom order gives the order the atoms are writen out into the final structures, for example the C,O atoms are writen after the side chain but are still part of the BB bead
+
+2) The number in the column denotes what to do with the atom:
+    2 = The connecting backbone atoms with the pre and proceeding backbone (only needed in the Backbone beads)
+    3 = A harmonic restraint is applied to this atom to steer it towards the CG representation
+
+3) The connectivity between fragments:
+    eg.	Both atom CA atom in BB bead has value '1' and atom CB in SC1 has a value of '1'.  Therefore the script orientates the fragment so the RMS  of the distance between corresponding atoms is smallest.  
+
+    It doesn't matter if there are multiples of the same number eg. CG, CD1 and CD2 all are of the value 2. 
+    The script averages the position of the other 2 connecting atoms eg. if we are rotating the SC1 fragment
+
+    the distance between the CB  and the BB bead is calculated and added to a list
+
+    the center of mass (COM) of SC2 and SC3 are calculated and the distance between the CG atom and the SC2 and SC3 COM is measured and added to list.
+
+    distances = [BB-CB, CG-COM(SC2, SC3)]
+    the Root Mean Squared of the distances are calculated. 
+    The SC1 fragment is then rotated by X degrees and the distances are then recalulated, the optimum rotation is the lowest RMS.         
+
+
+          1                                              2     3
+          |                                              |     |
+BB bead   V                                              V     V
+------------------------------------------------------------------------------        
+ATOM      1  N   PHE     1      42.030  16.760  10.920  2.00  0.00           N
+ATOM      2  HN  PHE     1      42.230  15.840  11.270  0.00  0.00           H
+ATOM      3  CA  PHE     1      42.770  17.920  11.410  3.00  1.00           C
+ATOM      4  HA  PHE     1      42.650  18.620  10.710  0.00  0.00           H
+ATOM     19  C   PHE     1      44.240  17.600  11.550  2.00  0.00           C
+ATOM     20  O   PHE     1      44.640  16.530  12.080  0.00  0.00           O
+
+SC1 bead
+------------------------------------------------------------------------------
+ATOM      5  CB  PHE     1      42.220  18.360  12.800  1.00  1.00           C
+ATOM      6  HB1 PHE     1      42.370  17.610  13.450  1.00  0.00           H
+ATOM      7  HB2 PHE     1      42.730  19.170  13.100  1.00  0.00           H
+ATOM      8  CG  PHE     1      40.730  18.730  12.860  3.00  2.00           C
+
+SC2 bead
+------------------------------------------------------------------------------
+ATOM      9  CD1 PHE     1      39.780  17.730  13.110  1.00  2.00           C
+ATOM     10  HD1 PHE     1      40.080  16.800  13.310  1.00  0.00           H
+ATOM     11  CE1 PHE     1      38.420  18.030  13.090  1.00  0.00           C
+ATOM     12  HE1 PHE     1      37.750  17.310  13.260  1.00  0.00           H
+ATOM     13  CZ  PHE     1      38.000  19.330  12.830  1.00  3.00           C
+ATOM     14  HZ  PHE     1      37.030  19.550  12.820  1.00  0.00           H
+
+SC3 bead
+------------------------------------------------------------------------------
+ATOM     15  CD2 PHE     1      40.300  20.030  12.600  1.00  2.00           C
+ATOM     16  HD2 PHE     1      40.970  20.750  12.430  1.00  0.00           H
+ATOM     17  CE2 PHE     1      38.940  20.340  12.590  1.00  3.00           C
+ATOM     18  HE2 PHE     1      38.640  21.270  12.410  1.00  0.00           H
