@@ -1,0 +1,13 @@
+the script is a fragment based conversion of CG representation into atomistic.
+
+The script has 2 outputs:
+
+The 1st requires no information other than the fragment corresponding to the bead
+The script will convert any protein using a basic de novo method of fragment alignment to the CG beads.
+
+The 2nd maps a users supplied atomistic structure onto the the CG representation. 
+The mapped structure is then steered for a very short period to fit the CG coordinates.
+
+example input.
+
+python -c cg_input.pdb -a atomistic_input.pdb -d user_supplied_database -v (3 level verbosity -vvv) -clean (removes temp file after cg2at)
