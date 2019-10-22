@@ -1,9 +1,0 @@
-ATOM     48  CA3 LIPA    1      14.294  -4.457  59.024  1.00  0.00      LPSA C  
-ATOM     50  OA3 LIPA    1      15.131  -4.967  58.011  1.00  0.00      LPSA O  
-ATOM     51  C31 LIPA    1      14.966  -4.838  56.666  1.00  0.00      LPSA C  
-ATOM     52  O31 LIPA    1      13.931  -4.301  56.215  1.00  0.00      LPSA O  
-ATOM     53  C32 LIPA    1      15.639  -5.949  55.803  1.00  0.00      LPSA C  
-ATOM     54 H32R LIPA    1      14.906  -6.214  55.016  1.00  0.00      LPSA H  
-ATOM     55 H32S LIPA    1      15.880  -6.877  56.315  1.00  0.00      LPSA H  
-ATOM    217  C33 LIPA    1      17.006  -5.746  55.174  1.00  0.00      LPSA C  
-END

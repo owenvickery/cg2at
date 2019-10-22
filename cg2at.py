@@ -21,7 +21,7 @@ parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',
 parser.add_argument('-a', help='atomistic coordinates',metavar='pdb/gro/tpr',type=str)
 parser.add_argument('-d', help='additional database location',metavar='../test',type=str)
 parser.add_argument('-v', action="count", default=0, help="increase output verbosity (eg -vv, 3 levels)")
-parser.add_argument('-clean', help='removes all part files from build', action='store_false')
+parser.add_argument('-clean', help='removes all part files from build', action='store_true')
 args = parser.parse_args()
 options = vars(args)
 
@@ -1335,9 +1335,10 @@ final_protein_time=time.time()
 #### converts non protein residues into atomistic and minimises 
 if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]) > 0:
 	np_system=build_atomistic_system(cg_residues, box_vec)
+	print()
 	for residue_type in cg_residues:
 		if residue_type not in  ['PROTEIN', 'SOL', 'ION']:
-			print('\nMinimising individual residues: '+residue_type)
+			print('Minimising individual residues: '+residue_type)
 		if residue_type =='ION' and 'SOL' not in cg_residues:
 			non_protein_minimise(np_system['SOL'], 'SOL')
 			merge_minimised('SOL')
@@ -1354,7 +1355,7 @@ if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']])
 non_protein_time=time.time()
 
 #### creates merged folder
-print('Merging all residue types to single file')
+print('\nMerging all residue types to single file')
 
 if len(system)>0:
 	mkdir_directory(working_dir+'MERGED')
