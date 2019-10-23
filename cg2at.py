@@ -1232,7 +1232,7 @@ def minimise_merged_pdbs(system, protein):
 	os.chdir(working_dir+'MERGED')
 #### grompps final merged systems
 	gromacs(gmx+' grompp -po md_out-merged_cg2at -f em_merged_cg2at.mdp -p topol_final.top \
--r merged_cg2at'+protein+'.pdb -c merged_cg2at'+protein+'.pdb -o min/merged_cg2at'+protein+'_minimised')
+-r merged_cg2at'+protein+'.pdb -c merged_cg2at'+protein+'.pdb -o min/merged_cg2at'+protein+'_minimised -maxwarn 1')
 	os.chdir('min')
 #### runs minimises final systems
 	gromacs(gmx+' mdrun -v -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb')
