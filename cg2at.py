@@ -465,9 +465,6 @@ def connectivity(bead_number, cg_bead, connect, at_residues, cg_residues, resid)
 	return at_connections, cg_connections, center
 
 
-
-
-
 ############################################################ Read in CG file Section ################################################################
 
 def read_initial_pdb():
@@ -535,6 +532,26 @@ def read_initial_pdb():
 
 	return cg_residues, box_vec
 
+def fix_pbc(residues_all, box_vec):
+#### fixes box PBC
+	box = box_vec.split()[1:4]
+	for residue in residues_all:
+		initial=True
+		for bead in residues_all[residue]:
+			if initial:
+				initial=False
+				pass
+			else:
+				for xyz in range(3):
+				#### for x, y, z if the distance between bead is more than half the box length
+					if np.sqrt((residues_all[residue][bead]['coord'][xyz]-residues_all[residue][bead_prev]['coord'][xyz])**2) > float(box[xyz])/2:
+					#### if the bead if in the opposite 1/3 of the box the position the box length is add/subtracted
+						if residues_all[residue][bead]['coord'][xyz] < float(box[xyz])/3:
+							residues_all[residue][bead]['coord'][xyz] = residues_all[residue][bead]['coord'][xyz]+float(box[xyz])
+						elif residues_all[residue][bead]['coord'][xyz] > float(box[xyz])-(float(box[xyz])/3):
+							residues_all[residue][bead]['coord'][xyz] = residues_all[residue][bead]['coord'][xyz]-float(box[xyz])
+			bead_prev=bead
+	return residues_all
 
 ############################################################ Build Non Protein Section ################################################################
 
@@ -629,7 +646,10 @@ def atomistic_non_protein(cg_residue_type,cg_residues):
 				at_connections,cg_connections, center=connectivity(bead_number, cg_bead, connect, at_residues, cg_residues,cg_residue)
 			#### rotates at_connections to finds minimum RMS distance with cg_connections 
 				if len(at_connections)==len(cg_connections):
-					xyz_rot_apply=rotate(np.array(at_connections), np.array(cg_connections))
+					try:
+						xyz_rot_apply=rotate(np.array(at_connections), np.array(cg_connections))
+					except:
+						sys.exit(str(cg_bead)+' '+str(at_connections)+' '+str(cg_connections))
 				else:
 					sys.exit('the bead '+cg_bead+' in residue '+cg_residues[cg_residue][cg_bead]['residue_name']+' contains the wrong number of connections')
 		#### if ION/SOL a random rotation is applied to the cluster 
@@ -1304,6 +1324,11 @@ print('\nThis script is now hopefully doing the following:\n')
 #### read in CG file
 print('Reading in your CG representation')
 cg_residues, box_vec = read_initial_pdb()
+#### Fix any pbc issues
+for residue_type in cg_residues:
+	cg_residues[residue_type]=fix_pbc(cg_residues[residue_type], box_vec)
+
+
 os.chdir(working_dir)
 read_in_time=time.time()
 
