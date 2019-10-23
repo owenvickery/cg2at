@@ -18,3 +18,48 @@ The following flags are available:
 example input.
 
 python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -v -clean 
+
+#############################################################################
+
+Script overview
+
+ Read in databases 
+        |-> choose forcefield and fragments
+                      |-> fetch available fragements and bonded information
+
+ collate input files as pdb into INPUT directory 
+                      |-> Read in CG input
+ 
+ Build non protein atomistic system
+                |-> align COM of fragments to bead
+                                | If not SOL or ION
+                                |-> rotate fragment to minimise distance between connecting atoms the connected beads 
+                                |                                       |-> energy minimise each residue separately
+                                |                                                         |-> merge all minimised residues 
+                                |                                                                         |-> minimise merged residue type incase of any clashes 
+                                | If ION or SOL
+                                |-> Randomly rotate water around COM of water/ion bead
+                                                         |-> concatonate water molecules in one pdb
+                                                         |              |-> minimise all water molecules
+                                                         |if ion
+                                                         |-> separate ions into separate file (no need to do anything to them) 
+
+Build de novo protein atomistic system
+                |-> align COM of fragments to bead
+                                |-> rotate fragment to minimise distance between connecting atoms the connected beads 
+                                                                           |-> each chain is minimised separately
+                                                                                               |-> merge all minimised chains
+                                                                                                            |-> minimise merged chains incase of any clashes                             
+Build user supplied protein atomistic system
+                |-> align COM of user supplied protein chain to CG chain
+                                         |-> fit backbone COMs of user supplied protein chain to CG backbone beads
+                                                                        |-> each chain is minimised separately
+                                                                                        |-> Run steered MD on selected atoms to fit the user supplied protein chain more accurately to the CG protein_mass
+
+ Merge protein and non protein 
+           |if de novo
+           |-> minimise merged system
+                        |-> copy to final directory 
+           |if user supplied protein
+           |-> run alchembed on each chain iteratively to prevent any stuck acyl tails 
+                                            |-> copy to final directory

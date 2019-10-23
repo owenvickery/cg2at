@@ -1079,7 +1079,6 @@ def write_posres(chain):
 						posres_output.write(str(at_counter)+'     1  1000  1000  1000\n')
 
 def steered_md_atomistic_to_cg_coord(chain):
-
 	os.chdir(working_dir+'PROTEIN')
 	mkdir_directory('steered_md')
 #### create bog standard mdp file, simulation is only 3 ps in a vaccum so settings should not have any appreciable effect 
@@ -1107,20 +1106,28 @@ pbc = xyz\nDispCorr	= no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')
 
 def merge_protein(no_chains, protein):
 #### merge protein chains into single pdb
-	if protein=='_novo':
-		location='min'
-	else:
-		location='steered_md'
+	merge = read_in_protein_pdbs(no_chains, working_dir+'PROTEIN/min/PROTEIN'+protein)
+	if protein!='_at_rep_user_supplied':
+		write_merged_pdb(merge, protein)
+	if protein=='_at_rep_user_supplied':
+		write_merged_pdb(merge, '_no_steered')
+		merge = read_in_protein_pdbs(no_chains, working_dir+'PROTEIN/steered_md/PROTEIN'+protein)
+		write_merged_pdb(merge, protein)
+
+def read_in_protein_pdbs(no_chains, file):
 	merge=[]
 #### reads in each chain into merge list
 	for chain in range(0,no_chains):
-		if os.path.exists(working_dir+'PROTEIN/'+location+'/PROTEIN'+protein+'_'+str(chain)+'.pdb'):
-			with open(working_dir+'PROTEIN/'+location+'/PROTEIN'+protein+'_'+str(chain)+'.pdb', 'r') as pdb_input:
+		if os.path.exists(file+'_'+str(chain)+'.pdb'):
+			with open(file+'_'+str(chain)+'.pdb', 'r') as pdb_input:
 				for line in pdb_input.readlines():
 					if line.startswith('ATOM'):
 						merge.append(line)
 		else:
-			sys.exit('cannot find minimised residue: \n'+'PROTEIN/'+location+'/PROTEIN'+protein+'_'+str(chain)+'.pdb')	
+			sys.exit('cannot find minimised residue: \n'+'PROTEIN/'+location+'/PROTEIN'+protein+'_'+str(chain)+'.pdb')		
+	return merge
+
+def write_merged_pdb(merge, protein):
 #### creates merged pdb and writes chains to it
 	pdb_output=create_pdb(working_dir+'PROTEIN/PROTEIN'+protein+'_merged.pdb')
 	for line in merge:
@@ -1256,6 +1263,7 @@ couple-moltype = protein_'+str(chain)+'\ncouple-lambda0 = none\ncouple-lambda1 =
 		os.chdir('..')
 #### copy final output to the FINAL folder
 	copyfile('alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+'.pdb', final_dir+'final_cg2at_at_rep_user_supplied.pdb')
+	copyfile('merged_cg2at_no_steered.pdb', final_dir+'final_cg2at_no_steered.pdb')
 
 ############################################################################## Clean up ######################################################################
 
@@ -1390,6 +1398,7 @@ if len(system)>0:
 	make_min('merged_cg2at')
 #### merges provided atomistic protein and residues types into a single pdb file into merged directory
 	if user_at_input:
+		merge_system_pdbs(system, '_no_steered')
 		merge_system_pdbs(system, '_at_rep_user_supplied' )
 		minimise_merged_pdbs(system, '_at_rep_user_supplied')
 		alchembed(p_system)
