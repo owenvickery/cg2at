@@ -8,6 +8,13 @@ The script will convert any protein using a basic de novo method of fragment ali
 The 2nd maps a users supplied atomistic structure onto the the CG representation. 
 The mapped structure is then steered for a very short period to fit the CG coordinates.
 
+The following flags are available:
+-c cg_input.pdb (can accept pdb/gro/tpr [required])
+-a atomistic_input.pdb (can accept pdb/gro/tpr[optional])
+-d user_supplied_database (can ignore for now unless you feel like making some fragments)
+-v (3 level verbosity -vvv) (use just -v to get the run times etc)
+-clean (removes temp file after cg2at) (small amount of cleaning of directories)
+
 example input.
 
-python -c cg_input.pdb -a atomistic_input.pdb -d user_supplied_database -v (3 level verbosity -vvv) -clean (removes temp file after cg2at)
+python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -v -clean 

@@ -29,15 +29,15 @@ options = vars(args)
 ################################################################ Initialisation ##################################################################
 
 def collect_input():
-#### puts all input files in input directory
+#### collates all input files in input directory
 	copyfile(args.c, input_directory+args.c.split('/')[-1])
 	if args.a != None:
 		copyfile(args.a, input_directory+args.a.split('/')[-1])
 	os.chdir(input_directory)
-#### converts input files into pdb files and removes pbc hopefully (editconf is bad for this)
-	gromacs('gmx editconf -f '+args.c.split('/')[-1]+' -pbc -resnr 1 -o CG_input.pdb')
+#### converts input files into pdb files 
+	gromacs('gmx editconf -f '+args.c.split('/')[-1]+' -resnr 1 -o CG_input.pdb')
 	if args.a != None:
-		gromacs('gmx editconf -f '+args.a.split('/')[-1]+' -pbc -resnr 1 -o AT_input.pdb')
+		gromacs('gmx editconf -f '+args.a.split('/')[-1]+' -resnr 1 -o AT_input.pdb')
 		return True
 	return False
 
@@ -1036,7 +1036,7 @@ def minimise_protein():
 	for chain in range(system['PROTEIN']):
 		minimise_protein_chain(chain, 'novo_')
 		if user_at_input:
-			minimise_protein_chain(chain, 'at-input_')
+			minimise_protein_chain(chain, 'at_rep_user_supplied_')
 	os.chdir('..')
 
 
