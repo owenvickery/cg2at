@@ -1030,7 +1030,7 @@ def minimise_protein():
 	mkdir_directory(working_dir+'FORCEFIELD')
 	copy_tree(forcefield_location+forcefield+'.ff', working_dir+'PROTEIN/'+forcefield+'.ff/.')
 	mkdir_directory('min')
-	copyfile(working_dir+'PROTEIN/'+forcefield+'.ff/residuetypes.dat', 'residuetypes.dat')
+	copyfile(forcefield_location+'/residuetypes.dat', 'residuetypes.dat')
 	with open('em.mdp','w') as em:
 		em.write('define = \nintegrator = steep\nnsteps = 10000\nemtol = 1000\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 	for chain in range(system['PROTEIN']):

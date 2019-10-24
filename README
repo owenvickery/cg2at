@@ -1,12 +1,22 @@
 the script is a fragment based conversion of CG representation into atomistic.
 
-The script has 2 outputs:
+The script has 3 outputs:
 
 The 1st requires no information other than the fragment corresponding to the bead
 The script will convert any protein using a basic de novo method of fragment alignment to the CG beads.
 
 The 2nd maps a users supplied atomistic structure onto the the CG representation. 
 The mapped structure is then steered for a very short period to fit the CG coordinates.
+
+The 3rd just does a rigid body fit on the backbone.
+There is no alchembed run on this system as you can use it as a restraint file and pull the steered coordinates into the rigid fit.
+
+This can be done by:
+add "define = -DPOSRES" to the MDP file applies restraints to all heavy atoms
+gmx grompp -f md.mdp -c final_cg2at_at_rep_user_supplied.pdb -r final_cg2at_no_steered.pdb -p topol_final.top -o rigid_fit.tpr
+gmx mdrun -v -deffnm rigid_fit
+
+#############################################################################
 
 The following flags are available:
 -c cg_input.pdb (can accept pdb/gro/tpr [required])
