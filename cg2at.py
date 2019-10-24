@@ -88,7 +88,7 @@ def ask_database(provided, user, selection_type):
 				return 0
 		#### if asking about fragments accept a list of libraries 
 			if selection_type=='fragments': 
-				number = np.array(input('\nplease select fragment libraries (in order of importance): ').split())
+				number = np.array(input('\nplease select fragment libraries (in order of importance: eg. "1 0" then ENTER): ').split())
 				number=number.astype(int)
 				if len(number[np.where(number >= len(provided)+len(user))]) == 0:
 					return number
