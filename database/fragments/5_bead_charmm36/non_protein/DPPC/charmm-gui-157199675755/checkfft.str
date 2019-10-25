@@ -1,0 +1,4 @@
+set fftx 16
+set ffty 16
+set fftz 90
+

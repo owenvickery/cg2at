@@ -887,12 +887,9 @@ def read_in_atomistic(protein, chain_count):
 	with open(protein, 'r') as pdb_input:
 		atomistic_protein_input[chain_count]={}
 		for line_nr, line in enumerate(pdb_input.readlines()):
-			#### separate line dependant on gro or pdb
+			#### separate line 
 			run=False ## turns to true is line is a bead/atom
-			if protein.endswith('gro') and len(line.split())==6:
-				line_sep = groatom(line)
-				run=True
-			elif protein.endswith('pdb') and line.startswith('ATOM'):
+			if protein.endswith('pdb') and line.startswith('ATOM'):
 				line_sep = pdbatom(line)
 				run=True
 			#### if line is correct
