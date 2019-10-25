@@ -889,7 +889,7 @@ def read_in_atomistic(protein, chain_count):
 		for line_nr, line in enumerate(pdb_input.readlines()):
 			#### separate line 
 			run=False ## turns to true is line is a bead/atom
-			if protein.endswith('pdb') and line.startswith('ATOM'):
+			if line.startswith('ATOM'):
 				line_sep = pdbatom(line)
 				run=True
 			#### if line is correct
