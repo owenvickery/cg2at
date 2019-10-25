@@ -21,6 +21,7 @@ parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',
 parser.add_argument('-a', help='atomistic coordinates',metavar='pdb/gro/tpr',type=str)
 parser.add_argument('-d', help='additional database location',metavar='../test',type=str)
 parser.add_argument('-v', action="count", default=0, help="increase output verbosity (eg -vv, 3 levels)")
+parser.add_argument('-ter', help='interactively choose terminal species', action='store_true')
 parser.add_argument('-clean', help='removes all part files from build', action='store_true')
 args = parser.parse_args()
 options = vars(args)
@@ -193,7 +194,7 @@ def sort_directories(p_directories, mod_directories, np_directories, water):
 
 def fetch_fragment(p_directories):
 #### fetches the Backbone heavy atoms and the connectivity with pre/proceeding residues 
-	atom_list, bb_list, restraint=[], [], []
+	atom_list, bb_list, restraint, terminal=[], [], [], False
 	processing={}     ### dictionary of backbone heavy atoms and connecting atoms eg backbone['ASP'][atoms/b_connect]
 	for directory in range(len(p_directories)):
 		for residue in p_directories[directory][1:]:	
@@ -210,7 +211,9 @@ def fetch_fragment(p_directories):
 										bb_list.append(line_sep['atom_name'])  ### connecting atoms
 									if line_sep['backbone'] == 3:
 										restraint.append(line_sep['atom_name'])  ### position restrained atoms
-			processing[residue]={'atoms':atom_list,'b_connect':bb_list,'restraint':restraint}  ### adds heavy atoms and connecting atoms to backbone dictionary 
+									if line_sep['backbone'] == 4:
+										terminal=True
+			processing[residue]={'atoms':atom_list,'b_connect':bb_list,'restraint':restraint, 'ter':terminal}  ### adds heavy atoms and connecting atoms to backbone dictionary 
 			atom_list, bb_list, restraint=[], [], []  ### resets residue lists of heavy atoms, connecting atoms and restraint 
 #### if verbose prints out all heavy atoms and connecting atoms for each backbone
 	if args.v >= 2:
@@ -782,6 +785,9 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 	at_residues={}
 	backbone_coords={}
 	backbone_coords[chain_count]=[]
+	terminal={}
+	terminal[chain_count]=[]
+
 	res=0
 	print('Converting Protein')
 	mkdir_directory(working_dir+'PROTEIN')	### make and change to protein directory
@@ -790,8 +796,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 #### for each residue in protein
 	initial=True
 	for residue_number in cg_residues:
-	#### temporary index/dictionaries	
-		
+	#### temporary index/dictionaries		
 		final_at_residues={}  
 		at_residues[residue_number]={}
 	#### fetch fragments in residue and connectivity
@@ -823,11 +828,15 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 					dist=np.sqrt(((xyz_prev[0]-xyz_cur[0])**2)+((xyz_prev[1]-xyz_cur[1])**2)+((xyz_prev[2]-xyz_cur[2])**2))
 				#### if distance between BB beads is more than 5 A then it is considered a new chain.
 					if dist > 5:
+						terminal[chain_count].append(backbone[cg_residues[residue_number-1]['BB']['residue_name']]['ter'])
 						chain_count+=1  ### adds to to the protein count
 						backbone_coords[chain_count]=[]   #### creates another dictionary key for bb fragments 
 						backbone_coords[chain_count].append(xyz_cur+[1])  #### adds xyz coord and mass of 1 to list
 						chain_information.append([dist, residue_number, residue_number-res])  ### info for verbose flag
 						res=residue_number-1 #### updates residue
+						terminal[chain_count]=[]
+						terminal[chain_count].append(backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
+
 					#### creates a new protein pdb 
 						pdb_output = create_pdb(working_dir+'PROTEIN/PROTEIN_novo_'+str(chain_count)+'.pdb')
 						at_counter=1  ### resets protein_chain atom count
@@ -839,6 +848,8 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 					xyz_cur=[cg_residues[residue_number]['BB']['coord'][0],cg_residues[residue_number]['BB']['coord'][1],cg_residues[residue_number]['BB']['coord'][2]]
 					backbone_coords[chain_count].append(xyz_cur+[1])
 					initial=False
+					terminal[chain_count].append(backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
+
 		#### finds optimum rotation of fragment
 			if len(at_connections) == len(cg_connections):
 				xyz_rot_apply=rotate(np.array(at_connections), np.array(cg_connections))
@@ -854,6 +865,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 			pdb_output.write(pdbline%((int(at_counter),final_at_residues[str(at_val+1)]['atom'],final_at_residues[str(at_val+1)]['res_type'],ascii_uppercase[chain_count],\
 				int(residue_number),final_at_residues[str(at_val+1)]['coord'][0],final_at_residues[str(at_val+1)]['coord'][1],final_at_residues[str(at_val+1)]['coord'][2],1,0))+'\n')
 			at_counter+=1  #### adds 1 to atom counter
+	terminal[chain_count].append(backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
 	pdb_output.close()   #### close file write
 	if args.v >=1:
 		print('\n{:-<75}'.format('>  Verbose level 1 start'))
@@ -867,7 +879,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 			print('\t', chain_count,'\tN/A\t',res+1,'-',residue_number+1,'\t\t',residue_number-res+1)
 
 		print('\n{:-<75}'.format('>  Verbose level 1 end\n'))
-
+	system['terminal_residue']=terminal
 	system['PROTEIN']=chain_count+1
 	return system, backbone_coords
 
@@ -1031,16 +1043,40 @@ def minimise_protein():
 	with open('em.mdp','w') as em:
 		em.write('define = \nintegrator = steep\nnsteps = 10000\nemtol = 1000\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 	for chain in range(system['PROTEIN']):
-		minimise_protein_chain(chain, 'novo_')
+		chain_ter=ask_terminal(chain)
+		minimise_protein_chain(chain, 'novo_', chain_ter)
 		if user_at_input:
-			minimise_protein_chain(chain, 'at_rep_user_supplied_')
+			minimise_protein_chain(chain, 'at_rep_user_supplied_', chain_ter)
 	os.chdir('..')
 
+def ask_terminal(chain):
+	default_ter=[1,1]
+	ter_name=['N terminal','C terminal']
+	for ter_val,  ter_residue in enumerate(p_system['terminal_residue'][chain]):
+		if not ter_residue:
+			if args.ter:
+				print('\n please select species for '+ter_name[ter_val]+' residue in chain '+str(chain)+' :\n 0: charged\n 1: neutral')
+				while True:
+					try:
+						number = int(input('\nplease select terminal species: '))
+						if number in [0,1]:
+							default_ter[ter_val]=number
+							break
+					except KeyboardInterrupt:
+						sys.exit('\nInterrupted')
+					except:
+						print("Oops!  That was a invalid choice")
+		else:
+			if ter_residue == 0:
+				default_ter[ter_val]=3
+			else:
+				default_ter[ter_val]=4
+	return default_ter
 
-def minimise_protein_chain(chain, input):
+def minimise_protein_chain(chain, input, chain_ter):
 #### pdb2gmx on on protein chain, creates the topologies	
 	gromacs(gmx+' pdb2gmx -f PROTEIN_'+input+str(chain)+'.pdb -o PROTEIN_'+input+str(chain)+'_gmx.pdb -water none \
--p PROTEIN_'+input+str(chain)+'.top  -i PROTEIN_'+input+str(chain)+'_posre.itp << EOF \n1\nEOF') ### single chains
+-p PROTEIN_'+input+str(chain)+'.top  -i PROTEIN_'+input+str(chain)+'_posre.itp << EOF \n1\n'+str(chain_ter[0])+'\n'+str(chain_ter[1])+'\nEOF') ### single chains
 #### converts the topology file and processes it into a itp file
 	convert_topology('PROTEIN_'+input, chain)
 #### writes topology overview for each chain 
@@ -1343,7 +1379,7 @@ if 'PROTEIN' in cg_residues:
 	if len(cg_residues['PROTEIN'])>0:
 	#### biulds 
 		p_system, backbone_coords=build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec)
-		system.update(p_system)
+		system['PROTEIN']=p_system['PROTEIN']
 		protein_de_novo_time=time.time()
 		if user_at_input:
 		#### reads in atomistic structure	
@@ -1360,7 +1396,6 @@ if 'PROTEIN' in cg_residues:
 			merge_protein(system['PROTEIN'], '_at_rep_user_supplied')
 		
 final_protein_time=time.time()
-
 
 #### converts non protein residues into atomistic and minimises 
 if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]) > 0:
@@ -1398,7 +1433,7 @@ if len(system)>0:
 		merge_system_pdbs(system, '_no_steered')
 		merge_system_pdbs(system, '_at_rep_user_supplied' )
 		minimise_merged_pdbs(system, '_at_rep_user_supplied')
-		alchembed(p_system)
+		alchembed(system['PROTEIN'])
 #### merges de novo protein and residues types into a single pdb file into merged directory
 	merge_system_pdbs(system, '_novo' )
 	minimise_merged_pdbs(system, '_novo')
