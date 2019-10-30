@@ -372,14 +372,6 @@ def create_pdb(file_name):
 '+box_vec+'MODEL        1\n')
 	return pdb_output
 
-def kick(xyz_check, prev_coord):
-	for xyz in prev_coord:
-		dist=np.sqrt(((xyz_check[0]-xyz[0])**2)+((xyz_check[1]-xyz[1])**2)+((xyz_check[2]-xyz[2])**2))
-		while dist < 0.15:
-			xyz_check = [xyz_check[0]+np.random.uniform(-0.2, 0.2), xyz_check[1]+np.random.uniform(-0.2, 0.2),xyz_check[2]+np.random.uniform(-0.2, 0.2)]
-			dist=np.sqrt(((xyz_check[0]-xyz[0])**2)+((xyz_check[1]-xyz[1])**2)+((xyz_check[2]-xyz[2])**2))
-	return xyz_check
-
 ####################################################################################################  Atomistic processing #######################################################################
 
 def fragment_location(residue, fragment):  
@@ -595,7 +587,9 @@ def build_atomistic_system(cg_residues, box_vec):
 			if residue_type not in ['SOL', 'ION']:
 				pdb_output = create_pdb(working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')
 		#### for every fragment in that resid
-			coord=[]
+			if residue_type not in ['ION', 'SOL']:
+			####### check if any atoms in residue overlap #######
+				atomistic_fragments[residue_type][resid] = check_non_protein_atom_overlap(atomistic_fragments[residue_type][resid])
 			for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
 			#### separates out the water molecules from the ion in the fragment
 				if residue_type in ['ION', 'SOL']:
@@ -615,15 +609,7 @@ def build_atomistic_system(cg_residues, box_vec):
 					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2],1,0))+'\n')
 			#### if residue_type not in ['ION', 'SOL'] write out to separate pdb
 				else:
-					try:
-					####### coordinate kick #######
-						if len(coord) > 0:
-							atomistic_fragments[residue_type][resid][at_id+1]['coord']=kick(atomistic_fragments[residue_type][resid][at_id+1]['coord'], coord)
-							coord.append(atomistic_fragments[residue_type][resid][at_id+1]['coord'])
-						else:
-							coord.append(atomistic_fragments[residue_type][resid][at_id+1]['coord'])
-					except:
-						sys.exit('missing fragment atom id : '+str(at_id+1)+' in residue type : '+residue_type)
+				#### write residue out to a pdb file
 					pdb_output.write(pdbline%((int(atom),atomistic_fragments[residue_type][resid][at_id+1]['atom'],atomistic_fragments[residue_type][resid][at_id+1]['res_type'],' ',1,\
 					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2],1,0))+'\n')
 
@@ -638,6 +624,22 @@ def build_atomistic_system(cg_residues, box_vec):
 			#### adds retype to system dictionary
 				system[residue_type]=int(resid)+1
 	return system 
+
+def check_non_protein_atom_overlap(residue):
+
+	coord=np.zeros(shape=(len(residue),3))
+	for atom in range(len(residue)):
+		coord[atom]=residue[atom+1]['coord']
+	for xyz_index, xyz in enumerate(coord):
+		dist=np.sqrt(((coord[:,0]-xyz[0])**2)+((coord[:,1]-xyz[1])**2)+((coord[:,2]-xyz[2])**2))
+		overlapped = np.where(np.logical_and(dist>0.01,dist<0.15))
+		if len(overlapped[0])>0:
+			while len(overlapped[0])>0:
+				xyz_check = [xyz[0]+np.random.uniform(-0.2, 0.2), xyz[1]+np.random.uniform(-0.2, 0.2),xyz[2]+np.random.uniform(-0.2, 0.2)]
+				dist=np.sqrt(((coord[:,0]-xyz_check[0])**2)+((coord[:,1]-xyz_check[1])**2)+((coord[:,2]-xyz_check[2])**2))
+				overlapped = np.where(np.logical_and(dist>0.01,dist<0.15))	
+			residue[xyz_index+1]['coord']	= xyz_check
+	return residue
 
 def atomistic_non_protein(cg_residue_type,cg_residues):
 	atomistic_fragments={}  #### residue dictionary
@@ -741,6 +743,8 @@ def minimise_merged(residue_type):
 	os.chdir('min')	
 	gromacs(gmx+' mdrun -v -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb')
 	os.chdir(working_dir)
+
+
 
 ############################################################ Build Protein Section ################################################################
 
@@ -904,7 +908,7 @@ def find_closest_cysteine(at_connections, cg_connections, cg_residues, at_residu
 				xyz_cur=[cg_residues[residue_number]['SC1']['coord'][0],cg_residues[residue_number]['SC1']['coord'][1],cg_residues[residue_number]['SC1']['coord'][2]]
 				xyz_check=[cg_residues[res_id]['SC1']['coord'][0],cg_residues[res_id]['SC1']['coord'][1],cg_residues[res_id]['SC1']['coord'][2]]
 				dist=np.sqrt(((xyz_check[0]-xyz_cur[0])**2)+((xyz_check[1]-xyz_cur[1])**2)+((xyz_check[2]-xyz_cur[2])**2))
-				if dist < 5.5:
+				if dist < 7:
 					atom = backbone[cg_residues[residue_number]['SC1']['residue_name']]['disulphide'][0]
 					for atom_number in at_residues[residue_number]['SC1']:
 						if at_residues[residue_number]['SC1'][atom_number]['atom']==atom:
@@ -1229,17 +1233,26 @@ def merge_protein(no_chains, protein):
 		write_merged_pdb(merge, protein)
 
 def read_in_protein_pdbs(no_chains, file):
-	merge=[]
 #### reads in each chain into merge list
 	for chain in range(0,no_chains):
+		merge_temp = []
+
 		if os.path.exists(file+'_'+str(chain)+'.pdb'):
 			with open(file+'_'+str(chain)+'.pdb', 'r') as pdb_input:
 				for line in pdb_input.readlines():
 					if line.startswith('ATOM'):
-						merge.append(line)
+						merge_temp.append(line)
 		else:
 			sys.exit('cannot find minimised residue: \n'+'PROTEIN/'+location+'/PROTEIN'+protein+'_'+str(chain)+'.pdb')		
-	return merge
+		if chain != 0:
+			merged, merged_coords = check_protein_atom_overlap(merge_temp, merged, merged_coords) 
+		else:
+			merged = merge_temp
+			merged_coords=np.zeros(shape=(len(merge_temp),3))
+			for line_index, line in enumerate(merge_temp):
+				line_sep=pdbatom(line)
+				merged_coords[line_index]=[line_sep['x'],line_sep['y'],line_sep['z']]
+	return merged
 
 def write_merged_pdb(merge, protein):
 #### creates merged pdb and writes chains to it
@@ -1247,6 +1260,30 @@ def write_merged_pdb(merge, protein):
 	for line in merge:
 		pdb_output.write(line)
 	pdb_output.close()
+
+def check_protein_atom_overlap(merged_temp, merged, merged_coords):
+	coord=np.zeros(shape=(len(merged_temp),3))
+	line_separated=[]
+	for line_index, line in enumerate(merged_temp):
+		line_sep=pdbatom(line)
+		coord[line_index]=[line_sep['x'],line_sep['y'],line_sep['z']]
+		line_separated.append(line_sep)
+	for xyz_index, xyz in enumerate(coord):
+		dist=np.sqrt(((merged_coords[:,0]-xyz[0])**2)+((merged_coords[:,1]-xyz[1])**2)+((merged_coords[:,2]-xyz[2])**2))
+		overlapped = np.where(np.logical_and(dist>0.01,dist<0.15))
+		if len(overlapped[0])>0:
+			while len(overlapped[0])>0:
+				xyz_check = [xyz[0]+np.random.uniform(-0.2, 0.2), xyz[1]+np.random.uniform(-0.2, 0.2),xyz[2]+np.random.uniform(-0.2, 0.2)]
+				dist=np.sqrt(((coord[:,0]-xyz_check[0])**2)+((coord[:,1]-xyz_check[1])**2)+((coord[:,2]-xyz_check[2])**2))
+				overlapped = np.where(np.logical_and(dist>0.01,dist<0.15))	
+			# print(line_separated[xyz_index])
+			merged.append(pdbline%((int(line_separated[xyz_index]['atom_number']), line_separated[xyz_index]['atom_name'], line_separated[xyz_index]['residue_name'],' ',line_separated[xyz_index]['residue_id'],\
+			xyz_check[0],xyz_check[1],xyz_check[2],1,0))+'\n')
+			coord[xyz_index] = xyz_check
+		else:
+			merged.append(merged_temp[xyz_index])
+	merged_coords=np.append(merged_coords, coord, axis=0)	
+	return merged, merged_coords
 
 def convert_topology(topol, protein_number):
 #### reads in topology 
@@ -1303,22 +1340,10 @@ def merge_system_pdbs(system, protein):
 			with open(working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb', 'r') as pdb_input:
 				for line in pdb_input.readlines():
 					if line.startswith('ATOM'):
-						if residue_type == 'PROTEIN' and protein == '_at_rep_user_supplied':
-							line_sep = pdbatom(line)
-							xyz=[line_sep['x'],line_sep['y'],line_sep['z']]
-						####### coordinate kick #######
-							if len(coord) > 0:
-								xyz=kick(xyz, coord)
-								coord.append(xyz)
-							else:
-								coord.append(xyz)
-							line_kicked=(pdbline%((int(line_sep['atom_number']),line_sep['atom_name'],line_sep['residue_name'],' ',1,xyz[0],xyz[1],xyz[2],1,0))+'\n')
-							pdb_output.write(line_kicked)
-						else:
-							pdb_output.write(line)
+						line_sep = pdbatom(line)
+						pdb_output.write(line)
 		else:
 			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')	
-		print(residue_type, protein, time.time()-start)	
 	pdb_output.write('TER\nENDMDL')
 	pdb_output.close()
 
@@ -1374,7 +1399,7 @@ def alchembed(system):
 	for chain in range(system):
 	#### creates a alchembed mdp for each chain 
 		with open('alchembed_'+str(chain)+'.mdp', 'w') as alchembed:
-			alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 1000\ndt = 0.0005\ncontinuation = no\nconstraint_algorithm = lincs\nconstraints	= h-bonds\nns_type = grid\nnstlist = 25\n\
+			alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 750\ndt = 0.001\ncontinuation = no\nconstraint_algorithm = lincs\nconstraints	= h-bonds\nns_type = grid\nnstlist = 25\n\
 rlist = 1\nrcoulomb	= 1\nrvdw = 1\ncoulombtype	= PME\npme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl	= no\ncutoff-scheme = Verlet\n\
 pbc = xyz\nDispCorr	= no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00\ndelta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6\n\
 couple-moltype = protein_'+str(chain)+'\ncouple-lambda0 = none\ncouple-lambda1 = vdw')
@@ -1387,6 +1412,7 @@ couple-moltype = protein_'+str(chain)+'\ncouple-lambda0 = none\ncouple-lambda1 =
 			gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at_rep_user_supplied_minimised.pdb \
 -c alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain-1)+'.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 1')			
 		os.chdir('alchembed')
+		chain_grompp=time.time()
 	#### run alchembed on the chain of interest
 		gromacs(gmx+' mdrun -v -deffnm merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -c merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+'.pdb')
 		os.chdir('..')
