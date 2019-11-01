@@ -1,0 +1,10 @@
+ATOM     57  C27 DOPC    1       8.636   3.761  51.779  1.00  6.00      MEMB
+ATOM     58  H7R DOPC    1       7.931   2.946  51.934  1.00  0.00      MEMB
+ATOM     59  H7S DOPC    1       9.656   3.320  51.776  1.00  0.00      MEMB
+ATOM     60  C28 DOPC    1       8.460   4.542  50.460  1.00  0.00      MEMB
+ATOM     61  H8R DOPC    1       8.474   3.834  49.605  1.00  0.00      MEMB
+ATOM     62  H8S DOPC    1       9.350   5.201  50.368  1.00  0.00      MEMB
+ATOM     63  C29 DOPC    1       7.198   5.363  50.475  1.00  0.00      MEMB
+ATOM     64  H9R DOPC    1       6.308   4.762  50.688  1.00  0.00      MEMB
+ATOM     65 C210 DOPC    1       7.050   6.691  50.299  1.00  7.00      MEMB
+ATOM     66 H10R DOPC    1       6.038   7.116  50.390  1.00  0.00      MEMB

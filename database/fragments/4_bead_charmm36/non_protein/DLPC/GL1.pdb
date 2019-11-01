@@ -1,0 +1,11 @@
+ATOM     25  C1  DLPC    1       1.096   7.500  55.834  1.00  2.00      MEMB
+ATOM     26  HA  DLPC    1       2.114   7.920  55.987  1.00  0.00      MEMB
+ATOM     27  HB  DLPC    1       0.400   8.361  55.760  1.00  0.00      MEMB
+ATOM     28  C2  DLPC    1       1.074   6.837  54.427  1.00  6.00      MEMB
+ATOM     29  HS  DLPC    1       0.009   6.560  54.287  1.00  0.00      MEMB
+ATOM     30  O21 DLPC    1       1.993   5.720  54.339  1.00  0.00      MEMB
+ATOM     31  C21 DLPC    1       2.153   5.032  53.211  1.00  0.00      MEMB
+ATOM     32  O22 DLPC    1       1.556   5.194  52.168  1.00  0.00      MEMB
+ATOM     33  C22 DLPC    1       3.141   3.888  53.478  1.00  3.00      MEMB
+ATOM     34  H2R DLPC    1       2.732   3.316  54.256  1.00  0.00      MEMB
+ATOM     35  H2S DLPC    1       4.121   4.217  53.842  1.00  0.00      MEMB

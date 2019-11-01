@@ -1,0 +1,9 @@
+ATOM     36  C3  DNPC    1       8.881   7.176  62.346  1.00  3.00      MEMB
+ATOM     37  HX  DNPC    1       9.693   7.639  62.926  1.00  0.00      MEMB
+ATOM     38  HY  DNPC    1       8.545   7.947  61.650  1.00  0.00      MEMB
+ATOM     39  O31 DNPC    1       9.296   6.129  61.486  1.00  0.00      MEMB
+ATOM     40  C31 DNPC    1      10.465   5.675  61.727  1.00  0.00      MEMB
+ATOM     41  O32 DNPC    1      11.281   6.093  62.512  1.00  0.00      MEMB
+ATOM     42  C32 DNPC    1      10.715   4.529  60.934  1.00  5.00      MEMB
+ATOM     43  H2X DNPC    1      11.772   4.619  60.652  1.00  0.00      MEMB
+ATOM     44  H2Y DNPC    1      10.131   4.523  59.992  1.00  0.00      MEMB
