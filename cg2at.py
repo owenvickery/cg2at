@@ -222,7 +222,7 @@ def fetch_fragment(p_directories):
 	processing={}     ### dictionary of backbone heavy atoms and connecting atoms eg backbone['ASP'][atoms/b_connect]
 	for directory in range(len(p_directories)):
 		for residue in p_directories[directory][1:]:	
-			atom_list, bb_list, restraint, disulphide, terminal=[], [], [], [], False
+			atom_list, bb_list, restraint, disulphide, terminal=[], [], [], '', False
 			for file_name in os.listdir(p_directories[directory][0]+residue):
 				if file_name.endswith('.pdb'):
 					with open(p_directories[directory][0]+residue+'/'+file_name, 'r') as pdb_input:
@@ -237,7 +237,7 @@ def fetch_fragment(p_directories):
 									if line_sep['backbone'] in [3, 5]:
 										restraint.append(line_sep['atom_name'])  ### position restrained atoms
 									if line_sep['backbone'] in [5]:
-										disulphide.append(line_sep['atom_name'])  ### position restrained atoms
+										disulphide = line_sep['atom_name'] ### position restrained atoms
 									if line_sep['backbone'] == 4:
 										terminal=True
 			processing[residue]={'atoms':atom_list,'b_connect':bb_list,'restraint':restraint, 'disulphide':disulphide, 'ter':terminal}  ### adds heavy atoms and connecting atoms to backbone dictionary 
@@ -387,6 +387,8 @@ def pdbatom(line):
 ### get information from pdb file
 ### atom number, atom name, residue name,chain, resid,  x, y, z, backbone (for fragment), connect(for fragment)
 	try:
+		# return dict([('atom_number',int(line[7:11].replace(" ", ""))),('atom_name',str(line[12:16]).replace(" ", "")),('residue_name',str(line[17:21]).replace(" ", "")),('chain',line[21]),('residue_id',int(line[22:26])), ('x',float(line[30:38])),('y',float(line[38:46])),('z',float(line[46:54])), ('backbone',int(float(line[56:62]))),('connect',int(float(line[62:67])))])
+
 		return dict([('atom_number',int(line[7:11].replace(" ", ""))),('atom_name',str(line[12:16]).replace(" ", "")),('residue_name',str(line[17:21]).replace(" ", "")),('chain',line[21]),('residue_id',int(line[22:26])), ('x',float(line[30:38])),('y',float(line[38:46])),('z',float(line[46:54])), ('backbone',int(float(line[56:62]))),('connect',int(float(line[62:67])))])
 	except:
 		sys.exit('\npdb line is wrong:\t'+line) 
@@ -930,21 +932,23 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 	system['PROTEIN']=chain_count+1
 	return system, backbone_coords, final_coordinates_atomistic
 
+################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
+#### 
 
 def find_closest_cysteine(at_connections, cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center):
 	disulphide, atom_number=False, 0
 	for res_id in cg_residues: 
 		try:
+			#### checks distance between cysteines if closer than 7A then adds another connection between the S and the sidechain of the other cysteine CG bead
 			if cg_residues[res_id]['SC1']['residue_name'] == 'CYS' and res_id != residue_number:
-				xyz_cur=[cg_residues[residue_number]['SC1']['coord'][0],cg_residues[residue_number]['SC1']['coord'][1],cg_residues[residue_number]['SC1']['coord'][2]]
-				xyz_check=[cg_residues[res_id]['SC1']['coord'][0],cg_residues[res_id]['SC1']['coord'][1],cg_residues[res_id]['SC1']['coord'][2]]
-				dist=np.sqrt(((xyz_check[0]-xyz_cur[0])**2)+((xyz_check[1]-xyz_cur[1])**2)+((xyz_check[2]-xyz_cur[2])**2))
+				xyz_cur=[cg_residues[residue_number]['SC1']['coord'][0],cg_residues[residue_number]['SC1']['coord'][1],cg_residues[residue_number]['SC1']['coord'][2]] ### cysteine of interest
+				xyz_check=[cg_residues[res_id]['SC1']['coord'][0],cg_residues[res_id]['SC1']['coord'][1],cg_residues[res_id]['SC1']['coord'][2]] ### cysteine to check distance
+				dist=np.sqrt(((xyz_check[0]-xyz_cur[0])**2)+((xyz_check[1]-xyz_cur[1])**2)+((xyz_check[2]-xyz_cur[2])**2)) ### distance
 				if dist < 7:
-					atom = backbone[cg_residues[residue_number]['SC1']['residue_name']]['disulphide'][0]
 					for atom_number in at_residues[residue_number]['SC1']:
-						if at_residues[residue_number]['SC1'][atom_number]['atom']==atom:
-							at_connections.append(at_residues[residue_number]['SC1'][atom_number]['coord']-center)
-					cg_connections.append(cg_residues[res_id]['SC1']['coord']-center)
+						if at_residues[residue_number]['SC1'][atom_number]['atom']==backbone[cg_residues[residue_number]['SC1']['residue_name']]['disulphide']: ### if sulphur
+							at_connections.append(at_residues[residue_number]['SC1'][atom_number]['coord']-center) ### add at centered coordinates
+					cg_connections.append(cg_residues[res_id]['SC1']['coord']-center) ### add cg centered coordinates
 					disulphide=True
 					break
 		except:
@@ -952,6 +956,7 @@ def find_closest_cysteine(at_connections, cg_connections, cg_residues, at_residu
 	return at_connections, cg_connections, disulphide, atom_number, res_id
 
 def shift_sulphur(residue_number,final_at_residues, disul_at_info, disul_cg_info, at_residues, cg_residues ):
+#### to shift sidechains roughly equally the 1st sidechain is shifted to within 3.2A and the second to 2A (pdb2gmx cutoff)
 	if disul_cg_info > residue_number:
 		xyz_cur=np.array([cg_residues[disul_cg_info]['SC1']['coord'][0],cg_residues[disul_cg_info]['SC1']['coord'][1],cg_residues[disul_cg_info]['SC1']['coord'][2]])
 		cutoff=3.2
@@ -961,6 +966,7 @@ def shift_sulphur(residue_number,final_at_residues, disul_at_info, disul_cg_info
 
 	xyz_check=np.array([at_residues[residue_number]['SC1'][disul_at_info]['coord'][0],at_residues[residue_number]['SC1'][disul_at_info]['coord'][1],at_residues[residue_number]['SC1'][disul_at_info]['coord'][2]])
 	dist=np.sqrt(((xyz_check[0]-xyz_cur[0])**2)+((xyz_check[1]-xyz_cur[1])**2)+((xyz_check[2]-xyz_cur[2])**2))
+#### moves sidechains closer together in increments of 5% of the length of the vector 
 	offset=0
 	if dist >= cutoff:
 		vector=xyz_cur-xyz_check
@@ -973,6 +979,7 @@ def shift_sulphur(residue_number,final_at_residues, disul_at_info, disul_cg_info
 			else:
 				offset = vector * x 
 				break
+#### applies final shift to the rest of the atoms in the sidechain
 	for atom in final_at_residues:
 		if atom in at_residues[residue_number]['SC1']:
 			final_at_residues[atom]['coord']=final_at_residues[atom]['coord']+offset
@@ -1151,7 +1158,7 @@ def minimise_protein():
 		minimise_protein_chain(chain, 'novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[0])+'\n'+str(pdb2gmx_selections[1]))
 		pdb2gmx_selections = histidine_protonation(chain, 'novo_', pdb2gmx_selections)
 
-		if user_at_input:
+		if user_at_input and 'PROTEIN' in system:
 			minimise_protein_chain(chain, 'at_rep_user_supplied_', pdb2gmx_selections)
 	os.chdir('..')
 
@@ -1450,11 +1457,11 @@ couple-moltype = protein_'+str(chain)+'\ncouple-lambda0 = none\ncouple-lambda1 =
 	#### if 1st chain use minimised structure for coordinate input
 		if chain == 0:
 			gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at_rep_user_supplied_minimised.pdb \
--c min/merged_cg2at_at_rep_user_supplied_minimised.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 1')
+-c min/merged_cg2at_at_rep_user_supplied_minimised.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 2')
 	#### if not 1st chain use the previous output of alchembed tfor the input of the next chain 
 		else:
 			gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at_rep_user_supplied_minimised.pdb \
--c alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain-1)+'.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 1')			
+-c alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain-1)+'.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 2')			
 		os.chdir('alchembed')
 		chain_grompp=time.time()
 	#### run alchembed on the chain of interest
@@ -1470,7 +1477,7 @@ def clean():
 #### cleans temp files from residue_types
 	for residue_type in cg_residues:
 		if residue_type not in ['SOL', 'ION']:
-			print('cleaning temp files from : '+residue_type)
+			print('\ncleaning temp files from : '+residue_type)
 			os.chdir(working_dir+residue_type)
 			file_list = glob.glob('*temp*', recursive=True)
 			for file in file_list:
@@ -1529,7 +1536,7 @@ fragment_selection_time=time.time()
 print('\nThis script is now hopefully doing the following (Good luck):\n')
 
 #### read in CG file
-print('Reading in your CG representation')
+print('Reading in your CG representation\n')
 cg_residues, box_vec = read_initial_pdb()
 #### Fix any pbc issues
 for residue_type in cg_residues:
@@ -1547,14 +1554,14 @@ if 'PROTEIN' in cg_residues:
 		p_system, backbone_coords, final_coordinates_atomistic=build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec)
 		system['PROTEIN']=p_system['PROTEIN']
 		protein_de_novo_time=time.time()
-		if user_at_input:
+		if user_at_input and 'PROTEIN' in system:
 		#### reads in atomistic structure	
 			atomistic_protein_input = read_in_atomistic(input_directory+'AT_input.pdb', system['PROTEIN'])	
 			atomistic_protein_centered, cg_com = center_atomistic(atomistic_protein_input)
 			atomistic_protein_rotated = rotate_protein_monomers(atomistic_protein_centered)
 		minimise_protein()
 		merge_protein(system['PROTEIN'], '_novo')
-		if user_at_input:
+		if user_at_input and 'PROTEIN' in system:
 			print('\tRunning steered MD on input atomistic structure\n')
 		#### runs steered MD on atomistic structure on CA and CB atoms
 			for chain in range(system['PROTEIN']):
@@ -1595,7 +1602,7 @@ if len(system)>0:
 #### make minimisation directory
 	make_min('merged_cg2at')
 #### merges provided atomistic protein and residues types into a single pdb file into merged directory
-	if user_at_input:
+	if user_at_input and 'PROTEIN' in system:
 		merge_system_pdbs(system, '_no_steered')
 		merge_system_pdbs(system, '_at_rep_user_supplied' )
 		minimise_merged_pdbs(system, '_at_rep_user_supplied')
@@ -1616,7 +1623,7 @@ if 'PROTEIN' in cg_residues:
 	if len(cg_residues['PROTEIN'])>0:
 		de_novo_atoms = read_in_atomistic(final_dir+'final_cg2at_de_novo.pdb', system['PROTEIN'])
 		RMSD['de novo '] = RMSD_measure(de_novo_atoms)
-		if user_at_input:
+		if user_at_input and 'PROTEIN' in system:
 			at_input_atoms = read_in_atomistic(final_dir+'final_cg2at_at_rep_user_supplied.pdb', system['PROTEIN'])
 			RMSD['at input'] = RMSD_measure(at_input_atoms)			
 	print('\n{0:^10}{1:^25}{2:^10}'.format('output ','chain','RMSD ('+chr(197)+')'))
@@ -1629,9 +1636,6 @@ if args.clean:
 	clean()
 
 final_time=time.time()
-
-
-
 
 #### prints out system information
 
@@ -1649,7 +1653,7 @@ if args.v == 1:
 	print('\nInitialisation: ', str(datetime.timedelta(minutes=np.round(initialisation_time-start_time, 2))).rsplit(':', 1)[0], ' min',\
 	'\nFragment selection: ', str(datetime.timedelta(minutes=np.round(fragment_selection_time-initialisation_time, 2))).rsplit(':', 1)[0], ' min' ,\
 	'\nRead in CG system: ', str(datetime.timedelta(minutes=np.round(read_in_time-fragment_selection_time, 2))).rsplit(':', 1)[0], ' min')
-	if user_at_input:
+	if user_at_input and 'PROTEIN' in system:
 		print('Build de novo protein system: ', str(datetime.timedelta(minutes=np.round(protein_de_novo_time-read_in_time, 2))).rsplit(':', 1)[0], ' min',\
 		'\nBuild protein system from provided structure: ', str(datetime.timedelta(minutes=np.round(final_protein_time-protein_de_novo_time, 2))).rsplit(':', 1)[0], ' min', \
 		'\nTotal protein system build: ', str(datetime.timedelta(minutes=np.round(final_protein_time-read_in_time, 2))).rsplit(':', 1)[0], ' min')
