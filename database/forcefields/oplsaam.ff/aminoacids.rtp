@@ -1,0 +1,1593 @@
+; New format introduced in Gromacs 3.1.4.
+; Dont use this forcefield with earlier versions.
+
+; This residue database includes new reparameterized dihedrals 
+; from Robertson et al (JCTC, 2015) that override the default atomtype-based 
+; dihedrals. All the bonded terms are defined in the same way as CHARMM formatted FF file.  
+; OPLS-AAM Force is added on top of existing OPLS-AA/L and OPLS-AA force fields
+; Curated From CHARMM formatted OPLS-AAM force field by:
+; Leela S. Dodda @ JorgensenLab at Yale University email: leela.dodda@yale.edu
+; IMPORTANT POINTS TO NOTE: 
+; * 2-Aminoisobutyric acid (AIB) parameters are also remove in OPLS-AA/M FF
+; References for the OPLS-AAM force field:
+; Michael J. Robertson, Julian Tirado-Rives, and William L. Jorgensen J. Chem. Theory Comput., 2015, 11 (7), pp 3499–3509
+;
+; NB: OPLS chargegroups are not strictly neutral, since we mainly
+; use them to optimize the neighborsearching. For accurate simulations
+; you should use PME.
+
+[ bondedtypes ]
+; Column 1 : default bondtype
+; Column 2 : default angletype
+; Column 3 : default proper dihedraltype
+; Column 4 : default improper dihedraltype
+; Column 5 : This controls the generation of dihedrals from the bonding.
+;            All possible dihedrals are generated automatically. A value of
+;            1 here means that all these are retained. A value of
+;            0 here requires generated dihedrals be removed if
+;              * there are any dihedrals on the same central atoms
+;                specified in the residue topology, or
+;              * there are other identical generated dihedrals
+;                sharing the same central atoms, or
+;              * there are other generated dihedrals sharing the
+;                same central bond that have fewer hydrogen atoms
+; Column 6 : number of neighbors to exclude from non-bonded interactions
+; Column 7 : 1 = generate 1,4 interactions between pairs of hydrogen atoms
+;            0 = do not generate such
+; Column 8 : 1 = remove proper dihedrals if found centered on the same
+;                bond as an improper dihedral
+;            0 = do not generate such
+; bonds  angles  dihedrals  impropers all_dihedrals nrexcl HH14 RemoveDih
+     1       1          3          4	    1         3      1     0
+
+[ ACE ]
+ [ atoms ]
+   CH3    oplsm_135   -0.180     1
+  HH31    oplsm_140    0.060     1
+  HH32    oplsm_140    0.060     1
+  HH33    oplsm_140    0.060     1
+     C    oplsm_235    0.500     2
+     O    oplsm_236   -0.500     2
+ [ bonds ]
+   CH3  HH31
+   CH3  HH32
+   CH3  HH33
+   CH3     C
+     C     O
+[ impropers ]
+  CH3    +N    C      O
+
+[ ALA ]
+ [ atoms ] 
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1 
+    CA    oplsm_224    0.140     1 
+    HA    oplsm_140    0.060     1 
+    CB    oplsm_135   -0.180     2 
+   HB1    oplsm_140    0.060     2 
+   HB2    oplsm_140    0.060     2 
+   HB3    oplsm_140    0.060     2 
+     C    oplsm_235    0.500     3
+     O    oplsm_236   -0.500     3
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB   HB3
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;    -C    CA     N     H     
+;    CA    +N     C     O     
+
+
+
+[ ARG ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1       
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1 
+    HA    oplsm_140    0.060     1 
+    CB    oplsm_136   -0.120     2 
+   HB1    oplsm_140    0.060     2 
+   HB2    oplsm_140    0.060     2 
+    CG    oplsm_308   -0.050     3 
+   HG1    oplsm_140    0.060     3 
+   HG2    oplsm_140    0.060     3 
+    CD    oplsm_307    0.190     4 
+   HD1    oplsm_140    0.060     4 
+   HD2    oplsm_140    0.060     4 
+    NE    oplsm_303   -0.700     5 
+    HE    oplsm_304    0.440     5 
+    CZ    oplsm_302    0.640	5 
+   NH1    oplsm_300   -0.800     6
+  HH11    oplsm_301    0.460     6
+  HH12    oplsm_301    0.460     6
+   NH2    oplsm_300   -0.800     7
+  HH21    oplsm_301    0.460     7
+  HH22    oplsm_301    0.460     7
+     C    oplsm_235    0.500     8
+     O    oplsm_236   -0.500     8
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   HG1
+    CG   HG2
+    CG    CD
+    CD   HD1
+    CD   HD2
+    CD    NE
+    NE    HE
+    NE    CZ
+    CZ   NH1
+    CZ   NH2
+   NH1  HH11
+   NH1  HH12
+   NH2  HH21
+   NH2  HH22
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+NH2 CZ NE NH1
+HE NE CD CZ
+HH12 NH1 CZ HH11
+HH22 NH2 CZ HH21
+
+
+;[ ARGN ]
+; [ atoms ]
+;     N    oplsm_238   -0.500     1
+;     H    oplsm_241    0.300     1
+;    CA    oplsm_224    0.140     1
+;    HA    oplsm_140    0.060     1
+;    CB    oplsm_136   -0.120     2
+;   HB1    oplsm_140    0.060     2
+;   HB2    oplsm_140    0.060     2
+;    CG    oplsm_136   -0.120     3
+;   HG1    oplsm_140    0.060     3
+;   HG2    oplsm_140    0.060     3
+;    CD    oplsm_307    0.040     4
+;   HD1    oplsm_140    0.060     4
+;   HD2    oplsm_140    0.060     4
+;    NE    oplsm_303   -0.620     5
+;    HE    oplsm_304    0.380     5                
+;    CZ    oplsm_302    0.550     6
+;   NH1    oplsm_750   -0.785     6
+;   HH1    oplsm_301    0.380     6                
+;   NH2    oplsm_751   -0.785     7
+;  HH21    oplsm_301    0.360     7                
+;  HH22    oplsm_301    0.360     7                
+;     C    oplsm_235    0.500     8
+;     O    oplsm_236   -0.500     8
+; [ bonds ]
+;     N     H
+;     N    CA
+;    CA    HA
+;    CA    CB
+;    CA     C
+;    CB   HB1
+;    CB   HB2
+;    CB    CG
+;    CG   HG1
+;    CG   HG2
+;    CG    CD
+;    CD   HD1
+;    CD   HD2
+;    CD    NE
+;    NE    HE
+;    NE    CZ
+;    CZ   NH1
+;    CZ   NH2
+;   NH1   HH1
+;   NH2  HH21
+;   NH2  HH22
+;     C     O
+;    -C     N
+; [ impropers ]
+;H N -C CA 
+;O C CA +N  
+;NH2 CZ NE NH1 
+;HE NE CD CZ
+;HH22 NH2 CZ HH21
+
+[ ASN ]
+ [ atoms ]
+     N    oplsm_238   -0.500     0
+     H    oplsm_241    0.300     0
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_136   -0.120     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_235    0.500     3
+   OD1    oplsm_236   -0.500     3
+   ND2    oplsm_237   -0.760     4
+  HD21    oplsm_240    0.380     4
+  HD22    oplsm_240    0.380     4
+     C    oplsm_235    0.500     5
+     O    oplsm_236   -0.500     5
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   OD1
+    CG   ND2
+   ND2  HD21
+   ND2  HD22
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+OD1 CG CB ND2
+HD22 ND2 CG HD21  
+;   -C    CA     N     H      
+;   CA    +N     C     O      
+;   CB   ND2    CG   OD1        
+;   CG  HD21   ND2  HD22        
+
+[ ASP ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_274   -0.220     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_271    0.700     3
+   OD1    oplsm_272   -0.800     3
+   OD2    oplsm_272   -0.800     3
+     C    oplsm_235    0.500     4
+     O    oplsm_236   -0.500     4
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   OD1
+    CG   OD2
+     C     O	
+    -C     N 
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+OD2 CG CB OD1
+;   -C    CA     N     H     
+;   CA    +N     C     O     
+;    CB   OD1    CG   OD2         
+
+[ ASPH ]
+ [ atoms ]
+     N    oplsm_238   -0.500     0  
+     H    oplsm_241    0.300     0  
+    CA    oplsm_224    0.140     1  
+    HA    oplsm_140    0.060     1  
+    CB    oplsm_136   -0.120     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_267    0.520     3
+   OD1    oplsm_269   -0.440     3
+   OD2    oplsm_268   -0.530     4
+   HD2    oplsm_270    0.450     4
+     C    oplsm_235    0.500     5
+     O    oplsm_236   -0.500     5
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   OD1
+    CG   OD2
+   OD2   HD2
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;   -C    CA     N     H     
+;   CA    +N     C     O     
+    CB   OD1    CG   OD2         
+
+
+[ CYS2 ] ; aka CYX
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_214    0.0975    2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    SG    oplsm_203   -0.2175    2
+     C    oplsm_235    0.500     3
+     O    oplsm_236   -0.500     3
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    SG
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;   -C    CA     N     H     
+;   CA    +N     C     O     
+
+[ CYSH ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_206    0.060     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    SG    oplsm_200   -0.335     3
+    HG    oplsm_204    0.155     3
+     C    oplsm_235    0.500     4
+     O    oplsm_236   -0.500     4
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    SG
+    SG    HG
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;   -C    CA     N     H     
+;   CA    +N     C     O     
+
+[ GLN ]
+ [ atoms ]
+     N    oplsm_238   -0.500     0
+     H    oplsm_241    0.300     0
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_136   -0.120     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_136   -0.120     3
+   HG1    oplsm_140    0.060     3
+   HG2    oplsm_140    0.060     3
+    CD    oplsm_235    0.500     4
+   OE1    oplsm_236   -0.500     4
+   NE2    oplsm_237   -0.760     5
+  HE21    oplsm_240    0.380     5
+  HE22    oplsm_240    0.380     5
+     C    oplsm_235    0.500     6
+     O    oplsm_236   -0.500     6
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   HG1
+    CG   HG2
+    CG    CD
+    CD   OE1
+    CD   NE2
+   NE2  HE21
+   NE2  HE22
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+ OE1 CD CG NE2
+ HE22 NE2 CD HE21  
+
+; Charged Glutamine
+; See. Patriksson et al. Int. J. Mass. Spectrom. 248 pp 124-135 (2006)
+[ QLN ]
+ [ atoms ]
+     N    oplsm_238   -0.500     0
+     H    oplsm_241    0.300     0
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_136   -0.120     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_136    0.054     3
+   HG1    oplsm_140    0.131     3
+   HG2    oplsm_140    0.131     3
+    CD    oplsm_235    0.544     4
+   OE1    oplsm_154   -0.496     4
+   HE1    oplsm_155    0.498     4
+   NE2    oplsm_237   -0.720     5
+  HE21    oplsm_240    0.429     5
+  HE22    oplsm_240    0.429     5
+     C    oplsm_235    0.500     6
+     O    oplsm_236   -0.500     6
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   HG1
+    CG   HG2
+    CG    CD
+    CD   OE1
+   OE1   HE1
+    CD   NE2
+   NE2  HE21
+   NE2  HE22
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;   -C    CA     N     H     
+;   CA    +N     C     O     
+    CG   NE2    CD   OE1      
+    CD  HE21   NE2  HE22            
+    HE1  OE1    CD   NE2      
+
+
+[ GLU ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_136   -0.120     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_274   -0.220     3
+   HG1    oplsm_140    0.060     3
+   HG2    oplsm_140    0.060     3
+    CD    oplsm_271    0.700     4
+   OE1    oplsm_272   -0.800     4
+   OE2    oplsm_272   -0.800     4
+     C    oplsm_235    0.500     5
+     O    oplsm_236   -0.500     5
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   HG1
+    CG   HG2
+    CG    CD
+    CD   OE1
+    CD   OE2
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+OE2 CD CG OE1
+;   -C    CA     N     H     
+;   CA    +N     C     O     
+;    CG   OE1    CD   OE2       
+
+
+;[ PGLU ]
+; [ atoms ]
+;     N    oplsm_238   -0.500     1
+;     H    oplsm_241    0.300     1
+;    CA    oplsm_224    0.140     1
+;    HA    oplsm_140    0.060     1
+;    CB    oplsm_136   -0.120     2
+;   HB1    oplsm_140    0.060     2
+;   HB2    oplsm_140    0.060     2
+;    CG    oplsm_136   -0.120     3
+;   HG1    oplsm_140    0.060     3
+;   HG2    oplsm_140    0.060     3
+;    CD    oplsm_267    0.520     4
+;   OE1    oplsm_269   -0.440     4
+;   OE2    oplsm_268   -0.530     4
+;   HE2    oplsm_270    0.450     4
+;     C    oplsm_235    0.500     5
+;     O    oplsm_236   -0.500     5
+; [ bonds ]
+;     N     H
+;     N    CA
+;    CA    HA
+;    CA    CB
+;    CA     C
+;    CB   HB1
+;    CB   HB2
+;    CB    CG
+;    CG   HG1
+;    CG   HG2
+;    CG    CD
+;    CD    OE1
+;    CD    OE2
+;    HE2   OE2
+;    CD     N
+;     C     O
+;    -C     N
+; [ impropers ]
+;    -C    CA     N     H     
+;    CA    +N     C     O     
+;    CG    OE2    CD    OE1
+
+
+[ GLUH ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_136   -0.120     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_136   -0.120     3
+   HG1    oplsm_140    0.060     3
+   HG2    oplsm_140    0.060     3
+    CD    oplsm_267    0.520     4
+   OE1    oplsm_269   -0.440     4
+   OE2    oplsm_268   -0.530     5
+   HE2    oplsm_270    0.450     5
+     C    oplsm_235    0.500     6
+     O    oplsm_236   -0.500     6
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   HG1
+    CG   HG2
+    CG    CD
+    CD   OE1
+    CD   OE2
+   OE2   HE2
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;   -C    CA     N     H     
+;   CA    +N     C     O     
+    CG   OE1    CD   OE2       
+
+
+[ GLY ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_223    0.080     1
+   HA1    oplsm_140    0.060     1
+   HA2    oplsm_140    0.060     1
+     C    oplsm_235    0.500     2
+     O    oplsm_236   -0.500     2
+ [ bonds ]
+     N     H
+     N    CA
+    CA   HA1
+    CA   HA2
+    CA     C
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;    -C    CA     N     H     
+;    CA    +N     C     O     
+
+
+[ HISD ] 
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_505   -0.005     2 
+   HB1    oplsm_140    0.060     2 
+   HB2    oplsm_140    0.060     2 
+    CG    oplsm_508    0.015     3
+   ND1    oplsm_503   -0.570     4
+   HD1    oplsm_504    0.420     4
+   CD2    oplsm_507   -0.015     5
+   HD2    oplsm_146    0.115     5
+   CE1    oplsm_506    0.295     6
+   HE1    oplsm_146    0.115     6
+   NE2    oplsm_511   -0.490     7
+     C    oplsm_235    0.500     8
+     O    oplsm_236   -0.500     8
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   ND1
+    CG   CD2
+   ND1   HD1
+   ND1   CE1
+   CD2   HD2
+   CD2   NE2
+   CE1   HE1
+   CE1   NE2
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;   -C    CA     N     H      
+;   CA    +N     C     O      
+   ND1   CD2    CG    CB     
+    CG   CE1   ND1   HD1      
+    CG   NE2   CD2   HD2     
+   ND1   NE2   CE1   HE1     
+
+
+;[ HIS1 ]   ; Identical to HISD
+; [ atoms ]
+;     N    oplsm_238   -0.500     1
+;     H    oplsm_241    0.300     1
+;    CA    oplsm_224    0.140     1
+;    HA    oplsm_140    0.060     1
+;    CB    oplsm_505   -0.297     2 
+;   HB1    oplsm_140    0.060     2 
+;   HB2    oplsm_140    0.060     2 
+;    CG    oplsm_508   -0.261     3
+;   ND1    oplsm_503   -0.291     4
+;   HD1    oplsm_504    0.326     4
+;   CD2    oplsm_507    0.504     5
+;   HD2    oplsm_146    0.183     5
+;   CE1    oplsm_506    0.182     6
+;   HE1    oplsm_146    0.098     6
+;   NE2    oplsm_511   -0.564     7
+;     C    oplsm_235    0.500     8
+;     O    oplsm_236   -0.500     8
+; [ bonds ]
+;     N     H
+;     N    CA
+;    CA    HA
+;    CA    CB
+;    CA     C
+;    CB   HB1
+;    CB   HB2
+;    CB    CG
+;    CG   ND1
+;    CG   CD2
+;   ND1   HD1
+;   ND1   CE1
+;   CD2   HD2
+;   CD2   NE2
+;   CE1   HE1
+;   CE1   NE2
+;     C     O
+;    -C     N
+; [ impropers ]
+;    -C    CA     N     H      
+;    CA    +N     C     O      
+;   ND1   CD2    CG    CB     
+;    CG   CE1   ND1   HD1      
+;    CG   NE2   CD2   HD2     
+;   ND1   NE2   CE1   HE1     
+
+
+[ HISE ] 
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_505   -0.005     2
+   HB1    oplsm_140    0.060	2
+   HB2    oplsm_140    0.060	2
+   ND1    oplsm_511   -0.490     3
+    CG    oplsm_507   -0.015     3
+   CD2    oplsm_508    0.015     4
+   HD2    oplsm_146    0.115     4 
+   CE1    oplsm_506    0.295     5
+   HE1    oplsm_146    0.115     5
+   NE2    oplsm_503   -0.570     6
+   HE2    oplsm_504    0.420     6
+     C    oplsm_235    0.500     7
+     O    oplsm_236   -0.500     7
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   ND1
+    CG   CD2
+   ND1   CE1
+   CD2   HD2
+   CD2   NE2
+   CE1   HE1
+   CE1   NE2
+   NE2   HE2
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;   -C    CA     N     H      
+;   CA    +N     C     O      
+   CE1   CD2   NE2   HE2      
+    CG   NE2   CD2   HD2     
+   ND1   NE2   CE1   HE1            
+   ND1   CD2   CG     CB         
+
+
+[ HISH ]  ; also known as HISP (or HIS+)
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_505   -0.005     2 
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_510    0.215     3 
+   ND1    oplsm_512   -0.540     4
+   HD1    oplsm_513    0.460     4 
+   CD2    oplsm_510    0.215     5 
+   HD2    oplsm_146    0.115     5 
+   CE1    oplsm_509    0.385     6 
+   HE1    oplsm_146    0.115     6 
+   NE2    oplsm_512   -0.540     7 
+   HE2    oplsm_513    0.460     7 
+     C    oplsm_235    0.500     8
+     O    oplsm_236   -0.500     8
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   ND1
+    CG   CD2
+   ND1   HD1
+   ND1   CE1
+   CD2   HD2
+   CD2   NE2
+   CE1   HE1
+   CE1   NE2
+   NE2   HE2
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;   -C    CA     N     H      
+;   CA    +N     C     O      
+    CG   CE1   ND1   HD1           
+   CE1   CD2   NE2   HE2      
+    CG   NE2   CD2   HD2     
+   ND1   NE2   CE1   HE1     
+   ND1   CD2    CG    CB         
+
+
+[ HOH ] 
+; We believe SPC has slightly better properties than TIP3P...
+ [ atoms ]
+    OW   opls_116   -0.82      0
+   HW1   opls_117    0.41      0
+   HW2   opls_117    0.41      0
+ [ bonds ]
+    OW   HW1
+    OW   HW2
+
+[ HO4 ] 
+; TIP4P
+ [ atoms ]
+    OW   opls_113    0.00      0
+   HW1   opls_114    0.52      0
+   HW2   opls_114    0.52      0
+    MW   opls_115   -1.04      0
+ [ bonds ]
+    OW   HW1
+    OW   HW2
+
+[ HO5 ] 
+; TIP5P
+ [ atoms ]
+    OW   opls_118    0.00      0
+   HW1   opls_119    0.248     0
+   HW2   opls_119    0.248     0
+   LP1   opls_120   -0.248     0
+   LP2   opls_120   -0.248     0
+ [ bonds ]
+    OW   HW1
+    OW   HW2
+
+[ ILE ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_137   -0.060     2
+    HB    oplsm_140    0.060     2
+   CG1    oplsm_136   -0.120     3
+  HG11    oplsm_140    0.060     3
+  HG12    oplsm_140    0.060     3
+   CG2    oplsm_135   -0.180     4
+  HG21    oplsm_140    0.060     4
+  HG22    oplsm_140    0.060     4
+  HG23    oplsm_140    0.060     4
+    CD    oplsm_135   -0.180     5
+   HD1    oplsm_140    0.060     5
+   HD2    oplsm_140    0.060     5
+   HD3    oplsm_140    0.060     5
+     C    oplsm_235    0.500     6
+     O    oplsm_236   -0.500     6
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB    HB
+    CB   CG1
+    CB   CG2
+   CG1  HG11
+   CG1  HG12
+   CG1    CD
+   CG2  HG21
+   CG2  HG22
+   CG2  HG23
+    CD   HD1
+    CD   HD2
+    CD   HD3
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+
+[ LEU ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_136   -0.120     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_137   -0.060     3
+    HG    oplsm_140    0.060     3
+   CD1    oplsm_135   -0.180     4
+  HD11    oplsm_140    0.060     4
+  HD12    oplsm_140    0.060     4
+  HD13    oplsm_140    0.060     4
+   CD2    oplsm_135   -0.180     5
+  HD21    oplsm_140    0.060     5
+  HD22    oplsm_140    0.060     5
+  HD23    oplsm_140    0.060     5
+     C    oplsm_235    0.500     6
+     O    oplsm_236   -0.500     6
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG    HG
+    CG   CD1
+    CG   CD2
+   CD1  HD11
+   CD1  HD12
+   CD1  HD13
+   CD2  HD21
+   CD2  HD22
+   CD2  HD23
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+
+[ LYS ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_136   -0.120     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_136   -0.120     3
+   HG1    oplsm_140    0.060     3
+   HG2    oplsm_140    0.060     3
+    CD    oplsm_136   -0.120     4
+   HD1    oplsm_140    0.060     4
+   HD2    oplsm_140    0.060     4
+    CE    oplsm_292    0.060     5
+   HE1    oplsm_140    0.060     5
+   HE2    oplsm_140    0.060     5
+    NZ    oplsm_287   -0.900     6 
+   HZ1    oplsm_290    0.360     6 
+   HZ2    oplsm_290    0.360     6 
+     C    oplsm_235    0.500     7
+     O    oplsm_236   -0.500     7
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   HG1
+    CG   HG2
+    CG    CD
+    CD   HD1
+    CD   HD2
+    CD    CE
+    CE   HE1
+    CE   HE2
+    CE    NZ
+    NZ   HZ1
+    NZ   HZ2
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+
+
+[ LYSH ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_136   -0.120     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_136   -0.120     3
+   HG1    oplsm_140    0.060     3
+   HG2    oplsm_140    0.060     3
+    CD    oplsm_136   -0.120     4
+   HD1    oplsm_140    0.060     4
+   HD2    oplsm_140    0.060     4
+    CE    oplsm_292    0.190     5
+   HE1    oplsm_140    0.060     5
+   HE2    oplsm_140    0.060     5
+    NZ    oplsm_287   -0.300     6
+   HZ1    oplsm_290    0.330     6
+   HZ2    oplsm_290    0.330     6
+   HZ3    oplsm_290    0.330     6
+     C    oplsm_235    0.500     7
+     O    oplsm_236   -0.500     7
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   HG1
+    CG   HG2
+    CG    CD
+    CD   HD1
+    CD   HD2
+    CD    CE
+    CE   HE1
+    CE   HE2
+    CE    NZ
+    NZ   HZ1
+    NZ   HZ2
+    NZ   HZ3
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+
+
+[ MET ]
+ [ atoms ]
+     N    oplsm_238   -0.5000    1
+     H    oplsm_241    0.3000    1
+    CA    oplsm_224    0.1400    1
+    HA    oplsm_140    0.0600    1
+    CB    oplsm_136   -0.1200    2
+   HB1    oplsm_140    0.0600    2
+   HB2    oplsm_140    0.0600    2
+    CG    oplsm_210    0.0475    3
+   HG1    oplsm_140    0.0600    3
+   HG2    oplsm_140    0.0600    3
+    SD    oplsm_202   -0.3350    4
+    CE    oplsm_209   -0.0125    5
+   HE1    oplsm_140    0.0600    5
+   HE2    oplsm_140    0.0600    5
+   HE3    oplsm_140    0.0600    5
+     C    oplsm_235    0.5000    6
+     O    oplsm_236   -0.5000    6
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   HG1
+    CG   HG2
+    CG    SD
+    SD    CE
+    CE   HE1
+    CE   HE2
+    CE   HE3
+     C     O
+    -C     N
+  [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+
+
+[ NAC ] ; metylamide, a.k.a NMA.
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+   CH3    oplsm_242    0.020     2
+  HH31    oplsm_140    0.060     2
+  HH32    oplsm_140    0.060     2
+  HH33    oplsm_140    0.060     2
+ [ bonds ]
+     N     H
+     N   CH3
+   CH3  HH31
+   CH3  HH32
+   CH3  HH33
+    -C     N
+ [ impropers ]
+    -C    CH3     N    H   
+
+[ NH2 ]
+ [ atoms ]
+     N     oplsm_237  -0.760	1
+    H1     oplsm_240   0.380     1
+    H2     oplsm_240   0.380     1
+ [ bonds ]
+    -C     N
+     N	   H1
+     N     H2
+ [ impropers ]
+    -C     H1    N      H2        
+
+[ NHE ] 
+; same as NH2
+ [ atoms ]
+     N     oplsm_237  -0.760	1
+    H1     oplsm_240   0.380     1
+    H2     oplsm_240   0.380     1
+ [ bonds ]
+    -C     N
+     N	   H1
+     N     H2
+ [ impropers ]
+    -C     H1     N     H2        
+ 
+[ PHE ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_149   -0.005     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_145   -0.115     2
+   CD1    oplsm_145   -0.115     3
+   HD1    oplsm_146    0.115     3
+   CD2    oplsm_145   -0.115     4
+   HD2    oplsm_146    0.115     4
+   CE1    oplsm_145   -0.115     5
+   HE1    oplsm_146    0.115     5
+   CE2    oplsm_145   -0.115     6
+   HE2    oplsm_146    0.115     6 
+    CZ    oplsm_145   -0.115     7 
+    HZ    oplsm_146    0.115     7
+     C    oplsm_235    0.500     8
+     O    oplsm_236   -0.500     8
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   CD1
+    CG   CD2
+   CD1   HD1
+   CD1   CE1
+   CD2   HD2
+   CD2   CE2
+   CE1   HE1
+   CE1    CZ
+   CE2   HE2
+   CE2    CZ
+    CZ    HZ
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+ HD1 CD1 CG CE1 
+ CB CG CD1 CD2  
+ HE1 CE1 CD1 CZ 
+ HD2 CD2 CE2 CG 
+ HZ CZ CE1 CE2
+ HE2 CE2 CZ CD2
+;   -C    CA     N     H      
+;   CA    +N     C     O      
+;   CG   CE2   CD2   HD2     
+;  CD2    CZ   CE2   HE2     
+;  CE1   CE2    CZ    HZ     
+;  CD1    CZ   CE1   HE1     
+;   CG   CE1   CD1   HD1     
+;  CD1   CD2    CG    CB         
+
+
+[ PRO ]
+ [ atoms ]
+     N    oplsm_239   -0.140     1
+    CA    oplsm_246    0.010     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_136   -0.120     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_136   -0.120     3
+   HG1    oplsm_140    0.060     3
+   HG2    oplsm_140    0.060     3
+    CD    oplsm_245   -0.050     4
+   HD1    oplsm_140    0.060     4
+   HD2    oplsm_140    0.060     4
+     C    oplsm_235    0.500     5
+     O    oplsm_236   -0.500     5
+ [ bonds ]
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   HG1
+    CG   HG2
+    CG    CD
+    CD   HD1
+    CD   HD2
+    CD     N
+     C     O
+    -C     N
+ [ impropers ]
+CD N -C CA  
+O C CA +N  
+;   -C    CA     N    CD     
+;   CA    +N     C     O     
+     
+
+[ SER ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_157    0.145     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    OG    oplsm_154   -0.683     3
+    HG    oplsm_155    0.418     3
+     C    oplsm_235    0.500     4
+     O    oplsm_236   -0.500     4
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    OG
+    OG    HG
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;   -C    CA     N     H     
+;   CA    +N     C     O     
+
+
+[ THR ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_158    0.205     2
+    HB    oplsm_140    0.060     2
+   OG1    oplsm_154   -0.683     2
+   HG1    oplsm_155    0.418     2
+   CG2    oplsm_135   -0.180     3
+  HG21    oplsm_140    0.060     3
+  HG22    oplsm_140    0.060     3
+  HG23    oplsm_140    0.060     3
+     C    oplsm_235    0.500     4
+     O    oplsm_236   -0.500     4
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB    HB
+    CB   OG1
+    CB   CG2
+   OG1   HG1
+   CG2  HG21
+   CG2  HG22
+   CG2  HG23
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+;   -C    CA     N     H     
+;   CA    +N     C     O     
+
+  
+[ TRP ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_136   -0.120     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_500    0.075     3  
+   CD1    oplsm_514   -0.115     4 
+   HD1    oplsm_146    0.115     4  
+   CD2    oplsm_501   -0.055     5
+   NE1    oplsm_503   -0.570     6  
+   HE1    oplsm_504    0.420     6  
+   CE2    oplsm_502    0.130     6
+   CE3    oplsm_145   -0.115     7  
+   HE3    oplsm_146    0.115     7  
+   CZ2    oplsm_145   -0.115     8  
+   HZ2    oplsm_146    0.115     8   
+   CZ3    oplsm_145   -0.115     9  
+   HZ3    oplsm_146    0.115     9  
+   CH2    oplsm_145   -0.115     10  
+   HH2    oplsm_146    0.115     10 
+     C    oplsm_235    0.500     11
+     O    oplsm_236   -0.500     11
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   CD1
+    CG   CD2
+   CD1   HD1
+   CD1   NE1
+   CD2   CE2
+   CD2   CE3
+   NE1   HE1
+   NE1   CE2
+   CE2   CZ2
+   CE3   HE3
+   CE3   CZ3
+   CZ2   HZ2
+   CZ2   CH2
+   CZ3   HZ3
+   CZ3   CH2
+   CH2   HH2
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+CB CG CD1 CD2  
+HZ2 CZ2 CE2 CH2
+HE3 CE3 CZ3 CD2
+ HD1 CD1 CG NE1 
+ HH2 CH2 CZ2 CZ3
+ CE2 CD2 CE3 CG 
+ HE1 NE1 CD1 CE2
+ HZ3 CZ3 CH2 CE3
+ CZ2 CE2 CD2 NE1
+;   -C    CA     N     H      
+;   CA    +N     C     O      
+;  CD1   CE2   NE1   HE1       
+;  CE2   CH2   CZ2   HZ2     
+;  CZ2   CZ3   CH2   HH2     
+;  CH2   CE3   CZ3   HZ3     
+;  CZ3   CD2   CE3   HE3     
+;   CG   NE1   CD1   HD1     
+;  CD1   CD2    CG    CB       
+
+
+[ TYR ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_149   -0.005     2
+   HB1    oplsm_140    0.060     2
+   HB2    oplsm_140    0.060     2
+    CG    oplsm_145   -0.115     2
+   CD1    oplsm_145   -0.115     4
+   HD1    oplsm_146    0.115     4
+   CD2    oplsm_145   -0.115     5
+   HD2    oplsm_146    0.115     5
+   CE1    oplsm_145   -0.115     6
+   HE1    oplsm_146    0.115     6
+   CE2    oplsm_145   -0.115     7
+   HE2    oplsm_146    0.115     7
+    CZ    oplsm_166    0.150     8
+    OH    oplsm_167   -0.585     8
+    HH    oplsm_168    0.435     8
+     C    oplsm_235    0.500     9
+     O    oplsm_236   -0.500     9
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB   HB1
+    CB   HB2
+    CB    CG
+    CG   CD1
+    CG   CD2
+   CD1   HD1
+   CD1   CE1
+   CD2   HD2
+   CD2   CE2
+   CE1   HE1
+   CE1    CZ
+   CE2   HE2
+   CE2    CZ
+    CZ    OH
+    OH    HH
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+ HD1 CD1 CG CE1
+ CB CG CD1 CD2 
+ HE1 CE1 CD1 CZ
+ HD2 CD2 CE2 CG
+ OH CZ CE1 CE2
+ HE2 CE2 CZ CD2
+; OLD OPLS-AA/L IMPLEMENTATION
+;   -C    CA     N     H      
+;   CA    +N     C     O      
+;   CG   CE2   CD2   HD2     
+;  CD2    CZ   CE2   HE2     
+;  CD1    CZ   CE1   HE1     
+;   CG   CE1   CD1   HD1     
+;  CD1   CD2    CG    CB     
+;  CE1   CE2    CZ    OH     
+
+
+[ VAL ]
+ [ atoms ]
+     N    oplsm_238   -0.500     1
+     H    oplsm_241    0.300     1
+    CA    oplsm_224    0.140     1
+    HA    oplsm_140    0.060     1
+    CB    oplsm_137   -0.060	2
+    HB    oplsm_140    0.060     2
+   CG1    oplsm_135   -0.180     3
+  HG11    oplsm_140    0.060     3
+  HG12    oplsm_140    0.060     3
+  HG13    oplsm_140    0.060     3
+   CG2    oplsm_135   -0.180     4
+  HG21    oplsm_140    0.060     4
+  HG22    oplsm_140    0.060     4
+  HG23    oplsm_140    0.060     4
+     C    oplsm_235    0.500     5
+     O    oplsm_236   -0.500     5
+ [ bonds ]
+     N     H
+     N    CA
+    CA    HA
+    CA    CB
+    CA     C
+    CB    HB
+    CB   CG1
+    CB   CG2
+   CG1  HG11
+   CG1  HG12
+   CG1  HG13
+   CG2  HG21
+   CG2  HG22
+   CG2  HG23
+     C     O
+    -C     N
+ [ impropers ]
+ H  N  -C  CA   
+ O  C  CA  +N
+
+
+[ F ]
+ [ atoms ]
+    F    opls_400  -1.000     0
+
+[ CL ]
+ [ atoms ]
+    CL   opls_401  -1.000     0
+
+[ BR ]
+ [ atoms ]
+    BR   opls_402  -1.000     0
+
+
+; Aqvists cation parameters
+
+[ LI ]
+ [ atoms ]
+    LI   opls_406   1.000     0 ; Jorgensen ion type would be oplsm_404
+
+[ NA ]
+ [ atoms ]
+    NA   opls_407   1.000     0 ; Jorgensen ion type would be oplsm_405
+
+[ K ]
+ [ atoms ]
+    K    opls_408   1.000     0
+
+[ RB ]
+ [ atoms ]
+    RB   opls_409   1.000     0
+
+[ CS ]
+ [ atoms ]
+    CS   opls_410   1.000     0
+
+[ MG ]
+ [ atoms ]
+    MG   opls_411   2.000     0
+
+[ CA ]
+ [ atoms ]
+    CA   opls_412   2.000     0
+
+[ SR ]
+ [ atoms ]
+    SR   opls_413   2.000     0
+
+[ BA ]
+ [ atoms ]
+    BA   opls_414   2.000     0
+
+; Metal ions 
+[ CU ]
+ [ atoms ]
+    CU   Cu2+       2.000     0
+
+[ FE ]
+ [ atoms ]
+    FE   Fe2+       2.000     0
+
+; Ethanol - CA is the carbon bound to the OH group
+[ EtOH ]
+ [ atoms ]
+    CB   opls_135    -0.180    1
+   HB1   opls_140     0.060    1
+   HB2   opls_140     0.060    1
+   HB3   opls_140     0.060    1
+    CA   opls_157     0.145    2
+   HA1   opls_140     0.060    2
+   HA2   opls_140     0.060    2
+    OH   opls_154    -0.683    2
+    HO   opls_155     0.418    2
+ [ bonds ]
+   CB    HB1
+   CB    HB2
+   CB    HB3
+   CB    CA
+   CA    HA1
+   CA    HA2
+   CA    OH
+   OH    HO
+
+; New All atom DMSO model, DvdS, 17/06/2006
+; Use at your own risk!
+[ DMSO  ]
+ [ atoms ]
+OD	    opls_125	-0.459	    1
+SD	    opls_124	 0.139      1
+CD1	    opls_139	-0.020	    1
+HD11	    opls_140	 0.060	    1
+HD12	    opls_140	 0.060	    1
+HD13	    opls_140	 0.060	    1
+CD2	    opls_139	-0.020	    1
+HD21	    opls_140	 0.060	    1
+HD22	    opls_140	 0.060	    1
+HD23	    opls_140	 0.060	    1
+
+ [ bonds ]
+    OD     SD  
+    SD     CD1 
+    SD     CD2 
+    CD1    HD11
+    CD1	   HD12
+    CD1	   HD13
+    CD2	   HD21
+    CD2	   HD22
+    CD2	   HD23
+

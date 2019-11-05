@@ -16,6 +16,41 @@ add "define = -DPOSRES" to the MDP file applies restraints to all heavy atoms
 gmx grompp -f md.mdp -c final_cg2at_at_rep_user_supplied.pdb -r final_cg2at_no_steered.pdb -p topol_final.top -o rigid_fit.tpr
 gmx mdrun -v -deffnm rigid_fit
 
+############################################################################
+
+Available fragments
+
+Charmm36
+
+Non protein
+-----------
+PC: 'POPC', 'DGPC', 'DLPC', 'DNPC', 'DOPC', 'DPPC', 'DRPC', 'DYPC'
+PE: 'POPE'
+PG: 'POPG'
+PA: 'POPA'
+PI: 'PIP2'
+Sterols: 'CHOL'
+Lipopolysaccharides: 'LIPA'
+Cardiolipin: 'CARD' (PVCL2) 
+
+protein
+-------
+all amino acids
+
+diacyl (CYSD) and triacyl (CYST) cysteine
+
+-----------------------------------------------------------------------------
+
+Forcefields
+
+
+amber14sb.ff
+amber99sb-ildn.ff
+charmm36-mar2019.ff
+charmm36-jul2017-updated.ff
+oplsaam.ff
+
+
 #############################################################################
 
 The following flags are available:
@@ -24,6 +59,7 @@ The following flags are available:
 -d user_supplied_database (can ignore for now unless you feel like making some fragments)
 -v (3 level verbosity -vvv) (use just -v to get the run times etc)
 -clean (removes temp file after cg2at) (small amount of cleaning of directories)
+-ter interactive terminal residue selection
 
 example input.
 
