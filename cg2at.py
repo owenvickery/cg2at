@@ -1313,12 +1313,14 @@ def write_merged_pdb(merge, protein):
 	pdb_output.close()
 
 def check_protein_atom_overlap(merged_temp, merged, merged_coords):
-	coord=np.zeros(shape=(len(merged_temp),3))
+	coord=np.zeros(shape=(len(merged_temp),3)) ## empty array
 	line_separated=[]
+#### filters out coordinates merged_temp
 	for line_index, line in enumerate(merged_temp):
 		line_sep=pdbatom(line)
 		coord[line_index]=[line_sep['x'],line_sep['y'],line_sep['z']]
 		line_separated.append(line_sep)
+#### runs through coordinates and checks if there is any overlap with existing coordinates if there is it moves the atom to 0.15 A away. 
 	for xyz_index, xyz in enumerate(coord):
 		dist=np.sqrt(((merged_coords[:,0]-xyz[0])**2)+((merged_coords[:,1]-xyz[1])**2)+((merged_coords[:,2]-xyz[2])**2))
 		overlapped = np.where(np.logical_and(dist>0.01,dist<0.15))
@@ -1327,7 +1329,6 @@ def check_protein_atom_overlap(merged_temp, merged, merged_coords):
 				xyz_check = [xyz[0]+np.random.uniform(-0.2, 0.2), xyz[1]+np.random.uniform(-0.2, 0.2),xyz[2]+np.random.uniform(-0.2, 0.2)]
 				dist=np.sqrt(((coord[:,0]-xyz_check[0])**2)+((coord[:,1]-xyz_check[1])**2)+((coord[:,2]-xyz_check[2])**2))
 				overlapped = np.where(np.logical_and(dist>0.01,dist<0.15))	
-			# print(line_separated[xyz_index])
 			merged.append(pdbline%((int(line_separated[xyz_index]['atom_number']), line_separated[xyz_index]['atom_name'], line_separated[xyz_index]['residue_name'],' ',line_separated[xyz_index]['residue_id'],\
 			xyz_check[0],xyz_check[1],xyz_check[2],1,0))+'\n')
 			coord[xyz_index] = xyz_check
@@ -1377,24 +1378,39 @@ def merge_system_pdbs(system, protein):
 		cg_updated.update(cg_residues)
 	else:
 		cg_updated=cg_residues
+	merge_temp=[]
+	merge_protein=[]
 #### run through every residue type in cg_residues
-	coord=[]
-	for residue_type in cg_updated:
-	#### if file contains user input identifier
+	for segment, residue_type in enumerate(cg_updated):
+	#### if file contains user input identifier	
 		if residue_type != 'PROTEIN':
 			input_type=''
 		else:
 			input_type=protein
-		start=time.time()
 		if os.path.exists(working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb'):
 		#### opens pdb files and writes straight to merged_cg2at pdb
 			with open(working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb', 'r') as pdb_input:
 				for line in pdb_input.readlines():
 					if line.startswith('ATOM'):
-						line_sep = pdbatom(line)
-						pdb_output.write(line)
+						if residue_type == 'PROTEIN':
+							merge_protein.append(line)
+						else:
+							merge_temp.append(line)
 		else:
-			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')	
+			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
+#### checks any overlap between protein and any other residue
+		if residue_type == 'PROTEIN':
+			merge_protein_coords=np.zeros(shape=(len(merge_protein),3))
+			for line_index, line in enumerate(merge_protein):
+				line_sep=pdbatom(line)
+				merge_protein_coords[line_index]=[line_sep['x'],line_sep['y'],line_sep['z']]
+	if 'PROTEIN' in cg_updated and protein == '_at_rep_user_supplied':
+		merged, merged_coords = check_protein_atom_overlap(merge_temp, merge_protein, merge_protein_coords)
+	else:
+		merged=merge_protein+merge_temp
+
+	for line in merged:
+		pdb_output.write(line)
 	pdb_output.write('TER\nENDMDL')
 	pdb_output.close()
 
@@ -1443,11 +1459,12 @@ def minimise_merged_pdbs(system, protein):
 	gromacs(gmx+' mdrun -v -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb')
 
 def alchembed(system):
-	print('Running alchembed')
+	
 	os.chdir(working_dir+'MERGED')
 	mkdir_directory('alchembed')
 #### runs through each chain and run alchembed on each sequentially
 	for chain in range(system):
+		print('Running alchembed on chain: '+str(chain))
 	#### creates a alchembed mdp for each chain 
 		with open('alchembed_'+str(chain)+'.mdp', 'w') as alchembed:
 			alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 750\ndt = 0.001\ncontinuation = no\nconstraint_algorithm = lincs\nconstraints	= h-bonds\nns_type = grid\nnstlist = 25\n\
@@ -1457,11 +1474,11 @@ couple-moltype = protein_'+str(chain)+'\ncouple-lambda0 = none\ncouple-lambda1 =
 	#### if 1st chain use minimised structure for coordinate input
 		if chain == 0:
 			gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at_rep_user_supplied_minimised.pdb \
--c min/merged_cg2at_at_rep_user_supplied_minimised.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 2')
+-c min/merged_cg2at_at_rep_user_supplied_minimised.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 1')
 	#### if not 1st chain use the previous output of alchembed tfor the input of the next chain 
 		else:
 			gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at_rep_user_supplied_minimised.pdb \
--c alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain-1)+'.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 2')			
+-c alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain-1)+'.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 1')			
 		os.chdir('alchembed')
 		chain_grompp=time.time()
 	#### run alchembed on the chain of interest

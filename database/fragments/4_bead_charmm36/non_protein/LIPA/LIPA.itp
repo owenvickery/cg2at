@@ -31,8 +31,8 @@ LIPA	     3
     25         CL      1   LIPA    C71     25      0.900    12.0110   ; qtot -1.330
     26        OBL      1   LIPA    O71     26     -0.630    15.9994   ; qtot -1.960
     27       CTL2      1   LIPA    C72     27     -0.220    12.0110   ; qtot -2.180
-    28       HAL2      1   LIPA   H72R     28      0.090     1.0080   ; qtot -2.090
-    29       HAL2      1   LIPA   H72S     29      0.090     1.0080   ; qtot -2.000
+    28       HAL2      1   LIPA    H2G     28      0.090     1.0080   ; qtot -2.090
+    29       HAL2      1   LIPA    H2H     29      0.090     1.0080   ; qtot -2.000
     30     CC3161      1   LIPA    CB2     30      0.070    12.0110   ; qtot -1.930
     31       HCA1      1   LIPA    HB2     31      0.090     1.0080   ; qtot -1.840
     32      NC2D1      1   LIPA    NB2     32     -0.470    14.0070   ; qtot -2.310
@@ -57,250 +57,250 @@ LIPA	     3
     51         CL      1   LIPA    C31     51      0.900    12.0110   ; qtot -3.330
     52        OBL      1   LIPA    O31     52     -0.630    15.9994   ; qtot -3.960
     53       CTL2      1   LIPA    C32     53     -0.220    12.0110   ; qtot -4.180
-    54       HAL2      1   LIPA   H32R     54      0.090     1.0080   ; qtot -4.090
-    55       HAL2      1   LIPA   H32S     55      0.090     1.0080   ; qtot -4.000
+    54       HAL2      1   LIPA    H2M     54      0.090     1.0080   ; qtot -4.090
+    55       HAL2      1   LIPA    H2N     55      0.090     1.0080   ; qtot -4.000
     56     CC3161      1   LIPA    CA2     56      0.070    12.0110   ; qtot -3.930
     57       HCA1      1   LIPA    HA2     57      0.090     1.0080   ; qtot -3.840
     58      NC2D1      1   LIPA    NA2     58     -0.470    14.0070   ; qtot -4.310
     59       HCP1      1   LIPA   HNA2     59      0.310     1.0080   ; qtot -4.000
     60       CTL1      1   LIPA    C73     60      0.170    12.0110   ; qtot -3.830
-    61       HAL1      1   LIPA   H73R     61      0.090     1.0080   ; qtot -3.740
+    61       HAL1      1   LIPA    H3G     61      0.090     1.0080   ; qtot -3.740
     62        OSL      1   LIPA    O73     62     -0.490    15.9994   ; qtot -4.230
     63         CL      1   LIPA    C81     63      0.900    12.0110   ; qtot -3.330
     64        OBL      1   LIPA    O81     64     -0.630    15.9994   ; qtot -3.960
     65       CTL2      1   LIPA    C82     65     -0.220    12.0110   ; qtot -4.180
-    66       HAL2      1   LIPA   H82R     66      0.090     1.0080   ; qtot -4.090
-    67       HAL2      1   LIPA   H82S     67      0.090     1.0080   ; qtot -4.000
+    66       HAL2      1   LIPA    H2J     66      0.090     1.0080   ; qtot -4.090
+    67       HAL2      1   LIPA    H2K     67      0.090     1.0080   ; qtot -4.000
     68       CTL2      1   LIPA    C83     68     -0.180    12.0110   ; qtot -4.180
-    69       HAL2      1   LIPA   H83R     69      0.090     1.0080   ; qtot -4.090
-    70       HAL2      1   LIPA   H83S     70      0.090     1.0080   ; qtot -4.000
+    69       HAL2      1   LIPA    H3J     69      0.090     1.0080   ; qtot -4.090
+    70       HAL2      1   LIPA    H3K     70      0.090     1.0080   ; qtot -4.000
     71       CTL2      1   LIPA    C84     71     -0.180    12.0110   ; qtot -4.180
-    72       HAL2      1   LIPA   H84R     72      0.090     1.0080   ; qtot -4.090
-    73       HAL2      1   LIPA   H84S     73      0.090     1.0080   ; qtot -4.000
+    72       HAL2      1   LIPA    H4J     72      0.090     1.0080   ; qtot -4.090
+    73       HAL2      1   LIPA    H4K     73      0.090     1.0080   ; qtot -4.000
     74       CTL2      1   LIPA    C85     74     -0.180    12.0110   ; qtot -4.180
-    75       HAL2      1   LIPA   H85R     75      0.090     1.0080   ; qtot -4.090
-    76       HAL2      1   LIPA   H85S     76      0.090     1.0080   ; qtot -4.000
+    75       HAL2      1   LIPA    H5J     75      0.090     1.0080   ; qtot -4.090
+    76       HAL2      1   LIPA    H5K     76      0.090     1.0080   ; qtot -4.000
     77       CTL2      1   LIPA    C86     77     -0.180    12.0110   ; qtot -4.180
-    78       HAL2      1   LIPA   H86R     78      0.090     1.0080   ; qtot -4.090
-    79       HAL2      1   LIPA   H86S     79      0.090     1.0080   ; qtot -4.000
+    78       HAL2      1   LIPA    H6J     78      0.090     1.0080   ; qtot -4.090
+    79       HAL2      1   LIPA    H6K     79      0.090     1.0080   ; qtot -4.000
     80       CTL2      1   LIPA    C87     80     -0.180    12.0110   ; qtot -4.180
-    81       HAL2      1   LIPA   H87R     81      0.090     1.0080   ; qtot -4.090
-    82       HAL2      1   LIPA   H87S     82      0.090     1.0080   ; qtot -4.000
+    81       HAL2      1   LIPA    H7J     81      0.090     1.0080   ; qtot -4.090
+    82       HAL2      1   LIPA    H7K     82      0.090     1.0080   ; qtot -4.000
     83       CTL2      1   LIPA    C88     83     -0.180    12.0110   ; qtot -4.180
-    84       HAL2      1   LIPA   H88R     84      0.090     1.0080   ; qtot -4.090
-    85       HAL2      1   LIPA   H88S     85      0.090     1.0080   ; qtot -4.000
+    84       HAL2      1   LIPA    H8J     84      0.090     1.0080   ; qtot -4.090
+    85       HAL2      1   LIPA    H8K     85      0.090     1.0080   ; qtot -4.000
     86       CTL2      1   LIPA    C89     86     -0.180    12.0110   ; qtot -4.180
-    87       HAL2      1   LIPA   H89R     87      0.090     1.0080   ; qtot -4.090
-    88       HAL2      1   LIPA   H89S     88      0.090     1.0080   ; qtot -4.000
+    87       HAL2      1   LIPA    H9J     87      0.090     1.0080   ; qtot -4.090
+    88       HAL2      1   LIPA    H9K     88      0.090     1.0080   ; qtot -4.000
     89       CTL2      1   LIPA   C810     89     -0.180    12.0110   ; qtot -4.180
-    90       HAL2      1   LIPA  H810R     90      0.090     1.0080   ; qtot -4.090
-    91       HAL2      1   LIPA  H810S     91      0.090     1.0080   ; qtot -4.000
+    90       HAL2      1   LIPA   H10J     90      0.090     1.0080   ; qtot -4.090
+    91       HAL2      1   LIPA   H10K     91      0.090     1.0080   ; qtot -4.000
     92       CTL2      1   LIPA   C811     92     -0.180    12.0110   ; qtot -4.180
-    93       HAL2      1   LIPA  H811R     93      0.090     1.0080   ; qtot -4.090
-    94       HAL2      1   LIPA  H811S     94      0.090     1.0080   ; qtot -4.000
+    93       HAL2      1   LIPA   H11J     93      0.090     1.0080   ; qtot -4.090
+    94       HAL2      1   LIPA   H11K     94      0.090     1.0080   ; qtot -4.000
     95       CTL2      1   LIPA   C812     95     -0.180    12.0110   ; qtot -4.180
-    96       HAL2      1   LIPA  H812R     96      0.090     1.0080   ; qtot -4.090
-    97       HAL2      1   LIPA  H812S     97      0.090     1.0080   ; qtot -4.000
+    96       HAL2      1   LIPA   H12J     96      0.090     1.0080   ; qtot -4.090
+    97       HAL2      1   LIPA   H12K     97      0.090     1.0080   ; qtot -4.000
     98       CTL2      1   LIPA   C813     98     -0.180    12.0110   ; qtot -4.180
-    99       HAL2      1   LIPA  H813R     99      0.090     1.0080   ; qtot -4.090
-   100       HAL2      1   LIPA  H813S    100      0.090     1.0080   ; qtot -4.000
+    99       HAL2      1   LIPA   H13J     99      0.090     1.0080   ; qtot -4.090
+   100       HAL2      1   LIPA   H13K    100      0.090     1.0080   ; qtot -4.000
    101       CTL3      1   LIPA   C814    101     -0.270    12.0110   ; qtot -4.270
-   102       HAL3      1   LIPA  H814R    102      0.090     1.0080   ; qtot -4.180
-   103       HAL3      1   LIPA  H814S    103      0.090     1.0080   ; qtot -4.090
-   104       HAL3      1   LIPA  H814T    104      0.090     1.0080   ; qtot -4.000
+   102       HAL3      1   LIPA   H14J    102      0.090     1.0080   ; qtot -4.180
+   103       HAL3      1   LIPA   H14K    103      0.090     1.0080   ; qtot -4.090
+   104       HAL3      1   LIPA   H14L    104      0.090     1.0080   ; qtot -4.000
    105       CTL2      1   LIPA    C74    105     -0.180    12.0110   ; qtot -4.180
-   106       HAL2      1   LIPA   H74R    106      0.090     1.0080   ; qtot -4.090
-   107       HAL2      1   LIPA   H74S    107      0.090     1.0080   ; qtot -4.000
+   106       HAL2      1   LIPA    H4G    106      0.090     1.0080   ; qtot -4.090
+   107       HAL2      1   LIPA    H4H    107      0.090     1.0080   ; qtot -4.000
    108       CTL2      1   LIPA    C75    108     -0.180    12.0110   ; qtot -4.180
-   109       HAL2      1   LIPA   H75R    109      0.090     1.0080   ; qtot -4.090
-   110       HAL2      1   LIPA   H75S    110      0.090     1.0080   ; qtot -4.000
+   109       HAL2      1   LIPA    H5G    109      0.090     1.0080   ; qtot -4.090
+   110       HAL2      1   LIPA    H5H    110      0.090     1.0080   ; qtot -4.000
    111       CTL2      1   LIPA    C76    111     -0.180    12.0110   ; qtot -4.180
-   112       HAL2      1   LIPA   H76R    112      0.090     1.0080   ; qtot -4.090
-   113       HAL2      1   LIPA   H76S    113      0.090     1.0080   ; qtot -4.000
+   112       HAL2      1   LIPA    H6G    112      0.090     1.0080   ; qtot -4.090
+   113       HAL2      1   LIPA    H6H    113      0.090     1.0080   ; qtot -4.000
    114       CTL2      1   LIPA    C77    114     -0.180    12.0110   ; qtot -4.180
-   115       HAL2      1   LIPA   H77R    115      0.090     1.0080   ; qtot -4.090
-   116       HAL2      1   LIPA   H77S    116      0.090     1.0080   ; qtot -4.000
+   115       HAL2      1   LIPA    H7G    115      0.090     1.0080   ; qtot -4.090
+   116       HAL2      1   LIPA    H7H    116      0.090     1.0080   ; qtot -4.000
    117       CTL2      1   LIPA    C78    117     -0.180    12.0110   ; qtot -4.180
-   118       HAL2      1   LIPA   H78R    118      0.090     1.0080   ; qtot -4.090
-   119       HAL2      1   LIPA   H78S    119      0.090     1.0080   ; qtot -4.000
+   118       HAL2      1   LIPA    H8G    118      0.090     1.0080   ; qtot -4.090
+   119       HAL2      1   LIPA    H8H    119      0.090     1.0080   ; qtot -4.000
    120       CTL2      1   LIPA    C79    120     -0.180    12.0110   ; qtot -4.180
-   121       HAL2      1   LIPA   H79R    121      0.090     1.0080   ; qtot -4.090
-   122       HAL2      1   LIPA   H79S    122      0.090     1.0080   ; qtot -4.000
+   121       HAL2      1   LIPA    H9G    121      0.090     1.0080   ; qtot -4.090
+   122       HAL2      1   LIPA    H9H    122      0.090     1.0080   ; qtot -4.000
    123       CTL2      1   LIPA   C710    123     -0.180    12.0110   ; qtot -4.180
-   124       HAL2      1   LIPA  H710R    124      0.090     1.0080   ; qtot -4.090
-   125       HAL2      1   LIPA  H710S    125      0.090     1.0080   ; qtot -4.000
+   124       HAL2      1   LIPA   H10G    124      0.090     1.0080   ; qtot -4.090
+   125       HAL2      1   LIPA   H10H    125      0.090     1.0080   ; qtot -4.000
    126       CTL2      1   LIPA   C711    126     -0.180    12.0110   ; qtot -4.180
-   127       HAL2      1   LIPA  H711R    127      0.090     1.0080   ; qtot -4.090
-   128       HAL2      1   LIPA  H711S    128      0.090     1.0080   ; qtot -4.000
+   127       HAL2      1   LIPA   H11G    127      0.090     1.0080   ; qtot -4.090
+   128       HAL2      1   LIPA   H11H    128      0.090     1.0080   ; qtot -4.000
    129       CTL2      1   LIPA   C712    129     -0.180    12.0110   ; qtot -4.180
-   130       HAL2      1   LIPA  H712R    130      0.090     1.0080   ; qtot -4.090
-   131       HAL2      1   LIPA  H712S    131      0.090     1.0080   ; qtot -4.000
+   130       HAL2      1   LIPA   H12G    130      0.090     1.0080   ; qtot -4.090
+   131       HAL2      1   LIPA   H12H    131      0.090     1.0080   ; qtot -4.000
    132       CTL2      1   LIPA   C713    132     -0.180    12.0110   ; qtot -4.180
-   133       HAL2      1   LIPA  H713R    133      0.090     1.0080   ; qtot -4.090
-   134       HAL2      1   LIPA  H713S    134      0.090     1.0080   ; qtot -4.000
+   133       HAL2      1   LIPA   H13G    133      0.090     1.0080   ; qtot -4.090
+   134       HAL2      1   LIPA   H13H    134      0.090     1.0080   ; qtot -4.000
    135       CTL3      1   LIPA   C714    135     -0.270    12.0110   ; qtot -4.270
-   136       HAL3      1   LIPA  H714R    136      0.090     1.0080   ; qtot -4.180
-   137       HAL3      1   LIPA  H714S    137      0.090     1.0080   ; qtot -4.090
-   138       HAL3      1   LIPA  H714T    138      0.090     1.0080   ; qtot -4.000
+   136       HAL3      1   LIPA   H14G    136      0.090     1.0080   ; qtot -4.180
+   137       HAL3      1   LIPA   H14H    137      0.090     1.0080   ; qtot -4.090
+   138       HAL3      1   LIPA   H14I    138      0.090     1.0080   ; qtot -4.000
    139      CC2O1      1   LIPA    C51    139      0.550    12.0110   ; qtot -3.450
    140      OC2D1      1   LIPA    O51    140     -0.550    15.9994   ; qtot -4.000
    141       CTL2      1   LIPA    C52    141     -0.180    12.0110   ; qtot -4.180
-   142       HAL2      1   LIPA   H52R    142      0.090     1.0080   ; qtot -4.090
-   143       HAL2      1   LIPA   H52S    143      0.090     1.0080   ; qtot -4.000
+   142       HAL2      1   LIPA    H2A    142      0.090     1.0080   ; qtot -4.090
+   143       HAL2      1   LIPA    H2B    143      0.090     1.0080   ; qtot -4.000
    144       CTL1      1   LIPA    C53    144      0.170    12.0110   ; qtot -3.830
-   145       HAL1      1   LIPA   H53R    145      0.090     1.0080   ; qtot -3.740
+   145       HAL1      1   LIPA    H3A    145      0.090     1.0080   ; qtot -3.740
    146        OSL      1   LIPA    O53    146     -0.490    15.9994   ; qtot -4.230
    147         CL      1   LIPA    C61    147      0.900    12.0110   ; qtot -3.330
    148        OBL      1   LIPA    O61    148     -0.630    15.9994   ; qtot -3.960
    149       CTL2      1   LIPA    C62    149     -0.220    12.0110   ; qtot -4.180
-   150       HAL2      1   LIPA   H62R    150      0.090     1.0080   ; qtot -4.090
-   151       HAL2      1   LIPA   H62S    151      0.090     1.0080   ; qtot -4.000
+   150       HAL2      1   LIPA    H2D    150      0.090     1.0080   ; qtot -4.090
+   151       HAL2      1   LIPA    H2E    151      0.090     1.0080   ; qtot -4.000
    152       CTL2      1   LIPA    C63    152     -0.180    12.0110   ; qtot -4.180
-   153       HAL2      1   LIPA   H63R    153      0.090     1.0080   ; qtot -4.090
-   154       HAL2      1   LIPA   H63S    154      0.090     1.0080   ; qtot -4.000
+   153       HAL2      1   LIPA    H3D    153      0.090     1.0080   ; qtot -4.090
+   154       HAL2      1   LIPA    H3E    154      0.090     1.0080   ; qtot -4.000
    155       CTL2      1   LIPA    C64    155     -0.180    12.0110   ; qtot -4.180
-   156       HAL2      1   LIPA   H64R    156      0.090     1.0080   ; qtot -4.090
-   157       HAL2      1   LIPA   H64S    157      0.090     1.0080   ; qtot -4.000
+   156       HAL2      1   LIPA    H4D    156      0.090     1.0080   ; qtot -4.090
+   157       HAL2      1   LIPA    H4E    157      0.090     1.0080   ; qtot -4.000
    158       CTL2      1   LIPA    C65    158     -0.180    12.0110   ; qtot -4.180
-   159       HAL2      1   LIPA   H65R    159      0.090     1.0080   ; qtot -4.090
-   160       HAL2      1   LIPA   H65S    160      0.090     1.0080   ; qtot -4.000
+   159       HAL2      1   LIPA    H5D    159      0.090     1.0080   ; qtot -4.090
+   160       HAL2      1   LIPA    H5E    160      0.090     1.0080   ; qtot -4.000
    161       CTL2      1   LIPA    C66    161     -0.180    12.0110   ; qtot -4.180
-   162       HAL2      1   LIPA   H66R    162      0.090     1.0080   ; qtot -4.090
-   163       HAL2      1   LIPA   H66S    163      0.090     1.0080   ; qtot -4.000
+   162       HAL2      1   LIPA    H6D    162      0.090     1.0080   ; qtot -4.090
+   163       HAL2      1   LIPA    H6E    163      0.090     1.0080   ; qtot -4.000
    164       CTL2      1   LIPA    C67    164     -0.180    12.0110   ; qtot -4.180
-   165       HAL2      1   LIPA   H67R    165      0.090     1.0080   ; qtot -4.090
-   166       HAL2      1   LIPA   H67S    166      0.090     1.0080   ; qtot -4.000
+   165       HAL2      1   LIPA    H7D    165      0.090     1.0080   ; qtot -4.090
+   166       HAL2      1   LIPA    H7E    166      0.090     1.0080   ; qtot -4.000
    167       CTL2      1   LIPA    C68    167     -0.180    12.0110   ; qtot -4.180
-   168       HAL2      1   LIPA   H68R    168      0.090     1.0080   ; qtot -4.090
-   169       HAL2      1   LIPA   H68S    169      0.090     1.0080   ; qtot -4.000
+   168       HAL2      1   LIPA    H8D    168      0.090     1.0080   ; qtot -4.090
+   169       HAL2      1   LIPA    H8E    169      0.090     1.0080   ; qtot -4.000
    170       CTL2      1   LIPA    C69    170     -0.180    12.0110   ; qtot -4.180
-   171       HAL2      1   LIPA   H69R    171      0.090     1.0080   ; qtot -4.090
-   172       HAL2      1   LIPA   H69S    172      0.090     1.0080   ; qtot -4.000
+   171       HAL2      1   LIPA    H9D    171      0.090     1.0080   ; qtot -4.090
+   172       HAL2      1   LIPA    H9E    172      0.090     1.0080   ; qtot -4.000
    173       CTL2      1   LIPA   C610    173     -0.180    12.0110   ; qtot -4.180
-   174       HAL2      1   LIPA  H610R    174      0.090     1.0080   ; qtot -4.090
-   175       HAL2      1   LIPA  H610S    175      0.090     1.0080   ; qtot -4.000
+   174       HAL2      1   LIPA   H10D    174      0.090     1.0080   ; qtot -4.090
+   175       HAL2      1   LIPA   H10E    175      0.090     1.0080   ; qtot -4.000
    176       CTL2      1   LIPA   C611    176     -0.180    12.0110   ; qtot -4.180
-   177       HAL2      1   LIPA  H611R    177      0.090     1.0080   ; qtot -4.090
-   178       HAL2      1   LIPA  H611S    178      0.090     1.0080   ; qtot -4.000
+   177       HAL2      1   LIPA   H11D    177      0.090     1.0080   ; qtot -4.090
+   178       HAL2      1   LIPA   H11E    178      0.090     1.0080   ; qtot -4.000
    179       CTL3      1   LIPA   C612    179     -0.270    12.0110   ; qtot -4.270
-   180       HAL3      1   LIPA  H612R    180      0.090     1.0080   ; qtot -4.180
-   181       HAL3      1   LIPA  H612S    181      0.090     1.0080   ; qtot -4.090
-   182       HAL3      1   LIPA  H612T    182      0.090     1.0080   ; qtot -4.000
+   180       HAL3      1   LIPA   H12D    180      0.090     1.0080   ; qtot -4.180
+   181       HAL3      1   LIPA   H12E    181      0.090     1.0080   ; qtot -4.090
+   182       HAL3      1   LIPA   H12F    182      0.090     1.0080   ; qtot -4.000
    183       CTL2      1   LIPA    C54    183     -0.180    12.0110   ; qtot -4.180
-   184       HAL2      1   LIPA   H54R    184      0.090     1.0080   ; qtot -4.090
-   185       HAL2      1   LIPA   H54S    185      0.090     1.0080   ; qtot -4.000
+   184       HAL2      1   LIPA    H4A    184      0.090     1.0080   ; qtot -4.090
+   185       HAL2      1   LIPA    H4B    185      0.090     1.0080   ; qtot -4.000
    186       CTL2      1   LIPA    C55    186     -0.180    12.0110   ; qtot -4.180
-   187       HAL2      1   LIPA   H55R    187      0.090     1.0080   ; qtot -4.090
-   188       HAL2      1   LIPA   H55S    188      0.090     1.0080   ; qtot -4.000
+   187       HAL2      1   LIPA    H5A    187      0.090     1.0080   ; qtot -4.090
+   188       HAL2      1   LIPA    H5B    188      0.090     1.0080   ; qtot -4.000
    189       CTL2      1   LIPA    C56    189     -0.180    12.0110   ; qtot -4.180
-   190       HAL2      1   LIPA   H56R    190      0.090     1.0080   ; qtot -4.090
-   191       HAL2      1   LIPA   H56S    191      0.090     1.0080   ; qtot -4.000
+   190       HAL2      1   LIPA    H6A    190      0.090     1.0080   ; qtot -4.090
+   191       HAL2      1   LIPA    H6B    191      0.090     1.0080   ; qtot -4.000
    192       CTL2      1   LIPA    C57    192     -0.180    12.0110   ; qtot -4.180
-   193       HAL2      1   LIPA   H57R    193      0.090     1.0080   ; qtot -4.090
-   194       HAL2      1   LIPA   H57S    194      0.090     1.0080   ; qtot -4.000
+   193       HAL2      1   LIPA    H7A    193      0.090     1.0080   ; qtot -4.090
+   194       HAL2      1   LIPA    H7B    194      0.090     1.0080   ; qtot -4.000
    195       CTL2      1   LIPA    C58    195     -0.180    12.0110   ; qtot -4.180
-   196       HAL2      1   LIPA   H58R    196      0.090     1.0080   ; qtot -4.090
-   197       HAL2      1   LIPA   H58S    197      0.090     1.0080   ; qtot -4.000
+   196       HAL2      1   LIPA    H8A    196      0.090     1.0080   ; qtot -4.090
+   197       HAL2      1   LIPA    H8B    197      0.090     1.0080   ; qtot -4.000
    198       CTL2      1   LIPA    C59    198     -0.180    12.0110   ; qtot -4.180
-   199       HAL2      1   LIPA   H59R    199      0.090     1.0080   ; qtot -4.090
-   200       HAL2      1   LIPA   H59S    200      0.090     1.0080   ; qtot -4.000
+   199       HAL2      1   LIPA    H9A    199      0.090     1.0080   ; qtot -4.090
+   200       HAL2      1   LIPA    H9B    200      0.090     1.0080   ; qtot -4.000
    201       CTL2      1   LIPA   C510    201     -0.180    12.0110   ; qtot -4.180
-   202       HAL2      1   LIPA  H510R    202      0.090     1.0080   ; qtot -4.090
-   203       HAL2      1   LIPA  H510S    203      0.090     1.0080   ; qtot -4.000
+   202       HAL2      1   LIPA   H10A    202      0.090     1.0080   ; qtot -4.090
+   203       HAL2      1   LIPA   H10B    203      0.090     1.0080   ; qtot -4.000
    204       CTL2      1   LIPA   C511    204     -0.180    12.0110   ; qtot -4.180
-   205       HAL2      1   LIPA  H511R    205      0.090     1.0080   ; qtot -4.090
-   206       HAL2      1   LIPA  H511S    206      0.090     1.0080   ; qtot -4.000
+   205       HAL2      1   LIPA   H11A    205      0.090     1.0080   ; qtot -4.090
+   206       HAL2      1   LIPA   H11B    206      0.090     1.0080   ; qtot -4.000
    207       CTL2      1   LIPA   C512    207     -0.180    12.0110   ; qtot -4.180
-   208       HAL2      1   LIPA  H512R    208      0.090     1.0080   ; qtot -4.090
-   209       HAL2      1   LIPA  H512S    209      0.090     1.0080   ; qtot -4.000
+   208       HAL2      1   LIPA   H12A    208      0.090     1.0080   ; qtot -4.090
+   209       HAL2      1   LIPA   H12B    209      0.090     1.0080   ; qtot -4.000
    210       CTL2      1   LIPA   C513    210     -0.180    12.0110   ; qtot -4.180
-   211       HAL2      1   LIPA  H513R    211      0.090     1.0080   ; qtot -4.090
-   212       HAL2      1   LIPA  H513S    212      0.090     1.0080   ; qtot -4.000
+   211       HAL2      1   LIPA   H13A    211      0.090     1.0080   ; qtot -4.090
+   212       HAL2      1   LIPA   H13B    212      0.090     1.0080   ; qtot -4.000
    213       CTL3      1   LIPA   C514    213     -0.270    12.0110   ; qtot -4.270
-   214       HAL3      1   LIPA  H514R    214      0.090     1.0080   ; qtot -4.180
-   215       HAL3      1   LIPA  H514S    215      0.090     1.0080   ; qtot -4.090
-   216       HAL3      1   LIPA  H514T    216      0.090     1.0080   ; qtot -4.000
+   214       HAL3      1   LIPA   H14A    214      0.090     1.0080   ; qtot -4.180
+   215       HAL3      1   LIPA   H14B    215      0.090     1.0080   ; qtot -4.090
+   216       HAL3      1   LIPA   H14C    216      0.090     1.0080   ; qtot -4.000
    217       CTL1      1   LIPA    C33    217      0.140    12.0110   ; qtot -3.860
-   218       HAL1      1   LIPA   H33R    218      0.090     1.0080   ; qtot -3.770
+   218       HAL1      1   LIPA    H3M    218      0.090     1.0080   ; qtot -3.770
    219        OH1      1   LIPA    O33    219     -0.660    15.9990   ; qtot -4.430
    220          H      1   LIPA   HO33    220      0.430     1.0080   ; qtot -4.000
    221       CTL2      1   LIPA    C34    221     -0.180    12.0110   ; qtot -4.180
-   222       HAL2      1   LIPA   H34R    222      0.090     1.0080   ; qtot -4.090
-   223       HAL2      1   LIPA   H34S    223      0.090     1.0080   ; qtot -4.000
+   222       HAL2      1   LIPA    H4M    222      0.090     1.0080   ; qtot -4.090
+   223       HAL2      1   LIPA    H4N    223      0.090     1.0080   ; qtot -4.000
    224       CTL2      1   LIPA    C35    224     -0.180    12.0110   ; qtot -4.180
-   225       HAL2      1   LIPA   H35R    225      0.090     1.0080   ; qtot -4.090
-   226       HAL2      1   LIPA   H35S    226      0.090     1.0080   ; qtot -4.000
+   225       HAL2      1   LIPA    H5M    225      0.090     1.0080   ; qtot -4.090
+   226       HAL2      1   LIPA    H5N    226      0.090     1.0080   ; qtot -4.000
    227       CTL2      1   LIPA    C36    227     -0.180    12.0110   ; qtot -4.180
-   228       HAL2      1   LIPA   H36R    228      0.090     1.0080   ; qtot -4.090
-   229       HAL2      1   LIPA   H36S    229      0.090     1.0080   ; qtot -4.000
+   228       HAL2      1   LIPA    H6M    228      0.090     1.0080   ; qtot -4.090
+   229       HAL2      1   LIPA    H6N    229      0.090     1.0080   ; qtot -4.000
    230       CTL2      1   LIPA    C37    230     -0.180    12.0110   ; qtot -4.180
-   231       HAL2      1   LIPA   H37R    231      0.090     1.0080   ; qtot -4.090
-   232       HAL2      1   LIPA   H37S    232      0.090     1.0080   ; qtot -4.000
+   231       HAL2      1   LIPA    H7M    231      0.090     1.0080   ; qtot -4.090
+   232       HAL2      1   LIPA    H7N    232      0.090     1.0080   ; qtot -4.000
    233       CTL2      1   LIPA    C38    233     -0.180    12.0110   ; qtot -4.180
-   234       HAL2      1   LIPA   H38R    234      0.090     1.0080   ; qtot -4.090
-   235       HAL2      1   LIPA   H38S    235      0.090     1.0080   ; qtot -4.000
+   234       HAL2      1   LIPA    H8M    234      0.090     1.0080   ; qtot -4.090
+   235       HAL2      1   LIPA    H8N    235      0.090     1.0080   ; qtot -4.000
    236       CTL2      1   LIPA    C39    236     -0.180    12.0110   ; qtot -4.180
-   237       HAL2      1   LIPA   H39R    237      0.090     1.0080   ; qtot -4.090
-   238       HAL2      1   LIPA   H39S    238      0.090     1.0080   ; qtot -4.000
+   237       HAL2      1   LIPA    H9M    237      0.090     1.0080   ; qtot -4.090
+   238       HAL2      1   LIPA    H9N    238      0.090     1.0080   ; qtot -4.000
    239       CTL2      1   LIPA   C310    239     -0.180    12.0110   ; qtot -4.180
-   240       HAL2      1   LIPA  H310R    240      0.090     1.0080   ; qtot -4.090
-   241       HAL2      1   LIPA  H310S    241      0.090     1.0080   ; qtot -4.000
+   240       HAL2      1   LIPA   H10M    240      0.090     1.0080   ; qtot -4.090
+   241       HAL2      1   LIPA   H10N    241      0.090     1.0080   ; qtot -4.000
    242       CTL2      1   LIPA   C311    242     -0.180    12.0110   ; qtot -4.180
-   243       HAL2      1   LIPA  H311R    243      0.090     1.0080   ; qtot -4.090
-   244       HAL2      1   LIPA  H311S    244      0.090     1.0080   ; qtot -4.000
+   243       HAL2      1   LIPA   H11M    243      0.090     1.0080   ; qtot -4.090
+   244       HAL2      1   LIPA   H11N    244      0.090     1.0080   ; qtot -4.000
    245       CTL2      1   LIPA   C312    245     -0.180    12.0110   ; qtot -4.180
-   246       HAL2      1   LIPA  H312R    246      0.090     1.0080   ; qtot -4.090
-   247       HAL2      1   LIPA  H312S    247      0.090     1.0080   ; qtot -4.000
+   246       HAL2      1   LIPA   H12M    246      0.090     1.0080   ; qtot -4.090
+   247       HAL2      1   LIPA   H12N    247      0.090     1.0080   ; qtot -4.000
    248       CTL2      1   LIPA   C313    248     -0.180    12.0110   ; qtot -4.180
-   249       HAL2      1   LIPA  H313R    249      0.090     1.0080   ; qtot -4.090
-   250       HAL2      1   LIPA  H313S    250      0.090     1.0080   ; qtot -4.000
+   249       HAL2      1   LIPA   H13M    249      0.090     1.0080   ; qtot -4.090
+   250       HAL2      1   LIPA   H13N    250      0.090     1.0080   ; qtot -4.000
    251       CTL3      1   LIPA   C314    251     -0.270    12.0110   ; qtot -4.270
-   252       HAL3      1   LIPA  H314R    252      0.090     1.0080   ; qtot -4.180
-   253       HAL3      1   LIPA  H314S    253      0.090     1.0080   ; qtot -4.090
-   254       HAL3      1   LIPA  H314T    254      0.090     1.0080   ; qtot -4.000
+   252       HAL3      1   LIPA   H14M    252      0.090     1.0080   ; qtot -4.180
+   253       HAL3      1   LIPA   H14N    253      0.090     1.0080   ; qtot -4.090
+   254       HAL3      1   LIPA   H14O    254      0.090     1.0080   ; qtot -4.000
    255      CC2O1      1   LIPA    C11    255      0.550    12.0110   ; qtot -3.450
    256      OC2D1      1   LIPA    O11    256     -0.550    15.9994   ; qtot -4.000
    257       CTL2      1   LIPA    C12    257     -0.180    12.0110   ; qtot -4.180
-   258       HAL2      1   LIPA   H12R    258      0.090     1.0080   ; qtot -4.090
-   259       HAL2      1   LIPA   H12S    259      0.090     1.0080   ; qtot -4.000
+   258       HAL2      1   LIPA    H2P    258      0.090     1.0080   ; qtot -4.090
+   259       HAL2      1   LIPA    H2Q    259      0.090     1.0080   ; qtot -4.000
    260       CTL1      1   LIPA    C13    260      0.140    12.0110   ; qtot -3.860
-   261       HAL1      1   LIPA   H13R    261      0.090     1.0080   ; qtot -3.770
+   261       HAL1      1   LIPA    H3P    261      0.090     1.0080   ; qtot -3.770
    262        OH1      1   LIPA    O13    262     -0.660    15.9990   ; qtot -4.430
    263          H      1   LIPA   HO13    263      0.430     1.0080   ; qtot -4.000
    264       CTL2      1   LIPA    C14    264     -0.180    12.0110   ; qtot -4.180
-   265       HAL2      1   LIPA   H14R    265      0.090     1.0080   ; qtot -4.090
-   266       HAL2      1   LIPA   H14S    266      0.090     1.0080   ; qtot -4.000
+   265       HAL2      1   LIPA    H4P    265      0.090     1.0080   ; qtot -4.090
+   266       HAL2      1   LIPA    H4Q    266      0.090     1.0080   ; qtot -4.000
    267       CTL2      1   LIPA    C15    267     -0.180    12.0110   ; qtot -4.180
-   268       HAL2      1   LIPA   H15R    268      0.090     1.0080   ; qtot -4.090
-   269       HAL2      1   LIPA   H15S    269      0.090     1.0080   ; qtot -4.000
+   268       HAL2      1   LIPA    H5P    268      0.090     1.0080   ; qtot -4.090
+   269       HAL2      1   LIPA    H5Q    269      0.090     1.0080   ; qtot -4.000
    270       CTL2      1   LIPA    C16    270     -0.180    12.0110   ; qtot -4.180
-   271       HAL2      1   LIPA   H16R    271      0.090     1.0080   ; qtot -4.090
-   272       HAL2      1   LIPA   H16S    272      0.090     1.0080   ; qtot -4.000
+   271       HAL2      1   LIPA    H6P    271      0.090     1.0080   ; qtot -4.090
+   272       HAL2      1   LIPA    H6Q    272      0.090     1.0080   ; qtot -4.000
    273       CTL2      1   LIPA    C17    273     -0.180    12.0110   ; qtot -4.180
-   274       HAL2      1   LIPA   H17R    274      0.090     1.0080   ; qtot -4.090
-   275       HAL2      1   LIPA   H17S    275      0.090     1.0080   ; qtot -4.000
+   274       HAL2      1   LIPA    H7P    274      0.090     1.0080   ; qtot -4.090
+   275       HAL2      1   LIPA    H7Q    275      0.090     1.0080   ; qtot -4.000
    276       CTL2      1   LIPA    C18    276     -0.180    12.0110   ; qtot -4.180
-   277       HAL2      1   LIPA   H18R    277      0.090     1.0080   ; qtot -4.090
-   278       HAL2      1   LIPA   H18S    278      0.090     1.0080   ; qtot -4.000
+   277       HAL2      1   LIPA    H8P    277      0.090     1.0080   ; qtot -4.090
+   278       HAL2      1   LIPA    H8Q    278      0.090     1.0080   ; qtot -4.000
    279       CTL2      1   LIPA    C19    279     -0.180    12.0110   ; qtot -4.180
-   280       HAL2      1   LIPA   H19R    280      0.090     1.0080   ; qtot -4.090
-   281       HAL2      1   LIPA   H19S    281      0.090     1.0080   ; qtot -4.000
+   280       HAL2      1   LIPA    H9P    280      0.090     1.0080   ; qtot -4.090
+   281       HAL2      1   LIPA    H9Q    281      0.090     1.0080   ; qtot -4.000
    282       CTL2      1   LIPA   C110    282     -0.180    12.0110   ; qtot -4.180
-   283       HAL2      1   LIPA  H110R    283      0.090     1.0080   ; qtot -4.090
-   284       HAL2      1   LIPA  H110S    284      0.090     1.0080   ; qtot -4.000
+   283       HAL2      1   LIPA   H10P    283      0.090     1.0080   ; qtot -4.090
+   284       HAL2      1   LIPA   H10Q    284      0.090     1.0080   ; qtot -4.000
    285       CTL2      1   LIPA   C111    285     -0.180    12.0110   ; qtot -4.180
-   286       HAL2      1   LIPA  H111R    286      0.090     1.0080   ; qtot -4.090
-   287       HAL2      1   LIPA  H111S    287      0.090     1.0080   ; qtot -4.000
+   286       HAL2      1   LIPA   H11P    286      0.090     1.0080   ; qtot -4.090
+   287       HAL2      1   LIPA   H11Q    287      0.090     1.0080   ; qtot -4.000
    288       CTL2      1   LIPA   C112    288     -0.180    12.0110   ; qtot -4.180
-   289       HAL2      1   LIPA  H112R    289      0.090     1.0080   ; qtot -4.090
-   290       HAL2      1   LIPA  H112S    290      0.090     1.0080   ; qtot -4.000
+   289       HAL2      1   LIPA   H12P    289      0.090     1.0080   ; qtot -4.090
+   290       HAL2      1   LIPA   H12Q    290      0.090     1.0080   ; qtot -4.000
    291       CTL2      1   LIPA   C113    291     -0.180    12.0110   ; qtot -4.180
-   292       HAL2      1   LIPA  H113R    292      0.090     1.0080   ; qtot -4.090
-   293       HAL2      1   LIPA  H113S    293      0.090     1.0080   ; qtot -4.000
+   292       HAL2      1   LIPA   H13P    292      0.090     1.0080   ; qtot -4.090
+   293       HAL2      1   LIPA   H13Q    293      0.090     1.0080   ; qtot -4.000
    294       CTL3      1   LIPA   C114    294     -0.270    12.0110   ; qtot -4.270
-   295       HAL3      1   LIPA  H114R    295      0.090     1.0080   ; qtot -4.180
-   296       HAL3      1   LIPA  H114S    296      0.090     1.0080   ; qtot -4.090
-   297       HAL3      1   LIPA  H114T    297      0.090     1.0080   ; qtot -4.000
+   295       HAL3      1   LIPA   H14P    295      0.090     1.0080   ; qtot -4.180
+   296       HAL3      1   LIPA   H14Q    296      0.090     1.0080   ; qtot -4.090
+   297       HAL3      1   LIPA   H14R    297      0.090     1.0080   ; qtot -4.000
 
 [ bonds ]
 ; ai	aj	funct	b0	Kb
