@@ -3,7 +3,6 @@
 ; and multiple charmm topology files
 
 
-
 [ bondtypes ]
 ;      i        j  func           b0           kb
 NH2       CA     1   0.14550000    200832.00 ; NPH
@@ -6325,6 +6324,7 @@ HA2     CT2A       CC       OC     9   180.000000     0.209200     6
 NH3      CT1     CT2A      HA2     9     0.000000     0.836800     3
 NH3      CT1     CT2A       CC     9     0.000000     0.836800     3
 CC     CT2A      CT1       CC     9     0.000000     0.836800     3
+CC     CT2A      CT1       CD     9     0.000000     0.836800     3
 CPH1     CT2A      CT1       CC     9     0.000000     0.836800     3
 CPH1     CT2A      CT1      NH3     9     0.000000     0.836800     3
 CPH1     CT2A      CT1       CD     9     0.000000     0.836800     3

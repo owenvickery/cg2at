@@ -127,6 +127,7 @@ def ask_database(provided, user, selection_type):
 		except:
 			print("Oops!  That was a invalid choice")
 
+
 def sort_forcefield(forcefield_available_prov, forcefield_available_user, f_number):
 #### returns forcefield location and forcefield name
 #### if forcefield selection is in provided copy forcefield to FORCEFIELD and FINAL directories
@@ -360,7 +361,7 @@ def rotate(at_connections, cg_connections):
 	xyz_rot_apply=[]
 #### iterates through rotation matrices
 	for xyz_rot in [x_rot,y_rot,z_rot]:
-		min_dist=[]
+		dist=[]
 	#### iterates through rotation matrices 
 		for rot_val, rotation in enumerate(xyz_rot):
 		#### applies matrix to coordinates saved as check
@@ -369,16 +370,31 @@ def rotate(at_connections, cg_connections):
 			individual_connections=[]
 			for connect in range(len(cg_connections)):
 				individual_connections.append(np.sqrt(((check[connect][0]-cg_connections[connect][0])**2)+((check[connect][1]-cg_connections[connect][1])**2)+((check[connect][2]-cg_connections[connect][2])**2)))
-		#### for each rotation the connection distances are added to min_dist list 
-			min_dist.append(individual_connections)
-		inter=np.array([])
+		#### for each rotation the connection distances are added to dist list 
+			dist.append(individual_connections)
 	#### the RMS is calculated for each rotation	
-		for mdist in np.array(min_dist):
-			inter = np.append(inter, np.sqrt(np.mean(mdist**2)))
+		dist=np.array(dist)
+		inter= np.sqrt(np.mean(dist**2,axis=1))
+		if len(dist[0])>1 and len(dist[0])<5:
+			ratio=dist/np.min(dist, axis=1)[:,np.newaxis]
+			rotation_index=np.argmin(inter[np.where(np.sum(ratio, axis=1)<np.min(np.sum(ratio, axis=1))*1.05)])
+			# print(np.sum(ratio, axis=1), np.min(np.sum(ratio, axis=1)))
+			for i in range(len(ratio)):
+				if np.all(ratio[i]<1.05):
+					if 'rotation_RMS' in locals():
+						if inter[i] < rotation_RMS:
+							rotation_RMS = inter[i]
+							rotation_index=i
+					else:
+						rotation_RMS=inter[i]
+						rotation_index=i
+		else:
+			rotation_index=np.argmin(inter)#int(np.where(inter==np.min(inter))[0])
+
 	#### the rotation with the lowest RMS applied to the at_connections
-		at_connections = at_connections.dot(xyz_rot[int(np.where(inter==np.min(inter))[0])])
+		at_connections = at_connections.dot(xyz_rot[rotation_index])
 	#### the optimal rotation is added to xyz_rot_apply list as radians
-		xyz_rot_apply.append(np.radians(int(np.where(inter==np.min(inter))[0])*5))
+		xyz_rot_apply.append(np.radians(rotation_index*5))
 	return xyz_rot_apply
 
 #################################################################################################### PDB processing ####################################################################################
@@ -659,13 +675,14 @@ def check_non_protein_atom_overlap(residue):
 		coord[atom]=residue[atom+1]['coord']
 	for xyz_index, xyz in enumerate(coord):
 		dist=np.sqrt(((coord[:,0]-xyz[0])**2)+((coord[:,1]-xyz[1])**2)+((coord[:,2]-xyz[2])**2))
-		overlapped = np.where(np.logical_and(dist>0.01,dist<0.15))
+		overlapped = np.where(np.logical_and(dist>0,dist<0.3))
 		if len(overlapped[0])>0:
 			while len(overlapped[0])>0:
 				xyz_check = [xyz[0]+np.random.uniform(-0.2, 0.2), xyz[1]+np.random.uniform(-0.2, 0.2),xyz[2]+np.random.uniform(-0.2, 0.2)]
 				dist=np.sqrt(((coord[:,0]-xyz_check[0])**2)+((coord[:,1]-xyz_check[1])**2)+((coord[:,2]-xyz_check[2])**2))
-				overlapped = np.where(np.logical_and(dist>0.01,dist<0.15))	
-			residue[xyz_index+1]['coord']	= xyz_check
+				overlapped = np.where(np.logical_and(dist>0,dist<0.3))	
+			residue[xyz_index+1]['coord'] = xyz_check
+			coord[xyz_index]=xyz_check
 	return residue
 
 def atomistic_non_protein(cg_residue_type,cg_residues):
@@ -833,7 +850,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 	pdb_output = create_pdb(working_dir+'PROTEIN/PROTEIN_novo_'+str(chain_count)+'.pdb')
 #### for each residue in protein
 	initial=True
-	for residue_number in cg_residues:
+	for cg_residue_id, residue_number in enumerate(cg_residues):
 	#### temporary index/dictionaries		
 		final_at_residues={}  
 		at_residues[residue_number]={}
@@ -852,9 +869,9 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 			at_connections, cg_connections, center=connectivity(frag_val, cg_fragments, connect, at_residues[residue_number], cg_residues, residue_number)
 		#### if BB bead adds the N and C terminal atoms to connectivity
 			if cg_fragments=='BB':
-#art################################# doesn't seem to help
-				if len(at_connections) == 0:
-					at_connections, cg_connections = artifical_side_chain(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center)
+#art################################# doesn't seem to help, Maybe change into dihedral angle but then is dependant upon aminoacid type? 
+				# if len(at_connections) == 0:
+				# 	at_connections, cg_connections = artifical_side_chain(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center)
 
 					# pass
 					##### write a function to a add a artifial sidechain to fix randon rotation of GLY/ALA
@@ -891,23 +908,30 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 					terminal[chain_count].append(backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
 			if cg_residues[residue_number][cg_fragments]['residue_name'] == 'CYS' and cg_fragments != 'BB':
 				at_connections, cg_connections, disulphide, disul_at_info, disul_cg_info= find_closest_cysteine(at_connections, cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center)
-
-
 		#### finds optimum rotation of fragment
 			if len(at_connections) == len(cg_connections):
 				xyz_rot_apply=rotate(np.array(at_connections), np.array(cg_connections))
 			else:
 				print('atom connections: '+str(len(at_connections))+' does not equal CG connections: '+str(len(cg_connections)))
 				sys.exit('residue number: '+str(residue_number)+', residue type: '+str(cg_residues[residue_number][cg_fragments]['residue_name'])+', bead: '+cg_fragments)
-
 		#### applies rotation to each atom
 			for atom in at_residues[residue_number][cg_fragments]:
 				at_residues[residue_number][cg_fragments][atom]['coord'] = rotate_atom(at_residues[residue_number][cg_fragments][atom]['coord'], center, xyz_rot_apply)		
 				final_at_residues[atom]=at_residues[residue_number][cg_fragments][atom]
-		if 'disulphide'in locals():
+	#### if disulphide bond found move the S atoms to within 2 A of each other
+		if 'disulphide' in locals():
 			if disulphide:
 				final_at_residues = shift_sulphur(residue_number,final_at_residues, disul_at_info, disul_cg_info, at_residues, cg_residues ) 
 				disulphide = False		
+	#### check if any atom overlap if so give the atom a kick
+		if cg_residue_id != 0:
+			final_at_residues, coords = check_de_novo_atom_overlap(final_at_residues, coords) 
+		else:
+			coords=np.zeros(shape=(len(final_at_residues),3))
+			for line_index, atom in enumerate(final_at_residues):
+				coords[line_index]=final_at_residues[atom]['coord']
+
+
 	#### writes fragment to pdb
 		final_coordinates_atomistic[chain_count][residue_number]=final_at_residues
 		for at_val, atom in enumerate(final_at_residues):
@@ -932,6 +956,30 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 	system['PROTEIN']=chain_count+1
 	return system, backbone_coords, final_coordinates_atomistic
 
+def check_de_novo_atom_overlap(merged_temp, merged_coords):
+	coord=np.zeros(shape=(len(merged_temp),3)) ## empty array
+#### filters out coordinates merged_temp
+	for line_index, atom in enumerate(merged_temp):
+		coord[line_index]=merged_temp[atom]['coord']
+		
+#### runs through coordinates and checks if there is any overlap with existing coordinates if there is it moves the atom to 0.15 A away. 
+	for xyz_index, xyz in enumerate(coord):
+		dist=np.sqrt(((merged_coords[:,0]-xyz[0])**2)+((merged_coords[:,1]-xyz[1])**2)+((merged_coords[:,2]-xyz[2])**2))
+		overlapped = np.where(np.logical_and(dist>0,dist<0.3))
+		if len(overlapped[0])>0:
+			while len(overlapped[0])>0:
+				xyz_check = [xyz[0]+np.random.uniform(-0.2, 0.2), xyz[1]+np.random.uniform(-0.2, 0.2),xyz[2]+np.random.uniform(-0.2, 0.2)]
+				dist=np.sqrt(((coord[:,0]-xyz_check[0])**2)+((coord[:,1]-xyz_check[1])**2)+((coord[:,2]-xyz_check[2])**2))
+				overlapped = np.where(np.logical_and(dist>0,dist<0.3))	
+			coord[xyz_index] = xyz_check
+		merged_coords=np.append(merged_coords, [coord[xyz_index]], axis=0)	
+
+	for line_index, atom in enumerate(merged_temp):
+		merged_temp[atom]['coord']=coord[line_index]
+
+	return merged_temp, merged_coords
+
+
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
 #### 
 
@@ -940,11 +988,11 @@ def find_closest_cysteine(at_connections, cg_connections, cg_residues, at_residu
 	for res_id in cg_residues: 
 		try:
 			#### checks distance between cysteines if closer than 7A then adds another connection between the S and the sidechain of the other cysteine CG bead
-			if cg_residues[res_id]['SC1']['residue_name'] == 'CYS' and res_id != residue_number:
+			if cg_residues[res_id]['SC1']['residue_name'] == 'CYS' and res_id not in [residue_number-1, residue_number, residue_number+1]:
 				xyz_cur=[cg_residues[residue_number]['SC1']['coord'][0],cg_residues[residue_number]['SC1']['coord'][1],cg_residues[residue_number]['SC1']['coord'][2]] ### cysteine of interest
 				xyz_check=[cg_residues[res_id]['SC1']['coord'][0],cg_residues[res_id]['SC1']['coord'][1],cg_residues[res_id]['SC1']['coord'][2]] ### cysteine to check distance
 				dist=np.sqrt(((xyz_check[0]-xyz_cur[0])**2)+((xyz_check[1]-xyz_cur[1])**2)+((xyz_check[2]-xyz_cur[2])**2)) ### distance
-				if dist < 7:
+				if dist < 6:
 					for atom_number in at_residues[residue_number]['SC1']:
 						if at_residues[residue_number]['SC1'][atom_number]['atom']==backbone[cg_residues[residue_number]['SC1']['residue_name']]['disulphide']: ### if sulphur
 							at_connections.append(at_residues[residue_number]['SC1'][atom_number]['coord']-center) ### add at centered coordinates
@@ -1323,18 +1371,18 @@ def check_protein_atom_overlap(merged_temp, merged, merged_coords):
 #### runs through coordinates and checks if there is any overlap with existing coordinates if there is it moves the atom to 0.15 A away. 
 	for xyz_index, xyz in enumerate(coord):
 		dist=np.sqrt(((merged_coords[:,0]-xyz[0])**2)+((merged_coords[:,1]-xyz[1])**2)+((merged_coords[:,2]-xyz[2])**2))
-		overlapped = np.where(np.logical_and(dist>0.01,dist<0.15))
+		overlapped = np.where(np.logical_and(dist>0,dist<0.3))
 		if len(overlapped[0])>0:
 			while len(overlapped[0])>0:
 				xyz_check = [xyz[0]+np.random.uniform(-0.2, 0.2), xyz[1]+np.random.uniform(-0.2, 0.2),xyz[2]+np.random.uniform(-0.2, 0.2)]
 				dist=np.sqrt(((coord[:,0]-xyz_check[0])**2)+((coord[:,1]-xyz_check[1])**2)+((coord[:,2]-xyz_check[2])**2))
-				overlapped = np.where(np.logical_and(dist>0.01,dist<0.15))	
+				overlapped = np.where(np.logical_and(dist>0,dist<0.3))	
 			merged.append(pdbline%((int(line_separated[xyz_index]['atom_number']), line_separated[xyz_index]['atom_name'], line_separated[xyz_index]['residue_name'],' ',line_separated[xyz_index]['residue_id'],\
 			xyz_check[0],xyz_check[1],xyz_check[2],1,0))+'\n')
 			coord[xyz_index] = xyz_check
 		else:
 			merged.append(merged_temp[xyz_index])
-	merged_coords=np.append(merged_coords, coord, axis=0)	
+		merged_coords=np.append(merged_coords, [coord[xyz_index]], axis=0)	
 	return merged, merged_coords
 
 def convert_topology(topol, protein_number):
