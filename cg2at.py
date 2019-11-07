@@ -17,6 +17,7 @@ from pathlib import Path
 import re
 import datetime
 import glob
+from scipy.spatial import KDTree
 
 parser = argparse.ArgumentParser(description='Converts CG representation into atomistic', epilog='Enjoy the program and best of luck!', allow_abbrev=True)
 parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str, required=True)
@@ -25,8 +26,10 @@ parser.add_argument('-d', help='additional database location',metavar='../test',
 parser.add_argument('-v', action="count", default=0, help="increase output verbosity (eg -vv, 3 levels)")
 parser.add_argument('-ter', help='interactively choose terminal species', action='store_true')
 parser.add_argument('-clean', help='removes all part files from build', action='store_true')
+parser.add_argument('-chains', help='list of chains to rigid body fit together, starts at chain 0',metavar='1 2',type=int, nargs='*')
 args = parser.parse_args()
 options = vars(args)
+
 
 ################################################################ Initialisation ##################################################################
 
@@ -375,9 +378,9 @@ def rotate(at_connections, cg_connections):
 	#### the RMS is calculated for each rotation	
 		dist=np.array(dist)
 		inter= np.sqrt(np.mean(dist**2,axis=1))
-		if len(dist[0])>1 and len(dist[0])<5:
+		if len(dist[0])==2:
 			ratio=dist/np.min(dist, axis=1)[:,np.newaxis]
-			rotation_index=np.argmin(inter[np.where(np.sum(ratio, axis=1)<np.min(np.sum(ratio, axis=1))*1.05)])
+			rotation_index=np.argmin(inter[np.where(np.sum(ratio, axis=1)<np.min(np.sum(ratio, axis=1))*1.02)])
 			# print(np.sum(ratio, axis=1), np.min(np.sum(ratio, axis=1)))
 			for i in range(len(ratio)):
 				if np.all(ratio[i]<1.05):
@@ -632,7 +635,12 @@ def build_atomistic_system(cg_residues, box_vec):
 		#### for every fragment in that resid
 			if residue_type not in ['ION', 'SOL']:
 			####### check if any atoms in residue overlap #######
-				atomistic_fragments[residue_type][resid] = check_non_protein_atom_overlap(atomistic_fragments[residue_type][resid])
+				coord=[]
+				for atom in atomistic_fragments[residue_type][resid]:
+					coord.append(atomistic_fragments[residue_type][resid][atom]['coord'])
+				coord=check_atom_overlap(coord)
+				for atom_val, atom in enumerate(atomistic_fragments[residue_type][resid]):
+					atomistic_fragments[residue_type][resid][atom]['coord']=coord[atom_val]
 			for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
 			#### separates out the water molecules from the ion in the fragment
 				if residue_type in ['ION', 'SOL']:
@@ -667,23 +675,6 @@ def build_atomistic_system(cg_residues, box_vec):
 			#### adds retype to system dictionary
 				system[residue_type]=int(resid)+1
 	return system 
-
-def check_non_protein_atom_overlap(residue):
-
-	coord=np.zeros(shape=(len(residue),3))
-	for atom in range(len(residue)):
-		coord[atom]=residue[atom+1]['coord']
-	for xyz_index, xyz in enumerate(coord):
-		dist=np.sqrt(((coord[:,0]-xyz[0])**2)+((coord[:,1]-xyz[1])**2)+((coord[:,2]-xyz[2])**2))
-		overlapped = np.where(np.logical_and(dist>0,dist<0.3))
-		if len(overlapped[0])>0:
-			while len(overlapped[0])>0:
-				xyz_check = [xyz[0]+np.random.uniform(-0.2, 0.2), xyz[1]+np.random.uniform(-0.2, 0.2),xyz[2]+np.random.uniform(-0.2, 0.2)]
-				dist=np.sqrt(((coord[:,0]-xyz_check[0])**2)+((coord[:,1]-xyz_check[1])**2)+((coord[:,2]-xyz_check[2])**2))
-				overlapped = np.where(np.logical_and(dist>0,dist<0.3))	
-			residue[xyz_index+1]['coord'] = xyz_check
-			coord[xyz_index]=xyz_check
-	return residue
 
 def atomistic_non_protein(cg_residue_type,cg_residues):
 	atomistic_fragments={}  #### residue dictionary
@@ -924,13 +915,12 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 				final_at_residues = shift_sulphur(residue_number,final_at_residues, disul_at_info, disul_cg_info, at_residues, cg_residues ) 
 				disulphide = False		
 	#### check if any atom overlap if so give the atom a kick
-		if cg_residue_id != 0:
-			final_at_residues, coords = check_de_novo_atom_overlap(final_at_residues, coords) 
-		else:
-			coords=np.zeros(shape=(len(final_at_residues),3))
-			for line_index, atom in enumerate(final_at_residues):
-				coords[line_index]=final_at_residues[atom]['coord']
-
+		coords=[]
+		for atom in final_at_residues:
+			coords.append(final_at_residues[atom]['coord'])
+		coords = check_atom_overlap(coords)
+		for line_index, atom in enumerate(final_at_residues):
+			final_at_residues[atom]['coord']=coords[line_index]
 
 	#### writes fragment to pdb
 		final_coordinates_atomistic[chain_count][residue_number]=final_at_residues
@@ -955,30 +945,6 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 	system['terminal_residue']=terminal
 	system['PROTEIN']=chain_count+1
 	return system, backbone_coords, final_coordinates_atomistic
-
-def check_de_novo_atom_overlap(merged_temp, merged_coords):
-	coord=np.zeros(shape=(len(merged_temp),3)) ## empty array
-#### filters out coordinates merged_temp
-	for line_index, atom in enumerate(merged_temp):
-		coord[line_index]=merged_temp[atom]['coord']
-		
-#### runs through coordinates and checks if there is any overlap with existing coordinates if there is it moves the atom to 0.15 A away. 
-	for xyz_index, xyz in enumerate(coord):
-		dist=np.sqrt(((merged_coords[:,0]-xyz[0])**2)+((merged_coords[:,1]-xyz[1])**2)+((merged_coords[:,2]-xyz[2])**2))
-		overlapped = np.where(np.logical_and(dist>0,dist<0.3))
-		if len(overlapped[0])>0:
-			while len(overlapped[0])>0:
-				xyz_check = [xyz[0]+np.random.uniform(-0.2, 0.2), xyz[1]+np.random.uniform(-0.2, 0.2),xyz[2]+np.random.uniform(-0.2, 0.2)]
-				dist=np.sqrt(((coord[:,0]-xyz_check[0])**2)+((coord[:,1]-xyz_check[1])**2)+((coord[:,2]-xyz_check[2])**2))
-				overlapped = np.where(np.logical_and(dist>0,dist<0.3))	
-			coord[xyz_index] = xyz_check
-		merged_coords=np.append(merged_coords, [coord[xyz_index]], axis=0)	
-
-	for line_index, atom in enumerate(merged_temp):
-		merged_temp[atom]['coord']=coord[line_index]
-
-	return merged_temp, merged_coords
-
 
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
 #### 
@@ -1205,7 +1171,6 @@ def minimise_protein():
 		pdb2gmx_selections=ask_terminal(chain)
 		minimise_protein_chain(chain, 'novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[0])+'\n'+str(pdb2gmx_selections[1]))
 		pdb2gmx_selections = histidine_protonation(chain, 'novo_', pdb2gmx_selections)
-
 		if user_at_input and 'PROTEIN' in system:
 			minimise_protein_chain(chain, 'at_rep_user_supplied_', pdb2gmx_selections)
 	os.chdir('..')
@@ -1215,11 +1180,11 @@ def histidine_protonation(chain, input, chain_ter):
 	with open('PROTEIN_'+input+str(chain)+'.top', 'r') as top_input:
 		for line in top_input.readlines():
 			if line.startswith('; residue'):
-				if line.split()[5] == 'HSD':
+				if line.split()[5] in ['HSD','HID']:
 					histidines.append(0)
-				elif line.split()[5] == 'HSE':
+				elif line.split()[5] in ['HSE', 'HIE']:
 					histidines.append(1)
-				elif line.split()[5] == 'HSP':
+				elif line.split()[5] in ['HSP','HIS1']:
 					histidines.append(2)
 	pdb2gmx_selections='-his << EOF \n1'
 	for his in histidines:
@@ -1333,24 +1298,24 @@ def merge_protein(no_chains, protein):
 
 def read_in_protein_pdbs(no_chains, file):
 #### reads in each chain into merge list
+	merge, merge_coords = [],[]
 	for chain in range(0,no_chains):
-		merge_temp = []
-
 		if os.path.exists(file+'_'+str(chain)+'.pdb'):
 			with open(file+'_'+str(chain)+'.pdb', 'r') as pdb_input:
 				for line in pdb_input.readlines():
 					if line.startswith('ATOM'):
-						merge_temp.append(line)
+						line_sep=pdbatom(line)
+						merge.append(line)
+						merge_coords.append([line_sep['x'],line_sep['y'],line_sep['z']])
 		else:
 			sys.exit('cannot find minimised residue: \n'+'PROTEIN/'+location+'/PROTEIN'+protein+'_'+str(chain)+'.pdb')		
-		if chain != 0:
-			merged, merged_coords = check_protein_atom_overlap(merge_temp, merged, merged_coords) 
-		else:
-			merged = merge_temp
-			merged_coords=np.zeros(shape=(len(merge_temp),3))
-			for line_index, line in enumerate(merge_temp):
-				line_sep=pdbatom(line)
-				merged_coords[line_index]=[line_sep['x'],line_sep['y'],line_sep['z']]
+	merged_coords = check_atom_overlap(merge_coords)
+	merged=[]
+	for line_val, line in enumerate(merge):
+		line_sep=pdbatom(line)
+		merged.append(pdbline%((int(line_sep['atom_number']), line_sep['atom_name'], line_sep['residue_name'],' ',line_sep['residue_id'],\
+			merged_coords[line_val][0],merged_coords[line_val][1],merged_coords[line_val][2],1,0))+'\n')
+
 	return merged
 
 def write_merged_pdb(merge, protein):
@@ -1360,30 +1325,35 @@ def write_merged_pdb(merge, protein):
 		pdb_output.write(line)
 	pdb_output.close()
 
-def check_protein_atom_overlap(merged_temp, merged, merged_coords):
-	coord=np.zeros(shape=(len(merged_temp),3)) ## empty array
-	line_separated=[]
-#### filters out coordinates merged_temp
-	for line_index, line in enumerate(merged_temp):
-		line_sep=pdbatom(line)
-		coord[line_index]=[line_sep['x'],line_sep['y'],line_sep['z']]
-		line_separated.append(line_sep)
-#### runs through coordinates and checks if there is any overlap with existing coordinates if there is it moves the atom to 0.15 A away. 
-	for xyz_index, xyz in enumerate(coord):
-		dist=np.sqrt(((merged_coords[:,0]-xyz[0])**2)+((merged_coords[:,1]-xyz[1])**2)+((merged_coords[:,2]-xyz[2])**2))
-		overlapped = np.where(np.logical_and(dist>0,dist<0.3))
-		if len(overlapped[0])>0:
-			while len(overlapped[0])>0:
-				xyz_check = [xyz[0]+np.random.uniform(-0.2, 0.2), xyz[1]+np.random.uniform(-0.2, 0.2),xyz[2]+np.random.uniform(-0.2, 0.2)]
-				dist=np.sqrt(((coord[:,0]-xyz_check[0])**2)+((coord[:,1]-xyz_check[1])**2)+((coord[:,2]-xyz_check[2])**2))
-				overlapped = np.where(np.logical_and(dist>0,dist<0.3))	
-			merged.append(pdbline%((int(line_separated[xyz_index]['atom_number']), line_separated[xyz_index]['atom_name'], line_separated[xyz_index]['residue_name'],' ',line_separated[xyz_index]['residue_id'],\
-			xyz_check[0],xyz_check[1],xyz_check[2],1,0))+'\n')
-			coord[xyz_index] = xyz_check
-		else:
-			merged.append(merged_temp[xyz_index])
-		merged_coords=np.append(merged_coords, [coord[xyz_index]], axis=0)	
-	return merged, merged_coords
+def check_atom_overlap(merged_coords):
+
+	kds=time.time()
+	tree = KDTree(merged_coords)
+	print('tree',time.time()-kds)
+	overlapped_ndx = tree.query_ball_tree(tree, r=0.15)
+	overlap=True
+	print('query',time.time()-kds)
+	kdm=time.time()
+	done=[]
+	moved_coord=[]
+
+	dist=0.2
+	for ndx in overlapped_ndx:
+		if len(ndx) == 2 and ndx[0] not in done:
+			xyz_check = [merged_coords[ndx[0]][0]+np.random.uniform(-0.2, 0.2), merged_coords[ndx[0]][1]+np.random.uniform(-0.2, 0.2),merged_coords[ndx[0]][2]+np.random.uniform(-0.2, 0.2)]
+			if len(moved_coord)>0:
+				dist=np.min(np.sqrt(((xyz_check[0]-np.array(moved_coord)[:,0])**2)+((xyz_check[1]-np.array(moved_coord)[:,1])**2)+((xyz_check[2]-np.array(moved_coord)[:,2])**2)))
+			while len(tree.query_ball_point(xyz_check, r=0.2)) != 1 or dist <= 0.15:
+				if len(moved_coord)>0:
+					dist=np.min(np.sqrt(((xyz_check[0]-np.array(moved_coord)[:,0])**2)+((xyz_check[1]-np.array(moved_coord)[:,1])**2)+((xyz_check[2]-np.array(moved_coord)[:,2])**2)))
+				xyz_check = [merged_coords[ndx[0]][0]+np.random.uniform(-0.2, 0.2), merged_coords[ndx[0]][1]+np.random.uniform(-0.2, 0.2),merged_coords[ndx[0]][2]+np.random.uniform(-0.2, 0.2)]
+			merged_coords[ndx[0]]=xyz_check
+			moved_coord.append(xyz_check)
+			done.append(ndx[0])
+
+	kde=time.time()	
+	print(kde-kdm)
+	return merged_coords
 
 def convert_topology(topol, protein_number):
 #### reads in topology 
@@ -1426,8 +1396,12 @@ def merge_system_pdbs(system, protein):
 		cg_updated.update(cg_residues)
 	else:
 		cg_updated=cg_residues
-	merge_temp=[]
+	merge=[]
+	merge_coords=[]
+	merge2=[]
+	merge_coords2=[]
 	merge_protein=[]
+	merge_protein_coords=[]
 #### run through every residue type in cg_residues
 	for segment, residue_type in enumerate(cg_updated):
 	#### if file contains user input identifier	
@@ -1440,28 +1414,18 @@ def merge_system_pdbs(system, protein):
 			with open(working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb', 'r') as pdb_input:
 				for line in pdb_input.readlines():
 					if line.startswith('ATOM'):
-						if residue_type == 'PROTEIN':
-							merge_protein.append(line)
-						else:
-							merge_temp.append(line)
+						line_sep = pdbatom(line)
+						merge.append(line_sep)
+						merge_coords.append([line_sep['x'],line_sep['y'],line_sep['z']])
 		else:
 			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
-#### checks any overlap between protein and any other residue
-		if residue_type == 'PROTEIN':
-			merge_protein_coords=np.zeros(shape=(len(merge_protein),3))
-			for line_index, line in enumerate(merge_protein):
-				line_sep=pdbatom(line)
-				merge_protein_coords[line_index]=[line_sep['x'],line_sep['y'],line_sep['z']]
-	if 'PROTEIN' in cg_updated and protein == '_at_rep_user_supplied':
-		merged, merged_coords = check_protein_atom_overlap(merge_temp, merge_protein, merge_protein_coords)
-	else:
-		merged=merge_protein+merge_temp
-
-	for line in merged:
-		pdb_output.write(line)
+	if protein == '_at_rep_user_supplied':
+		merged_coords = check_atom_overlap(merge_coords)
+	for line_val, line in enumerate(merge):
+		pdb_output.write(pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
+			merged_coords[line_val][0],merged_coords[line_val][1],merged_coords[line_val][2],1,0))+'\n')
 	pdb_output.write('TER\nENDMDL')
 	pdb_output.close()
-
 
 def write_merged_topol(system, protein):
 	os.chdir(working_dir+'MERGED')
