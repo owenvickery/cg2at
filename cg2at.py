@@ -1662,7 +1662,7 @@ if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']])
 non_protein_time=time.time()
 
 #### creates merged folder
-print('\nMerging all residue types to single file\n')
+print('\nMerging all residue types to single file\nOr a possibly tea\n')
 
 
 if len(system)>0:
@@ -1710,7 +1710,7 @@ final_time=time.time()
 #### prints out system information
 
 print('\n{:-<100}'.format(''))
-print('{0:^100}'.format('Script has completed'))
+print('{0:^100}'.format('Script has completed time for a beer'))
 print('\n{0:^20}{1:^10}'.format('molecules','number'))
 print('{0:^20}{1:^10}'.format('---------','------'))
 for section in system:
