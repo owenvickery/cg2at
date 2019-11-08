@@ -21,11 +21,14 @@ gmx mdrun -v -deffnm rigid_fit
 Available fragments
 
 Charmm36
+________
 
 Non protein
 -----------
+'DGPE', DLPE', 'DNPE', 'DOPE', 'DPPE', 'DYPE'
+
 PC: 'POPC', 'DGPC', 'DLPC', 'DNPC', 'DOPC', 'DPPC', 'DRPC', 'DYPC'
-PE: 'POPE'
+PE: 'POPE', 'DGPE', 'DLPE', 'DNPE', 'DOPE', 'DPPE', 'DYPE'
 PG: 'POPG'
 PA: 'POPA'
 PI: 'PIP2'
@@ -33,11 +36,32 @@ Sterols: 'CHOL'
 Lipopolysaccharides: 'LIPA'
 Cardiolipin: 'CARD' (PVCL2) 
 
-protein
+Protein
 -------
 all amino acids
 
 diacyl (CYSD) and triacyl (CYST) cysteine
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Amber99sb
+_________
+
+Protein
+-------
+All amino acids
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+lipid-14
+________
+
+Non protein
+-----------
+Currently empty
+
+
+
 
 -----------------------------------------------------------------------------
 
