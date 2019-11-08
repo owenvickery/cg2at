@@ -1,0 +1,9 @@
+ATOM     27  C3  DLPE    1       1.234   8.246  55.413  14.0  3.00      MEMB
+ATOM     28  HX  DLPE    1       0.733   9.055  55.988  14.0  0.00      MEMB
+ATOM     29  HY  DLPE    1       0.475   7.626  54.972  14.0  0.00      MEMB
+ATOM     30  O31 DLPE    1       2.022   8.807  54.385  1.00  0.00      MEMB
+ATOM     31  C31 DLPE    1       2.030   8.137  53.246  1.00  0.00      MEMB
+ATOM     32  O32 DLPE    1       1.424   7.106  52.990  1.00  0.00      MEMB
+ATOM     33  C32 DLPE    1       2.762   9.001  52.318  15.0  5.00      MEMB
+ATOM     34  H2X DLPE    1       3.456   9.564  52.979  15.0  0.00      MEMB
+ATOM     35  H2Y DLPE    1       2.018   9.688  51.849  15.0  0.00      MEMB

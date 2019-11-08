@@ -1,0 +1,12 @@
+ATOM    110  C36 DNPE    1       7.759   3.760  59.904  8.00  11.00      MEMB
+ATOM    111  H6X DNPE    1       8.170   4.029  58.901  8.00  0.00      MEMB
+ATOM    112  H6Y DNPE    1       7.388   4.666  60.411  8.00  0.00      MEMB
+ATOM    113  C37 DNPE    1       6.533   2.894  59.677  1.00  0.00      MEMB
+ATOM    114  H7X DNPE    1       5.756   2.943  60.463  1.00  0.00      MEMB
+ATOM    115  H7Y DNPE    1       7.002   1.942  59.898  1.00  0.00      MEMB
+ATOM    116  C38 DNPE    1       5.964   2.874  58.241  1.00  0.00      MEMB
+ATOM    117  H8X DNPE    1       5.498   1.908  57.964  1.00  0.00      MEMB
+ATOM    118  H8Y DNPE    1       6.752   3.003  57.476  1.00  0.00      MEMB
+ATOM    119  C39 DNPE    1       4.837   3.865  58.067  9.00  12.00      MEMB
+ATOM    120  H9X DNPE    1       5.245   4.670  57.428  9.00  0.00      MEMB
+ATOM    121  H9Y DNPE    1       4.600   4.300  59.062  9.00  0.00      MEMB

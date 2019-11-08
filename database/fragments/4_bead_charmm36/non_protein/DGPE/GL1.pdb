@@ -1,0 +1,11 @@
+ATOM     16  C1  DGPE    1       5.888   3.147  60.072  18.0  2.00      MEMB
+ATOM     17  HA  DGPE    1       6.048   3.401  61.132  18.0  0.00      MEMB
+ATOM     18  HB  DGPE    1       5.470   4.052  59.599  18.0  0.00      MEMB
+ATOM     19  C2  DGPE    1       7.291   2.811  59.515  1.00  3.00      MEMB
+ATOM     20  HS  DGPE    1       7.921   3.720  59.599  1.00  0.00      MEMB
+ATOM     21  O21 DGPE    1       7.406   2.308  58.167  1.00  0.00      MEMB
+ATOM     22  C21 DGPE    1       6.500   2.603  57.273  1.00  0.00      MEMB
+ATOM     23  O22 DGPE    1       5.528   3.298  57.408  1.00  0.00      MEMB
+ATOM     24  C22 DGPE    1       6.895   2.193  55.878  19.0  4.00      MEMB
+ATOM     25  H2R DGPE    1       6.100   2.619  55.218  19.0  0.00      MEMB
+ATOM     26  H2S DGPE    1       6.892   1.095  55.793  19.0  0.00      MEMB

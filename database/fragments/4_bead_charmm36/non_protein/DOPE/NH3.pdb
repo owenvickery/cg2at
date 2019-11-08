@@ -1,0 +1,10 @@
+ATOM      1  N   DOPE    1      -0.891   5.932  60.110  1.00  0.00      MEMB
+ATOM      2  HN1 DOPE    1      -1.440   6.140  60.961  1.00  0.00      MEMB
+ATOM      3  HN2 DOPE    1      -1.006   6.605  59.325  1.00  0.00      MEMB
+ATOM      4  HN3 DOPE    1      -1.257   5.002  59.763  1.00  0.00      MEMB
+ATOM      5  C12 DOPE    1       0.480   5.506  60.415  1.00  0.00      MEMB
+ATOM      6 H12A DOPE    1       1.090   6.436  60.458  1.00  0.00      MEMB
+ATOM      7 H12B DOPE    1       0.802   4.810  59.602  1.00  0.00      MEMB
+ATOM      8  C11 DOPE    1       0.506   4.747  61.735  18.0  1.00      MEMB
+ATOM      9 H11A DOPE    1      -0.158   5.249  62.465  18.0  0.00      MEMB
+ATOM     10 H11B DOPE    1       1.545   4.883  62.098  18.0  0.00      MEMB

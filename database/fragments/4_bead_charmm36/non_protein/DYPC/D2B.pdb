@@ -1,6 +1,6 @@
-ATOM     98  C37 DYPC    1       8.963   2.590  51.052  1.00  8.00      MEMB
-ATOM     99  H7X DYPC    1       9.600   3.482  51.253  1.00  0.00      MEMB
-ATOM    100  H7Y DYPC    1       9.562   1.729  50.769  1.00  0.00      MEMB
+ATOM     98  C37 DYPC    1       8.963   2.590  51.052  10.0  8.00      MEMB
+ATOM     99  H7X DYPC    1       9.600   3.482  51.253  10.0  0.00      MEMB
+ATOM    100  H7Y DYPC    1       9.562   1.729  50.769  10.0  0.00      MEMB
 ATOM    101  C38 DYPC    1       7.988   2.777  49.890  1.00  0.00      MEMB
 ATOM    102  H8X DYPC    1       7.123   3.360  50.256  1.00  0.00      MEMB
 ATOM    103  H8Y DYPC    1       7.597   1.765  49.642  1.00  0.00      MEMB
@@ -8,6 +8,6 @@ ATOM    104  C39 DYPC    1       8.611   3.398  48.663  1.00  0.00      MEMB
 ATOM    105  H9X DYPC    1       9.370   2.808  48.156  1.00  0.00      MEMB
 ATOM    106 C310 DYPC    1       8.395   4.628  48.189  1.00  0.00      MEMB
 ATOM    107 H10X DYPC    1       8.874   4.932  47.244  1.00  0.00      MEMB
-ATOM    108 C311 DYPC    1       7.476   5.629  48.812  1.00  9.00      MEMB
-ATOM    109 H11X DYPC    1       7.093   5.304  49.806  1.00  0.00      MEMB
-ATOM    110 H11Y DYPC    1       8.054   6.557  49.019  1.00  0.00      MEMB
+ATOM    108 C311 DYPC    1       7.476   5.629  48.812  11.0  9.00      MEMB
+ATOM    109 H11X DYPC    1       7.093   5.304  49.806  11.0  0.00      MEMB
+ATOM    110 H11Y DYPC    1       8.054   6.557  49.019  11.0  0.00      MEMB

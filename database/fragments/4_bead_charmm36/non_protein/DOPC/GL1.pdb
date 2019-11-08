@@ -1,11 +1,11 @@
-ATOM     25  C1  DOPC    1       5.440   7.662  58.249  1.00  2.00      MEMB
-ATOM     26  HA  DOPC    1       5.291   8.239  57.312  1.00  0.00      MEMB
-ATOM     27  HB  DOPC    1       4.883   8.178  59.066  1.00  0.00      MEMB
+ATOM     25  C1  DOPC    1       5.440   7.662  58.249  14.0  2.00      MEMB
+ATOM     26  HA  DOPC    1       5.291   8.239  57.312  14.0  0.00      MEMB
+ATOM     27  HB  DOPC    1       4.883   8.178  59.066  14.0  0.00      MEMB
 ATOM     28  C2  DOPC    1       4.797   6.254  58.069  1.00  3.00      MEMB
 ATOM     29  HS  DOPC    1       4.776   5.781  59.075  1.00  0.00      MEMB
 ATOM     30  O21 DOPC    1       5.587   5.459  57.168  1.00  0.00      MEMB
 ATOM     31  C21 DOPC    1       5.456   4.154  57.369  1.00  0.00      MEMB
 ATOM     32  O22 DOPC    1       4.600   3.629  58.055  1.00  0.00      MEMB
-ATOM     33  C22 DOPC    1       6.575   3.401  56.709  1.00  4.00      MEMB
-ATOM     34  H2R DOPC    1       6.164   2.551  56.129  1.00  0.00      MEMB
-ATOM     35  H2S DOPC    1       7.246   2.994  57.496  1.00  0.00      MEMB
+ATOM     33  C22 DOPC    1       6.575   3.401  56.709  15.0  4.00      MEMB
+ATOM     34  H2R DOPC    1       6.164   2.551  56.129  15.0  0.00      MEMB
+ATOM     35  H2S DOPC    1       7.246   2.994  57.496  15.0  0.00      MEMB

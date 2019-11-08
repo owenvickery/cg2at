@@ -14,6 +14,6 @@ ATOM     13 H15C DPPC    1      -1.070   7.922  64.764  1.00  0.00      MEMB
 ATOM     14  C12 DPPC    1      -0.252   7.332  61.992  1.00  0.00      MEMB
 ATOM     15 H12A DPPC    1       0.005   8.394  61.993  1.00  0.00      MEMB
 ATOM     16 H12B DPPC    1      -1.292   7.224  61.727  1.00  0.00      MEMB
-ATOM     17  C11 DPPC    1       0.576   6.922  60.774  1.00  1.00      MEMB
-ATOM     18 H11A DPPC    1       0.154   7.444  59.876  1.00  0.00      MEMB
-ATOM     19 H11B DPPC    1       0.531   5.823  60.577  1.00  0.00      MEMB
+ATOM     17  C11 DPPC    1       0.576   6.922  60.774  20.0  1.00      MEMB
+ATOM     18 H11A DPPC    1       0.154   7.444  59.876  20.0  0.00      MEMB
+ATOM     19 H11B DPPC    1       0.531   5.823  60.577  20.0  0.00      MEMB

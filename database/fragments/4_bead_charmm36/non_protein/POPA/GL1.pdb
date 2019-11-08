@@ -1,11 +1,11 @@
-ATOM      7  C1  POPA    1      11.260  12.126  60.316  1.00  1.00      MEMB
-ATOM      8  HA  POPA    1      10.592  12.632  59.577  1.00  0.00      MEMB
-ATOM      9  HB  POPA    1      10.792  11.136  60.529  1.00  0.00      MEMB
+ATOM      7  C1  POPA    1      11.260  12.126  60.316  16.0  1.00      MEMB
+ATOM      8  HA  POPA    1      10.592  12.632  59.577  16.0  0.00      MEMB
+ATOM      9  HB  POPA    1      10.792  11.136  60.529  16.0  0.00      MEMB
 ATOM     10  C2  POPA    1      12.652  11.941  59.664  1.00  6.00      MEMB
 ATOM     11  HS  POPA    1      13.174  11.174  60.292  1.00  0.00      MEMB
 ATOM     12  O21 POPA    1      13.352  13.211  59.569  1.00  0.00      MEMB
 ATOM     13  C21 POPA    1      14.676  13.097  59.724  1.00  0.00      MEMB
 ATOM     14  O22 POPA    1      15.188  12.139  60.241  1.00  0.00      MEMB
-ATOM     15  C22 POPA    1      15.443  14.253  59.057  1.00  2.00      MEMB
-ATOM     16  H2R POPA    1      15.952  14.813  59.844  1.00  0.00      MEMB
-ATOM     17  H2S POPA    1      14.789  14.956  58.594  1.00  0.00      MEMB
+ATOM     15  C22 POPA    1      15.443  14.253  59.057  17.0  2.00      MEMB
+ATOM     16  H2R POPA    1      15.952  14.813  59.844  17.0  0.00      MEMB
+ATOM     17  H2S POPA    1      14.789  14.956  58.594  17.0  0.00      MEMB

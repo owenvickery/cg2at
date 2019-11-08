@@ -1,11 +1,11 @@
-ATOM     25  C1  DGPC    1       9.034   5.679  61.902  1.00  2.00      MEMB
-ATOM     26  HA  DGPC    1       8.965   5.076  62.840  1.00  0.00      MEMB
-ATOM     27  HB  DGPC    1       9.342   6.728  62.110  1.00  0.00      MEMB
+ATOM     25  C1  DGPC    1       9.034   5.679  61.902  18.0  2.00      MEMB
+ATOM     26  HA  DGPC    1       8.965   5.076  62.840  18.0  0.00      MEMB
+ATOM     27  HB  DGPC    1       9.342   6.728  62.110  18.0  0.00      MEMB
 ATOM     28  C2  DGPC    1      10.175   5.009  61.064  1.00  4.00      MEMB
 ATOM     29  HS  DGPC    1      11.130   5.149  61.616  1.00  0.00      MEMB
 ATOM     30  O21 DGPC    1      10.316   5.564  59.766  1.00  0.00      MEMB
 ATOM     31  C21 DGPC    1      10.748   6.794  59.620  1.00  0.00      MEMB
 ATOM     32  O22 DGPC    1      11.242   7.519  60.463  1.00  0.00      MEMB
-ATOM     33  C22 DGPC    1      10.462   7.158  58.175  1.00  3.00      MEMB
-ATOM     34  H2R DGPC    1      11.026   6.468  57.519  1.00  0.00      MEMB
-ATOM     35  H2S DGPC    1      10.796   8.202  58.009  1.00  0.00      MEMB
+ATOM     33  C22 DGPC    1      10.462   7.158  58.175  19.0  3.00      MEMB
+ATOM     34  H2R DGPC    1      11.026   6.468  57.519  19.0  0.00      MEMB
+ATOM     35  H2S DGPC    1      10.796   8.202  58.009  19.0  0.00      MEMB

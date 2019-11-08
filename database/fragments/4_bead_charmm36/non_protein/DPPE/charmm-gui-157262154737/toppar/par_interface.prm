@@ -1,0 +1,1008 @@
+* INTERFACE FF 
+* topology and parameter for caly minerals, cement minerals 
+*
+
+!CLAY MINERA 
+ATOMS
+MASS -1 AY1   26.981539  ! Al  6 coordinate ; Aluminum atom(+1.45) or magnesium defect(+1.1) in octahedral aluminate sheet 
+MASS -1 AY2   26.981539  ! Al  6 coordinate ; Aluminum atom +1.45) or magnesium defect(+1.1) in octahedral aluminate sheet
+MASS -1 HOK    1.008000  ! H   1 coordinate ; Hydrogen atom in AlOH surface group in kaolinite
+MASS -1 HOY    1.008000  ! H   1 coordinate ; Hydrogen atom in (Al,Mg,Si)OH and OH- group in clay, silica
+MASS -1 OY1   15.999400  ! O   2 coordinate ; Oxygen atom in silicate sheet, surface (-0.55, -0.783 if next to Al defect) 
+MASS -1 OY2   15.999400  ! O   2 coordinate ; Oxygen atom in silicate sheet, surface (-0.55, -0.783 if next to Al defect)  
+MASS -1 OY3   15.999400  ! O   2 coordinate ; Oxygen atom in silicate sheet, surface (-0.55, -0.783 if next to Al defect) 
+MASS -1 OY4   15.999400  ! O   3 coordinate ; Oxygen atom in octahedral aluminate sheet (-0.758, -0.867 if next to Mg defect) 
+MASS -1 OY5   15.999400  ! O   3 coordinate ; Oxygen atom in octahedral aluminate sheet (-0.758, -0.867 if next to Mg defect)  
+MASS -1 OY6   15.999400  ! O   3 coordinate ; Oxygen atom in octahedral aluminate sheet (-0.683, -0.792 if next to Mg defect)   
+MASS -1 OY7   15.999400  ! O   3 coordinate ; Oxygen atom in octahedral aluminate sheet (-0.758, -0.867 if next to Mg defect)  
+MASS -1 OY8   15.999400  ! O   3 coordinate ; Oxygen atom in octahedral aluminate sheet (-0.758, -0.867 if next to Mg defect)  
+MASS -1 OY9   15.999400  ! O   3 coordinate ; Oxygen atom in octahedral aluminate sheet (-0.683, -0.792 if next to Mg defect)  
+MASS -1 SY1   28.086000  ! Si  4 coordinate ; Silicon atom in tetrahedral silicate sheet (+1.1) 
+MASS -1 SY2   28.086000  ! Si  4 coordinate ; Silicon atom in tetrahedral silicate sheet (+1.1) 
+MASS -1 AYT1  26.981539  ! Al               ; Aluminum defect of SY1 (+0.8)
+MASS -1 AYT2  26.981539  ! Al               ; Aluminum defect of SY2 (+0.8)
+MASS -1 K_CM  39.102000  ! K+               ; Potassium ion in mica, montmorillonite, and other clays (+1.0)         
+!MASS -1 NA+   22.989770 ! Na+              ; Sodium ion in silica, clay, and organic salts (+1.0)
+!MASS -1 HT5   1.007970  ! H   1 coordinate ; Hydrogen atom in TIP5P water model
+!MASS -1 OT5  14.999400  ! O   2 coordinate ; Oxygen atom in TIP5P water model
+!MASS -1 ET5   0.500000  ! Lp  1 coordinate ; Electron pair in TIP5P water/ether model (shown as He)
+!CEMENT MINERAL & SILICA & CA_SULFATE
+MASS -1 AC1   26.981530  ! Al  4 coordinate ; Aluminum atom in aluminate ring in Ca3Al2O6 (+1.2; note: eps 0.04 better)
+MASS -1 AC2   26.981530  ! Al  4 coordinate ; Aluminum atom in ettringite, octahedrally coordinated(+1.6)
+MASS -1 SC1   28.086000  ! Si  4 coordinate ; Silicon atom in silicate ion in Ca3SiO5 (+1.0)
+MASS -1 SC2   28.086000  ! Si  4 coordinate ; Silicon atom in tobermolite ring (+1.0)
+MASS -1 SC3   28.086000  ! Si  4 coordinate ; Silicon atom in tobermolite ring junction (+1.0)
+MASS -1 SC4   28.086000  ! Si  4 coordinate ; Silicon atom in silica (+1.1 in bulk SiO2 or SiOH, +0.725 in SiO-)
+MASS -1 CA_S  40.080000  ! Ca  0 coordinate ; Calcium ion in Ca3SiO5 (+1.5) and organic salts. replace CA++ with CA_S in C3S.
+MASS -1 CA_A  40.080000  ! Ca  0 coordinate ; Calcium ion in Ca3Al2O6 (+1.5). replace CA+A with CA_A in C3A.
+MASS -1 CA_G  40.080000  ! Ca  0 coordinate ; Calcium ion in gypsum, hemihydrate, and anhydrite(+1.5). replace CA+G with CA_G.
+MASS -1 CA_H  40.080000  ! Ca  0 coordinate ; Calcium ion in hydroxyapatite (+1.5). replace CA+H with CA_H.
+MASS -1 CA_E  40.080000  ! CA  0 coordinate ; Calcium ion in ettringite(+1.6). replace CA+E with CA_E.
+MASS -1 CA_T  40.080000  ! Ca  0 coordinate ; Calcium ion in tobermolite (+1.5). replace CA+T with CA_T.
+MASS -1 OC1   15.999400  ! O   1 coordinate ; Oxygen atom silicate ion in Ca3SiO5 (-1.0)
+MASS -1 OC2   15.999400  ! O   0 coordinate ; Oxide ion in Ca3SiO5 (-1.5)
+MASS -1 OC3   15.999400  ! O   2 coordinate ; Oxygen atom in aluminate ring in Ca3Al2O6 (-0.75)
+MASS -1 OC4   15.999400  ! O   1 coordinate ; Oxygen atom in apical position in Ca3Al2O6 (-1.35)
+MASS -1 OC5   15.999400  ! O   2 coordinate ; Oxygen atom in ettringite, Al(OH)6 unit (-0.9) and in superficial hydroxide ions (-1.05)
+MASS -1 OC6   15.999400  ! O   2 coordinate ; Oxygen atom in ettringite, Al(OH)6 unit (-0.9)
+MASS -1 OC7   15.999400  ! O   2 coordinate ; Oxygen atom in ettringite, Al(OH)6 unit (-0.9)
+MASS -1 OC8   15.999400  ! O   2 coordinate ; Oxygen atom in ettringite, Al(OH)6 unit (-0.9)
+MASS -1 OC9   15.999400  ! O   2 coordinate ; Oxygen atom in ettringite, Al(OH)6 unit (-0.9)
+MASS -1 OC10  15.999400  ! O   2 coordinate ; Oxygen atom in ettringite, Al(OH)6 unit (-0.9)
+MASS -1 OC11  15.999400  ! O   2 coordinate ; Oxygen atom in ettringite, Al(OH)6 unit (-0.9)
+MASS -1 OC12  15.999400  ! O   2 coordinate ; Oxygen atom in tobermolite (-0.6 and -0.5)
+MASS -1 OC13  15.999400  ! O   2 coordinate ; Oxygen atom in tobermolite in apical position (-0.925 in tob 11A, -1.0 tob 14A)
+MASS -1 OC14  15.999400  ! O   2 coordinate ; Oxygen atom in tobermolite in SiOH unit (-0.66)
+MASS -1 S_AN  32.080000  ! S   1 coordinate ; S in thioketone group. replace S' with S_AN.
+MASS -1 O_SC  15.999400  ! O   2 coordinate ; oxygen in water(-0.82 in this model).replace O_SC with O* 
+MASS -1 O2_SC 15.999400  ! O   2 coordinate ; oxygen in water(-0.82, compass). replace O2_SC with O2*
+MASS -1 H_SC   1.007970  ! H   1 coordinate ; hydrogen bonded to nitrogen, Oxygen. replace H_SC with H*
+MASS -1 HOC    1.007970  ! H   1 coordinate ; Hydrogen atom in OH group of ettringite (+0.35) and in superficial hydroxide ions (+0.3)
+MASS -1 H1O    1.007970  ! H   1 coordinate ; Hydrogen atom bonded to oxygen, nitrogen(compass)
+MASS -1 OC23  15.999400  ! O   2 coordinate ; Oxygen atom in bulk silica (-0.55)
+MASS -1 OC24  15.999400  ! O   2 coordinate ; Oxygen atom on silica surface and clay edges (-0.675 in Si-OH, -0.9 in SiO-)
+MASS -1 PAP  30.973800   ! P   4 coordinate ; Phosphorus atom in (hydrogen)phosphate ion in hydroxyapatite (+1.0)
+MASS -1 OAP1 15.999400   ! O   1 coordinate ; Oxygen atom in (hydrogen)phosphate ion in hydroxyapatite (-0.8 to -0.6)
+MASS -1 OAP2 15.999400   ! O   1 coordinate ; Oxygen atom in hydroxide ion in hydroxyapatite (-1.1)
+MASS -1 HOP   1.008000   ! H   1 coordinate ; Hydrogen atom in hydrogenphosphate and in hydroxide ion in apatite (+0.4 and +0.2)
+!MASS -1 HA1   1.007970  ! H   1 coordinate ; Hydrogen atom in terminal OH group in PEO (+0.4)
+!MASS -1 OA1  15.999400  ! O   2 coordinate ; Oxygen atom in terminal OH group in PEO (-0.6)
+MASS -1 CPEO  12.011150  ! C   4 coordinate ; Carbon atom in backbone or terminal group in PEO. Because of duplicate, CE1 convert to CPEO
+MASS -1 HPEO   1.007970  ! H   1 coordinate ; Hydrogen atom in backbone or terminal group in PEO. Because of duplicate, HE1 convert to HPEO
+MASS -1 OPEO  15.999400  ! O   2 coordinate ; Oxygen atom in PEO backbone. Because of duplicate, OE1 convert to OPEO
+!MASS -1 OET5 14.999400  ! O   2 coordinate ; Oxygen atom in PEO backbone with lone pairs ET5 attached (et5=-0.12)
+!MASS -1 OAT5 14.999400  ! O   2 coordinate ; Oxygen atom in terminal OH group in PEO with lone pairs et5 attached (et5=-0.18)
+!METAL
+MASS  -1 AG  107.868200  ! AG  0 coordinate ; Silver metal (HH et al. 2008)
+MASS  -1 AL   26.981539  ! AL  0 coordinate ; Aluminium metal (HH et al. 2008)
+MASS  -1 AU  196.966500  ! AU  0 coordinate ; Gold metal (HH et al. 2008)
+MASS  -1 CU   63.546000  ! CU  0 coordinate ; Copper metal (HH et al. 2008)
+MASS  -1 NI   58.693400  ! NI  0 coordinate ; Nickel metal (HH et al. 2008)
+MASS  -1 PB  207.200000  ! PB  0 coordinate ; Lead metal (HH et al. 2008)
+MASS  -1 PD  106.420000  ! PD  0 coordinate ; Palladium metal (HH et al. 2008)
+MASS  -1 PT  195.084000  ! PT  0 coordinate ; Platinum metal (HH et al. 2008)
+
+BONDS 
+! V (bond) = Kb(b-b0)**2 
+! Kb: kcal/mole/A**2 
+! b0: A 
+! atom type  Kb        b0   
+!
+!CLAY MINERALS
+!
+AY1  OY4     430.0000  2.0412  
+AY1  OY5     430.0000  2.0234  
+AY1  OY6     430.0000  2.0170  
+AY1  OY7     430.0000  2.0212    
+AY1  OY8     430.0000  2.0433
+AY1  OY9     430.0000  2.0128    
+AYT1 OY1     430.0000  1.7262
+AYT1 OY2     430.0000  1.7167
+AYT1 OY3     430.0000  1.7430
+AYT1 OY4     430.0000  1.7315
+AYT1 OY7     430.0000  1.7315
+AYT1 OC24    285.0000  1.6800
+AY2  OY4     430.0000  2.0212     
+AY2  OY5     430.0000  2.0433    
+AY2  OY6     430.0000  2.0128    
+AY2  OY7     430.0000  2.0412    
+AY2  OY8     430.0000  2.0234    
+AY2  OY9     430.0000  2.0170    
+AYT2 OY1     430.0000  1.7283
+AYT2 OY2     430.0000  1.7230
+AYT2 OY3     430.0000  1.7230
+AYT2 OY5     430.0000  1.7304
+AYT2 OY8     430.0000  1.7304
+AYT2 OC24    285.0000  1.6800
+SY1  OY1     430.0000  1.7262
+SY1  OY2     430.0000  1.7167    
+SY1  OY3     430.0000  1.7430   
+SY1  OY4     430.0000  1.7315
+SY1  OY7     430.0000  1.7315     
+SY1  OC24    285.0000  1.6800
+SY2  OY1     430.0000  1.7283     
+SY2  OY2     430.0000  1.7230     
+SY2  OY3     430.0000  1.7230     
+SY2  OY5     430.0000  1.7304
+SY2  OY8     430.0000  1.7304   
+SY2  OC24    285.0000  1.6800  
+OY1  HOK     495.0000  0.9290 
+OY4  HOK     495.0000  0.9290     
+OY5  HOK     495.0000  0.9290    
+OY6  HOK     495.0000  0.9290     
+OY6  HOY     495.0000  0.9290     
+OY9  HOY     495.0000  0.9290     
+!
+!caly_mineral_tpatch_bond 
+!
+!OY1 HOY     495.0000  1.6100  !  pres PYOHY1 in pyrophyllite  
+OY2  HOK     495.0000  1.0600  !  pres KAOHX2 in kaolinite    
+OY3  HOK     495.0000  1.0600  !  pres KAOHX1 in kaolinite    
+!OY2 HOY     495.0000  0.9290  !  pres PYROH1 in pyrophyllite 
+!OY3 HOY     495.0000  0.9290  !  pres PYROH3 in pyrophyllite
+OY1  HOY     430.0000  0.9300  ! PYOHY1_tpatch
+OY2  HOY     430.0000  0.9300  ! PYROX1_tpatch
+OY3  HOY     430.0000  0.9300  ! PYROX2_tpatch
+!
+!CEMENT MINERALS & silica & ca_sulfate
+SC1  OC1     250.0000  1.6800
+SC2  OC12    430.0000  1.6900
+SC2  OC13    430.0000  1.6200
+SC2  OC14    430.0000  1.6880
+!SC2  OC22   430.0000  1.6300
+SC3  OC12    430.0000  1.6900  !  come from SC2 OC12 and has to be changed 
+SC3  OC13    430.0000  1.6200  !  come from SC2 OC13 and has to be changed 
+SC3  OC14    430.0000  1.6880  !  come from SC2 OC14 and has to be changed 
+SC4  OC23    285.0000  1.6800  !  quartz 
+S_AN OC11    550.0000  1.5000  !  ettringite & anhydrite
+AC1  OC3     180.0000  1.9800  
+AC1  OC4     180.0000  1.8100  
+AC2  OC5     350.0000  2.0200  !  ettringite
+AC2  OC6     350.0000  2.0200  !  ettringite, replace with AC2 CO5.
+AC2  OC7     350.0000  2.0200  !  ettringite, replace with AC2 CO5.
+AC2  OC8     350.0000  2.0200  !  ettringite, replace with AC2 CO5.
+AC2  OC9     350.0000  2.0200  !  ettringite, replace with AC2 CO5.
+AC2  OC10    350.0000  2.0200  !  ettringite, replace with AC2 CO5.
+OC4  HOC     495.0000  0.9290  
+OC5  HOC     495.0000  0.9290  !  ettringite
+OC6  HOC     495.0000  0.9290  !  ettringite, replace with OC5-HOC.
+OC7  HOC     495.0000  0.9290  !  ettringite, replace with OC5-HOC.
+OC8  HOC     495.0000  0.9290  !  ettringite, replace with OC5-HOC.
+OC9  HOC     495.0000  0.9290  !  ettringite, replace with OC5-HOC.
+OC10 HOC     495.0000  0.9290  !  ettringite, replace with OC5-HOC.
+OC14 HOY     495.0000  0.9450  
+OC23 HOY     495.0000  0.9450
+PAP  OAP1    430.0000  1.5700
+OAP1 HOP     500.0000  0.9400
+OAP2 HOP     500.0000  0.9400
+!OT5  HT5    540.6336  0.9570
+!OT5  ET5    300.0000  0.6800
+!OA1  HA1    540.6336  0.9600
+!CPEO OA1    384.0000  1.4000
+CPEO OPEO    273.2000  1.4000
+CPEO CPEO    322.7158  1.5260
+CPEO HPEO    340.6175  1.0900
+!OA1  HT5    540.6336  0.9570 
+!OA1  ET5    300.0000  0.7000 
+!OA1  ET5    300.0000  0.7000 
+O_SC  H_SC   540.6336  0.9600  !  flexible SPC water(from CVFF)
+O2_SC H1O    552.0000  0.9572  !  hemihydrate in the water(from PCFF)
+!
+!cement_mineral_tpach_bond
+!
+OC12 HOY     495.0000  0.9290  !  tombermolite, TMOHY1 for tpatch.
+
+ANGLES
+!quadratic_angle   Theta0         K2  
+! V(angle) = Ktheta(Theta - Theta0)**2 
+! V(Urey-Bradley) = Kub(S-S0)**2 
+! Ketheta: kcal/mole/rad**2
+! Theta0: degrees
+! Kub: kcal/mole/A**2 (Urey-Bradley)
+! S0: A
+! atom type       Ktheta   Theta0    Kub    S0
+! atom type          K2          Theta     
+!  
+!CLAY MIMERALS
+!
+SY1   OY4   AY1    170.0000    127.5000
+SY1   OY4   AY2    170.0000    123.7000
+SY1   OY7   AY1    170.0000    123.7000
+SY1   OY7   AY2    170.0000    127.5000
+AYT1  OY4   AY1    170.0000    127.5000
+AYT1  OY4   AY2    170.0000    123.7000
+AYT1  OY7   AY1    170.0000    123.7000
+AYT1  OY7   AY2    170.0000    127.5000
+SY2   OY5   AY1    170.0000    123.8000
+SY2   OY5   AY2    170.0000    127.2000
+SY2   OY8   AY1    170.0000    127.2000
+SY2   OY8   AY2    170.0000    123.8000
+AYT2  OY5   AY1    170.0000    123.8000
+AYT2  OY5   AY2    170.0000    127.2000
+AYT2  OY8   AY1    170.0000    127.2000
+AYT2  OY8   AY2    170.0000    123.8000
+AY1   OY4   AY2    170.0000    101.6000
+AY1   OY5   AY2    170.0000    101.6000
+AY1   OY6   AY2    170.0000    103.0000
+AY1   OY7   AY2    170.0000    101.6000
+AY1   OY8   AY2    170.0000    101.6000
+AY1   OY9   AY2    170.0000    103.0000
+SY1   OY1   SY2    170.0000    128.8000
+SY1   OY2   SY2    170.0000    139.9000    
+SY1   OY3   SY2    170.0000    128.2000    
+AYT1  OY1   SY2    170.0000    128.8000
+AYT1  OY2   SY2    170.0000    139.9000
+AYT1  OY3   SY2    170.0000    128.2000
+AYT2  OY1   SY1    170.0000    128.8000
+AYT2  OY2   SY1    170.0000    139.9000
+AYT2  OY3   SY1    170.0000    128.2000
+OY1   SY1   OY2    170.0000    110.0000
+OY2   SY1   OY3    170.0000    106.7000
+OY3   SY1   OY1    170.0000    107.0000
+OY1   SY1   OY4    170.0000    110.0000
+OY2   SY1   OY4    170.0000    112.5000
+OY3   SY1   OY4    170.0000    110.3000
+OY1   SY1   OY7    170.0000    110.0000
+OY2   SY1   OY7    170.0000    112.5000
+OY3   SY1   OY7    170.0000    110.3000
+OY1   AYT1  OY2    170.0000    110.0000
+OY2   AYT1  OY3    170.0000    106.7000
+OY3   AYT1  OY1    170.0000    107.0000
+OY1   AYT1  OY4    170.0000    110.0000
+OY2   AYT1  OY4    170.0000    112.5000
+OY3   AYT1  OY4    170.0000    110.3000
+OY1   AYT1  OY7    170.0000    110.0000
+OY2   AYT1  OY7    170.0000    112.5000
+OY3   AYT1  OY7    170.0000    110.3000
+OY1   SY2   OY2    170.0000    107.0000
+OY2   SY2   OY3    170.0000    109.6000
+OY3   SY2   OY1    170.0000    107.3000
+OY1   SY2   OY5    170.0000    110.2000
+OY2   SY2   OY5    170.0000    112.2000
+OY3   SY2   OY5    170.0000    110.4000
+OY1   SY2   OY8    170.0000    110.2000
+OY2   SY2   OY8    170.0000    112.2000
+OY3   SY2   OY8    170.0000    110.4000
+OY1   AYT2  OY2    170.0000    107.0000
+OY2   AYT2  OY3    170.0000    109.6000
+OY3   AYT2  OY1    170.0000    107.3000
+OY1   AYT2  OY5    170.0000    110.2000
+OY2   AYT2  OY5    170.0000    112.2000
+OY3   AYT2  OY5    170.0000    110.4000
+OY1   AYT2  OY8    170.0000    110.2000
+OY2   AYT2  OY8    170.0000    112.2000
+OY3   AYT2  OY8    170.0000    110.4000
+OY4   AY1   OY5    170.0000     92.8000
+OY4   AY1   OY6    170.0000     92.7000
+OY4   AY1   OY7    170.0000     78.4000
+OY4   AY1   OY8    170.0000     98.2000
+OY4   AY1   OY9    170.0000    167.1000
+OY5   AY1   OY6    170.0000     94.8000
+OY5   AY1   OY7    170.0000    166.7000
+OY5   AY1   OY8    170.0000     78.4000
+OY5   AY1   OY9    170.0000     95.8000
+OY6   AY1   OY7    170.0000     95.6000
+OY6   AY1   OY8    170.0000    167.3000
+OY6   AY1   OY9    170.0000     77.0000
+OY7   AY1   OY8    170.0000     92.9000
+OY7   AY1   OY9    170.0000     94.7000
+OY8   AY1   OY9    170.0000     92.9000
+OY4   AY2   OY5    170.0000     92.9000
+OY4   AY2   OY6    170.0000     94.7000
+OY4   AY2   OY7    170.0000     78.4000
+OY4   AY2   OY8    170.0000    166.7000
+OY4   AY2   OY9    170.0000     95.6000
+OY5   AY2   OY6    170.0000     92.9000
+OY5   AY2   OY7    170.0000     98.2000
+OY5   AY2   OY8    170.0000     78.4000
+OY5   AY2   OY9    170.0000    167.3000
+OY6   AY2   OY7    170.0000    167.1000
+OY6   AY2   OY8    170.0000     95.8000
+OY6   AY2   OY9    170.0000     77.0000
+OY7   AY2   OY8    170.0000     92.8000
+OY7   AY2   OY9    170.0000     92.7000
+OY8   AY2   OY9    170.0000     94.8000
+HOY   OY6   AY1     45.0000    126.0000
+HOY   OY6   AY2     45.0000    126.0000
+HOY   OY9   AY1     45.0000    126.0000
+HOY   OY9   AY2     45.0000    126.0000
+HOK   OY4   AY1     45.0000    126.0000
+HOK   OY4   AY2     45.0000    126.0000
+HOK   OY5   AY1     45.0000    126.0000
+HOK   OY5   AY2     45.0000    126.0000
+HOK   OY6   AY1     45.0000    126.0000
+HOK   OY6   AY2     45.0000    126.0000
+HOY   OC24  SY1     50.0000    115.0000
+HOY   OC24  SY2     50.0000    115.0000
+HOY   OC24  AYT1    50.0000    115.0000
+HOY   OC24  AYT2    50.0000    115.0000
+OC24  SY1   OY1    100.0000    109.5000
+OC24  SY1   OY2    100.0000    109.5000
+OC24  SY1   OY3    100.0000    109.5000
+OC24  SY1   OY4    100.0000    109.5000
+OC24  SY1   OY7    100.0000    109.5000
+OC24  SY2   OY1    100.0000    109.5000
+OC24  SY2   OY2    100.0000    109.5000
+OC24  SY2   OY3    100.0000    109.5000
+OC24  SY2   OY5    100.0000    109.5000
+OC24  SY2   OY8    100.0000    109.5000
+OC24  AYT1  OY1    100.0000    109.5000
+OC24  AYT1  OY2    100.0000    109.5000
+OC24  AYT1  OY3    100.0000    109.5000
+OC24  AYT1  OY4    100.0000    109.5000
+OC24  AYT1  OY7    100.0000    109.5000
+OC24  AYT2  OY1    100.0000    109.5000
+OC24  AYT2  OY2    100.0000    109.5000
+OC24  AYT2  OY3    100.0000    109.5000
+OC24  AYT2  OY5    100.0000    109.5000
+OC24  AYT2  OY8    100.0000    109.5000
+OC24  SY1   OC24   100.0000    109.5000
+OC24  SY2   OC24   100.0000    109.5000
+OC24  AYT1  OC24   100.0000    109.5000
+OC24  AYT2  OC24   100.0000    109.5000
+!
+!clay_mineral_tpatch_angle
+!
+SY1   OY1   HOY    170.0000    131.42    ! PYOHY3_tpatch
+SY1   OY2   HOY    170.0000    144.68    ! PYOHX1_tpatch
+SY1   OY3   HOY    170.0000    131.53    ! PYOHX4_tpatch
+SY2   OY1   HOY    170.0000    131.42    ! PYOHY1_tpatch
+SY2   OY2   HOY    170.0000    144.68    ! PYOHX5_tpatch
+SY2   OY3   HOY    170.0000    131.52    ! PYOHX2_tpatch
+AYT2  OY2   HOY    170.0000    139.8600  ! MIOHX3
+!HOY  OY3   HOY    170.0000    120.0000  ! PYOHY4 error 
+!SY1  OY1   HOY    170.0000    131.4200  ! PYOHY2
+SY1   OY2   HOK    170.0000    151.0100  ! for replacing O9 with O9-H11 in kaolinate terminal
+SY1   OY3   HOK    170.0000    138.8736  ! for replacing SI1 with SI1-O19-H12 in kaolinate terminal
+!SY1  OY3   HOY    170.0000    131.5235  ! PYOHX4 for replaceing SI4 with SI4-O28-H10 in pyrophyllite terminal
+!AYT2 OY2   HOY    170.0000    139.8600  ! MIOHX3                                                            
+SY2   OY1   HOK    170.0000    120.0000  ! for replacing O8 with O8-H9 in kaolinate terminal                 
+!SY2  OY1   HOY    170.0000    131.4200  ! PYOHY1 for replacing SI1 with SI1-O25-H5 in pyrophyllite terminal 
+SY2   OY3   HOK    170.0000    120.0000  ! for replacing O10 with O10-H10 in kaolinate terminal             
+SY2   OY2   HOK    170.0000    151.0060  ! for SI2 with SI2-O20-H13 in kaolinate terminal                    
+!SY2  OY2   HOY    170.0000    144.6800  ! for SI1 with SI1-O26-H6 in pyrophyllite terminal                  
+SY1   OY1   HOK    170.0000    129.8500  ! for replacing SI3 with SI3-O21-H14 in kaolinite terminal 
+!SY1  OY2   HOY    170.0000    144.6800  ! for replacing O2 with SI2-O2-H7 in pyrophyllite terinal
+!SY2  OY3   HOY    170.0000    131.5235  ! for repacing O4 with SI3-O4-H8 in pyrophyllite terminal
+
+!CEMENT MINERALS & silica & ca_sulfate
+!
+OC1   SC1   OC1    160.0000    109.5000
+OC3   AC1   OC3    110.0000    111.5000
+AC1   OC3   AC1    110.0000    156.7000
+OC3   AC1   OC4    110.0000    105.0000
+OC4   AC1   OC4    110.0000    121.0000
+OC5   AC2   OC6     80.0000     90.0000  !  ettringite
+OC5   AC2   OC7     80.0000     90.0000  !  ettringite
+OC5   AC2   OC8     80.0000    180.0000  !  ettringite  
+OC5   AC2   OC9     80.0000     90.0000  !  ettringite  
+OC5   AC2   OC10    80.0000     90.0000  !  ettringite 
+OC6   AC2   OC7     80.0000     90.0000  !  ettringite 
+OC6   AC2   OC8     80.0000     90.0000  !  ettringite   
+OC6   AC2   OC9     80.0000    180.0000  !  ettringite 
+OC6   AC2   OC10    80.0000     90.0000  !  ettringite 
+OC7   AC2   OC8     80.0000     90.0000  !  ettringite
+OC7   AC2   OC9     80.0000     90.0000  !  ettringite
+OC7   AC2   OC10    80.0000    180.0000  !  ettringite
+OC8   AC2   OC9     80.0000     90.0000  !  ettringite
+OC8   AC2   OC10    80.0000     90.0000  !  ettringite
+OC9   AC2   OC10    80.0000     90.0000  !  ettringite 
+AC2   OC5   HOC     40.0000    115.0000  !  ettringite
+AC2   OC6   HOC     40.0000    115.0000  !  ettringite
+AC2   OC7   HOC     40.0000    115.0000  !  ettringite
+AC2   OC8   HOC     40.0000    115.0000  !  ettringite
+AC2   OC9   HOC     40.0000    115.0000  !  ettringite
+AC2   OC10  HOC     40.0000    115.0000  !  ettringite 
+!OC11 S_AN  OC11   135.0000    109.5000  !  ettringite & anhydrite 
+OC11  S_AN  OC11   130.0000    109.5000  ! test for error ettringite & anhydrite & gyps & hemi
+HOC   OC4   AC1     40.0000    115.0000 
+OC23  SC4   OC23   100.0000    109.5000  !  quartz
+SC2   OC12  SC2    170.0000    144.0000  
+SC2   OC12  SC3    170.0000    139.0000 
+SC3   OC12  SC3    170.0000    174.5000 
+SC3   OC14  HOY     50.0000    125.0000
+OC12  SC2   OC12   170.0000    100.2000
+OC12  SC2   OC13   170.0000    111.5000
+OC12  SC3   OC12   170.0000    107.0000
+OC12  SC3   OC14   170.0000    111.0000
+OC13  SC2   OC13   170.0000    112.5000
+SC4   OC23  SC4    100.0000    149.0000  !  quartz
+SC4   OC23  HOY     50.0000    115.0000  !   
+OAP1  PAP   OAP1   125.0000    109.4700  !  
+HOP   OAP1  PAP     50.0000    115.0000
+!HT5   OT5   HT5    50.0000    104.5200
+!ET5   OT5   ET5    80.0000    109.4700
+!ET5   OT5   HT5    80.0000    110.6800
+!HA1   OA1   CPEO   58.5000    106.0000
+!OA1   CPEO  CPEO   70.0000    109.5000
+OPEO  CPEO  CPEO    70.0000    109.5000
+!OA1   CPEO  HPEO   57.0000    109.5000
+OPEO  CPEO  HPEO    57.0000    109.5000
+HPEO  CPEO  HPEO    39.5000    106.4000
+CPEO  CPEO  HPEO    44.4000    110.0000
+CPEO  OPEO  CPEO    60.0000    107.0000
+!HT5   OA1   CPEO   58.5000    106.0000
+!ET5   OPEO  *      80.0000    110.0000
+!ET5   OA1   *      80.0000    110.0000
+H_SC  O_SC  H_SC    50.0000    104.5000
+H1O   O2_SC H1O     46.6500    104.5200
+!
+!cement_mineral_tpatch_angle
+!
+OC13  SC2   OC14   170.0000    111.7400  ! TBOHY2 
+OC12  SC2   OC14   170.0000    101.0200  ! TBOHY2 
+SC2   OC14  HOY     50.0000    136.1500  ! TBOHY2 
+OC14  SC3   OC14   170.0000    110.9800  ! TBOHY5
+SC2   OC12  HOY    170.0000    140.1041  !  TOBM in TMOHY1 for tpatch
+SC3   OC12  HOY    170.0000    135.3300  !  TOBM in TMOHY5 for tpatch
+
+DIHEDRALS  
+! V(dihedral) = Kchi(1 + cos(n(chi) - delta) 
+! Kchi: kcal/mole 
+! n: multiplicity 
+! delta: degrees 
+! atom types                 Kchi   n      delta   
+!
+!CLAY MINERALS
+!
+!X     SY1   OY1   X        0.00   3      0.00  !  in charmm27_interface_v1_5.prm 
+!X     SY1   OY2   x        0.00   3      0.00  !  in charmm27_interface_v1_5.prm
+!X     SY1   OY3   X        0.00   3      0.00  !  in charmm27_interface_v1_5.prm
+!X     SY1   OY4   X        0.00   3      0.00  !  in charmm27_interface_v1_5.prm
+!X     SY1   OY7   X        0.00   3      0.00  !  in charmm27_interface_v1_5.prm
+!X     SY2   OY1   X        0.00   3      0.00  !  in charmm27_interface_v1_5.prm
+!X     SY2   OY2   X        0.00   3      0.00  !  in charmm27_interface_v1_5.prm
+!X     SY2   OY3   X        0.00   3      0.00  !  in charmm27_interface_v1_5.prm
+!X     SY2   OY5   X        0.00   3      0.00  !  in charmm27_interface_v1_5.prm
+!X     SY2   OY8   X        0.00   3      0.00  !  in charmm27_interface_v1_5.prm
+!X     AY1   OY4   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AY1   OY5   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AY1   OY6   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm  
+!X     AY1   OY7   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AY1   OY8   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AY1   OY9   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AY2   OY4   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AY2   OY5   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AY2   OY6   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm 
+!X     AY2   OY7   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AY2   OY8   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AY2   OY9   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AYT1  OY2   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm 
+!X     AYT1  OY3   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AYT1  OY4   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AYT1  OY7   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AYT2  OY1   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AYT2  OY2   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AYT2  OY3   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AYT2  OY5   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AYT2  OY8   X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     SY1   OC24  X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     SY2   OC24  X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AYT1  OC24  X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+!X     AYT2  OC24  X        0.00   2      0.00  !  in charmm27_interface_v1_5.prm
+AY1   OY4   AY2   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+AY1   OY4   AY2   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+AY1   OY4   AY2   OY6       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+AY1   OY4   AY2   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+AY1   OY4   AY2   OY9       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+AY1   OY5   AY2   OY4       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm
+AY1   OY5   AY2   OY6       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm   
+AY1   OY5   AY2   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm      
+AY1   OY5   AY2   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm       
+AY1   OY5   AY2   OY9       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm
+AY1   OY6   AY2   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+AY1   OY6   AY2   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+AY1   OY6   AY2   OY9       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm   
+AY1   OY7   AY2   OY4       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY7   X    in charmm27_interface_v1_5.prm 
+AY1   OY7   AY2   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY7   X    in charmm27_interface_v1_5.prm
+AY1   OY7   AY2   OY6       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY7   X    in charmm27_interface_v1_5.prm
+AY1   OY7   AY2   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY7   X    in charmm27_interface_v1_5.prm
+AY1   OY7   AY2   OY9       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY7   X    in charmm27_interface_v1_5.prm
+AY1   OY7   SY1   OY1       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY7   X    in charmm27_interface_v1_5.prm   
+AY1   OY7   SY1   OY2       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY7   X    in charmm27_interface_v1_5.prm     
+AY1   OY7   SY1   OY3       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY7   X    in charmm27_interface_v1_5.prm
+AY1   OY8   SY2   OY1       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY8   X    in charmm27_interface_v1_5.prm
+AY1   OY8   SY2   OY3       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY8   X    in charmm27_interface_v1_5.prm
+AY1   OY8   AY2   OY4       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm  
+AY1   OY8   AY2   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm       
+AY1   OY8   AY2   OY6       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm
+AY1   OY8   AY2   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm
+AY1   OY8   AY2   OY9       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm
+AY1   OY9   AY2   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY9   X    in charmm27_interface_v1_5.prm
+AY1   OY9   AY2   OY6       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY9   X    in charmm27_interface_v1_5.prm
+AY1   OY9   AY2   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY9   X    in charmm27_interface_v1_5.prm
+AY2   OY4   AY1   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm
+AY2   OY5   AY1   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm
+AY2   OY6   AY1   OY4       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm  
+AY2   OY6   AY1   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm  
+AY2   OY6   AY1   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm  
+AY2   OY6   AY1   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm   
+AY2   OY6   AY1   OY9       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm    
+AY2   OY7   SY1   OY2       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY7   X    in charmm27_interface_v1_5.prm
+AY2   OY7   SY1   OY3       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY7   X    in charmm27_interface_v1_5.prm  
+AY2   OY7   AY1   OY4       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY7   X    in charmm27_interface_v1_5.prm 
+AY2   OY8   SY2   OY1       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY8   X    in charmm27_interface_v1_5.prm   
+AY2   OY8   SY2   OY2       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY8   X    in charmm27_interface_v1_5.prm   
+AY2   OY8   SY2   OY3       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY8   X    in charmm27_interface_v1_5.prm 
+AY2   OY8   AY1   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm 
+AY2   OY9   AY1   OY4       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY9   X    in charmm27_interface_v1_5.prm
+AY2   OY9   AY1   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY9   X    in charmm27_interface_v1_5.prm
+AY2   OY9   AY1   OY6       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY9   X    in charmm27_interface_v1_5.prm
+AY2   OY9   AY1   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY9   X    in charmm27_interface_v1_5.prm
+AY2   OY9   AY1   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY9   X    in charmm27_interface_v1_5.prm
+SY1   OY1   SY2   OY3       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm
+SY1   OY1   SY2   OY8       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm
+SY1   OY2   SY2   OY1       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY2   X    in charmm27_interface_v1_5.prm
+SY1   OY2   SY2   OY3       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY2   X    in charmm27_interface_v1_5.prm
+SY1   OY2   SY2   OY8       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY2   X    in charmm27_interface_v1_5.prm
+SY1   OY3   SY2   OY1       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm
+SY1   OY3   SY2   OY8       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm
+SY1   OY7   AY1   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY7   X    in charmm27_interface_v1_5.prm 
+SY1   OY7   AY1   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY7   X    in charmm27_interface_v1_5.prm
+SY1   OY7   AY2   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY7   X    in charmm27_interface_v1_5.prm
+SY2   OY2   SY1   OY7       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY2   X    in charmm27_interface_v1_5.prm
+SY2   OY2   SY1   OY1       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY2   X    in charmm27_interface_v1_5.prm
+SY2   OY3   SY1   OY2       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm
+SY2   OY3   SY1   OY7       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm
+SY2   OY8   AY2   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm
+OY2   SY1   OY1   SY2       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm
+OY4   AY1   OY5   AY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm   
+OY4   AY1   OY5   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm     
+OY4   AY1   OY6   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm      
+OY4   AY1   OY7   SY1       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY7   X    in charmm27_interface_v1_5.prm    
+OY4   AY1   OY8   AY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm     
+OY4   AY1   OY8   SY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm    
+OY4   AY1   OY9   HOY       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY9   X    in charmm27_interface_v1_5.prm   
+OY4   AY2   OY5   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm 
+OY4   AY2   OY6   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+OY4   AY2   OY7   SY1       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY7   X    in charmm27_interface_v1_5.prm
+OY4   AY2   OY8   SY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm
+OY4   AY2   OY9   HOY       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY9   X    in charmm27_interface_v1_5.prm
+OY5   AY1   OY8   SY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm
+OY5   AY2   OY4   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+OY5   AY2   OY6   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm      
+OY5   AY2   OY7   SY1       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY7   X    in charmm27_interface_v1_5.prm
+OY5   AY2   OY8   SY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm      
+OY5   AY2   OY9   HOY       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY9   X    in charmm27_interface_v1_5.prm       
+OY6   AY1   OY4   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm 
+OY6   AY1   OY5   AY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm
+OY6   AY1   OY5   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm
+OY6   AY1   OY7   SY1       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY7   X    in charmm27_interface_v1_5.prm 
+OY6   AY1   OY9   HOY       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY9   X    in charmm27_interface_v1_5.prm 
+OY6   AY1   OY8   AY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm 
+OY6   AY1   OY8   SY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm 
+OY6   AY2   OY4   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+OY6   AY2   OY5   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm 
+OY6   AY2   OY7   SY1       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY7   X    in charmm27_interface_v1_5.prm
+OY6   AY2   OY8   SY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm
+OY6   AY2   OY9   HOY       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY9   X    in charmm27_interface_v1_5.prm   
+OY7   AY1   OY5   AY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm
+OY7   AY1   OY5   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm
+OY7   AY1   OY8   AY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm
+OY7   AY1   OY8   SY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm
+OY7   SY1   OY1   SY2       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm
+OY9   AY1   OY4   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm        
+OY9   AY1   OY5   AY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm       
+OY9   AY1   OY5   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm       
+OY9   AY1   OY6   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm   
+OY9   AY1   OY7   SY1       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY7   X    in charmm27_interface_v1_5.prm       
+OY9   AY1   OY8   AY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm     
+OY9   AY1   OY8   SY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm    
+OY9   AY2   OY4   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+OY9   AY2   OY5   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm
+OY9   AY2   OY6   HOK       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+OY9   AY2   OY7   SY1       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY7   X    in charmm27_interface_v1_5.prm
+OY9   AY2   OY8   SY2       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm
+HOK   OY4   AY1   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm
+HOK   OY4   AY1   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm  
+HOK   OY4   AY2   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+HOK   OY4   AY2   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+HOK   OY4   AY1   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm  
+HOK   OY5   AY1   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm
+HOK   OY5   AY2   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm
+HOK   OY5   AY2   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm      
+HOK   OY6   AY1   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm        
+HOK   OY6   AY1   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm     
+HOK   OY6   AY1   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm     
+HOK   OY6   AY2   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+HOK   OY6   AY2   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm  
+HOY   OY9   AY1   OY5       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY9   X    in charmm27_interface_v1_5.prm
+HOY   OY9   AY1   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY9   X    in charmm27_interface_v1_5.prm    
+HOY   OY9   AY1   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY1   OY9   X    in charmm27_interface_v1_5.prm    
+HOY   OY9   AY2   OY7       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY9   X    in charmm27_interface_v1_5.prm 
+HOY   OY9   AY2   OY8       0.00   2      0.00  !  kaolinite,        replace with  X     AY2   OY9   X    in charmm27_interface_v1_5.prm    
+AY1   OY4   SY1   OY1       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY4   X    in charmm27_interface_v1_5.prm 
+AY1   OY4   SY1   OY2       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY4   X    in charmm27_interface_v1_5.prm
+AY1   OY4   SY1   OY3       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY4   X    in charmm27_interface_v1_5.prm
+AY1   OY5   SY2   OY1       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY5   X    in charmm27_interface_v1_5.prm
+AY1   OY5   SY2   OY2       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY5   X    in charmm27_interface_v1_5.prm
+AY1   OY5   SY2   OY3       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY5   X    in charmm27_interface_v1_5.prm
+AY1   OY6   AY2   OY4       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+AY1   OY6   AY2   OY7       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+AY1   OY9   AY2   OY4       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY9   X    in charmm27_interface_v1_5.prm
+AY1   OY9   AY2   OY7       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY9   X    in charmm27_interface_v1_5.prm
+AY2   OY4   AY1   OY5       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm 
+AY2   OY4   AY1   OY6       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm
+AY2   OY4   AY1   OY8       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm
+AY2   OY4   AY1   OY9       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm
+AY2   OY4   SY1   OY1       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY4   X    in charmm27_interface_v1_5.prm
+AY2   OY4   SY1   OY2       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY4   X    in charmm27_interface_v1_5.prm
+AY2   OY4   SY1   OY3       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY4   X    in charmm27_interface_v1_5.prm
+AY2   OY5   SY2   OY1       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY5   X    in charmm27_interface_v1_5.prm
+AY2   OY5   SY2   OY2       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY5   X    in charmm27_interface_v1_5.prm
+AY2   OY5   SY2   OY3       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY5   X    in charmm27_interface_v1_5.prm
+AY2   OY7   AY1   OY5       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY7   X    in charmm27_interface_v1_5.prm  
+AY2   OY7   AY1   OY6       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY7   X    in charmm27_interface_v1_5.prm
+AY2   OY7   AY1   OY8       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY7   X    in charmm27_interface_v1_5.prm   
+AY2   OY7   AY1   OY9       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY7   X    in charmm27_interface_v1_5.prm
+!SY1  OY1   AYT2  OY5       0.00   2      0.00  !  pyrophyllite,     replace with  X     AYT2  OY5   X    in charmm27_interface_v1_5.prm 
+SY1   OY1   SY2   OY2       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm
+SY1   OY3   SY2   OY2       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm
+!SY1  OY3   AYT2  OY5       0.00   2      0.00  !  pyrophyllite,     replace with  X     AYT2  OY3   X    in charmm27_interface_v1_5.prm
+SY2   OY1   SY1   OY3       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm
+SY2   OY3   SY1   OY1       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm
+OY1   SY1   OY7   AY2       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY7   X    in charmm27_interface_v1_5.prm!replacing                            
+!OY2  SY2   OY3   SY1       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm                 
+OY3   SY1   OY2   SY2       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY2   X    in charmm27_interface_v1_5.prm
+OY4   AY1   OY6   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm         
+OY4   AY2   OY5   SY2       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm
+OY4   AY2   OY6   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+OY4   SY1   OY1   SY2       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm  
+OY4   SY1   OY2   SY2       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY2   X    in charmm27_interface_v1_5.prm
+OY5   AY1   OY6   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm
+OY5   AY2   OY4   SY1       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm 
+OY5   AY2   OY6   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+OY5   SY2   OY1   SY1       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm
+OY5   SY2   OY2   SY1       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm
+OY6   AY1   OY4   SY1       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm
+OY6   AY1   OY5   SY2       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm 
+OY6   AY2   OY4   SY1       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+OY6   AY2   OY5   SY2       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm
+OY7   AY1   OY4   SY1       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm
+OY7   AY1   OY6   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm
+OY7   AY2   OY4   SY1       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+OY7   AY2   OY5   SY2       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm
+OY7   AY2   OY6   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+OY8   AY2   OY4   SY1       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+OY8   AY2   OY5   SY2       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm
+OY8   AY2   OY6   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+OY9   AY1   OY4   SY1       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm
+OY9   AY1   OY5   SY2       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm
+OY9   AY1   OY6   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm
+OY9   AY2   OY4   SY1       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY4   X    in charmm27_interface_v1_5.prm
+OY9   AY2   OY5   SY2       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm
+OY9   AY2   OY6   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AY2   OY6   X    in charmm27_interface_v1_5.prm
+AY1   OY5   AYT2  OY1       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY5   X    in charmm27_interface_v1_5.prm
+AY1   OY5   AYT2  OY2       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY5   X    in charmm27_interface_v1_5.prm
+AY1   OY5   AYT2  OY3       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY5   X    in charmm27_interface_v1_5.prm
+AY1   OY8   AYT2  OY1       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY8   X    in charmm27_interface_v1_5.prm
+AY1   OY8   AYT2  OY2       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY8   X    in charmm27_interface_v1_5.prm 
+AY1   OY8   AYT2  OY3       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY8   X    in charmm27_interface_v1_5.prm 
+AY2   OY5   AYT2  OY1       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY5   X    in charmm27_interface_v1_5.prm 
+AY2   OY5   AYT2  OY2       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY5   X    in charmm27_interface_v1_5.prm 
+AY2   OY5   AYT2  OY3       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY5   X    in charmm27_interface_v1_5.prm 
+AY2   OY8   AYT2  OY1       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY8   X    in charmm27_interface_v1_5.prm 
+AY2   OY8   AYT2  OY2       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY8   X    in charmm27_interface_v1_5.prm
+AY2   OY8   AYT2  OY3       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY8   X    in charmm27_interface_v1_5.prm 
+AYT2  OY1   SY1   OY2       0.00   3      0.00  !  mica,             replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm
+AYT2  OY1   SY1   OY3       0.00   3      0.00  !  mica,             replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm  
+AYT2  OY1   SY1   OY4       0.00   3      0.00  !  mica,             replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm 
+AYT2  OY1   SY1   OY7       0.00   3      0.00  !  mica,             replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm
+AYT2  OY2   SY1   OY1       0.00   3      0.00  !  mica,             replace with  X     SY1   OY2   x    in charmm27_interface_v1_5.prm
+AYT2  OY2   SY1   OY3       0.00   3      0.00  !  mica,             replace with  X     SY1   OY2   x    in charmm27_interface_v1_5.prm
+AYT2  OY2   SY1   OY7       0.00   3      0.00  !  mica,             replace with  X     SY1   OY2   x    in charmm27_interface_v1_5.prm 
+AYT2  OY2   SY1   OY4       0.00   3      0.00  !  mica,             replace with  X     SY1   OY2   x    in charmm27_interface_v1_5.prm
+AYT2  OY3   SY1   OY1       0.00   3      0.00  !  mica,             replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm
+AYT2  OY3   SY1   OY2       0.00   3      0.00  !  mica,             replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm
+AYT2  OY3   SY1   OY4       0.00   3      0.00  !  mica,             replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm 
+AYT2  OY3   SY1   OY7       0.00   3      0.00  !  mica,             replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm
+AYT2  OY5   AY1   OY4       0.00   2      0.00  !  mica,             replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm 
+AYT2  OY5   AY1   OY6       0.00   2      0.00  !  mica,             replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm 
+AYT2  OY5   AY1   OY7       0.00   2      0.00  !  mica,             replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm 
+AYT2  OY5   AY1   OY8       0.00   2      0.00  !  mica,             replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm  
+AYT2  OY5   AY1   OY9       0.00   2      0.00  !  mica,             replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm 
+AYT2  OY5   AY2   OY4       0.00   2      0.00  !  mica,             replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm 
+AYT2  OY5   AY2   OY6       0.00   2      0.00  !  mica,             replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm 
+AYT2  OY5   AY2   OY7       0.00   2      0.00  !  mica,             replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm 
+AYT2  OY5   AY2   OY8       0.00   2      0.00  !  mica,             replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm 
+AYT2  OY5   AY2   OY9       0.00   2      0.00  !  mica,             replace with  X     AY2   OY5   X    in charmm27_interface_v1_5.prm
+AYT2  OY8   AY1   OY4       0.00   2      0.00  !  mica,             replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm
+AYT2  OY8   AY1   OY5       0.00   2      0.00  !  mica,             replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm 
+AYT2  OY8   AY1   OY6       0.00   2      0.00  !  mica,             replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm 
+AYT2  OY8   AY1   OY7       0.00   2      0.00  !  mica,             replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm 
+AYT2  OY8   AY1   OY9       0.00   2      0.00  !  mica,             replace with  X     AY1   OY8   X    in charmm27_interface_v1_5.prm 
+AYT2  OY8   AY2   OY5       0.00   2      0.00  !  mica,             replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm   
+AYT2  OY8   AY2   OY7       0.00   2      0.00  !  mica,             replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm 
+AYT2  OY8   AY2   OY6       0.00   2      0.00  !  mica,             replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm
+AYT2  OY8   AY2   OY4       0.00   2      0.00  !  mica,             replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm
+AYT2  OY8   AY2   OY9       0.00   2      0.00  !  mica,             replace with  X     AY2   OY8   X    in charmm27_interface_v1_5.prm 
+SY1   OY1   AYT2  OY2       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY1   X    in charmm27_interface_v1_5.prm
+SY1   OY1   AYT2  OY3       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY1   X    in charmm27_interface_v1_5.prm
+SY1   OY1   AYT2  OY5       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY1   X    in charmm27_interface_v1_5.prm 
+SY1   OY1   AYT2  OY8       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY1   X    in charmm27_interface_v1_5.prm 
+SY1   OY2   AYT2  OY1       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY2   X    in charmm27_interface_v1_5.prm
+SY1   OY2   AYT2  OY3       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY2   X    in charmm27_interface_v1_5.prm
+SY1   OY2   AYT2  OY5       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY2   X    in charmm27_interface_v1_5.prm 
+SY1   OY2   AYT2  OY8       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY2   X    in charmm27_interface_v1_5.prm 
+SY1   OY3   AYT2  OY1       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY3   X    in charmm27_interface_v1_5.prm
+SY1   OY3   AYT2  OY2       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY3   X    in charmm27_interface_v1_5.prm  
+SY1   OY3   AYT2  OY5       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY3   X    in charmm27_interface_v1_5.prm 
+SY1   OY3   AYT2  OY8       0.00   2      0.00  !  mica,             replace with  X     AYT2  OY3   X    in charmm27_interface_v1_5.prm
+OY2   SY2   OY8   AY1       0.00   3      0.00  !  mica,             replace with  X     SY2   OY8   X    in charmm27_interface_v1_5.prm
+OY5   AY1   OY4   SY1       0.00   2      0.00  !  mica,             replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm
+OY7   AY1   OY5   SY2       0.00   2      0.00  !  mica,             replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm
+OY8   AY1   OY4   SY1       0.00   2      0.00  !  mica,             replace with  X     AY1   OY4   X    in charmm27_interface_v1_5.prm
+OY8   AY1   OY5   SY2       0.00   2      0.00  !  mica,             replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm
+OY8   AY1   OY6   HOY       0.00   2      0.00  !  mica,             replace with  X     AY1   OY6   X    in charmm27_interface_v1_5.prm 
+SY1   OY3   SY2   OY5       0.00   3      0.00  !  montmorillonite,  replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm 
+SY2   OY3   SY1   OY4       0.00   3      0.00  !  montmorillonite,  replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm
+SY2   OY5   AY1   OY4       0.00   2      0.00  !  montmorillonite,  replace with  X     AY1   OY5   X    in charmm27_interface_v1_5.prm
+!
+!clay_mineral_impatch_dihedral
+!
+OY3   SY1   OY1   OY2       0.00   3      0.00  ! SIOX1; kaolinate     
+OY3   SY1   OY2   OY1       0.00   3      0.00  ! SIOX1; kaolinate  
+OY2   SY2   OY1   OY3       0.00   3      0.00  ! SIOX2; kaolinate
+OY2   SY2   OY3   OY1       0.00   3      0.00  ! SIOX2; kaolinate 
+!
+!clay_mineral_tpatch_dihedral
+!
+OY1   SY1   OY2   HOY       0.00   3      0.00  !  PYOHX1_tpatch; pyrophyllite       
+OY1   SY2   OY2   HOY       0.00   3      0.00  !  PYOHY2_tpatch; pyrophyllite
+OY1   SY1   OY3   HOY       0.00   3      0.00  !  PYOHX4_tpatch; pyrophyllite
+OY1   SY2   OY3   HOY       0.00   3      0.00  !  PYOHX2_tpatch; pyrophyllite
+OY2   SY1   OY1   HOY       0.00   3      0.00  !  PYOHY3_tpatch; pyrophyllite
+OY2   SY1   OY3   HOY       0.00   3      0.00  !  PYOHX4_tpatch; pyrophyllite
+OY2   SY2   OY3   HOY       0.00   3      0.00  !  PYOHX2_tpatch; pyrophyllite 
+OY3   SY2   OY1   HOY       0.00   3      0.00  !  PYOHY1_tpatch; pyrophyllite
+OY3   SY2   OY2   HOY       0.00   3      0.00  !  PYOHX5_tpatch; pyrophyllite
+OY4   SY1   OY2   HOY       0.00   3      0.00  !  PYOHY4_tpatch; pyrophyllite
+OY4   SY1   OY3   HOY       0.00   3      0.00  !  PYOHX4_tpatch; pyrophyllite 
+OY5   SY2   OY2   HOY       0.00   3      0.00  !  PYOHY2_tpatch; pyrophyllite
+OY5   SY2   OY3   HOY       0.00   3      0.00  !  PYOHX3_tpatch; pyrophyllite
+OY7   SY1   OY1   HOY       0.00   3      0.00  !  PYOHY3_tpatch; pyrophyllite
+OY7   SY1   OY3   HOY       0.00   3      0.00  !  PYOHX6_tpatch; pyrophyllite
+OY8   SY2   OY1   HOY       0.00   3      0.00  !  PYOHY1_tpatch; pyrophyllite
+OY8   SY2   OY3   HOY       0.00   3      0.00  !  PYOHX2_tpatch; pyrophyllite
+OY8   SY2   OY2   HOY       0.00   3      0.00  !  PYOHX5_tpatch; pyrophyllite
+!
+OY3   SY1   OY1   HOY       0.00   3      0.00  !  MTOHY1_tpatch; montmorillonite
+OY4   SY1   OY1   HOY       0.00   3      0.00  !  MTOHY1_tpatch; montmorillonite
+OY2   SY2   OY1   HOY       0.00   3      0.00  !  MTOHY2_tpatch; montmorillonite
+OY5   SY2   OY1   HOY       0.00   3      0.00  !  MTOHY3_tpatch; montmorillonite
+!
+OY1   AYT2  OY2   HOY       0.00   2      0.00  !  MIOHX6_tpatch; mica; in charmm27_interface_v1_5.prm 
+OY3   AYT2  OY2   HOY       0.00   2      0.00  !  MIOHX6_tpatch; mica; in charmm27_interface_v1_5.prm 
+OY8   AYT2  OY2   HOY       0.00   2      0.00  !  MIOHX6_tpatch; mica; in charmm27_interface_v1_5.prm 
+OY5   AYT2  OY2   HOY       0.00   2      0.00  !  MIOHX3_tpatch; mica; in charmm27_interface_v1_5.prm
+!
+AY2   OY8   SY2   OY5       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY8   X    in charmm27_interface_v1_5.prm!replacing O8 with O19-H9 in kaol
+OY1   SY1   OY2   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY2   X    in charmm27_interface_v1_5.prm!tpatch for KAOHY2                    
+OY1   SY1   OY3   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm!replacing SI1 with SI1-O19-H12 in kaol 
+OY1   SY2   OY2   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY2   X    in charmm27_interface_v1_5.prm!replacing O3-SI2-O20-H13 in kaol     
+OY1   SY2   OY3   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm!replacing O10 with O10-H10 in kaol    
+OY2   SY1   OY3   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm!replacing SI1 with SI1-O19-H12 in kaol
+OY2   SY1   OY1   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm!replacing SI3 with SI3-O21-H14 in kaol
+OY2   SY2   OY1   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm!replacing O8 with O8-H9 in kaol      
+OY2   SY2   OY3   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm!replacing O10 with O10-H10 in kaol    
+OY3   SY1   OY1   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm!replacing SI3 with SI3-O21-H14 in kaol 
+OY3   SY1   OY2   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY2   X    in charmm27_interface_v1_5.prm!replacing O9 with O9-H11 in kaol      
+OY3   SY2   OY1   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm!replacing O8 with O19-H9 in kaol      
+OY3   SY2   OY2   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY2   X    in charmm27_interface_v1_5.prm!replacing O3-SI2-O20-H13 in kaol        
+OY7   SY1   OY1   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm!replacing SI3 with SI3-O21-H14 in kaol
+OY7   SY1   OY2   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY2   X    in charmm27_interface_v1_5.prm!replacing O9 with O9-H11 in kaol     
+OY7   SY1   OY3   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm!replacing SI1 with SI1-O19-H12 in kaol
+OY8   SY2   OY1   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm!replacing O8 with O19-H9 in kaol      
+OY8   SY2   OY2   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY2   X    in charmm27_interface_v1_5.prm!replacing O3-SI2-O20-H13 in kaol     
+OY8   SY2   OY3   HOK       0.00   3      0.00  !  kaolinite,        replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm!replacing O10 with O10-H10 in kaoli   
+!
+!OY1  AYT2  OY2   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AYT2  OY2   X    in charmm27_interface_v1_5.prm!MIOHX3                         
+!OY1  SY1   OY2   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY2   X    in charmm27_interface_v1_5.prm!replacing O3-SI2-O2-H7 in pyro 
+!OY1  SY1   OY3   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm!PYOHX4 replacing ??-SI4-O28-H10
+!OY1  SY1   OY7   AY2       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY7   X    in charmm27_interface_v1_5.prm                                      
+!OY1  SY2   OY2   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY2   X    in charmm27_interface_v1_5.prm!PYOHX5 replacing SI5 with SI5-O29-H11
+!OY1  SY2   OY3   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm!replacing O5-SI3-O4-H8 in pyro       
+!OY2  SY1   OY1   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm!PRES PYOHY2                           
+!OY2  SY1   OY3   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm!PYOHX4 replacing O5-SI4-O28-H10 in pyro
+!OY2  SY2   OY1   HOY       0.00   3      0.00  !  prophyllite,      replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm!MIOHY1                                 
+!OY2  SY2   OY3   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm!replacing O5-SI3-O4-H8 in pyro        
+!OY3  AYT2  OY2   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AYT2  OY2   X    in charmm27_interface_v1_5.prm!MIOHX3                
+!OY3  SY1   OY1   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm!MIOHY2                
+OY3   SY1   OY2   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY2   X    in charmm27_interface_v1_5.prm!replacing O3-SI2-O2-H7
+!OY3  SY2   OY1   HOY       0.00   3      0.00  !  prophyllite,      replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm!PYOHY1                          
+!OY3  SY2   OY2   HOY       0.00   3      0.00  !  prophyllite,      replace with  X     SY2   OY2   X    in charmm27_interface_v1_5.prm!replacing O1-SI1-O26-H6 in pyro
+!OY4  SY1   OY1   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm!MIOHY2
+!OY4  SY1   OY2   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY2   X    in charmm27_interface_v1_5.prm!PRES PYOHY3
+!OY4  SY1   OY3   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm!PYOHX7     
+!OY5  AYT2  OY2   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AYT2  OY2   X    in charmm27_interface_v1_5.prm!MIOHX3
+!OY5  SY2   OY1   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm!MIOHY4
+!OY5  SY2   OY2   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY2   X    in charmm27_interface_v1_5.prm!PYOHX5 replacing SI5 with SI5-O29-H11
+!OY5  SY2   OY3   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm!PYOHX6 replacing SI5 with SI5-O24-H12
+!OY7  SY1   OY1   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY1   X    in charmm27_interface_v1_5.prm!PRES PYOHY2 
+!OY7  SY1   OY3   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY3   X    in charmm27_interface_v1_5.prm!PYOHX4  replacing O15-SI4-O28-H10 in pyro
+OY7   SY1   OY2   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY1   OY2   X    in charmm27_interface_v1_5.prm!replacing O3-SI2-O2-H7
+!OY8  AYT2  OY2   HOY       0.00   2      0.00  !  pyrophyllite,     replace with  X     AYT2  OY2   X    in charmm27_interface_v1_5.prm!MIOHX6 
+!OY8  SY2   OY1   HOY       0.00   3      0.00  !  prophyllite,      replace with  X     SY2   OY1   X    in charmm27_interface_v1_5.prm!PYOHY1
+!OY8  SY2   OY2   HOY       0.00   3      0.00  !  prophyllite,      replace with  X     SY2   OY2   X    in charmm27_interface_v1_5.prm!replacing O1-SI1-O26-H6 in pyro
+!OY8  SY2   OY3   HOY       0.00   3      0.00  !  pyrophyllite,     replace with  X     SY2   OY3   X    in charmm27_interface_v1_5.prm!replacing O5-SI3-O4-H8 in pyro
+!
+!CEMENT MINERALS
+!
+SC3   OC12  SC2   OC14      0.00   3      0.00  !  TBOHY2;tombermolite,     replace with  X     SC2   OC12   X    in pcff_interface_V1_5.frc.
+SC2   OC12  SC2   OC14      0.00   3      0.00  !  TBOHY2;tombermolite,     replace with  X     SC2   OC12   X    in pcff_interface_V1_5.frc.
+OC13  SC2   OC14  HOY       0.00   3      0.00  !  TBOHY2;tombermolite,     replace with  X     SC2   OC12   X    in pcff_interface_V1_5.frc.
+OC12  SC2   OC14  HOY       0.00   3      0.00  !  TBOHY2;tombermolite,     replace with  X     SC2   OC12   X    in pcff_interface_V1_5.frc.
+OC14  SC3   OC14  HOY       0.00   3      0.00  !  TBOHY5
+!
+!X     SC1   OC12  X        0.00   0      0.00  !  tobermolite in pcff_interface_V1_5.frc
+!X     SC3   OC12  X        0.00   0      0.00  !  tobermolite, replace with  X SC2 OC12 X in pcff_interface_V1_5.frc.
+!X     SC3   OC14  X        0.00   0      0.00  !  tobermolite, replace with  X SC2 OC12 X in pcff_interface_V1_5.frc.
+!X     SC4   OC23  X        0.00   0      0.00  !  cristobalite, in charmm27_interface_v1_5.prm
+!X     AC1   OC3   X        0.00   2      0.00  ! 
+!X     AC1   OC4   X        0.00   2      0.00  ! 
+!X     AC2   OC5   X        0.00   2      0.00  ! ! 2?  ettringite in pcff_interface_v1_5.frc 
+!X     PAP   OAP1  X        0.00   2      0.00  !  
+!X     OPEO  CPEO  X        0.39   3      0.00  !  PEO,              replace with  X     OE1   CE1    X    in cvff_interface_v1_5.frc
+!X     oET5  CPEO  X        0.39   3      0.00  !                    replace with  X     oET5  CE1    X    in cvff_interface_v1_5.frc
+!X     CPEO  CPEO  X        1.00   3      0.00  !  PEO,              replace with  X     CE1   CE1    X    in cvff_interface_v1_5.frc 
+!ET5   oET5  CPEO  X        0.00   0      0.00  !                    replace with  ET5   oET5  CE1    X    in cvff_interface_v1_5.frc
+OPEO  CPEO  CPEO  OPEO     -2.55   1      0.00  !  PEO,              replace with  OE1   CE1   CE1    OE1  in cvff_interface_v1_5.frc
+!OET5  CPEO  CPEO  OET5    -1.72   1      0.00  !                    replace with  oET5  CE1   CE1    oET5 in cvff_interface_v1_5.frc
+CPEO  OPEO  CPEO  CPEO      0.39   3      0.00  !  PEO,              replace with  X     OE1   CE1    X    in cvff_interface_v1_5.frc 
+CPEO  OPEO  CPEO  HPEO      0.39   3      0.00  !  PEO,              replace with  X     OE1   CE1    X    in cvff_interface_v1_5.frc
+OPEO  CPEO  CPEO  HPEO      1.00   3      0.00  !  PEO,              replace with  X     CE1   CE1    X    in cvff_interface_v1_5.frc
+!CPEO  CPEO  OPEO  CPEO     0.39   3      0.00  !  PEO,              replace with  X     OE1   CE1    X    in cvff_interface_v1_5.frc
+HPEO  CPEO  CPEO  HPEO      1.00   3      0.00  !  PEO,              replace with  X     CE1   CE1    X    in cvff_interface_v1_5.frc 
+AC1   OC3   AC1   OC4       0.00   2      0.00  !  C3A,              replace with  X     AC1   OC5    X    in charmm27_interface_v1_5.prm
+AC1   OC3   AC1   OC3       0.00   2      0.00  !  C3A,              replace with  X     AC1   OC5    X    in charmm27_interface_v1_5.prm
+OC4   AC2   OC9   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC5   AC2   OC6   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC5   AC2   OC7   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC5   AC2   OC9   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC5   AC2   OC10  HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC6   AC2   OC5   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC6   AC2   OC7   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC6   AC2   OC8   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC6   AC2   OC10  HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC7   AC2   OC5   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC7   AC2   OC6   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC7   AC2   OC8   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC7   AC2   OC9   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC8   AC2   OC9   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC8   AC2   OC10  HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC8   AC2   OC6   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC8   AC2   OC7   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC9   AC2   OC5   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC9   AC2   OC7   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC9   AC2   OC8   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC9   AC2   OC10  HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC10  AC2   OC5   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC10  AC2   OC8   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC10  AC2   OC9   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC10  AC2   OC6   HOC       0.00   3      0.00  !  ettringite,       replace with  X     AC2   OC5    X    in pcff_interface_v1_5.frc
+OC12  SC2   OC12  HOY       0.00   3      0.00  !  tombermolite,     replace with  X     SC2   OC12   X    in pcff_interface_V1_5.frc.
+OC12  SC3   OC12  HOY       0.00   3      0.00  !  tobermolite,      replace with  X     SC3   OC12   X    in pcff_interface_V1_5.frc.
+OC13  SC2   OC12  HOY       0.00   3      0.00  !  tombermolite,     replace with  X     SC2   OC12   X    in pcff_interface_V1_5.frc.
+OC14  SC3   OC12  HOY       0.00   3      0.00  !  tombermolite,     replace with  X     SC3   OC12   X    in pcff_interface_V1_5.frc.
+SC3   OC12  SC2   OC12      0.00   3      0.00  !  tobermolite,      replace with  X     SC2   OC12   X    in pcff_interface_V1_5.frc.
+SC3   OC12  SC2   OC13      0.00   3      0.00  !  tobermolite,      replace with  X     SC2   OC12   X    in pcff_interface_V1_5.frc.
+SC3   OC12  SC3   OC12      0.00   3      0.00  !  tobermolite,      replace with  X     SC3   OC12   X    in pcff_interface_V1_5.frc.
+SC3   OC12  SC3   OC14      0.00   3      0.00  !  tobermolite,      replace with  X     SC3   OC12   X    in pcff_interface_V1_5.frc.
+SC2   OC12  SC3   OC12      0.00   3      0.00  !  tobermolite,      replace with  X     SC3   OC12   X    in pcff_interface_V1_5.frc.
+SC2   OC12  SC3   OC14      0.00   3      0.00  !  tobermolite,      replace with  X     SC3   OC12   X    in pcff_interface_V1_5.frc.
+SC2   OC12  SC2   OC13      0.00   3      0.00  !  tobermolite,      replace with  X     SC3   OC12   X    in pcff_interface_V1_5.frc.
+SC2   OC12  SC2   OC12      0.00   3      0.00  !  tobermolite,      replace with  X     SC3   OC12   X    in pcff_interface_V1_5.frc.
+OC12  SC3   OC14  HOY       0.00   3      0.00  !  tobermolite,      replace with  X     SC3   OC12   X    in pcff_interface_V1_5.frc.
+SC4   OC23  SC4   OC23      0.00   2      0.00  !  cristobalite,     replace with  X     SC4   OC23   X    in charmm27_interface_v1_5.prm
+OC23  SC4   OC23  HOY       0.00   2      0.00  !  cristobalite,     replace with  X     SC4   OC23   X    in charmm27_interface_v1_5.prm
+OC11  OC11  S_AN  OC11      0.00   1      0.00  !  test for error
+!OC11 OC11  *S    OC11      0.00   2      0.00  !  test for error
+
+IMPROPER
+!
+!atom types           Kpsi                   psi0
+!
+
+NONBONDED  NBXMOD 5  ATOM CDIEL FSHIFT VATOM VDISTANCE VFSWITCH -
+     CUTNB 14.0  CTOFNB 12.0  CTONNB 10.0  EPS 1.0  E14FAC 1.0  WMIN 1.5
+!
+!V(Lennard-Jones) = Eps,i,j[(Rmin,i,j/ri,j)**12 - 2(Rmin,i,j/ri,j)**6]
+!
+!epsilon: kcal/mole, Eps,i,j = sqrt(eps,i * eps,j)
+!Rmin/2: A, Rmin,i,j = Rmin/2,i + Rmin/2,j
+!
+!atom  ignored    epsilon      Rmin/2   ignored   eps,1-4       Rmin/2,1-4
+!
+
+AG       0.0     -4.560        1.4775  !  HH et al. (2008) in charmm27_interface_V1_5.prm
+AL       0.0     -4.020        1.4625  !  HH et al. (2008) in charmm27_interface_V1_5.prm 
+AU       0.0     -5.290        1.4755  !  HH et al. (2008) in charmm27_interface_V1_5.prm
+CU       0.0     -4.720        1.3080  !  HH et al. (2008) in charmm27_interface_V1_5.prm
+NI       0.0     -5.650        1.2760  !  HH et al. (2008) in charmm27_interface_V1_5.prm
+PB       0.0     -2.930        1.7825  !  HH et al. (2008) in charmm27_interface_V1_5.prm
+PD       0.0     -6.150        1.4095  !  HH et al. (2008) in charmm27_interface_V1_5.prm
+PT       0.0     -7.800        1.4225  !  HH et al. (2008) in charmm27_interface_V1_5.prm
+                                                           
+!Clay minerals (NA+ and HOY from silica needed)
+!K+      0.0     -0.200        1.9000  !  in charmm27_interface_V1_5.prm 
+K_CM     0.0     -0.200        1.9000  !  replace K+ with K_CM in MICA and MONT.
+!K_CM    0.0     -0.087        1.7650  !  POT
+SY1      0.0     -0.050        2.0000  !  in charmm27_interface_V1_5.prm  
+SY2      0.0     -0.050        2.0000  !  in charmm27_interface_V1_5.prm  
+AY1      0.0     -0.050        2.1000  !  in charmm27_interface_V1_5.prm  
+AY2      0.0     -0.050        2.1000  !  in charmm27_interface_V1_5.prm   
+AYT1     0.0     -0.050        2.1000  !  in charmm27_interface_V1_5.prm   
+AYT2     0.0     -0.050        2.1000  !  in charmm27_interface_V1_5.prm   
+OY1      0.0     -0.025        1.7500  !  in charmm27_interface_V1_5.prm   
+OY2      0.0     -0.025        1.7500  !  in charmm27_interface_V1_5.prm   
+OY3      0.0     -0.025        1.7500  !  in charmm27_interface_V1_5.prm   
+OY4      0.0     -0.025        1.7500  !  in charmm27_interface_V1_5.prm   
+OY5      0.0     -0.025        1.7500  !  in charmm27_interface_V1_5.prm   
+OY6      0.0     -0.025        1.7500  !  in charmm27_interface_V1_5.prm   
+OY7      0.0     -0.025        1.7500  !  in charmm27_interface_V1_5.prm   
+OY8      0.0     -0.025        1.7500  !  in charmm27_interface_V1_5.prm   
+OY9      0.0     -0.025        1.7500  !  in charmm27_interface_V1_5.prm   
+HOK      0.0     -0.015        0.5425  !  in charmm27_interface_V1_5.prm(See also HOC)
+HOC      0.0     -0.015        0.5425  !  in charmm27_interface_V1_5.prm 
+
+!Cement minerals (HOY from silica needed)
+!CA++    0.0     -0.280        1.6750  !  in charmm27_interface_V1_5.prm. Tricalcium silicate starts here. 
+CA_S     0.0     -0.280        1.6750  !  in charmm27_interface_V1_5.prm. Tricalcium silicate starts here. replace CA_S with CA++ in C3S.
+SC1      0.0     -0.470        2.250   !  in charmm27_interface_V1_5.prm.                        
+SC2      0.0     -0.470        2.250   !  replace SC1 with SC2. later SC2 has to be confirmed.
+SC3      0.0     -0.470        2.250   !  replace SC1 with SC3. later SC3 has to be confirmed.
+S_AN     0.0     -0.450        2.0130  !  in pcff_interface_v_1_5.frc. using nonbond(9-6) not (12-6). in ANHY, ETTR,and HEMI. replace S' with S_AN.
+!CA+A    0.0     -0.150        1.6500  !  in charmm27_interface_V1_5.prm. using nonbond(9-6) not (12-6). Tricalcium aluminate starts here. 
+CA_A     0.0     -0.150        1.6500  !  in charmm27_interface_V1_5.prm. Tricalcium aluminate starts here. replace CA_A with CA+A in C3A.
+CA_E     0.0     -0.240        1.8250  !  in pcff_interface_v_1_5.frc. using nonbond(9-6) not (12-6). ETTR
+CA_T     0.0     -0.240        1.8500  !  in pcff_interface_v_1_5.frc. using nonbond(9-6) not (12-6). TOBM.
+AC1      0.0     -0.500        2.3000  !  in charmm27_interface_V1_5.prm 
+AC2      0.0     -0.500        2.3000  !  in charmm27_interface_V1_5.prm. replace AC2 with AC1. later AC2 has to be confirmed.
+OC1      0.0     -0.080        1.5750  !  in charmm27_interface_V1_5.prm. using nonbond(9-6) not (12-6) 
+OC2      0.0     -0.080        1.7500  !  in charmm27_interface_V1_5.prm. using nonbond(9-6) not (12-6)
+OC3      0.0     -0.080        1.7500  !  in charmm27_interface_V1_5.prm  
+OC4      0.0     -0.080        1.7000  !  in charmm27_interface_V1_5.prm 
+OC5      0.0     -0.120        1.7350  !  in charmm27_interface_V1_5.prm
+OC6      0.0     -0.080        1.7500  !  replace OC6 with OC3. later OC1 has to be confirmed.   
+OC7      0.0     -0.080        1.7500  !  replace OC7 with OC3. later OC1 has to be confirmed.  
+OC8      0.0     -0.080        1.7500  !  replace OC8 with OC3. later OC1 has to be confirmed.  
+OC9      0.0     -0.080        1.7500  !  replace OC3 with OC9. later OC1 has to be confirmed.   
+OC10     0.0     -0.080        1.7500  !  replace OC10 with OC3. later OC1 has to be confirmed.  
+OC11     0.0     -0.080        1.7500  !  replace OC11 with OC3. later OC1 has to be confirmed.  
+OC12     0.0     -0.080        1.7500  !  replace OC10 with OC3. later OC1 has to be confirmed.  
+OC13     0.0     -0.080        1.7500  !  replace OC11 with OC3. later OC1 has to be confirmed.  
+OC14     0.0     -0.080        1.7500  !  replace OC14 with OC3. later OC1 has to be confirmed.  
+!H*      0.0     -0.000        0.0001  !  in charmm27_interface_V1_5.prm. SPC water
+H_SC     0.0     -0.0150       0.5425  !  in charmm27_interface_V1_5.prm. SPC water
+!O*      0.0     -0.1554       1.7766  !  in charmm27_interface_V1_5.prm. SPC water 
+O_SC     0.0     -0.1554       1.7766  !  in charmm27_interface_V1_5.prm. SPC water 
+
+!Silica
+!NA+     0.0     -0.094        1.585   !  in charmm27_interface_V1_5.prm. Hydration energy -98 +/-4 kcal/mol; supersedes older value for clays
+SC4      0.0     -0.093        2.075   !  in charmm27_interface_V1_5.prm.
+OC23     0.0     -0.054        1.735   !  in charmm27_interface_V1_5.prm. 
+OC24     0.0     -0.122        1.735   !  in charmm27_interface_V1_5.prm. 
+HOY      0.0     -0.015        0.5425  !  in charmm27_interface_V1_5.prm. Also used for clay minerals, supercedes older value (see also HOC)
+                                       
+!Ca-sulfate                            
+CA_G     0.00    -0.240        1.8000  !  in pcff_interface_v_1_5.frc. using nonbond(9-6) not (12-6). in ANHY, GYPS, and HEMI. CA_H 
+!O2*     0.0     -0.0800       1.9200  !  in pcff_interface_v_1_5.frc. using nonbond(9-6) not (12-6)
+O2_SC    0.0     -0.0800       1.9200  !  in pcff_interface_v_1_5.frc. using nonbond(9-6) not (12-6). replace O2_SC with O2*
+H1O      0.0     -0.008        0.5435  !  in pcff_interface.frc; using nonbond(9-6) not (12-6) 
+
+!Apatite
+!CA+H    0.0     -0.130        1.650   !  in charmm27_interface_V1_5.prm.
+CA_H     0.0     -0.130        1.650   !  in charmm27_interface_V1_5.prm. replace CA_H with CA+H in HAPP.
+PAP      0.0     -0.280        2.150   !  in charmm27_interface_V1_5.prm.
+OAP1     0.0     -0.070        1.700   !  in charmm27_interface_V1_5.prm.
+OAP2     0.0     -0.080        1.850   !  in charmm27_interface_V1_5.prm.
+HOP      0.0     -0.000        0.0001  !  in charmm27_interface_V1_5.prm. Same as H*
+                                       
+!PEO                                   
+HPEO     0.0     -0.031        1.2500  !  in charmm27_interface_V1_5.prm. convert HE1 to HPEO
+CPEO     0.0     -0.068        2.0900  !  in charmm27_interface_V1_5.prm. convert CE1 to CPEO
+OPEO     0.0     -0.300        1.6500  !  in pcff_interface_v_1_5.frc. using nonbond(9-6) not (12-6). convert OE1 to OPEO."please check"
+
+
+END
+

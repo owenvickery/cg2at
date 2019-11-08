@@ -445,7 +445,7 @@ def get_atomistic(residue,cg_fragment, cg_coord,resid):
 		for line_nr, line in enumerate(pdb_input.readlines()):
 			if line.startswith('ATOM'):
 				line_sep = pdbatom(line) ## splits up pdb line
-				residue_list[line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'], 'connect':line_sep['connect'], 'frag_mass':1}
+				residue_list[line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'extra':line_sep['backbone'], 'connect':line_sep['connect'], 'frag_mass':1}
 #### updates fragment mass   
 				if 'H' not in line_sep['atom_name']:
 					for atom in line_sep['atom_name']:
@@ -634,6 +634,7 @@ def build_atomistic_system(cg_residues, box_vec):
 				pdb_output = create_pdb(working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')
 		#### for every fragment in that resid
 			if residue_type not in ['ION', 'SOL']:
+				atomistic_fragments[residue_type][resid] = check_hydrogens(atomistic_fragments[residue_type][resid])
 			####### check if any atoms in residue overlap #######
 				coord=[]
 				for atom in atomistic_fragments[residue_type][resid]:
@@ -651,18 +652,21 @@ def build_atomistic_system(cg_residues, box_vec):
 						else:
 							system[atomistic_fragments[residue_type][resid][at_id+1]['res_type']]+=1
 						pdb_ion.write(pdbline%((at_id+1,atomistic_fragments[residue_type][resid][at_id+1]['atom'],atomistic_fragments[residue_type][resid][at_id+1]['res_type'],' ',1,\
-					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2],1,0))+'\n')
+					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2]\
+					,atomistic_fragments[residue_type][resid][at_id+1]['extra'],atomistic_fragments[residue_type][resid][at_id+1]['connect']))+'\n')
 					else:
 					#### if restype SOL and has a mass over 1 (eg H) adds a count to the water_count also writes to solvent pdb
 						if atomistic_fragments[residue_type][resid][at_id+1]['frag_mass'] > 1:					
 							water_count+=1
 						pdb_sol.write(pdbline%((at_id+1,atomistic_fragments[residue_type][resid][at_id+1]['atom'],atomistic_fragments[residue_type][resid][at_id+1]['res_type'],' ',1,\
-					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2],1,0))+'\n')
+					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2]\
+					,atomistic_fragments[residue_type][resid][at_id+1]['extra'],atomistic_fragments[residue_type][resid][at_id+1]['connect']))+'\n')
 			#### if residue_type not in ['ION', 'SOL'] write out to separate pdb
 				else:
 				#### write residue out to a pdb file
-					pdb_output.write(pdbline%((atom,atomistic_fragments[residue_type][resid][at_id+1]['atom'],atomistic_fragments[residue_type][resid][at_id+1]['res_type'],' ',1,\
-					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2],1,0))+'\n')
+					pdb_output.write(pdbline%((at_id,atomistic_fragments[residue_type][resid][at_id+1]['atom'],atomistic_fragments[residue_type][resid][at_id+1]['res_type'],' ',1,\
+					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2]\
+					,atomistic_fragments[residue_type][resid][at_id+1]['extra'],atomistic_fragments[residue_type][resid][at_id+1]['connect']))+'\n')
 
 	#### if restype ION add ion to system dictionary and add solvent molecules
 		if residue_type == 'ION':
@@ -675,6 +679,34 @@ def build_atomistic_system(cg_residues, box_vec):
 			#### adds retype to system dictionary
 				system[residue_type]=int(resid)+1
 	return system 
+
+def check_hydrogens(residue):
+#### 	
+	connect=[]
+	for atom_num, atom in enumerate(residue):
+		if residue[atom]['connect'] > 0 and residue[atom]['extra'] > 1:
+			connect.append([atom, residue[atom]['extra'],  residue[atom]['connect']]) 
+	connect=np.array(connect)
+	for atom_num, carbon in enumerate(connect):
+		h_com=[]
+		h_atoms=[]
+		for atom_num, atom in enumerate(residue):
+			if residue[atom]['extra'] == carbon[1] and atom != carbon[0]:
+				h_com.append(residue[atom]['coord'])
+				h_atoms.append(atom)
+			if residue[atom]['connect'] == carbon[2] and atom != carbon[0]:
+				connecting_coord=residue[atom]['coord']
+		h_com=np.array(h_com)
+		h_com=np.array([np.mean(h_com[:,0]),np.mean(h_com[:,1]),np.mean(h_com[:,2])])
+		vector=np.array([h_com[0]-residue[carbon[0]]['coord'][0],h_com[1]-residue[carbon[0]]['coord'][1],h_com[2]-residue[carbon[0]]['coord'][2]])
+		h_com_f=h_com+vector*2
+		d1 = np.sqrt((h_com[0]-connecting_coord[0])**2+(h_com[1]-connecting_coord[1])**2+(h_com[2]-connecting_coord[2])**2)
+		d2 = np.sqrt((h_com_f[0]-connecting_coord[0])**2+(h_com_f[1]-connecting_coord[1])**2+(h_com_f[2]-connecting_coord[2])**2)
+		if d2<d1:
+			for h_at in h_atoms:
+				residue[h_at]['coord']=residue[h_at]['coord']+vector*2
+
+	return residue
 
 def atomistic_non_protein(cg_residue_type,cg_residues):
 	atomistic_fragments={}  #### residue dictionary
@@ -749,6 +781,7 @@ def merge_minimised(residue_type):
 		resid_range=1
 	else:
 		resid_range=np_system[residue_type]
+	merge,merge_coords=[],[]
 #### run through every resid 
 	for resid in range(resid_range):
 	#### check if it exists
@@ -757,9 +790,16 @@ def merge_minimised(residue_type):
 			with open(working_dir+residue_type+'/min/'+residue_type+'_'+str(resid)+'.pdb', 'r') as pdb_input:
 				for line in pdb_input.readlines():
 					if line.startswith('ATOM'):
-						pdb_output.write(line)
+						line_sep = pdbatom(line)
+						merge.append(line_sep)
+						merge_coords.append([line_sep['x'],line_sep['y'],line_sep['z']])
 		else:
-			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/min/'+residue_type+'_temp_'+str(resid)+'.pdb')		
+			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
+	if residue_type !='SOL':
+		merge_coords = check_atom_overlap(merge_coords)
+	for line_val, line in enumerate(merge):
+		pdb_output.write(pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
+			merge_coords[line_val][0],merge_coords[line_val][1],merge_coords[line_val][2],1,0))+'\n')
 	pdb_output.write('TER\nENDMDL')
 	pdb_output.close()
 
@@ -932,14 +972,14 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 	pdb_output.close()   #### close file write
 	if args.v >=1:
 		print('\n{:-<75}'.format('>  Verbose level 1 start'))
-		print('\nchain number\tDelta A\tno in pdb\tlength of chain')
-		print('------------\t-------\t---------\t---------------')
+		print('\nchain number\tDelta A\t\tno in pdb\tlength of chain')
+		print('------------\t-------\t\t---------\t---------------')
 		for chain in range(chain_count):
-			print('\t',chain,'\t',np.round(chain_information[chain][0], 1),'\t',chain_information[chain][1]-chain_information[chain][2]+1,'-',chain_information[chain][1],'\t\t',chain_information[chain][2])
+			print('\t',chain,'\t',np.round(chain_information[chain][0], 1),'\t\t',chain_information[chain][1]-chain_information[chain][2]+1,'-',chain_information[chain][1],'\t\t',chain_information[chain][2])
 		if chain_count >1:
-			print('\t', chain_count,'\tN/A\t',chain_information[chain][1]+2,'-',residue_number+1,'\t\t',residue_number-res)
+			print('\t', chain_count,'\tN/A\t\t',chain_information[chain][1]+2,'-',residue_number+1,'\t\t',residue_number-res)
 		else:
-			print('\t', chain_count,'\tN/A\t',res+1,'-',residue_number+1,'\t\t',residue_number-res+1)
+			print('\t', chain_count,'\tN/A\t\t',res+1,'-',residue_number+1,'\t\t',residue_number-res+1)
 
 		print('\n{:-<75}'.format('>  Verbose level 1 end\n'))
 	system['terminal_residue']=terminal
@@ -1325,35 +1365,34 @@ def write_merged_pdb(merge, protein):
 		pdb_output.write(line)
 	pdb_output.close()
 
-def check_atom_overlap(merged_coords):
-
-	kds=time.time()
-	tree = KDTree(merged_coords)
-	print('tree',time.time()-kds)
-	overlapped_ndx = tree.query_ball_tree(tree, r=0.15)
+def check_atom_overlap(coordinates):
+	# print(len(coordinates))
+	tree = KDTree(coordinates)
+	overlapped_ndx = tree.query_ball_tree(tree, r=0.3)
 	overlap=True
-	print('query',time.time()-kds)
-	kdm=time.time()
 	done=[]
 	moved_coord=[]
 
-	dist=0.2
+	dist=0.35
 	for ndx in overlapped_ndx:
 		if len(ndx) == 2 and ndx[0] not in done:
-			xyz_check = [merged_coords[ndx[0]][0]+np.random.uniform(-0.2, 0.2), merged_coords[ndx[0]][1]+np.random.uniform(-0.2, 0.2),merged_coords[ndx[0]][2]+np.random.uniform(-0.2, 0.2)]
+			# print('before',ndx,coordinates[ndx[0]], coordinates[ndx[1]])
+			xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
 			if len(moved_coord)>0:
 				dist=np.min(np.sqrt(((xyz_check[0]-np.array(moved_coord)[:,0])**2)+((xyz_check[1]-np.array(moved_coord)[:,1])**2)+((xyz_check[2]-np.array(moved_coord)[:,2])**2)))
-			while len(tree.query_ball_point(xyz_check, r=0.2)) != 1 or dist <= 0.15:
+			while len(tree.query_ball_point(xyz_check, r=0.3)) == 2 or dist < 0.3:
 				if len(moved_coord)>0:
 					dist=np.min(np.sqrt(((xyz_check[0]-np.array(moved_coord)[:,0])**2)+((xyz_check[1]-np.array(moved_coord)[:,1])**2)+((xyz_check[2]-np.array(moved_coord)[:,2])**2)))
-				xyz_check = [merged_coords[ndx[0]][0]+np.random.uniform(-0.2, 0.2), merged_coords[ndx[0]][1]+np.random.uniform(-0.2, 0.2),merged_coords[ndx[0]][2]+np.random.uniform(-0.2, 0.2)]
-			merged_coords[ndx[0]]=xyz_check
+				xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
+			coordinates[ndx[0]]=xyz_check
+			# print('after',ndx,coordinates[ndx[0]], coordinates[ndx[1]])
 			moved_coord.append(xyz_check)
 			done.append(ndx[0])
+	return coordinates
 
-	kde=time.time()	
-	print(kde-kdm)
-	return merged_coords
+
+
+
 
 def convert_topology(topol, protein_number):
 #### reads in topology 
@@ -1419,11 +1458,12 @@ def merge_system_pdbs(system, protein):
 						merge_coords.append([line_sep['x'],line_sep['y'],line_sep['z']])
 		else:
 			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
-	if protein == '_at_rep_user_supplied':
-		merged_coords = check_atom_overlap(merge_coords)
+	if protein in ['_at_rep_user_supplied','_novo']:
+		print('checking for atom overlap in : '+protein)
+		merge_coords = check_atom_overlap(merge_coords)
 	for line_val, line in enumerate(merge):
 		pdb_output.write(pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
-			merged_coords[line_val][0],merged_coords[line_val][1],merged_coords[line_val][2],1,0))+'\n')
+			merge_coords[line_val][0],merge_coords[line_val][1],merge_coords[line_val][2],1,0))+'\n')
 	pdb_output.write('TER\nENDMDL')
 	pdb_output.close()
 
@@ -1602,7 +1642,7 @@ final_protein_time=time.time()
 #### converts non protein residues into atomistic and minimises 
 if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]) > 0:
 	np_system=build_atomistic_system(cg_residues, box_vec)
-	print()
+	print('\nThis may take some time....(probably time for a coffee)\n')
 	for residue_type in cg_residues:
 		if residue_type not in  ['PROTEIN', 'SOL', 'ION']:
 			print('Minimising individual residues: '+residue_type)
@@ -1622,7 +1662,8 @@ if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']])
 non_protein_time=time.time()
 
 #### creates merged folder
-print('\nMerging all residue types to single file')
+print('\nMerging all residue types to single file\n')
+
 
 if len(system)>0:
 	mkdir_directory(working_dir+'MERGED')

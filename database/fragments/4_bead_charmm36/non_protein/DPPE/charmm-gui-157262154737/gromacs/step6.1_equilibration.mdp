@@ -1,0 +1,38 @@
+define                  = -DREST_ON -DSTEP6_1
+integrator              = md
+dt                      = 0.001
+nsteps                  = 25000
+nstlog                  = 1000
+nstxout                 = 1000
+nstvout                 = 1000
+nstfout                 = 1000
+nstcalcenergy           = 100
+nstenergy               = 1000
+;
+cutoff-scheme           = Verlet
+nstlist                 = 20
+rlist                   = 1.2
+coulombtype             = pme
+rcoulomb                = 1.2
+vdwtype                 = Cut-off
+vdw-modifier            = Force-switch
+rvdw_switch             = 1.0
+rvdw                    = 1.2
+;
+tcoupl                  = berendsen
+tc_grps                 = MEMB   SOL_ION
+tau_t                   = 1.0    1.0
+ref_t                   = 323.15   323.15
+;
+constraints             = h-bonds
+constraint_algorithm    = LINCS
+;
+nstcomm                 = 100
+comm_mode               = linear
+comm_grps               = MEMB   SOL_ION
+;
+gen-vel                 = yes
+gen-temp                = 323.15
+gen-seed                = -1
+;
+refcoord_scaling        = com

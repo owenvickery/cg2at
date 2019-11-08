@@ -1,6 +1,6 @@
-ATOM     88 C218 DGPC    1       5.148   5.238  44.961  1.00  9.00      MEMB
-ATOM     89 H18R DGPC    1       4.524   5.892  44.352  1.00  0.00      MEMB
-ATOM     90 H18S DGPC    1       4.526   4.335  45.097  1.00  0.00      MEMB
+ATOM     88 C218 DGPC    1       5.148   5.238  44.961  14.0  9.00      MEMB
+ATOM     89 H18R DGPC    1       4.524   5.892  44.352  14.0  0.00      MEMB
+ATOM     90 H18S DGPC    1       4.526   4.335  45.097  14.0  0.00      MEMB
 ATOM     91 C219 DGPC    1       6.467   4.939  44.259  1.00  0.00      MEMB
 ATOM     92 H19R DGPC    1       7.218   4.381  44.841  1.00  0.00      MEMB
 ATOM     93 H19S DGPC    1       6.865   5.938  43.992  1.00  0.00      MEMB

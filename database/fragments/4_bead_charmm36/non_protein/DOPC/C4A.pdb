@@ -1,6 +1,6 @@
-ATOM     79 C215 DOPC    1       7.750   7.642  45.382  1.00  8.00      MEMB
-ATOM     80 H15R DOPC    1       8.460   6.955  45.870  1.00  0.00      MEMB
-ATOM     81 H15S DOPC    1       8.171   7.966  44.418  1.00  0.00      MEMB
+ATOM     79 C215 DOPC    1       7.750   7.642  45.382  10.0  8.00      MEMB
+ATOM     80 H15R DOPC    1       8.460   6.955  45.870  10.0  0.00      MEMB
+ATOM     81 H15S DOPC    1       8.171   7.966  44.418  10.0  0.00      MEMB
 ATOM     82 C216 DOPC    1       6.474   6.882  45.102  1.00  0.00      MEMB
 ATOM     83 H16R DOPC    1       5.825   7.421  44.386  1.00  0.00      MEMB
 ATOM     84 H16S DOPC    1       5.924   6.806  46.058  1.00  0.00      MEMB

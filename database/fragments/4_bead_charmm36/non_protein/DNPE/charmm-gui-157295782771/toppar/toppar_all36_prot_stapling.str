@@ -1,0 +1,1104 @@
+read rtf card append
+* Topology for stapling
+*
+41 1
+
+DECL -CA
+DECL -C
+DECL -O
+DECL +N
+DECL +HN
+DECL +CA
+DEFA FIRS NTER LAST CTER
+AUTO ANGLES DIHE
+
+! Stapling patches
+! 1. Metathesis
+
+PRES NSTP         0.91 ! standard N-terminus for stapling peptide
+GROUP                  ! use in generate statement
+ATOM N    NH3    -0.30 !         HT1
+ATOM HT1  HC      0.33 !     (+)/
+ATOM HT2  HC      0.33 ! --CA--N--HT2
+ATOM HT3  HC      0.33 !   |    \
+ATOM CA   CT1     0.22 !   HA    HT3
+DELETE ATOM HN
+BOND HT1 N HT2 N HT3 N
+DONOR HT1 N
+DONOR HT2 N
+DONOR HT3 N
+IC HT1     N      CA     C          1.0400  109.50  180.00  110.00   1.4900
+IC HT2     CA     *N     HT1        1.0400  109.50  120.00  109.50   1.0400
+IC HT3     CA     *N     HT2        1.0400  109.50  120.00  109.50   1.0400
+
+PRES META3        0.18  ! Metathesis between two (S)-propylalanine
+GROUP                   !            :
+ATOM CX1  CT3    -0.18  !         HN-N
+ATOM HX11 HA3     0.09  !     HX12   :   HB1 HM1   HM2 HB1       2HX22
+ATOM HX12 HA3     0.09  !      \     :   |   |     |   |    :   /
+ATOM HX13 HA3     0.09  ! HX11--CX1--CA--CB--CM1==CM2--1CB--2CA--2CX2--2HX21
+ATOM 1CB  CT2    -0.18  !      /     :   |             |    :   \
+ATOM 1HB1 HA2     0.09  !     HX13   :   HB2           HB2       2HX23
+ATOM 1HB2 HA2     0.09  !          O=C
+GROUP                   !            :
+ATOM CM1  CE1    -0.15
+ATOM HM1  HE1     0.15
+ATOM CM2  CE1    -0.15
+ATOM HM2  HE1     0.15
+GROUP
+ATOM 2CB  CT2    -0.18
+ATOM 2HB1 HA2     0.09
+ATOM 2HB2 HA2     0.09
+GROUP
+ATOM CX2  CT3    -0.18
+ATOM HX21 HA3     0.09
+ATOM HX22 HA3     0.09
+ATOM HX23 HA3     0.09
+DELETE ATOM 1HA
+DELETE ATOM 2HA
+DELETE ATOM 1HB3
+DELETE ATOM 2HB3
+BOND   1CA  CX1  CX1  HX11  CX1  HX12  CX1  HX13
+BOND   2CA  CX2  CX2  HX21  CX2  HX22  CX2  HX23
+BOND   1CB  CM1  CM1  HM1   CM2  HM2
+BOND   CM2  2CB
+DOUBLE CM1  CM2
+IC  1N       1C      *1CA     CX1        1.4592  114.44 -123.23  111.09   1.5461
+IC  1C       1CA     CX1      HX11       1.5390  111.09  177.25  109.60   1.1109
+IC  HX11     1CA     *CX1     HX12       1.1109  109.60  119.13  111.05   1.1119
+IC  HX12     1CA     *CX1     HX13       1.1109  109.60 -119.58  111.61   1.1114
+IC  1N       1CA     1CB      CM1        1.4504  111.47  180.00  115.76   1.5435
+IC  1CA      1CB     CM1      CM2        1.5115  126.91    0.00  126.69   1.5092
+IC  CM2      1CB     *CM1     HM1        1.3502  126.91 -178.81  114.69   1.1010
+IC  CM1      2CB     *CM2     HM2        1.5099  126.94 -177.42  118.69   1.1018
+IC  CM1      CM2     2CB      2CA        0.0000    0.00  180.00    0.00   0.0000
+IC  2N       2C      *2CA     CX2        1.4592  114.44 -123.23  111.09   1.5461
+IC  2C       2CA     CX2      HX21       1.5390  111.09  177.25  109.60   1.1109
+IC  HX21     2CA     *CX2     HX22       1.1109  109.60  119.13  111.05   1.1119
+IC  HX22     2CA     *CX2     HX23       1.1109  109.60 -119.58  111.61   1.1114
+IC  2N       2CA     2CB      CM2        1.4504  111.47  180.00  115.76   1.5435
+
+PRES META4        0.18  ! Metathesis between two (S)-butylalanine
+GROUP                   !            :
+ATOM CX1  CT3    -0.18  !         HN-N
+ATOM HX11 HA3     0.09  !     HX12   :   HB1 HG1 HM1   HM2 HI1  HB1  :    2HX22
+ATOM HX12 HA3     0.09  !      \     :   |    |  |     |   |    |    :   /
+ATOM HX13 HA3     0.09  ! HX11--CX1-CA--1CB--CG--CM1==CM2--CI--2CB--2CA--2CX2--2HX21
+ATOM 1CB  CT2    -0.18  !      /     :   |    |            |    |    :   \
+ATOM 1HB1 HA2     0.09  !     HX13   :   HB2 HG2           HI2  HB2  :    2HX23
+ATOM 1HB2 HA2     0.09  !          O=C
+GROUP                   !            :
+ATOM CG   CT2    -0.18  !
+ATOM HG1  HA2     0.09
+ATOM HG2  HA2     0.09
+GROUP
+ATOM CM1  CE1    -0.15
+ATOM HM1  HE1     0.15
+ATOM CM2  CE1    -0.15
+ATOM HM2  HE1     0.15
+GROUP
+ATOM CI   CT2    -0.18
+ATOM HI1  HA2     0.09
+ATOM HI2  HA2     0.09
+GROUP
+ATOM 2CB  CT2    -0.18
+ATOM 2HB1 HA2     0.09
+ATOM 2HB2 HA2     0.09
+GROUP
+ATOM CX2  CT3    -0.18
+ATOM HX21 HA3     0.09
+ATOM HX22 HA3     0.09
+ATOM HX23 HA3     0.09
+DELETE ATOM 1HA
+DELETE ATOM 2HA
+DELETE ATOM 1HB3
+DELETE ATOM 2HB3
+BOND   1CA  CX1  CX1  HX11  CX1  HX12  CX1  HX13
+BOND   2CA  CX2  CX2  HX21  CX2  HX22  CX2  HX23
+BOND   1CB  CG   CG   HG1   CG   HG2
+BOND   CG   CM1  CM1  HM1   CM2  HM2
+BOND   CM2  CI   CI   HI1   CI   HI2
+BOND   2CB  CI
+DOUBLE CM1  CM2
+IC 1N       1C      *1CA     CX1        1.4592  114.44 -123.23  111.09   1.5461
+IC 1C       1CA     CX1      HX11       1.5390  111.09  177.25  109.60   1.1109
+IC HX11     1CA     *CX1     HX12       1.1109  109.60  119.13  111.05   1.1119
+IC HX12     1CA     *CX1     HX13       1.1109  109.60 -119.58  111.61   1.1114
+IC 1N       1CA     1CB      CG         1.4504  111.47  180.00  115.76   1.5435
+IC 1CA      1CB     CG       CM1        1.5568  115.76  180.00  113.28   1.5397
+IC CM1      1CB     *CG      HG1        1.5397  113.28  120.74  109.10   1.1138
+IC CM1      1CB     *CG      HG2        1.5397  113.28 -122.34  108.99   1.1143
+IC 1CB      CG      CM1      CM2        1.5115  126.91    0.00  126.69   1.5092
+IC CM2      CG      *CM1     HM1        1.3502  126.91 -178.81  114.69   1.1010
+IC CG       CM1     CM2      CI         0.0000    0.00  180.00    0.00   0.0000
+IC CM1      CI      *CM2     HM2        1.5099  126.94 -177.42  118.69   1.1018
+IC 2N       2C      *2CA     CX2        1.4592  114.44 -123.23  111.09   1.5461
+IC 2C       2CA     CX2      HX21       1.5390  111.09  177.25  109.60   1.1109
+IC HX21     2CA     *CX2     HX22       1.1109  109.60  119.13  111.05   1.1119
+IC HX22     2CA     *CX2     HX23       1.1109  109.60 -119.58  111.61   1.1114
+IC 2N       2CA     2CB      CI         1.4504  111.47  180.00  115.76   1.5435
+IC CM2      2CB     *CI      HI1        1.5397  113.28  120.74  109.10   1.1138
+IC CM2      2CB     *CI      HI2        1.5397  113.28 -122.34  108.99   1.1143
+
+PRES META5        0.18  ! Metathesis between two (S)-pentenylalanine
+GROUP                   !            :
+ATOM CX1  CT3    -0.18  !         HN-N
+ATOM HX11 HA3     0.09  !     HX12   :   HB1 HG1 HD1 HM1   HM2 HH1 HI1  HB1       2HX22
+ATOM HX12 HA3     0.09  !      \     :   |    |   |   |     |   |   |   |    :   /
+ATOM HX13 HA3     0.09  ! HX11--CX1--CA--CB--CG--CD--CM1==CM2--CH--CI--2CB--2CA--2CX2--2HX21
+ATOM 1CB  CT2    -0.18  !      /     :   |    |   |             |   |   |    :   \
+ATOM 1HB1 HA2     0.09  !     HX13   :   HB2 HG2 HD2           HH2 HI2  HB2       2HX23
+ATOM 1HB2 HA2     0.09  !          O=C
+GROUP                   !            :
+ATOM CG   CT2    -0.18  !
+ATOM HG1  HA2     0.09
+ATOM HG2  HA2     0.09
+GROUP
+ATOM CD   CT2    -0.18
+ATOM HD1  HA2     0.09
+ATOM HD2  HA2     0.09
+GROUP
+ATOM CM1  CE1    -0.15
+ATOM HM1  HE1     0.15
+ATOM CM2  CE1    -0.15
+ATOM HM2  HE1     0.15
+GROUP
+ATOM CH   CT2    -0.18
+ATOM HH1  HA2     0.09
+ATOM HH2  HA2     0.09
+GROUP
+ATOM CI   CT2    -0.18
+ATOM HI1  HA2     0.09
+ATOM HI2  HA2     0.09
+GROUP
+ATOM 2CB  CT2    -0.18
+ATOM 2HB1 HA2     0.09
+ATOM 2HB2 HA2     0.09
+GROUP
+ATOM CX2  CT3    -0.18
+ATOM HX21 HA3     0.09
+ATOM HX22 HA3     0.09
+ATOM HX23 HA3     0.09
+DELETE ATOM 1HA
+DELETE ATOM 2HA
+DELETE ATOM 1HB3
+DELETE ATOM 2HB3
+BOND   1CA  CX1  CX1  HX11  CX1  HX12  CX1  HX13
+BOND   2CA  CX2  CX2  HX21  CX2  HX22  CX2  HX23
+BOND   1CB  CG   CG   HG1   CG   HG2
+BOND   CG   CD   CD   HD1   CD   HD2
+BOND   CD   CM1  CM1  HM1   CM2  HM2
+BOND   CM2  CH   CH   HH1   CH   HH2
+BOND   CH   CI   CI   HI1   CI   HI2
+BOND   2CB  CI
+DOUBLE CM1  CM2
+IC 1N        1C      1CA      1CB        1.4592  114.44   123.23  111.09  1.5461
+IC 1C        1CA     1CB      1HB1       1.5390  111.09   177.25  109.60  1.1109
+IC 1HB1      1CA     1CB      1HB2       1.1109  109.60   119.13  111.05  1.1119
+IC 1C        1N      1CA      1CB        1.4900  107.00   120.00  113.50  1.5380
+IC 1CB       1N      1CA      1CX1       1.5380  113.50  -120.00  113.50  1.5380
+IC 1N        1CA     1CB      CG         1.4300  113.50   180.00  113.50  1.5300
+IC CG        1CA     1CB      1HB1       1.5300  113.50   120.00  110.10  1.1110
+IC 1HB1      1CA     1CB      1HB2       1.1110  110.10  -120.00  110.10  1.1110
+IC 1CA       1CB     CG       CD         1.5380  113.50   180.00  113.60  1.5300
+IC CD        1CB     CG       HG1        1.5300  113.60   120.00  110.10  1.1110
+IC HG1       1CB     CG       HG2        1.1110  110.10  -120.00  110.10  1.1110
+IC 1CB       CG      CD       CM1        1.5300  113.60   180.00  112.20  1.5020
+IC CM1       CG      CD       HD1        1.5020  112.20   120.00  110.10  1.1110
+IC HD1       CG      CD       HD2        1.1110  110.10  -120.00  110.10  1.1110
+IC CG        CD      CM1      CM2        1.5300  112.20   180.00  123.50  1.3400
+IC CM2       CD      CM1      HM1        1.3400  123.50   180.00  116.00  1.1000
+IC CD        CM1     CM2      CH         1.5020  123.50   180.00  123.50  1.5020
+IC CH        CM1     CM2      HM2        1.5020  123.50   180.00  119.50  1.1000
+IC CM1       CM2     CH       CI         1.3400  123.50   180.00  112.20  1.5300
+IC CI        CM2     CH       HH1        1.5300  112.20   120.00  111.50  1.1110
+IC HH1       CM2     CH       HH2        1.1110  111.50  -120.00  111.50  1.1110
+IC CM2       CH      CI       2CB        1.5020  112.20   180.00  113.60  1.5300
+IC 2CB       CH      CI       HI1        1.5300  113.60   120.00  110.10  1.1110
+IC HI1       CH      CI       HI2        1.1110  110.10  -120.00  110.10  1.1110
+IC 1N        1CA     1CX1     1HX11      1.4300  113.50   180.00  110.10  1.1110
+IC 1HX11     1CA     1CX1     1HX12      1.1110  110.10   120.00  110.10  1.1110
+IC 1HX11     1CA     1CX1     1HX13      1.1110  110.10  -120.00  110.10  1.1110
+IC 2CB       2N      2CA      CX2        1.5380  113.50  -120.00  113.50  1.5380
+IC 2N        2CA     CX2      HX21       1.4300  113.50   180.00  110.10  1.1110
+IC HX21      2CA     CX2      HX22       1.1110  110.10   120.00  110.10  1.1110
+IC HX21      2CA     CX2      HX23       1.1110  110.10  -120.00  110.10  1.1110
+IC 2CA       CI      2CB      2HB1       1.5380  113.50   120.00  110.10  1.1110
+IC 2CA       CI      2CB      2HB2       1.5380  113.50  -120.00  110.10  1.1110
+
+PRES META6        0.18  ! Metathesis between two (S)-hexylalanine
+GROUP                   !            :
+ATOM CX1  CT3    -0.18  !         HN-N
+ATOM HX11 HA3     0.09  !     HX12   :   HB1 HG1 HD1 HE1 HM1   HM2 HH1 HI1  HJ1 HB1         2HX22
+ATOM HX12 HA3     0.09  !      \     :   |    |   |  |   |     |   |   |    |   |     :     /
+ATOM HX13 HA3     0.09  ! HX11--CX1--CA--CB--CG--CD--CE--CM1==CM2--CH--CI--CJ--1CB--2CA--2CX2--2HX21
+ATOM 1CB  CT2    -0.18  !      /     :   |    |   |  |             |   |    |   |     :     \
+ATOM 1HB1 HA2     0.09  !     HX13   :   HB2 HG2 HD2 HE2           HH2 HI2  HJ2 HB2          2HX23
+ATOM 1HB2 HA2     0.09  !          O=C
+GROUP                   !            :
+ATOM CG   CT2    -0.18  !
+ATOM HG1  HA2     0.09
+ATOM HG2  HA2     0.09
+GROUP
+ATOM CD   CT2    -0.18
+ATOM HD1  HA2     0.09
+ATOM HD2  HA2     0.09
+GROUP
+ATOM CE   CT2    -0.18
+ATOM HE1  HA2     0.09
+ATOM HE2  HA2     0.09
+GROUP
+ATOM CM1  CE1    -0.15
+ATOM HM1  HE1     0.15
+ATOM CM2  CE1    -0.15
+ATOM HM2  HE1     0.15
+GROUP
+ATOM CH   CT2    -0.18
+ATOM HH1  HA2     0.09
+ATOM HH2  HA2     0.09
+GROUP
+ATOM CI   CT2    -0.18
+ATOM HI1  HA2     0.09
+ATOM HI2  HA2     0.09
+GROUP
+ATOM CJ   CT2    -0.18
+ATOM HJ1  HA2     0.09
+ATOM HJ2  HA2     0.09
+GROUP
+ATOM 2CB  CT2    -0.18
+ATOM 2HB1 HA2     0.09
+ATOM 2HB2 HA2     0.09
+GROUP
+ATOM CX2  CT3    -0.18
+ATOM HX21 HA3     0.09
+ATOM HX22 HA3     0.09
+ATOM HX23 HA3     0.09
+DELETE ATOM 1HA
+DELETE ATOM 2HA
+DELETE ATOM 1HB3
+DELETE ATOM 2HB3
+BOND   1CA  CX1  CX1  HX11  CX1  HX12  CX1  HX13
+BOND   2CA  CX2  CX2  HX21  CX2  HX22  CX2  HX23
+BOND   1CB  CG   CG   HG1   CG   HG2
+BOND   CG   CD   CD   HD1   CD   HD2
+BOND   CD   CE   CE   HE1   CE   HE2
+BOND   CE   CM1  CM1  HM1   CM2  HM2
+BOND   CM2  CH   CH   HH1   CH   HH2
+BOND   CH   CI   CI   HI1   CI   HI2
+BOND   CI   CJ   CJ   HJ1   CJ   HJ2
+BOND   2CB  CJ
+DOUBLE CM1  CM2
+IC 1N       1C      *1CA     CX1        1.4592  114.44 -123.23  111.09   1.5461
+IC 1C       1CA     CX1      HX11       1.5390  111.09  177.25  109.60   1.1109
+IC HX11     1CA     *CX1     HX12       1.1109  109.60  119.13  111.05   1.1119
+IC HX12     1CA     *CX1     HX13       1.1109  109.60 -119.58  111.61   1.1114
+IC 1N       1CA     1CB      CG         1.4504  111.47  180.00  115.76   1.5435
+IC 1CA      1CB     CG       CD         1.5568  115.76  180.00  113.28   1.5397
+IC CD       1CB     *CG      HG1        1.5397  113.28  120.74  109.10   1.1138
+IC CD       1CB     *CG      HG2        1.5397  113.28 -122.34  108.99   1.1143
+IC 1CB      CG      CD       CE         1.5458  114.46  180.00  126.91   1.3502
+IC CE       CG      *CD      HD1        1.5350  112.33  122.25  108.41   1.1141
+IC CE       CG      *CD      HD2        1.5350  112.33 -121.59  108.13   1.1146
+IC CG       CD      CE       CM1        1.5458  114.46  180.00  126.91   1.3502
+IC CM1      CD      *CE      HE1        1.5350  112.33  122.25  108.41   1.1141
+IC CM1      CD      *CE      HE2        1.5350  112.33 -121.59  108.13   1.1146
+IC CD       CE      CM1      CM2        1.5115  126.91    0.00  126.69   1.5092
+IC CM2      CE      *CM1     HM1        1.3502  126.91 -178.81  114.69   1.1010
+IC CE       CM1     CM2      CH         0.0000    0.00  180.00    0.00   0.0000
+IC CM1      CH      *CM2     HM2        1.5099  126.94 -177.42  118.69   1.1018
+IC 2N       2C      *2CA     CX2        1.4592  114.44 -123.23  111.09   1.5461
+IC 2C       2CA     CX2      HX21       1.5390  111.09  177.25  109.60   1.1109
+IC HX21     2CA     *CX2     HX22       1.1109  109.60  119.13  111.05   1.1119
+IC HX22     2CA     *CX2     HX23       1.1109  109.60 -119.58  111.61   1.1114
+IC 2N       2CA     2CB      CJ         1.4504  111.47  180.00  115.76   1.5435
+IC 2CA      2CB     CJ       CI         1.5458  114.46  180.00  126.91   1.3502
+IC CI       2CB     *CJ      HJ1        1.5397  113.28  120.74  109.10   1.1138
+IC CI       2CB     *CJ      HJ2        1.5397  113.28 -122.34  108.99   1.1143
+IC 2CB      CJ      CI       CH         1.5458  114.46  180.00  126.91   1.3502
+IC CJ       CH      *CI      HI1        1.5350  112.33  122.25  108.41   1.1141
+IC CJ       CH      *CI      HI2        1.5350  112.33 -121.59  108.13   1.1146
+IC CM2      CI      *CH      HH1        1.5350  112.33  122.25  108.41   1.1141
+IC CM2      CI      *CH      HH2        1.5350  112.33 -121.59  108.13   1.1146
+
+PRES META7        0.18  ! Metathesis between two (S)-hexylalanine
+GROUP                   !            :
+ATOM CX1  CT3    -0.18  !         HN-N
+ATOM HX11 HA3     0.09  !     HX12   :   HB1 HG1 HD1 HE1 HF1 HM1  HM2  HH1 HI1 HJ1 HK1  HB1         2HX22
+ATOM HX12 HA3     0.09  !      \     :   |    |   |  |   |   |    |    |   |   |   |    |     :     /
+ATOM HX13 HA3     0.09  ! HX11--CX1--CA--CB--CG--CD--CE--CF--CM1==CM2--CH--CI--CJ--CK--1CB--2CA--2CX2--2HX21
+ATOM 1CB  CT2    -0.18  !      /     :   |    |   |  |   |             |   |   |   |    |     :     \
+ATOM 1HB1 HA2     0.09  !     HX13   :   HB2 HG2 HD2 HE2 HF1           HH2 HI2 HJ2 HK2  HB2          2HX23
+ATOM 1HB2 HA2     0.09  !          O=C
+GROUP                   !            :
+ATOM CG   CT2    -0.18  !
+ATOM HG1  HA2     0.09
+ATOM HG2  HA2     0.09
+GROUP
+ATOM CD   CT2    -0.18
+ATOM HD1  HA2     0.09
+ATOM HD2  HA2     0.09
+GROUP
+ATOM CE   CT2    -0.18
+ATOM HE1  HA2     0.09
+ATOM HE2  HA2     0.09
+GROUP
+ATOM CF   CT2    -0.18
+ATOM HF1  HA2     0.09
+ATOM HF2  HA2     0.09
+GROUP
+ATOM CM1  CE1    -0.15
+ATOM HM1  HE1     0.15
+ATOM CM2  CE1    -0.15
+ATOM HM2  HE1     0.15
+GROUP
+ATOM CH   CT2    -0.18
+ATOM HH1  HA2     0.09
+ATOM HH2  HA2     0.09
+GROUP
+ATOM CI   CT2    -0.18
+ATOM HI1  HA2     0.09
+ATOM HI2  HA2     0.09
+GROUP
+ATOM CJ   CT2    -0.18
+ATOM HJ1  HA2     0.09
+ATOM HJ2  HA2     0.09
+GROUP
+ATOM CK   CT2    -0.18
+ATOM HK1  HA2     0.09
+ATOM HK2  HA2     0.09
+GROUP
+ATOM 2CB  CT2    -0.18
+ATOM 2HB1 HA2     0.09
+ATOM 2HB2 HA2     0.09
+GROUP
+ATOM CX2  CT3    -0.18
+ATOM HX21 HA3     0.09
+ATOM HX22 HA3     0.09
+ATOM HX23 HA3     0.09
+DELETE ATOM 1HA
+DELETE ATOM 2HA
+DELETE ATOM 1HB3
+DELETE ATOM 2HB3
+BOND   1CA  CX1  CX1  HX11  CX1  HX12  CX1  HX13
+BOND   2CA  CX2  CX2  HX21  CX2  HX22  CX2  HX23
+BOND   1CB  CG   CG   HG1   CG   HG2
+BOND   CG   CD   CD   HD1   CD   HD2
+BOND   CD   CE   CE   HE1   CE   HE2
+BOND   CE   CF   CF   HF1   CF   HF2
+BOND   CF   CM1  CM1  HM1   CM2  HM2
+BOND   CM2  CH   CH   HH1   CH   HH2
+BOND   CH   CI   CI   HI1   CI   HI2
+BOND   CI   CJ   CJ   HJ1   CJ   HJ2
+BOND   CJ   CK   CK   HK1   CK   HK2
+BOND   2CB  CK
+DOUBLE CM1  CM2
+IC 1N      1C      1CA     1CB        1.4592  114.44  123.23  111.09   1.5461
+IC 1C      1CA     1CB     1HB1       1.5390  111.09  177.25  109.60   1.1109
+IC 1HB1    1CA     1CB     1HB2       1.1110  110.10 -120.00  110.10   1.1110
+IC 1N      1C      1CA     CX1        1.4592  114.44 -123.23  111.09   1.5461
+IC 1C      1CA     CX1     HX11       1.5390  111.09  177.25  109.60   1.1109
+IC HX11    1CA     CX1     HX12       1.1110  110.10  120.00  110.10   1.1110
+IC HX12    1CA     CX1     HX13       1.1109  109.60 -119.58  111.61   1.1114
+IC 1N      1CA     1CB     CG         1.4300  113.50  180.00  113.50   1.5300
+IC 1CA     1CB     CG      CD         1.5380  113.50  180.00  113.60   1.5300
+IC CD      1CB     CG      HG1        1.5300  113.60  120.00  110.10   1.1110
+IC CD      1CB     CG      HG2        1.5397  113.28 -122.34  108.99   1.1143
+IC 1CB     CG      CD      CE         1.5300  113.60  180.00  113.60   1.5300
+IC CE      CG      CD      HD1        1.5300  113.60  120.00  110.10   1.1110
+IC CE      CG      CD      HD2        1.5350  112.33 -121.59  108.13   1.1146
+IC CG      CD      CE      CF         1.5300  113.60  180.00  113.60   1.5300
+IC CF      CD      CE      HE1        1.5300  113.60  120.00  110.10   1.1110
+IC CF      CD      CE      HE2        1.5350  112.33 -121.59  108.13   1.1146
+IC CD      CE      CF      CM1        1.5300  113.60  180.00  112.20   1.5020
+IC CM1     CE      CF      HF1        1.5020  112.20  120.00  110.10   1.1110
+IC CM1     CF      CF      HF2        1.5350  112.33 -121.59  108.13   1.1146
+IC CE      CF      CM1     CM2        1.5300  112.20  180.00  123.50   1.3400
+IC CM2     CF      CM1     HM1        1.3400  123.50  180.00  116.00   1.1000
+IC CF      CM1     CM2     CH         1.5020  123.50  180.00  123.50   1.5020
+IC CM1     CH      CM2     HM2        1.5099  126.94 -177.42  118.69   1.1018
+IC 2N      2C      2CA     CX2        1.4592  114.44 -123.23  111.09   1.5461
+IC 2C      2CA     CX2     HX21       1.5390  111.09  177.25  109.60   1.1109
+IC HX21    2CA     CX2     HX22       1.1110  110.10  120.00  110.10   1.1110
+IC HX22    2CA     CX2     HX23       1.1109  109.60 -119.58  111.61   1.1114
+IC 2N      2CA     2CB     CK         1.4504  111.47  180.00  115.76   1.5435
+IC 2CA     2CB     CK      CJ         1.5458  114.46  180.00  126.91   1.3502
+IC CI      2CB     CK      HK1        1.5397  113.28  120.74  109.10   1.1138
+IC CI      2CB     CK      HK2        1.5397  113.28 -122.34  108.99   1.1143
+IC 2CB     CK      CJ      CI         1.5458  114.46  180.00  126.91   1.3502
+IC CK      CI      CJ      HJ1        1.5300  113.60  120.00  110.10   1.1110
+IC CK      CI      CJ      HJ2        1.5350  112.33 -121.59  108.13   1.1146
+IC CK      CJ      CI      CH         1.5458  114.46  180.00  126.91   1.3502
+IC CJ      CH      CI      HI1        1.5300  113.60  120.00  110.10   1.1110
+IC CM2     CI      CH      HH1        1.5350  112.33  122.25  108.41   1.1141
+IC CM2     CI      CH      HH2        1.5350  112.33 -121.59  108.13   1.1146
+IC 1C      1N      1CA     1CB        1.4900  107.00  120.00  113.50   1.5380
+IC 1CB     1N      1CA     CX1        1.5380  113.50 -120.00  113.50   1.5380
+IC CG      1CA     1CB     1HB1       1.5300  113.50  120.00  110.10   1.1110
+IC HG1     1CB     CG      HG2        1.1110  110.10 -120.00  110.10   1.1110
+IC HD1     CG      CD      HD2        1.1110  110.10 -120.00  110.10   1.1110
+IC HE1     CD      CE      HE2        1.1110  110.10 -120.00  110.10   1.1110
+IC HF1     CE      CF      HF2        1.1110  110.10 -120.00  110.10   1.1110
+IC CH      CM1     CM2     HM2        1.5020  123.50  180.00  119.50   1.1000
+IC CM1     CM2     CH      CI         1.3400  123.50  180.00  112.20   1.5300
+IC CI      CM2     CH      HH1        1.5300  112.20  120.00  111.50   1.1110
+IC HH1     CM2     CH      HH2        1.1110  111.50 -120.00  111.50   1.1110
+IC CM2     CH      CI      CJ         1.5020  112.20  180.00  113.60   1.5300
+IC HI1     CH      CI      HI2        1.1110  110.10 -120.00  110.10   1.1110
+IC CH      CI      CJ      CK         1.5300  113.60  180.00  113.60   1.5300
+IC HJ1     CI      CJ      HJ2        1.1110  110.10 -120.00  110.10   1.1110
+IC CI      CJ      CK      2CB        1.5300  113.60  180.00  113.60   1.5300
+IC 2CB     CJ      CK      HK1        1.5300  113.60  120.00  110.10   1.1110
+IC HK1     CJ      CK      HK2        1.1110  110.10 -120.00  110.10   1.1110
+IC 1N      1CA     CX1     HX11       1.4300  113.50  180.00  110.10   1.1110
+IC HX11    1CA     CX1     HX13       1.1110  110.10 -120.00  110.10   1.1110
+IC 2CB     2N      2CA     CX2        1.5380  113.50 -120.00  113.50   1.5380
+IC 2N      2CA     CX2     HX21       1.4300  113.50  180.00  110.10   1.1110
+IC HX21    2CA     CX2     HX23       1.1110  110.10 -120.00  110.10   1.1110
+IC 2CA     CK      2CB     2HB1       1.5380  113.50  120.00  110.10   1.1110
+IC 2CA     CK      2CB     2HB2       1.5380  113.50 -120.00  110.10   1.1110
+
+! (R) forms
+
+PRES RMETA3        0.18  ! Metathesis between two (R)-propylalanine
+GROUP                   !     :
+ATOM CB1  CT2    -0.09  !  HN-N
+ATOM HB11 HA2     0.09  !     :   HB1 HM1   HM2 HB1
+ATOM HB12 HA2     0.09  !     :   |   |     |   |    :
+GROUP                   ! H3C-CA--CB--CM1==CM2--1CB--2CA-
+ATOM CM1  CE1    -0.15  !     :   |             |    :
+ATOM HM1  HE1     0.15  !     :   HB2           HB2
+ATOM CM2  CE1    -0.15  !   O=C
+ATOM HM2  HE1     0.15  !     :
+GROUP
+ATOM CB2  CT2    -0.09
+ATOM HB21 HA2     0.09
+ATOM HB22 HA2     0.09
+DELETE ATOM 1HA
+DELETE ATOM 2HA
+BOND   1CA  CB1  CB1  HB11  CB1  HB12
+BOND   2CA  CB2  CB2  HB21  CB2  HB22
+BOND   CB1  CM1  CM1  HM1   CM2  HM2  CM2  CB2
+DOUBLE CM1  CM2
+IC 1N       1C      *1CA     CB1        1.4592  114.44 -123.23  111.09   1.5461
+IC 1C       1CA     CB1      CM1        1.4504  111.47  180.00  115.76   1.5435
+IC CM1      1CA     *CB1     HB11       1.5397  113.28  120.74  109.10   1.1138
+IC CM1      1CA     *CB1     HB12       1.5397  113.28 -122.34  108.99   1.1143
+IC 1CA      CB1     CM1      CM2        1.5115  126.91    0.00  126.69   1.5092
+IC CM2      CB1     *CM1     HM1        1.3502  126.91 -178.81  114.69   1.1010
+IC CM1      CB2     *CM2     HM2        1.5099  126.94 -177.42  118.69   1.1018
+IC CM1      CM2     CB2      2CA        0.0000    0.00  180.00    0.00   0.0000
+IC 2N       2C      *2CA     CB2        1.4592  114.44 -123.23  111.09   1.5461
+IC 2C       2CA     CB2      HB21       1.5390  111.09  177.25  109.60   1.1109
+IC HB21     2CA     *CB2     HB22       1.1109  109.60  119.13  111.05   1.1119
+IC 2N       2CA     CB2      CM2        1.4504  111.47  180.00  115.76   1.5435
+
+PRES RMETA4        0.18 ! Metathesis between two (R)-butylalanine
+GROUP                   !            :
+ATOM CB1  CT2    -0.09  !         HN-N
+ATOM HB11 HA2     0.09  !     HX12   :   HB1 HG1 HM1   HM2 HI1  HB1       2HX22
+ATOM HB12 HA2     0.09  !      \     :   |    |  |     |   |    |    :   /
+GROUP                   ! HX11--CX1--CA--CB--CG--CM1==CM2--CI--1CB--2CA--2CX2--2HX21
+ATOM CG   CT2    -0.18  !      /     :   |    |            |    |    :   \
+ATOM HG1  HA2     0.09  !     HX13   :   HB2 HG2           HI2  HB2       2HX23
+ATOM HG2  HA2     0.09  !          O=C
+GROUP                   !            :
+ATOM CM1  CE1    -0.15  !
+ATOM HM1  HE1     0.15
+ATOM CM2  CE1    -0.15
+ATOM HM2  HE1     0.15
+GROUP
+ATOM CI   CT2    -0.18
+ATOM HI1  HA2     0.09
+ATOM HI2  HA2     0.09
+GROUP
+ATOM CB2  CT2    -0.09
+ATOM HB21 HA2     0.09
+ATOM HB22 HA2     0.09
+DELETE ATOM 1HA
+DELETE ATOM 2HA
+BOND   1CA  CB1  CB1  HB11  CB1  HB12
+BOND   CB1  CG   CG   HG1   CG   HG2
+BOND   CG   CM1  CM1  HM1   CM2  HM2
+BOND   CM2  CI   CI   HI1   CI   HI2
+BOND   CI   CB2  CB2  2CA   CB2  HB21  CB2 HB22
+DOUBLE CM1  CM2
+IC 1N      1C      *1CA     CB1        1.4592  114.44 -123.23  111.09   1.5461
+IC 1C      1CA     CB1      CG         1.4504  111.47  180.00  115.76   1.5435
+IC CG      1CA     *CB1     HB11       1.5397  113.28  120.74  109.10   1.1138
+IC CG      1CA     *CB1     HB12       1.5397  113.28 -122.34  108.99   1.1143
+IC 1CA     CB1     CG       CM1        1.5568  115.76  180.00  113.28   1.5397
+IC CM1     CB1     *CG      HG1        1.5397  113.28  120.74  109.10   1.1138
+IC CM1     CB1     *CG      HG2        1.5397  113.28 -122.34  108.99   1.1143
+IC CB1     CG      CM1      CM2        1.5115  126.91    0.00  126.69   1.5092
+IC CM2     CG      *CM1     HM1        1.3502  126.91 -178.81  114.69   1.1010
+IC CG      CM1     CM2      CI         0.0000    0.00  180.00    0.00   0.0000
+IC CM1     CI      *CM2     HM2        1.5099  126.94 -177.42  118.69   1.1018
+IC 2N      2C      *2CA     CB2        1.4592  114.44 -123.23  111.09   1.5461
+IC 2C      2CA     CB2      CI         1.4504  111.47  180.00  115.76   1.5435
+IC CI      2CA     *CB2     HB21       1.5397  113.28  120.74  109.10   1.1138
+IC CI      2CA     *CB2     HB22       1.5397  113.28 -122.34  108.99   1.1143
+IC 2N      2CA     CB2      CI         1.4504  111.47  180.00  115.76   1.5435
+IC CM2     CB2     *CI      HI1        1.5397  113.28  120.74  109.10   1.1138
+IC CM2     CB2     *CI      HI2        1.5397  113.28 -122.34  108.99   1.1143
+
+PRES RMETA5       0.18  ! Metathesis between two (R)-pentenylalanine
+GROUP                   !            :
+ATOM CB1  CT2    -0.09  !         HN-N
+ATOM HB11 HA2     0.09  !     HX12   :   HB1 HG1 HD1 HM1   HM2 HH1 HI1  HB1       2HX22
+ATOM HB12 HA2     0.09  !      \     :   |    |   |   |     |   |   |   |    :   /
+GROUP                   ! HX11--CX1--CA--CB--CG--CD--CM1==CM2--CH--CI--1CB--2CA--2CX2--2HX21
+ATOM CG   CT2    -0.18  !      /     :   |    |   |             |   |   |    :   \
+ATOM HG1  HA2     0.09  !     HX13   :   HB2 HG2 HD2           HH2 HI2  HB2       2HX23
+ATOM HG2  HA2     0.09  !          O=C
+GROUP                   !            :
+ATOM CD   CT2    -0.18  !
+ATOM HD1  HA2     0.09
+ATOM HD2  HA2     0.09
+GROUP
+ATOM CM1  CE1    -0.15
+ATOM HM1  HE1     0.15
+ATOM CM2  CE1    -0.15
+ATOM HM2  HE1     0.15
+GROUP
+ATOM CH   CT2    -0.18
+ATOM HH1  HA2     0.09
+ATOM HH2  HA2     0.09
+GROUP
+ATOM CI   CT2    -0.18
+ATOM HI1  HA2     0.09
+ATOM HI2  HA2     0.09
+GROUP
+ATOM CB2  CT2    -0.09
+ATOM HB21 HA2     0.09
+ATOM HB22 HA2     0.09
+DELETE ATOM 1HA
+DELETE ATOM 2HA
+BOND   1CA  CB1  CB1  HB11  CB1  HB12
+BOND   CB1  CG   CG   HG1   CG   HG2
+BOND   CG   CD   CD   HD1   CD   HD2
+BOND   CD   CM1  CM1  HM1   CM2  HM2
+BOND   CM2  CH   CH   HH1   CH   HH2
+BOND   CH   CI   CI   HI1   CI   HI2
+BOND   CI   CB2  CB2  HB21  CB2  HB22 CB2 2CA
+DOUBLE CM1  CM2
+IC 1N      1C      *1CA     CB1        1.4592  114.44 -123.23  111.09   1.5461
+IC 1C      1CA     CB1      CG         1.4504  111.47  180.00  115.76   1.5435
+IC CG      1CA     *CB1     HB11       1.5397  113.28  120.74  109.10   1.1138
+IC CG      1CA     *CB1     HB12       1.5397  113.28 -122.34  108.99   1.1143
+IC 1N      1CA     1CB      CG         1.4504  111.47  180.00  115.76   1.5435
+IC 1CA     1CB     CG       CD         1.5568  115.76  180.00  113.28   1.5397
+IC CD      1CB     *CG      HG1        1.5397  113.28  120.74  109.10   1.1138
+IC CD      1CB     *CG      HG2        1.5397  113.28 -122.34  108.99   1.1143
+IC 1CB     CG      CD       CM1        1.5458  114.46  180.00  126.91   1.3502
+IC CM1     CG      *CD      HD1        1.5350  112.33  122.25  108.41   1.1141
+IC CM1     CG      *CD      HD2        1.5350  112.33 -121.59  108.13   1.1146
+IC CG      CD      CM1      CM2        1.5115  126.91    0.00  126.69   1.5092
+IC CM2     CD      *CM1     HM1        1.3502  126.91 -178.81  114.69   1.1010
+IC CD      CM1     CM2      CH         0.0000    0.00  180.00    0.00   0.0000
+IC CM1     CH      *CM2     HM2        1.5099  126.94 -177.42  118.69   1.1018
+IC 2N      2C      *2CA     CB2        1.4592  114.44 -123.23  111.09   1.5461
+IC 2C      2CA     CB2      CI         1.4504  111.47  180.00  115.76   1.5435
+IC CI      2CA     *CB2     HB21       1.5397  113.28  120.74  109.10   1.1138
+IC CI      2CA     *CB2     HB22       1.5397  113.28 -122.34  108.99   1.1143
+IC 2CA     CB2     CI       CH         1.4504  111.47  180.00  115.76   1.5435
+IC CH      CB2     *CI      HI1        1.5397  113.28  120.74  109.10   1.1138
+IC CH      CB2     *CI      HI2        1.5397  113.28 -122.34  108.99   1.1143
+IC CB2     CI      CH       CM2        1.5458  114.46  180.00  126.91   1.3502
+IC CM2     CI      *CH      HH1        1.5350  112.33  122.25  108.41   1.1141
+IC CM2     CI      *CH      HH2        1.5350  112.33 -121.59  108.13   1.1146
+
+PRES RMETA6       0.18  ! Metathesis between two (R)-hexylalanine
+GROUP                   !            :
+ATOM CB1  CT2    -0.09  !         HN-N
+ATOM HB11 HA2     0.09  !     HX12   :   HB1 HG1 HD1 HE1 HM1   HM2 HH1 HI1  HJ1 HB1         2HX22
+ATOM HB12 HA2     0.09  !      \     :   |    |   |  |   |     |   |   |    |   |     :     /
+GROUP                   ! HX11--CX1--CA--CB--CG--CD--CE--CM1==CM2--CH--CI--CJ--1CB--2CA--2CX2--2HX21
+ATOM CG   CT2    -0.18  !      /     :   |    |   |  |             |   |    |   |     :     \
+ATOM HG1  HA2     0.09  !     HX13   :   HB2 HG2 HD2 HE2           HH2 HI2  HJ2 HB2          2HX23
+ATOM HG2  HA2     0.09  !          O=C
+GROUP                   !            :
+ATOM CD   CT2    -0.18  !
+ATOM HD1  HA2     0.09
+ATOM HD2  HA2     0.09
+GROUP
+ATOM CE   CT2    -0.18
+ATOM HE1  HA2     0.09
+ATOM HE2  HA2     0.09
+GROUP
+ATOM CM1  CE1    -0.15
+ATOM HM1  HE1     0.15
+ATOM CM2  CE1    -0.15
+ATOM HM2  HE1     0.15
+GROUP
+ATOM CH   CT2    -0.18
+ATOM HH1  HA2     0.09
+ATOM HH2  HA2     0.09
+GROUP
+ATOM CI   CT2    -0.18
+ATOM HI1  HA2     0.09
+ATOM HI2  HA2     0.09
+GROUP
+ATOM CJ   CT2    -0.18
+ATOM HJ1  HA2     0.09
+ATOM HJ2  HA2     0.09
+GROUP
+ATOM CB2  CT2    -0.09
+ATOM HB21 HA2     0.09
+ATOM HB22 HA2     0.09
+DELETE ATOM 1HA
+DELETE ATOM 2HA
+BOND   1CA  CB1  CB1  HB11  CB1  HB12
+BOND   CB1  CG   CG   HG1   CG   HG2
+BOND   CG   CD   CD   HD1   CD   HD2
+BOND   CD   CE   CE   HE1   CE   HE2
+BOND   CE   CM1  CM1  HM1   CM2  HM2
+BOND   CM2  CH   CH   HH1   CH   HH2
+BOND   CH   CI   CI   HI1   CI   HI2
+BOND   CI   CJ   CJ   HJ1   CJ   HJ2
+BOND   CJ   CB2  CB2  HB21  CB2  HB22  CB2  2CA
+DOUBLE CM1  CM2
+IC 1N      1C      *1CA     CB1        1.4592  114.44 -123.23  111.09   1.5461
+IC 1C      1CA     CB1      CG         1.4504  111.47  180.00  115.76   1.5435
+IC CG      1CA     *CB1     HB11       1.5397  113.28  120.74  109.10   1.1138
+IC CG      1CA     *CB1     HB12       1.5397  113.28 -122.34  108.99   1.1143
+IC 1N      1CA     1CB      CG         1.4504  111.47  180.00  115.76   1.5435
+IC 1CA     1CB     CG       CD         1.5568  115.76  180.00  113.28   1.5397
+IC CD      1CB     *CG      HG1        1.5397  113.28  120.74  109.10   1.1138
+IC CD      1CB     *CG      HG2        1.5397  113.28 -122.34  108.99   1.1143
+IC 1CB     CG      CD       CE         1.5458  114.46  180.00  126.91   1.3502
+IC CE      CG      *CD      HD1        1.5350  112.33  122.25  108.41   1.1141
+IC CE      CG      *CD      HD2        1.5350  112.33 -121.59  108.13   1.1146
+IC CG      CD      CE       CM1        1.5458  114.46  180.00  126.91   1.3502
+IC CM1     CD      *CE      HE1        1.5350  112.33  122.25  108.41   1.1141
+IC CM1     CD      *CE      HE2        1.5350  112.33 -121.59  108.13   1.1146
+IC CD      CE      CM1      CM2        1.5115  126.91    0.00  126.69   1.5092
+IC CM2     CE      *CM1     HM1        1.3502  126.91 -178.81  114.69   1.1010
+IC CE      CM1     CM2      CH         0.0000    0.00  180.00    0.00   0.0000
+IC CM1     CH      *CM2     HM2        1.5099  126.94 -177.42  118.69   1.1018
+IC 2N      2C      *2CA     CB2        1.4592  114.44 -123.23  111.09   1.5461
+IC 2C      2CA     CB2      CJ         1.4504  111.47  180.00  115.76   1.5435
+IC CG      1CA     *CB2     HB21       1.5397  113.28  120.74  109.10   1.1138
+IC CG      1CA     *CB2     HB22       1.5397  113.28 -122.34  108.99   1.1143
+IC 2N      2CA     2CB      CJ         1.4504  111.47  180.00  115.76   1.5435
+IC 2CA     2CB     CJ       CI         1.5458  114.46  180.00  126.91   1.3502
+IC CI      2CB     *CJ      HJ1        1.5397  113.28  120.74  109.10   1.1138
+IC CI      2CB     *CJ      HJ2        1.5397  113.28 -122.34  108.99   1.1143
+IC 2CB     CJ      CI       CH         1.5458  114.46  180.00  126.91   1.3502
+IC CJ      CH      *CI      HI1        1.5350  112.33  122.25  108.41   1.1141
+IC CJ      CH      *CI      HI2        1.5350  112.33 -121.59  108.13   1.1146
+IC CM2     CI      *CH      HH1        1.5350  112.33  122.25  108.41   1.1141
+IC CM2     CI      *CH      HH2        1.5350  112.33 -121.59  108.13   1.1146
+
+PRES RMETA7       0.18  ! Metathesis between two (R)-hexylalanine
+                        !
+GROUP                   !            :
+ATOM CB1  CT2    -0.09  !         HN-N
+ATOM HB11 HA2     0.09  !     HX12   :   HB1 HG1 HD1 HE1 HF1 HM1  HM2  HH1 HI1 HJ1 HK1  HB1         2HX22
+ATOM HB12 HA2     0.09  !      \     :   |    |   |  |   |   |    |    |   |   |   |    |     :     /
+GROUP                   ! HX11--CX1--1CA--CB1--CG--CD--CE--CF--CM1==CM2--CH--CI--CJ--CK--1CB--2CA--2CX2--2HX21
+ATOM CG   CT2    -0.18  !      /     :   |    |   |  |   |             |   |   |   |    |     :     \
+ATOM HG1  HA2     0.09  !     HX13   :   HB2 HG2 HD2 HE2 HF1           HH2 HI2 HJ2 HK2  HB2          2HX23
+ATOM HG2  HA2     0.09  !          O=C
+GROUP                   !            :
+ATOM CD   CT2    -0.18  !
+ATOM HD1  HA2     0.09
+ATOM HD2  HA2     0.09
+GROUP
+ATOM CE   CT2    -0.18
+ATOM HE1  HA2     0.09
+ATOM HE2  HA2     0.09
+GROUP
+ATOM CF   CT2    -0.18
+ATOM HF1  HA2     0.09
+ATOM HF2  HA2     0.09
+GROUP
+ATOM CM1  CE1    -0.15
+ATOM HM1  HE1     0.15
+ATOM CM2  CE1    -0.15
+ATOM HM2  HE1     0.15
+GROUP
+ATOM CH   CT2    -0.18
+ATOM HH1  HA2     0.09
+ATOM HH2  HA2     0.09
+GROUP
+ATOM CI   CT2    -0.18
+ATOM HI1  HA2     0.09
+ATOM HI2  HA2     0.09
+GROUP
+ATOM CJ   CT2    -0.18
+ATOM HJ1  HA2     0.09
+ATOM HJ2  HA2     0.09
+GROUP
+ATOM CK   CT2    -0.18
+ATOM HK1  HA2     0.09
+ATOM HK2  HA2     0.09
+GROUP
+ATOM CB2  CT2    -0.09
+ATOM HB21 HA2     0.09
+ATOM HB22 HA2     0.09
+DELETE ATOM 1HA
+DELETE ATOM 2HA
+BOND   1CA  CB1  CB1  HB11  CB1  HB12
+BOND   CB1  CG   CG   HG1   CG   HG2
+BOND   CG   CD   CD   HD1   CD   HD2
+BOND   CD   CE   CE   HE1   CE   HE2
+BOND   CE   CF   CF   HF1   CF   HF2
+BOND   CF   CM1  CM1  HM1   CM2  HM2
+BOND   CM2  CH   CH   HH1   CH   HH2
+BOND   CH   CI   CI   HI1   CI   HI2
+BOND   CI   CJ   CJ   HJ1   CJ   HJ2
+BOND   CJ   CK   CK   HK1   CK   HK2
+BOND   CK   CB2  CB2  HB21  CB2  HB22  CB2  2CA
+DOUBLE CM1  CM2
+IC 1N      1C      *CA      CB1        1.4592  114.44 -123.23  111.09   1.5461
+IC 1C      1CA     CB1      CG         1.4504  111.47  180.00  115.76   1.5435
+IC CG      1CA     *CB1     HB11       1.5397  113.28  120.74  109.10   1.1138
+IC CG      1CA     *CB1     HB12       1.5397  113.28 -122.34  108.99   1.1143
+IC 1N      1CA     CB       CG         1.4504  111.47  180.00  115.76   1.5435
+IC 1CA     1CB     CG       CD         1.5568  115.76  180.00  113.28   1.5397
+IC CD      1CB     *CG      HG1        1.5397  113.28  120.74  109.10   1.1138
+IC CD      1CB     *CG      HG2        1.5397  113.28 -122.34  108.99   1.1143
+IC 1CB     CG      CD       CE         1.5458  114.46  180.00  126.91   1.3502
+IC CE      CG      *CD      HD1        1.5350  112.33  122.25  108.41   1.1141
+IC CE      CG      *CD      HD2        1.5350  112.33 -121.59  108.13   1.1146
+IC CG      CD      CE       CF         1.5458  114.46  180.00  126.91   1.3502
+IC CF      CD      *CE      HE1        1.5350  112.33  122.25  108.41   1.1141
+IC CF      CD      *CE      HE2        1.5350  112.33 -121.59  108.13   1.1146
+IC CD      CE      CF       CM1        1.5458  114.46  180.00  126.91   1.3502
+IC CM1     CE      *CF      HF1        1.5350  112.33  122.25  108.41   1.1141
+IC CM1     CF      CF       HF2        1.5350  112.33 -121.59  108.13   1.1146
+IC HF1     CE      CF       HF2        1.1110  110.10 -120.00  110.10   1.1110
+IC CM1     CF      *CF      HF2        1.5350  112.33 -121.59  108.13   1.1146
+IC CE      CF      CM1      CM2        1.5115  126.91    0.00  126.69   1.5092
+IC CM2     CF      *CM1     HM1        1.3502  126.91 -178.81  114.69   1.1010
+IC CF      CM1     CM2      CH         0.0000    0.00  180.00    0.00   0.0000
+IC CM1     CH      *CM2     HM2        1.5099  126.94 -177.42  118.69   1.1018
+IC 2N      2C      *2CA     CB2        1.4592  114.44 -123.23  111.09   1.5461
+IC 2C      2CA     CB2      CK         1.4504  111.47  180.00  115.76   1.5435
+IC CK      2CA     *CB2     HB21       1.5397  113.28  120.74  109.10   1.1138
+IC CK      2CA     *CB2     HB22       1.5397  113.28 -122.34  108.99   1.1143
+IC 2N      2CA     2CB      CK         1.4504  111.47  180.00  115.76   1.5435
+IC 2CA     2CB     CK       CJ         1.5458  114.46  180.00  126.91   1.3502
+IC CI      2CB     *CK      HK1        1.5397  113.28  120.74  109.10   1.1138
+IC CI      2CB     *CK      HK2        1.5397  113.28 -122.34  108.99   1.1143
+IC 2CB     CK      CJ       CI         1.5458  114.46  180.00  126.91   1.3502
+IC CK      CI      *CJ      HJ1        1.5350  112.33  122.25  108.41   1.1141
+IC CK      CI      *CJ      HJ2        1.5350  112.33 -121.59  108.13   1.1146
+IC CK      CJ      CI       CH         1.5458  114.46  180.00  126.91   1.3502
+IC CJ      CH      *CI      HI1        1.5350  112.33  122.25  108.41   1.1141
+IC HI1     CH      CI       HI2        1.1110  110.10 -120.00  110.10   1.1110
+IC CJ      CH      *CI      HI2        1.5350  112.33 -121.59  108.13   1.1146
+IC CM2     CI      *CH      HH1        1.5350  112.33  122.25  108.41   1.1141
+IC CM2     CI      *CH      HH2        1.5350  112.33 -121.59  108.13   1.1146
+
+! Stapling patches
+! 2. Click
+
+PRES  CR12         0.18  ! triazole linkage (click reaction)! 1 alkyne + 2 azide
+GROUP                    !
+ATOM N1   NG2R50  -0.27  !     :
+ATOM N2   NG2R50  -0.27  !  HN-N             __
+ATOM N3   NG2R50  -0.15  !     :   HB1    N1 --N2
+ATOM CR2  CG2R51   0.22  !     :   :     /      |
+ATOM CR1  CG2R51   0.15  !  HA-CA..CB..CR1      |
+ATOM HR   HGR52    0.10  !     :   :     \\     |
+GROUP                    !     :   HB2    CR2--N3
+ATOM CX   CT2     -0.18  !   O=C           |     \                :
+ATOM HX1  HA2      0.09  !     :          HR      CZ--CY--CX--CB..CA..HA
+ATOM HX2  HA2      0.09  !                                        :
+GROUP
+ATOM CY   CT2     -0.18
+ATOM HY1  HA2      0.09
+ATOM HY2  HA2      0.09
+GROUP
+ATOM CZ   CT2      0.22
+ATOM HZ1  HA2      0.09
+ATOM HZ2  HA2      0.09
+DELETE ATOM 1HB3
+DELETE ATOM 2HB3
+BOND   1CB CR1  CR1 N1   N2 N3  CR2  N3
+BOND   CR2 HR   N3  CZ
+BOND   CZ  HZ1  CZ  HZ2  CZ CY
+BOND   CY  HY1  CY  HY2  CY CX
+BOND   CX  HX1  CX  HX2  CX 2CB
+DOUBLE CR1  CR2  N1  N2
+IC 1N      1CA     1CB      CR1         1.4532 112.8200  180.0000 116.9400  1.5109
+IC CR1     1CA     *1CB     1HB1        1.5109 116.9400  119.8000 107.9100  1.1114
+IC CR1     1CA     *1CB     1HB2        1.5109 116.9400 -124.0400 109.5000  1.1101
+IC 1CA     1CB     CR1      N1          1.5578 116.9400   90.0000 120.1700  1.3859
+IC N1      1CB     *CR1     CR2         1.3859 120.1700 -178.2600 129.7100  1.3596
+IC 1CB     CR1     N1       N2          1.5109 120.1700 -179.2000 105.2000  1.3170
+IC 1CB     CR1     CR2      N3          1.5109 129.7100  178.6600 105.8000  1.3782
+IC N2      CR2     *N3      CZ          1.3539 107.1500 -178.6900 125.8600  0.9996
+IC N3      CR1     *CR2     HR          1.3782 105.8000 -179.3500 129.8900  1.0809
+IC 2N      2CA     2CB      CX          1.4504 111.4700  180.0000 115.7600  1.5435
+IC 2CA     2CB     CX       CY          1.5568 115.7600  180.0000 113.2800  1.5397
+IC CY      2CB     *CX      HX1         1.5397 113.2800  120.7400 109.1000  1.1138
+IC CY      2CB     *CX      HX2         1.5397 113.2800 -122.3400 108.9900  1.1143
+IC 2CB     CX      CY       CZ          1.5435 113.2800  180.0000 112.3300  1.5350
+IC CZ      CX      *CY      HY1         1.5350 112.3300  122.2500 108.4100  1.1141
+IC CZ      CX      *CY      HY2         1.5350 112.3300 -121.5900 108.1300  1.1146
+IC CX      CY      CZ       HZ1         1.5397 112.3300  180.0000 110.4600  1.4604
+IC HZ1     CY      *CZ      HZ2         1.4604 110.4600  119.9100 110.5100  1.1128
+
+PRES  CR21         0.18  ! triazole linkage (click reaction)! 2 alkyne + 1 azide
+GROUP                    !
+ATOM N1   NG2R50  -0.27  !     :
+ATOM N2   NG2R50  -0.27  !  HN-N             __
+ATOM N3   NG2R50  -0.15  !     :   HB1    N1 --N2
+ATOM CR2  CG2R51   0.22  !     :   :     /      |
+ATOM CR1  CG2R51   0.15  !  HA-CA..CB..CR1      |
+ATOM HR   HGR52    0.10  !     :   :     \\     |
+GROUP                    !     :   HB2    CR2--N3
+ATOM CX   CT2     -0.18  !   O=C           |     \                :
+ATOM HX1  HA2      0.09  !     :          HR      CZ--CY--CX--CB..CA..HA
+ATOM HX2  HA2      0.09  !                                        :
+GROUP
+ATOM CY   CT2     -0.18
+ATOM HY1  HA2      0.09
+ATOM HY2  HA2      0.09
+GROUP
+ATOM CZ   CT2      0.22
+ATOM HZ1  HA2      0.09
+ATOM HZ2  HA2      0.09
+DELETE ATOM 1HB3
+DELETE ATOM 2HB3
+BOND   2CB CR1  CR1 N1   N2 N3  CR2  N3
+BOND   CR2 HR   N3  CZ
+BOND   CZ  HZ1  CZ  HZ2  CZ CY
+BOND   CY  HY1  CY  HY2  CY CX
+BOND   CX  HX1  CX  HX2  CX 1CB
+DOUBLE CR1  CR2  N1  N2
+IC 2N      2CA     2CB      CR1       1.4532 112.8200  180.0000 116.9400  1.5109
+IC CR1     2CA     *2CB     2HB1      1.5109 116.9400  119.8000 107.9100  1.1114
+IC CR1     2CA     *2CB     2HB2      1.5109 116.9400 -124.0400 109.5000  1.1101
+IC 2CA     2CB     CR1      N1        1.5578 116.9400   90.0000 120.1700  1.3859
+IC N1      2CB     *CR1     CR2       1.3859 120.1700 -178.2600 129.7100  1.3596
+IC 2CB     CR1     N1       N2        1.5109 120.1700 -179.2000 105.2000  1.3170
+IC 2CB     CR1     CR2      N3        1.5109 129.7100  178.6600 105.8000  1.3782
+IC N2      CR2     *N3      CZ        1.3539 107.1500 -178.6900 125.8600  0.9996
+IC N3      CR1     *CR2     HR        1.3782 105.8000 -179.3500 129.8900  1.0809
+IC 1N      1CA     1CB      CX        1.4504 111.4700  180.0000 115.7600  1.5435
+IC 1CA     1CB     CX       CY        1.5568 115.7600  180.0000 113.2800  1.5397
+IC CY      1CB     *CX      HX1       1.5397 113.2800  120.7400 109.1000  1.1138
+IC CY      1CB     *CX      HX2       1.5397 113.2800 -122.3400 108.9900  1.1143
+IC 1CB     CX      CY       CZ        1.5435 113.2800  180.0000 112.3300  1.5350
+IC CZ      CX      *CY      HY1       1.5350 112.3300  122.2500 108.4100  1.1141
+IC CZ      CX      *CY      HY2       1.5350 112.3300 -121.5900 108.1300  1.1146
+IC CX      CY      CZ       HZ1       1.5397 112.3300  180.0000 110.4600  1.4604
+IC HZ1     CY      *CZ      HZ2       1.4604 110.4600  119.9100 110.5100  1.1128
+
+! Stapling patches
+! 3. cystein bis-alkylation
+
+PRES  DIBM         0.32  ! Cystein bis-alkylation J. Am. Soc., 2012, 134, 17704
+GROUP                    ! at meta-position
+ATOM C1   CG2R61  -0.115 !             H5       H6
+ATOM C2   CG2R61  -0.115 !              \      /
+ATOM C3   CG2R61  -0.115 !         H71   C5===C6
+ATOM C4   CG2R61  -0.115 !         |    /      \
+ATOM C5   CG2R61  -0.115 !    1SG--C7--C4      C1--H1
+ATOM C6   CG2R61  -0.115 !         |    \\    //
+ATOM C7   CG321    0.09  !         H72   C3---C2
+ATOM H71  HGA2     0.09  !              /      \
+ATOM H72  HGA2     0.09  !             H3  H81--C8--H82
+ATOM C8   CG321    0.10  !                      |
+ATOM H81  HGA2     0.09  !                     2SG
+ATOM H82  HGA2     0.09  !
+ATOM H1   HGR61    0.115
+ATOM H3   HGR61    0.115
+ATOM H5   HGR61    0.115
+ATOM H6   HGR61    0.115
+DELETE ATOM 1HG1
+DELETE ATOM 2HG1
+BOND   1SG C7  2SG C8
+BOND   C7  H71 C7  H72 C8 H81 C8 H82
+BOND   C7  C4  C4  C5  C5 C6  C6 C1
+BOND   C1  C2  C2  C3  C3 C4  C2 C8
+BOND   C3  H3  C1  H1  C5 H5  C6 H6
+IC  1CA  1CB   1SG  C7   1.5380  112.50    0.00   95.00  1.8180
+IC  1CB  1SG   C7   C4   1.8180   95.00    0.00  115.20  1.4900
+IC  1SG  C7    C4   C5   1.8180  115.20    0.00  120.00  1.3750
+IC  1SG  C4   *C7   H71  1.8180  115.20    0.00  107.50  1.1110
+IC  1SG  C4   *C7   H72  1.8180  115.20  120.00  107.50  1.1110
+IC  C7   C4    C5   C6   1.4900  120.00    0.00  120.00  1.3750
+IC  C4   C5    C6   C1   1.3750  120.00    0.00  120.00  1.3750
+IC  C5   C6    C1   C2   1.3750  120.00    0.00  120.00  1.3750
+IC  C6   C1    C2   C3   1.3750  120.00    0.00  120.00  1.3750
+IC  C1   C2    C4   C4   1.3750  120.00    0.00  120.00  1.3750
+IC  C4   C6   *C5   H5   1.3750  120.00    0.00  120.00  1.0800
+IC  C5   C1   *C6   H6   1.3750  120.00    0.00  120.00  1.0800
+IC  C6   C2   *C1   H1   1.3750  120.00    0.00  120.00  1.0800
+IC  C2   C4   *C3   H3   1.3750  120.00    0.00  120.00  1.0800
+IC  C1   C3   *C2   C8   1.3750  120.00    0.00  120.00  1.4900
+IC  C1   C2    C8   2SG  1.3750  120.00    0.00  115.20  1.8180
+IC  2SG  C2   *C8   H81  1.8180  115.20    0.00  107.50  1.1110
+IC  2SG  C2   *C8   H82  1.8180  115.20  120.00  107.50  1.1110
+
+PRES  DIBP         0.32  ! Cystein bis-alkylation
+GROUP                    ! at para-position
+ATOM C1   CG2R61  -0.115 !             H5       H6
+ATOM C2   CG2R61  -0.115 !              \      /
+ATOM C3   CG2R61  -0.115 !         H71   C5===C6   H81
+ATOM C4   CG2R61  -0.115 !         |    /      \   |
+ATOM C5   CG2R61  -0.115 !    1SG--C7--C4      C1--C8--2SG
+ATOM C6   CG2R61  -0.115 !         |    \\    //   |
+ATOM C7   CG321    0.09  !         H72   C3---C2   H82
+ATOM H71  HGA2     0.09  !              /       \
+ATOM H72  HGA2     0.09  !             H3        H2
+ATOM C8   CG321    0.10  !
+ATOM H81  HGA2     0.09  !
+ATOM H82  HGA2     0.09  !
+ATOM H2   HGR61    0.115
+ATOM H3   HGR61    0.115
+ATOM H5   HGR61    0.115
+ATOM H6   HGR61    0.115
+DELETE ATOM 1HG1
+DELETE ATOM 2HG1
+BOND   1SG C7  2SG C8
+BOND   C7  H71 C7  H72 C8 H81 C8 H82
+BOND   C7  C4  C4  C5  C5 C6  C6 C1
+BOND   C1  C2  C2  C3  C3 C4  C1 C8
+BOND   C3  H3  C2  H2  C5 H5  C6 H6
+IC 1CA     1CB     1SG     C7         1.5380  112.50    0.00   95.00   1.8180
+IC 1CB     1SG     C7      C4         1.8180   95.00    0.00  115.20   1.4900
+IC 1SG     C7      C4      C5         1.8180  115.20    0.00  120.00   1.3750
+IC 1SG     C4      *C7     H71        1.8180  115.20    0.00  107.50   1.1110
+IC 1SG     C4      *C7     H72        1.8180  115.20  120.00  107.50   1.1110
+IC C7      C4      C5      C6         1.4900  120.00    0.00  120.00   1.3750
+IC C4      C5      C6      C1         1.3750  120.00    0.00  120.00   1.3750
+IC C5      C6      C1      C2         1.3750  120.00    0.00  120.00   1.3750
+IC C6      C1      C2      C3         1.3750  120.00    0.00  120.00   1.3750
+IC C1      C2      C4      C4         1.3750  120.00    0.00  120.00   1.3750
+IC C4      C6      *C5     H5         1.3750  120.00    0.00  120.00   1.0800
+IC C5      C1      *C6     H6         1.3750  120.00    0.00  120.00   1.0800
+IC C1      C3      *C2     H2         1.3750  120.00  180.00  120.00   1.0800
+IC C2      C4      *C3     H3         1.3750  120.00    0.00  120.00   1.0800
+IC C6      C2      *C1     C8         1.3750  120.00    0.00  120.00   1.4900
+IC C6      C1      C8      2SG        1.3750  120.00    0.00  115.20   1.8180
+IC 2SG     C1      *C8     H81        1.8180  115.20    0.00  107.50   1.1110
+IC 2SG     C1      *C8     H82        1.8180  115.20  120.00  107.50   1.1110
+
+END
+
+read param card append flex
+* Parameters for stapling
+*
+
+BONDS
+
+CT2      CG1T1    410.00     1.4650  ! CG1T1 CG331 2BTY, 2-butyne, kevo
+CG2R64   S        262.00     1.7410  ! CG2R64 SG311 ! 2SMPYR
+NG2S3    HC       447.80     1.0190  ! NG311  HGPAM1!
+NG2S3    CG331    255.00     1.4630  ! MGU2
+NH3      CG2R64   370.00     1.370   ! CG2R64 NG311 ! 4MC
+CG311    HGA3     322.00     1.1110  ! ALLOW ALI
+CT2      CG2R51   229.63     1.5000  ! PROT his, adm jr., 7/22/89
+CT3      CG2R51   229.63     1.5000  ! PROT his, adm jr., 7/22/89
+NG2R50   HGP1     474.00     1.0100  ! NA G, adm jr. 11/97
+NG2R50   CT3      255.00     1.4630  ! MGU2
+NG2R50   CT2      255.00     1.4630  ! MGU2
+
+ANGLES
+!V(angle) = Ktheta(Theta - Theta0)**2
+!V(Urey-Bradley) = Kub(S - S0)**2
+!Ktheta: kcal/mole/rad**2
+!Theta0: degrees
+!Kub: kcal/mole/A**2 (Urey-Bradley)
+!S0: A
+!
+!      atom types            Ktheta   Theta0   Kub    S0
+CT2      CT2      CE1       32.00    112.20   ! from CE1 CT2 CT3 and CG2D1  CG321  CG321
+CT1      CT2      CE1       32.00    112.20   ! from CE1 CT2 CT3 and CG2D1  CG321  CG321
+CT1      CT2      CG1T1     32.00    112.20   !
+CG1T1    CT2      HA2       47.00    111.50   ! CG1T1 CG331 HGA3    2BTY, 2-butyne, kevo
+CG1T2    CG1T1    CT2       11.00    180.00   ! CG1T2 CG1T1 CG331   PRPY, propene, kevo
+CG2R64   S        CT2       66.00     91.00   ! CG2R64 SG311 CG311 ! 2SMPYR
+NG2R62   CG2R64   S         38.00    116.00   ! NA Ade h2 %%% TEST 113.5 -> 118.9 %%%
+CT2      CT2      NG2S3     27.30    109.70   ! NESM
+NG2S3    CT2      HA2       38.30    105.20   ! NG2S3 CG331 HGA3 ! NESM
+CG2R64   NH3      HC        30.00    109.50   20.00   2.07400
+CT1      CT2      HGA3      34.60    110.10   ! CG321 CG331 HGA3 !
+CT2      NG2S3    CG2R64    50.00    120.00   ! CG201 NG2S1 CG2R6! 2AMP,2-amino pyridine
+CT2      NG2S3    HC        42.30    111.50   ! MMSM
+CG2R64   NG2S3    HC        43.50    113.50   ! 4MC, yxu
+CT2      NH3      CG2R64    50.00    120.00   ! CG201 NG2S1 CG2R6! 2AMP,2-amino pyridine
+NH3      CG2R64   NG2R62    66.00    121.70   ! 4MC
+CG2R64   NG2S3    HGP1      40.00    114.00   ! PMSM
+CG331    NG2S3    CG2R64    50.00    120.00   ! CG201 NG2S1 CG2R6! 2AMP,2-amino pyridine
+CG2R61   CG321    S         53.00    115.20   ! CG2R61 CG321 NG2S1! NZAD,
+CT1     CT3       CG2R51    58.350   113.00   ! ALLOW ARO ! HIS
+HA3     CT3       CG2R51    33.430   109.50   ! ALLOW ARO ! HIS
+NG2R50  NG2R50    NG2R50    110.00   103.00   ! OXAD
+NG2R50  NG2R50    HGP1      30.000   127.00   20.00    2.140000 ! ALLOW ARO
+CT3     CG2R51    CG2R51    45.800   130.00   ! ALLOW ARO ! HIS
+CT3     CG2R51    NG2R50    45.800   124.00   ! ALLOW ARO ! HIS
+HGP1    NG2R50    CG2R51    30.000   125.50   20.00    2.150000 ! ALLOW ARO
+NG2R50   NG2R50   CT2       30.000   125.50   20.00    2.150000 ! ALLOW ARO
+CG2R51   NG2R50   CT2       30.000   125.50   20.00    2.150000 ! ALLOW ARO
+NG2R50   CT2      CT2       58.350   113.00   ! ALLOW ARO ! HIS
+NG2R50   CT2      HA2       33.430   109.50   ! ALLOW ARO ! HIS
+
+! V(dihedral) = Kchi(1 + cos(n(chi) - delta))
+
+DIHEDRALS
+CT2      CT2      CE1      HE1     0.1200  3     0.00 !
+CT2      CT2      CE1      CE2     0.5000  1   180.00 ! from CE2  CE1  CT2  CT3
+CT2      CT2      CE1      CE2     1.3000  3   180.00 ! from CE2  CE1  CT2  CT3
+CT2      CT2      CE1      CE1     0.5000  1   180.00 ! from CE2  CE1  CT2  CT3
+CT2      CT2      CE1      CE1     1.3000  3   180.00 ! from CE2  CE1  CT2  CT3
+CE1      CE1      CT2      HA2     0.1200  3     0.00 !
+CT1      CT2      CE1      HE1     0.1200  3     0.00 !
+CT1      CT2      CE1      CE1     0.5000  1   180.00 !
+CT1      CT2      S        CG2R64  0.1500  3   180.00 ! from  HGA3   CG331  SG311 CG2R63 ! 2SMPYR
+NG2R62   CG2R64   S        CT2     2.1200  2   180.00 ! from  NG2R62 CG2R64 SG311 CG311 ! 2SMPYR
+NG2R62   CG2R64   S        CT2     0.1900  4   180.00 ! from  NG2R62 CG2R64 SG311 CG311 ! 2SMPYR
+S        CG2R64   NG2R62   CG2R64  2.0000  2   180.00 ! from  SG311  CG2R64 NG2R62 CG2R62 ! 4O2SM
+HA2      CT2      S        CG2R64  0.1500  3   180.00 ! from  HGA3   CG331  SG311 CG2R63 ! 2SMPYR
+NG2R62   CG2R64   NH3      CT2     1.4000  1   180.00 ! NG2R62 CG2R64 NG311  CG331  ! 4MC, yxu
+NG2R62   CG2R64   NH3      CT2     1.3000  2   180.00 ! NG2R62 CG2R64 NG311  CG331  ! 4MC, yxu
+NH3      CG2R64   NG2R62   CG2R64  3.1000  2   180.00 ! NG311  CG2R65 NG2R62 CG2R65 ! 4MC, yxu
+NG2R62   CG2R64   NH3      HC      2.4000  2   180.00 ! NG2R62 CG2R65 NG311  HGPAM1 ! 4MC, yxu
+NG2R62   CG2R64   NG2S3    HGP1    2.4000  2   180.00 ! NG2R62 CG2R65 NG311  HGPAM1 ! 4MC, yxu
+NG2R62   CG2R64   NG2S3    CG331   1.4000  1   180.00 ! NG2R62 CG2R64 NG311  CG331  ! 4MC, yxu
+NG2R62   CG2R64   NG2S3    CG331   1.3000  2   180.00 ! NG2R62 CG2R64 NG311  CG331  ! 4MC, yxu
+HGA3     CG331    NG2S3    CG2R64  0.4000  3     0.00 ! HGA3   CG331  NG311  CG2R64 ! 4MC, yxu
+HGA3     CG331    NG2S3    CG2R64  0.0800  6     0.00 ! HGA3   CG331  NG311  CG2R64 ! 4MC, yxu
+CG2R61   CG2R61   CG321    S       0.1190  2     0.00 ! CG2R61 CG2R61 CG321  NG2S1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG2R61   CG321    S       0.1320  4   180.00 ! CG2R61 CG2R61 CG321  NG2S1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG2R61   CG321    S       0.0130  6   180.00 ! CG2R61 CG2R61 CG321  NG2S1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG321    S        CT2     0.0150  1     0.00 ! CG2R61 CG321  NG2S1  CG2O1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG321    S        CT2     0.2980  2     0.00 ! CG2R61 CG321  NG2S1  CG2O1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG321    S        CT2     0.0760  3   180.00 ! CG2R61 CG321  NG2S1  CG2O1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG321    S        CT2     0.6190  4     0.00 ! CG2R61 CG321  NG2S1  CG2O1 !NZAD, N-benzylacetamide, isg
+CG2R61   CG321    S        CT2     0.1480  6     0.00 ! CG2R61 CG321  NG2S1  CG2O1 !NZAD, N-benzylacetamide, isg
+CT1      CT3      CG2R51   NG2R50  0.5300  1   180.00 ! HIS
+CT1      CT3      CG2R51   NG2R50  0.4200  2   180.00 ! HIS
+CT1      CT3      CG2R51   NG2R50  0.3000  3   180.00 ! HIS
+CG2R51   CG2R51   CT3      CT1     2.0400  1     0.00 ! HIS
+CG2R51   CG2R51   CT3      CT1     0.4400  2     0.00 ! HIS
+CG2R51   CG2R51   CT3      CT1     0.1300  3   180.00 ! HIS
+CT3      CG2R51   NG2R50   NG2R50  5.5000  2   180.00 ! OXAD
+NG2R50   CG2R51   CG2R51   CT3     3.0000  2   180.00 ! OXAD
+CT3      CG2R51   CG2R51   HGR52   2.0000  2   180.00 ! HIS
+HA3      CT3      CG2R51   NG2R50  0.1900  3     0.00 ! HIS
+HA3      CT3      CG2R51   CG2R51  0.0000  3     0.00 ! HIS
+NG2R50   NG2R50   NG2R50   CG2R51 14.0000  2   180.00 ! OXAD
+NG2R50   NG2R50   NG2R50   HGP1   14.0000  2   180.00 ! HIS
+NG2R50   CG2R51   CG2R51   NG2R50 14.0000  2   180.00 ! OXAD
+CG2R51   CG2R51   NG2R50   HGP1   14.0000  2   180.00 ! HIS
+HGR52    CG2R51   NG2R50   HGP1    1.0000  2   180.00 ! OXAD
+NG2R50   NG2R50   NG2R50   CT2    14.0000  2   180.00 ! HIS
+NG2R50   NG2R50   CT2      CT2     2.0400  1     0.00 ! HIS
+NG2R50   NG2R50   CT2      CT2     0.4400  2     0.00 ! HIS
+NG2R50   NG2R50   CT2      CT2     0.1300  3   180.00 ! HIS
+NG2R50   NG2R50   CT2      HA2     0.0000  3     0.00 ! HIS
+CG2R51   NG2R50   CT2      CT2     0.5300  1   180.00 ! HIS
+CG2R51   NG2R50   CT2      CT2     0.4200  2   180.00 ! HIS
+CG2R51   NG2R50   CT2      CT2     0.3000  3   180.00 ! HIS
+CG2R51   NG2R50   CT2      HA2     0.0000  3     0.00 ! HIS
+CG2R51   CG2R51   NG2R50   CT2    14.0000  2   180.00 ! HIS
+HGR52    CG2R51   NG2R50   CT2     1.0000  2   180.00 ! OXAD
+
+END
+

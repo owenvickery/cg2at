@@ -1,0 +1,11 @@
+ATOM     16  C1  DOPE    1       3.681   2.341  61.377  14.0  2.00      MEMB
+ATOM     17  HA  DOPE    1       3.672   1.243  61.556  14.0  0.00      MEMB
+ATOM     18  HB  DOPE    1       4.385   2.805  62.085  14.0  0.00      MEMB
+ATOM     19  C2  DOPE    1       4.165   2.628  59.968  1.00  3.00      MEMB
+ATOM     20  HS  DOPE    1       5.277   2.474  60.047  1.00  0.00      MEMB
+ATOM     21  O21 DOPE    1       3.633   3.902  59.490  1.00  0.00      MEMB
+ATOM     22  C21 DOPE    1       4.573   4.521  58.881  1.00  0.00      MEMB
+ATOM     23  O22 DOPE    1       5.750   4.181  58.979  1.00  0.00      MEMB
+ATOM     24  C22 DOPE    1       4.197   5.787  58.154  15.0  4.00      MEMB
+ATOM     25  H2R DOPE    1       4.598   5.889  57.133  15.0  0.00      MEMB
+ATOM     26  H2S DOPE    1       4.610   6.636  58.729  15.0  0.00      MEMB
