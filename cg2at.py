@@ -855,92 +855,78 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
 		pass
 	return at_connections,cg_connections, res
 
-def dihedral(p1, p2, p3, p4):
-    """Praxeolitic formula
-    1 sqrt, 1 cross product"""
-    b1 = -1.0*(p2 - p1)
+def dihedral(p1,p2,p3,p4):
+#### https://en.wikipedia.org/w/index.php?title=Dihedral_angle&oldid=689165217#Angle_between_three_vectors
+#### dihedral = atan2(([b1xb2]x[b2xb3]).b2/|b2|, [b1xb2].[b2xb3]))
+
+    b1 = -1.0*(p2 - p1) ## needs to be inverted
     b2 = p3 - p2
     b3 = p4 - p3
 
-    # normalize b1 so that it does not influence magnitude of vector
-    # rejections that come next
-    b2 /= np.linalg.norm(b2)
+    b1_b2 = np.cross(b1, b2)
+    b2_b3 = np.cross(b2, b3)
 
-    # vector rejections
-    # v = projection of b1 onto plane perpendicular to b2
-    #   = b1 minus component that aligns with b2
-    # w = projection of b3 onto plane perpendicular to b2
-    #   = b3 minus component that aligns with b2
-    v = b1 - np.dot(b1, b2)*b2
-    w = b3 - np.dot(b3, b2)*b2
+    b1_b2_cross_b2_b3 = np.cross(b1_b2, b2_b3)
+    b2_norm = b2/np.linalg.norm(b2)
 
-    # angle between v and w in a plane is the torsion angle
-    # v and w may not be normalized but that's fine since tan is y/x
-    x = np.dot(v, w)
-    y = np.dot(np.cross(b2, v), w)
-    return np.degrees(np.arctan2(y, x))
+    x = np.dot(b1_b2_cross_b2_b3, b2_norm)
+    y = np.dot(b1_b2, b2_b3)
 
-def minimise_dihedral(residue_number, cg, at, center, xyz_rot_apply):
-	try:
-		# center_2=(cg[residue_number]['BB']['coord']+cg[residue_number-1]['BB']['coord'])/2
-		dih_temp=[]
-		for atom in at[residue_number-1]['BB']:
-			if at[residue_number-1]['BB'][atom]['atom'] == backbone[cg[residue_number-1]['BB']['residue_name']]['dihedral'][-1]:
-				prev_C=at[residue_number-1]['BB'][atom]['coord']-center
-				break
-		for atom in at[residue_number]['BB']:
-			if at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number]['BB']['residue_name']]['dihedral']:
-				coord=rotate_atom(at[residue_number]['BB'][atom]['coord'], center, xyz_rot_apply)
-				dih_temp.append(coord-center)
-		vector=dih_temp[0]-dih_temp[2]
-		print(vector, cg[residue_number-1]['BB']['residue_name'], cg[residue_number]['BB']['residue_name'], dihedral(prev_C, dih_temp[0], dih_temp[1], dih_temp[2]))
-	except:
-		pass
-
-# 	xyz_rot_apply=[]
-# #### iterates through rotation matrices
-# 	for xyz_rot in [x_rot,y_rot,z_rot]:
-# 		dist=[]
-# 	#### iterates through rotation matrices 
-# 		for rot_val, rotation in enumerate(xyz_rot):
-# 		#### applies matrix to coordinates saved as check
-# 			check = at_connections.dot(rotation)
-# 		#### for each connection the distance is calculated and added to list
-# 			individual_connections=[]
-# 			for connect in range(len(cg_connections)):
-# 				individual_connections.append(np.sqrt(((check[connect][0]-cg_connections[connect][0])**2)+((check[connect][1]-cg_connections[connect][1])**2)+((check[connect][2]-cg_connections[connect][2])**2)))
-# 		#### for each rotation the connection distances are added to dist list 
-# 			dist.append(individual_connections)
-# 	#### the RMS is calculated for each rotation	
-# 		dist=np.array(dist)
-# 		inter= np.sqrt(np.mean(dist**2,axis=1))
-# 		if len(dist[0])==2 and same:
-# 			ratio=dist/np.min(dist, axis=1)[:,np.newaxis]
-# 			rotation_index=np.argmin(inter[np.where(np.sum(ratio, axis=1)<np.min(np.sum(ratio, axis=1))*1.02)])
-# 			# print(np.sum(ratio, axis=1), np.min(np.sum(ratio, axis=1)))
-# 			for i in range(len(ratio)):
-# 				if np.all(ratio[i]<1.05):
-# 					if 'rotation_RMS' in locals():
-# 						if inter[i] < rotation_RMS:
-# 							rotation_RMS = inter[i]
-# 							rotation_index=i
-# 					else:
-# 						rotation_RMS=inter[i]
-# 						rotation_index=i
-# 		else:
-# 			rotation_index=np.argmin(inter)#int(np.where(inter==np.min(inter))[0])
-
-# 	#### the rotation with the lowest RMS applied to the at_connections
-# 		at_connections = at_connections.dot(xyz_rot[rotation_index])
-# 	#### the optimal rotation is added to xyz_rot_apply list as radians
-# 		xyz_rot_apply.append(np.radians(rotation_index*5))
-# 	return xyz_rot_apply
+    return np.degrees(np.arctan2(x, y))
 
 
+def	apply_rotation_around_vector(rotate_z, rotate_x, theta_z, coord, center):
+	coord = np.array(coord)-center
+	coord = coord.dot(eulerAnglesToRotationMatrix([0,0,rotate_z]))
+	coord = coord.dot(eulerAnglesToRotationMatrix([rotate_x,0,0]))
+	coord = coord.dot(eulerAnglesToRotationMatrix([0,0,np.radians(theta_z)]))
+	coord = coord.dot(eulerAnglesToRotationMatrix([-rotate_x,0,0]))
+	coord = coord.dot(eulerAnglesToRotationMatrix([0,0,-rotate_z]))
+	return coord+center
 
 
+def minimise_dihedral(residue_number, cg, at, center):
+#### fetch backbone atoms from current residue
+	dih_temp=[]
+	for atom in at[residue_number]['BB']:
+		if at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number]['BB']['residue_name']]['dihedral']:
+			dih_temp.append(at[residue_number]['BB'][atom]['coord'])
+	vector=(dih_temp[2]-((dih_temp[0]+dih_temp[2])/2))-(dih_temp[0]-((dih_temp[0]+dih_temp[2])/2))
+#### fetch preceeding carbon atom
+	for atom in at[residue_number-1]['BB']:
+		if at[residue_number-1]['BB'][atom]['atom'] == backbone[cg[residue_number-1]['BB']['residue_name']]['dihedral'][-1]:
+			prev_C=at[residue_number-1]['BB'][atom]['coord']-center
+			break
 
-	return xyz_rot_apply
+#### rotate aroun z to put on yz plane
+	rotate_z = np.arccos(vector[1]/np.sqrt(vector[0]**2+vector[1]**2+vector[2]**2))
+	vector_z = vector.dot(eulerAnglesToRotationMatrix([0,0,rotate_z]))
+#### rotate around x to align with z axis 
+	rotate_x = np.arccos(vector[2]/np.sqrt(vector[0]**2+vector[1]**2+vector[2]**2))
+	vector_x = vector.dot(eulerAnglesToRotationMatrix([rotate_x,0,0]))
+
+#### apply rotations to dihedral atoms 
+	dih_aligned =[]
+	for atom in [prev_C, dih_temp[0]-center, dih_temp[1]-center, dih_temp[2]-center]:
+		atom=np.array(atom)
+		atom_z = atom.dot(eulerAnglesToRotationMatrix([0,0,rotate_z]))
+		atom_x = atom_z.dot(eulerAnglesToRotationMatrix([rotate_x,0,0]))
+		dih_aligned.append(atom_x)
+#### rotate around z axis to find a Phi dihedral between -160 and -95
+	for theta in range(0,360):
+		a = dih_aligned[1].dot(eulerAnglesToRotationMatrix([0,0,np.radians(theta)]))
+		b = dih_aligned[2].dot(eulerAnglesToRotationMatrix([0,0,np.radians(theta)]))
+		c = dih_aligned[3].dot(eulerAnglesToRotationMatrix([0,0,np.radians(theta)]))
+		dih = dihedral(dih_aligned[0], a,b, c)
+		if -160 < dih < -50:
+			theta_z = np.radians(theta)
+			dih_fin = dih
+			break
+	if 'theta_z' not in locals():
+		print(residue_number)
+		theta_z = 0
+		dih_fin = 0 
+	return rotate_z, rotate_x, theta_z
 
 def build_protein_atomistic_system(cg_residues, box_vec):
 #### initisation of counters
@@ -982,13 +968,6 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 			at_connections, cg_connections, center=connectivity(frag_val, cg_fragments, connect, at_residues[residue_number], cg_residues, residue_number)
 		#### if BB bead adds the N and C terminal atoms to connectivity
 			if cg_fragments=='BB':
-#art################################# doesn't seem to help, Maybe change into dihedral angle but then is dependant upon aminoacid type? 
-				# if len(at_connections) == 0:
-				# 	at_connections, cg_connections = artifical_side_chain(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center)
-
-					# pass
-					##### write a function to a add a artifial sidechain to fix randon rotation of GLY/ALA
-#art###############################
 				at_connections, cg_connections, res = BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center)
 			#### measures the distance between BB beads. 
 				if not initial:
@@ -1030,13 +1009,21 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 			else:
 				print('atom connections: '+str(len(at_connections))+' does not equal CG connections: '+str(len(cg_connections)))
 				sys.exit('residue number: '+str(residue_number)+', residue type: '+str(cg_residues[residue_number][cg_fragments]['residue_name'])+', bead: '+cg_fragments)
-			if cg_fragments=='BB':
-				xyz_rot_apply = minimise_dihedral(residue_number, cg_residues, at_residues, center, xyz_rot_apply)
+
 
 		#### applies rotation to each atom
 			for atom in at_residues[residue_number][cg_fragments]:
 				at_residues[residue_number][cg_fragments][atom]['coord'] = rotate_atom(at_residues[residue_number][cg_fragments][atom]['coord'], center, xyz_rot_apply)		
-				final_at_residues[atom]=at_residues[residue_number][cg_fragments][atom]
+				if cg_fragments!='BB' or cg_residues[residue_number][cg_fragments]['residue_name'] in ['GLY','PRO']:
+					final_at_residues[atom]=at_residues[residue_number][cg_fragments][atom]
+
+			if cg_fragments=='BB' and cg_residues[residue_number][cg_fragments]['residue_name'] not in ['GLY','PRO']:
+				if residue_number != 0:
+					rotate_z, rotate_x, theta_z = minimise_dihedral(residue_number, cg_residues, at_residues, center)
+				for atom in at_residues[residue_number][cg_fragments]:
+					if residue_number != 0:
+						at_residues[residue_number][cg_fragments][atom]['coord'] = apply_rotation_around_vector(rotate_z, rotate_x, theta_z, at_residues[residue_number][cg_fragments][atom]['coord'], center)
+					final_at_residues[atom]=at_residues[residue_number][cg_fragments][atom]
 	#### if disulphide bond found move the S atoms to within 2 A of each other
 		if 'disulphide' in locals():
 			if disulphide:
