@@ -19,14 +19,15 @@ import datetime
 import glob
 from scipy.spatial import KDTree
 
-parser = argparse.ArgumentParser(description='Converts CG representation into atomistic', epilog='Enjoy the program and best of luck!', allow_abbrev=True)
+parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', epilog='Enjoy the program and best of luck!\n', allow_abbrev=True)
 parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str, required=True)
 parser.add_argument('-a', help='atomistic coordinates',metavar='pdb/gro/tpr',type=str)
 parser.add_argument('-d', help='additional database location',metavar='../test',type=str)
 parser.add_argument('-v', action="count", default=0, help="increase output verbosity (eg -vv, 3 levels)")
 parser.add_argument('-ter', help='interactively choose terminal species', action='store_true')
 parser.add_argument('-clean', help='removes all part files from build', action='store_true')
-parser.add_argument('-chains', help='list of chains to rigid body fit together, starts at chain 0',metavar='1 2',type=int, nargs='*')
+# parser.add_argument('-chains', help='list of chains to rigid body fit together, starts at chain 0',metavar='1 2',type=int, nargs='*')
+parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional',metavar='tip3p',type=str)
 args = parser.parse_args()
 options = vars(args)
 
@@ -150,7 +151,6 @@ def sort_forcefield(forcefield_available_prov, forcefield_available_user, f_numb
 def fetch_residues(fragments_available_prov, fragments_available_user):
 #### list of directories and water types  [[root, folders...],[root, folders...]]
 	np_directories, p_directories,mod_directories=[], [],[]
-	water=[]
 	fragment_number = database_selection(fragments_available_prov, fragments_available_user, 'fragments')
 	if type(fragment_number) == int:
 		fragment_number=[0]
@@ -170,12 +170,6 @@ def fetch_residues(fragments_available_prov, fragments_available_user):
 						np_directories.append([])
 						np_directories[-1].append(root)
 						np_directories[-1]+=dirs
-		#### adds water residues to water list
-						if os.path.exists(location+directory_type+'SOL'):
-							for root, dirs, files in os.walk(location+directory_type+'SOL'):
-								for water_type in files:
-									water.append(water_type[:-4])
-								break
 		#### adds protein residues locations to p_directories
 					else:
 						p_directories.append([])
@@ -193,9 +187,48 @@ def fetch_residues(fragments_available_prov, fragments_available_user):
 								mod_directories[-1]+=dirs
 								break
 					break
-	return sort_directories(p_directories, mod_directories, np_directories, water)				
+	return sort_directories(p_directories, mod_directories, np_directories)				
 
-def sort_directories(p_directories, mod_directories, np_directories, water):
+def check_water_molecules():
+	exists = False
+	if args.w != None:
+		for directory in np_directories:
+			if os.path.exists(directory[0]+'SOL/'+args.w+'.pdb'):
+				return directory[0]+'SOL/', args.w
+	if not exists:
+		if args.w != None:
+			print('\nThe water type '+args.w+' doesn\'t exist')
+		water=[]
+		for directory in np_directories:
+			water.append([directory[0]+'SOL/'])
+			for root, dirs, files in os.walk(directory[0]+'SOL/'):
+				for file in files:
+					if file.endswith('.pdb'):
+						water[-1].append(file)
+				break
+		print('\nPlease select a water molecule from below:\n')
+		print('{0:^20}{1:^30}'.format('Selection','water_molecule'))
+		print('{0:^20}{1:^30}'.format('---------','----------'))
+		offset=0
+		for d_val, directory in enumerate(np_directories):
+			print('the following water models are found in: \n\n'+water[d_val][0]+'\n')
+			for selection, water_file in enumerate(water[d_val][1:]):
+				print('{0:^20}{1:^30}'.format(selection+offset,water_file.split('.')[0]))
+			offset+=len(water[d_val][1:])
+	while True:
+		try:
+			number = int(input('\nplease select a water molecule: '))
+			minim = 0
+			for water_val, water_selection in enumerate(water):
+				if minim <= number < minim + len(water_selection):
+					return water_selection[0], water_selection[number-minim+water_val+1].split('.')[0]
+				minim += len(water_selection)
+		except KeyboardInterrupt:
+			sys.exit('\nInterrupted')
+		except:
+			print("Oops!  That was a invalid choice")			
+
+def sort_directories(p_directories, mod_directories, np_directories):
 #### sorts directories alphabetically and creates residue database
 	p_residues, np_residues, mod_residues = [],[],[]
 	for directory in range(len(mod_directories)):
@@ -218,7 +251,7 @@ def sort_directories(p_directories, mod_directories, np_directories, water):
 			print(p_directories[directory][0],'\n\nresidues\n\n',p_directories[directory][1:], '\n')
 		print('\n{:-<75}'.format('>  Verbose level 1 end\n'))
 
-	return np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories, water
+	return np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories
 
 def fetch_fragment(p_directories):
 #### fetches the Backbone heavy atoms and the connectivity with pre/proceeding residues 
@@ -238,14 +271,14 @@ def fetch_fragment(p_directories):
 										atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
 									if line_sep['backbone'] == 2:
 										bb_list.append(line_sep['atom_name'])  ### connecting atoms
-									if line_sep['backbone'] in [3, 5]:
+									if line_sep['backbone'] in [3,4,5]:
 										restraint.append(line_sep['atom_name'])  ### position restrained atoms
 									if line_sep['backbone'] in [5]:
 										disulphide = line_sep['atom_name'] ### position restrained atoms
 									if line_sep['backbone'] == 4:
 										terminal=True
-									if line_sep['backbone'] in [2,3] and file_name.startswith('B'):
-										dihedral .append(line_sep['atom_name'])
+									if line_sep['backbone'] in [6] and file_name.startswith('B'):
+										dihedral.append(line_sep['atom_name'])
 			processing[residue]={'atoms':atom_list,'b_connect':bb_list,'restraint':restraint, 'disulphide':disulphide, 'ter':terminal, 'dihedral':dihedral}  ### adds heavy atoms and connecting atoms to backbone dictionary 
 			atom_list, bb_list, restraint=[], [], []  ### resets residue lists of heavy atoms, connecting atoms and restraint 
 #### if verbose prints out all heavy atoms and connecting atoms for each backbone
@@ -332,7 +365,8 @@ def write_topol(residue_type, residue_number, chain):
 	with open('topol_'+residue_type+chain+'.top', 'w') as topol_write:
 	#### add standard headers may need to be changed dependant on forcefield
 		topol_write.write('; Include forcefield parameters\n#include \"'+working_dir+'FORCEFIELD/'+forcefield+'.ff/forcefield.itp\"\n')
-		topol_write.write('#include \"'+working_dir+'/FORCEFIELD/'+forcefield+'.ff/tip3p.itp\"\n\n#include \"'+working_dir+'/FORCEFIELD/'+forcefield+'.ff/ions.itp\"\n\n')
+		if 'SOL' in cg_residues:
+			topol_write.write('#include \"'+water_dir+water+'.itp\"\n\n#include \"'+working_dir+'/FORCEFIELD/'+forcefield+'.ff/ions.itp\"\n\n')
 	#### add location of residue topology file absolute file locations
 		if residue_type not in ['ION','SOL']:
 			for directory in range(len(np_directories)):
@@ -438,6 +472,7 @@ def fragment_location(residue, fragment):
 	sys.exit('cannot find fragment: '+residue+'/'+fragment)
 
 def get_atomistic(residue,cg_fragment, cg_coord,resid):
+	SF=1
 #### find atomistic residues
 	residue_list={} ## a dictionary of bead in each residue eg residue_list[atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
 	frag_location=fragment_location(residue, cg_fragment+'.pdb') ### get fragment location from database
@@ -447,15 +482,15 @@ def get_atomistic(residue,cg_fragment, cg_coord,resid):
 		for line_nr, line in enumerate(pdb_input.readlines()):
 			if line.startswith('ATOM'):
 				line_sep = pdbatom(line) ## splits up pdb line
-				residue_list[line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'extra':line_sep['backbone'], 'connect':line_sep['connect'], 'frag_mass':1}
+				residue_list[line_sep['atom_number']]={'coord':np.array([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'extra':line_sep['backbone'], 'connect':line_sep['connect'], 'frag_mass':1}
 #### updates fragment mass   
 				if 'H' not in line_sep['atom_name']:
 					for atom in line_sep['atom_name']:
 						if atom in mass:
 							residue_list[line_sep['atom_number']]['frag_mass']=mass[atom]  ### updates atom masses with crude approximations
-							fragment_masses.append([line_sep['x'],line_sep['y'],line_sep['z'],mass[atom]])
+							fragment_masses.append([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF,mass[atom]])
 				else:
-					fragment_masses.append([line_sep['x'],line_sep['y'],line_sep['z'],1])
+					fragment_masses.append([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF,1])
 	return align_at_frag_to_CG_frag(fragment_masses, cg_coord, residue_list)
 
 def align_at_frag_to_CG_frag(fragment_masses, cg_coord, residue_list):
@@ -528,11 +563,14 @@ def read_initial_pdb():
 				if line_sep['residue_name'] in p_residues: ## if in protein database 
 					if 'PROTEIN' not in cg_residues:  ## if protein does not exist add to dict
 						cg_residues['PROTEIN']={}
-				elif line_sep['residue_name'] in np_residues or line_sep['residue_name'] in water:
-					if line_sep['residue_name'] in water: ## renames waters to SOL saves headache later on
-						line_sep['residue_name']='SOL'
+				elif line_sep['residue_name'].startswith('W') and line_sep['atom_name'].startswith('W'):#in np_residues or line_sep['residue_name'] in water:
+					# if line_sep['residue_name'] in water: ## renames waters to SOL saves headache later on
+					line_sep['residue_name']='SOL'
 					if line_sep['residue_name'] not in cg_residues: ## if residue type does not exist add to dict
+						water_dir, water = check_water_molecules()
+						print()
 						cg_residues[line_sep['residue_name']]={}
+					line_sep['atom_name']=water
 				else:
 					sys.exit('\n'+line_sep['residue_name']+' is not in the fragment database!')
 #### sets up previous resid id 
@@ -548,6 +586,9 @@ def read_initial_pdb():
 						cg_residues[line_sep_prev['residue_name']][count]={} ### then create sub dictionary cg_residues[resname][count]
 						cg_residues[line_sep_prev['residue_name']][count]=residue_list ### adds residue list to dictionary key cg_residues[resname][count]
 					else:
+						for bead in residue_list:
+							if bead.startswith('B'):
+								residue_list['BB']= residue_list.pop(bead)
 						cg_residues['PROTEIN'][count]={} ### then create sub dictionary cg_residues['PROTEIN'][count]
 						cg_residues['PROTEIN'][count]=residue_list ### adds residue list to dictionary key cg_residues['PROTEIN'][count]
 #### updates dictionaries and counters
@@ -572,8 +613,10 @@ def read_initial_pdb():
 #### checks if box vectors exist
 	if 'box_vec' not in locals():### stops script if it cannot find box vectors
 		sys.exit('missing box vectors')
-
-	return cg_residues, box_vec
+	if 'water' in locals():
+		return cg_residues, box_vec, water_dir, water
+	else:
+		return cg_residues, box_vec, False, False
 
 def fix_pbc(cg_residues, box_vec):
 #### fixes box PBC
@@ -809,7 +852,7 @@ def merge_minimised(residue_type):
 						merge.append(line_sep)
 						merge_coords.append([line_sep['x'],line_sep['y'],line_sep['z']])
 		else:
-			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
+			sys.exit('cannot find minimised residue: \n'+ working_dir+residue_type+'/'+residue_type+'_merged.pdb')
 	if residue_type !='SOL':
 		merge_coords = check_atom_overlap(merge_coords)
 	for line_val, line in enumerate(merge):
@@ -884,63 +927,124 @@ def	apply_rotation_around_vector(rotate_z, rotate_x, theta_z, coord, center):
 	coord = coord.dot(eulerAnglesToRotationMatrix([0,0,-rotate_z]))
 	return coord+center
 
+def find_angle(a,b,c):
+	AB = a - b
+	BC = c - b
+	ABBC = np.linalg.norm(AB)*np.linalg.norm(BC)
+	AB_dot_BC = AB.dot(BC)
+	angle = np.arccos(AB_dot_BC/ABBC)
+	return np.degrees(angle)
 
-def minimise_dihedral(residue_number, cg, at, center):
+
+def fetch_dihdral_atoms(residue_number, cg, at):
+	center=cg[residue_number]['BB']['coord']
+	cg_angle = find_angle(cg[residue_number-1]['BB']['coord'], cg[residue_number]['BB']['coord'], cg[residue_number+1]['BB']['coord'])
 #### fetch backbone atoms from current residue
 	dih_temp=[]
 	for atom in at[residue_number]['BB']:
-		if at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number]['BB']['residue_name']]['dihedral']:
+		if at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number]['BB']['residue_name']]['restraint'] or at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number]['BB']['residue_name']]['b_connect'] or at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number]['BB']['residue_name']]['dihedral']:
 			dih_temp.append(at[residue_number]['BB'][atom]['coord'])
-	vector=(dih_temp[2]-((dih_temp[0]+dih_temp[2])/2))-(dih_temp[0]-((dih_temp[0]+dih_temp[2])/2))
+
 #### fetch preceeding carbon atom
 	for atom in at[residue_number-1]['BB']:
-		if at[residue_number-1]['BB'][atom]['atom'] == backbone[cg[residue_number-1]['BB']['residue_name']]['dihedral'][-1]:
-			prev_C=at[residue_number-1]['BB'][atom]['coord']-center
+		if at[residue_number-1]['BB'][atom]['atom'] == backbone[cg[residue_number-1]['BB']['residue_name']]['b_connect'][-1]:
+			prev_C=at[residue_number-1]['BB'][atom]['coord']
 			break
+	for atom in at[residue_number+1]['BB']:
+		if at[residue_number+1]['BB'][atom]['atom'] == backbone[cg[residue_number+1]['BB']['residue_name']]['b_connect'][0]:
+			next_N=at[residue_number+1]['BB'][atom]['coord']
+			break
+	return prev_C, dih_temp, next_N, center, cg_angle
 
-#### rotate aroun z to put on yz plane
-	rotate_z = np.arccos(vector[1]/np.sqrt(vector[0]**2+vector[1]**2+vector[2]**2))
+def align_to_vector(a,b):
+	vector=(a-b)
+	rotate_z = np.arccos( np.sqrt(vector[1]**2)/np.linalg.norm(vector))#    
 	vector_z = vector.dot(eulerAnglesToRotationMatrix([0,0,rotate_z]))
 #### rotate around x to align with z axis 
-	rotate_x = np.arccos(vector[2]/np.sqrt(vector[0]**2+vector[1]**2+vector[2]**2))
-	vector_x = vector.dot(eulerAnglesToRotationMatrix([rotate_x,0,0]))
+	rotate_x = np.arccos(np.sqrt(vector[2]**2)/np.linalg.norm(vector_z))# np.sqrt(vector[0]**2+vector[1]**2+vector[2]**2))
+	return [rotate_z, rotate_x]
 
-#### apply rotations to dihedral atoms 
-	dih_aligned =[]
-	for atom in [prev_C, dih_temp[0]-center, dih_temp[1]-center, dih_temp[2]-center]:
-		atom=np.array(atom)
-		atom_z = atom.dot(eulerAnglesToRotationMatrix([0,0,rotate_z]))
-		atom_x = atom_z.dot(eulerAnglesToRotationMatrix([rotate_x,0,0]))
-		dih_aligned.append(atom_x)
-#### rotate around z axis to find a Phi dihedral between -160 and -95
+def rotate_dihedral(a, b, c, d, myNumber):
+	dih = []
 	for theta in range(0,360):
-		a = dih_aligned[1].dot(eulerAnglesToRotationMatrix([0,0,np.radians(theta)]))
-		b = dih_aligned[2].dot(eulerAnglesToRotationMatrix([0,0,np.radians(theta)]))
-		c = dih_aligned[3].dot(eulerAnglesToRotationMatrix([0,0,np.radians(theta)]))
-		dih = dihedral(dih_aligned[0], a,b, c)
-		if -160 < dih < -50:
-			theta_z = np.radians(theta)
-			dih_fin = dih
-			break
-	if 'theta_z' not in locals():
-		print(residue_number)
-		theta_z = 0
-		dih_fin = 0 
-	return rotate_z, rotate_x, theta_z
+		D = d.dot(eulerAnglesToRotationMatrix([0,0,np.radians(theta)]))
+		dih.append(dihedral(a, b, c, D))
+	theta_z = np.radians(np.where(min(dih, key=lambda x:abs(x-myNumber))==dih)[0][0])
+	return theta_z
+
+def minimise_dihedral(residue_number, cg, at):
+
+	martini_angle={96:[-60, -50],134:[-140,130]}  ### rough psi angles -20 = beta, 130 = alpha
+	prev_C, dih_temp, next_N, center, cg_angle = fetch_dihdral_atoms(residue_number, cg, at)
+	# print(residue_number, cg_angle)
+	dihedrals_res=[]
+	
+	for atoms in range(2):
+		center = (dih_temp[atoms]+dih_temp[atoms+1])/2
+		rotation = align_to_vector(dih_temp[atoms],dih_temp[atoms+1])
+	# #### apply rotations to dihedral atoms 
+		dih_aligned =[]
+		for at_val, atom in enumerate([prev_C, dih_temp[0], dih_temp[1], dih_temp[2],dih_temp[3], next_N]):
+			atom=np.array(atom)-center
+			atom_z = atom.dot(eulerAnglesToRotationMatrix([0,0,rotation[0]]))
+			atom_x = atom_z.dot(eulerAnglesToRotationMatrix([rotation[1],0,0]))
+			dih_aligned.append(atom_x)
+
+		if atoms == 0:	
+			myNumber = martini_angle[min(martini_angle, key=lambda x:abs(x-cg_angle))][0]
+			theta_z = rotate_dihedral(dih_aligned[0], dih_aligned[1], dih_aligned[2], dih_aligned[3], myNumber)
+			dih_temp[2] = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, dih_temp[2], center)
+			for atom in at[residue_number]['BB']:
+				if at[residue_number]['BB'][atom]['atom'] == backbone[cg[residue_number]['BB']['residue_name']]['b_connect'][-1]:
+					at[residue_number]['BB'][atom]['coord'] = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, at[residue_number]['BB'][atom]['coord'], center)
+			theta_z = rotate_dihedral(dih_aligned[0], dih_aligned[1], dih_aligned[2], dih_aligned[4], np.radians(180))
+			for atom in at[residue_number]['BB']:
+				if at[residue_number]['BB'][atom]['atom'] == backbone[cg[residue_number]['BB']['residue_name']]['dihedral']:
+					at[residue_number]['BB'][atom]['coord'] = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, at[residue_number]['BB'][atom]['coord'], center)
+
+		else:	
+			myNumber = martini_angle[min(martini_angle, key=lambda x:abs(x-cg_angle))][1]
+			theta_z = rotate_dihedral(dih_aligned[0], dih_aligned[1], dih_aligned[2], dih_aligned[4], myNumber)
+			for atom in at[residue_number+1]['BB']:
+				if at[residue_number+1]['BB'][atom]['atom'] == backbone[cg[residue_number+1]['BB']['residue_name']]['b_connect'][0]:
+					at[residue_number+1]['BB'][atom]['coord'] = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, at[residue_number+1]['BB'][atom]['coord'], center)
+	return at
+
+
+def fix_dihedrals(atomistic_residues, cg_residues):
+	for res_index, residue_id in enumerate(atomistic_residues):
+		if res_index != 0 and res_index != len(atomistic_residues)-1:# and cg_residues[residue_id]['BB']['residue_name'] not in ['GLY','PRO']:
+			atomistic_residues = minimise_dihedral(residue_id, cg_residues, atomistic_residues)
+	final = {}
+	atom_count=0
+	residue_number=0
+	final_resid={}
+	for residue_id in atomistic_residues:
+		final_resid[residue_id]={}
+		residue_length=0
+		residue_temp={}
+		for cg_fragments in atomistic_residues[residue_id]:
+			residue_temp.update(atomistic_residues[residue_id][cg_fragments])
+		for atom in range(1, len(residue_temp)+1):
+			final[atom_count]=residue_temp[atom]
+			final[atom_count].update({'resid':residue_number})
+			final_resid[residue_id][atom]=residue_temp[atom]
+			atom_count+=1
+		residue_number+=1
+	return final, final_resid
 
 def build_protein_atomistic_system(cg_residues, box_vec):
 #### initisation of counters
 	chain_information=[]
 	chain_count=0
-	at_counter=1
 	system={}
 	at_residues={}
 	backbone_coords={}
 	backbone_coords[chain_count]=[]
 	terminal={}
 	terminal[chain_count]=[]
-	final_coordinates_atomistic={}
-	final_coordinates_atomistic[chain_count]={}
+	temporary_coordinates_atomistic={}
+	temporary_coordinates_atomistic[chain_count]={}
 
 	res=0
 	print('Converting Protein')
@@ -951,7 +1055,6 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 	initial=True
 	for cg_residue_id, residue_number in enumerate(cg_residues):
 	#### temporary index/dictionaries		
-		final_at_residues={}  
 		at_residues[residue_number]={}
 	#### fetch fragments in residue and connectivity
 		at_residues[residue_number], connect=get_atomistic_fragments(cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name'],cg_residues[residue_number], residue_number)
@@ -978,17 +1081,13 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 					if dist > 5:
 						terminal[chain_count].append(backbone[cg_residues[residue_number-1]['BB']['residue_name']]['ter'])
 						chain_count+=1  ### adds to to the protein count
-						final_coordinates_atomistic[chain_count]={}
+						temporary_coordinates_atomistic[chain_count]={}
 						backbone_coords[chain_count]=[]   #### creates another dictionary key for bb fragments 
 						backbone_coords[chain_count].append(xyz_cur+[1])  #### adds xyz coord and mass of 1 to list
 						chain_information.append([dist, residue_number, residue_number-res])  ### info for verbose flag
 						res=residue_number-1 #### updates residue
 						terminal[chain_count]=[]
 						terminal[chain_count].append(backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
-
-					#### creates a new protein pdb 
-						pdb_output = create_pdb(working_dir+'PROTEIN/PROTEIN_novo_'+str(chain_count)+'.pdb')
-						at_counter=1  ### resets protein_chain atom count
 					else:
 					#### the xyz coord of the BB bead are added to the backbone_coords dictionary
 						backbone_coords[chain_count].append(xyz_cur+[1])
@@ -1014,37 +1113,20 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 		#### applies rotation to each atom
 			for atom in at_residues[residue_number][cg_fragments]:
 				at_residues[residue_number][cg_fragments][atom]['coord'] = rotate_atom(at_residues[residue_number][cg_fragments][atom]['coord'], center, xyz_rot_apply)		
-				if cg_fragments!='BB' or cg_residues[residue_number][cg_fragments]['residue_name'] in ['GLY','PRO']:
-					final_at_residues[atom]=at_residues[residue_number][cg_fragments][atom]
 
-			if cg_fragments=='BB' and cg_residues[residue_number][cg_fragments]['residue_name'] not in ['GLY','PRO']:
-				if residue_number != 0:
-					rotate_z, rotate_x, theta_z = minimise_dihedral(residue_number, cg_residues, at_residues, center)
-				for atom in at_residues[residue_number][cg_fragments]:
-					if residue_number != 0:
-						at_residues[residue_number][cg_fragments][atom]['coord'] = apply_rotation_around_vector(rotate_z, rotate_x, theta_z, at_residues[residue_number][cg_fragments][atom]['coord'], center)
-					final_at_residues[atom]=at_residues[residue_number][cg_fragments][atom]
 	#### if disulphide bond found move the S atoms to within 2 A of each other
 		if 'disulphide' in locals():
 			if disulphide:
-				final_at_residues = shift_sulphur(residue_number,final_at_residues, disul_at_info, disul_cg_info, at_residues, cg_residues ) 
-				disulphide = False		
-	#### check if any atom overlap if so give the atom a kick
-		coords=[]
-		for atom in final_at_residues:
-			coords.append(final_at_residues[atom]['coord'])
-		coords = check_atom_overlap(coords)
-		for line_index, atom in enumerate(final_at_residues):
-			final_at_residues[atom]['coord']=coords[line_index]
+				at_residues[residue_number] = shift_sulphur(residue_number, disul_at_info, disul_cg_info, at_residues, cg_residues) 
+				disulphide = False
+		temporary_coordinates_atomistic[chain_count][residue_number]=at_residues[residue_number]
 
-	#### writes fragment to pdb
-		final_coordinates_atomistic[chain_count][residue_number]=final_at_residues
-		for at_val, atom in enumerate(final_at_residues):
-			pdb_output.write(pdbline%((at_counter,final_at_residues[at_val+1]['atom'],final_at_residues[at_val+1]['res_type'],ascii_uppercase[chain_count],\
-				int(residue_number),final_at_residues[at_val+1]['coord'][0],final_at_residues[at_val+1]['coord'][1],final_at_residues[at_val+1]['coord'][2],1,0))+'\n')
-			at_counter+=1  #### adds 1 to atom counter
+	final_coordinates_atomistic = finalise_novo_atomistic(temporary_coordinates_atomistic, cg_residues)
+
 	terminal[chain_count].append(backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
-	pdb_output.close()   #### close file write
+
+	system['terminal_residue']=terminal
+	system['PROTEIN']=chain_count+1
 	if args.v >=1:
 		print('\n{:-<75}'.format('>  Verbose level 1 start'))
 		print('\nchain number\tDelta A\t\tno in pdb\tlength of chain')
@@ -1054,12 +1136,28 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 		if chain_count >1:
 			print('\t', chain_count,'\tN/A\t\t',chain_information[chain][1]+2,'-',residue_number+1,'\t\t',residue_number-res)
 		else:
-			print('\t', chain_count,'\tN/A\t\t',res+1,'-',residue_number+1,'\t\t',residue_number-res+1)
+			print('\t', chain_count,'\tN/A\t\t',res+2,'-',residue_number+1,'\t\t',residue_number-res)
 
 		print('\n{:-<75}'.format('>  Verbose level 1 end\n'))
-	system['terminal_residue']=terminal
-	system['PROTEIN']=chain_count+1
 	return system, backbone_coords, final_coordinates_atomistic
+
+def finalise_novo_atomistic(temporary_coordinates_atomistic, cg_residues):
+	final_at_residues={}
+	final_at_resids = {}
+	for chain in temporary_coordinates_atomistic:
+		pdb_output = create_pdb(working_dir+'PROTEIN/PROTEIN_novo_'+str(chain)+'.pdb')
+		final_at_residues[chain], final_at_resids[chain] = fix_dihedrals(temporary_coordinates_atomistic[chain], cg_residues)
+	#### check if any atom overlap if so give the atom a kick
+		coords=[]
+		for atom in final_at_residues[chain]:
+			coords.append(final_at_residues[chain][atom]['coord'])
+		coords = check_atom_overlap(coords)
+		for line_index, atom in enumerate(final_at_residues[chain]):
+			final_at_residues[chain][atom]['coord']=coords[line_index]
+			pdb_output.write(pdbline%((line_index,final_at_residues[chain][atom]['atom'],final_at_residues[chain][atom]['res_type'],ascii_uppercase[chain],\
+				final_at_residues[chain][atom]['resid'],final_at_residues[chain][atom]['coord'][0],final_at_residues[chain][atom]['coord'][1],final_at_residues[chain][atom]['coord'][2],1,0))+'\n')
+		pdb_output.close()
+	return final_at_resids
 
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
 #### 
@@ -1084,7 +1182,7 @@ def find_closest_cysteine(at_connections, cg_connections, cg_residues, at_residu
 			pass
 	return at_connections, cg_connections, disulphide, atom_number, res_id
 
-def shift_sulphur(residue_number,final_at_residues, disul_at_info, disul_cg_info, at_residues, cg_residues ):
+def shift_sulphur(residue_number, disul_at_info, disul_cg_info, at_residues, cg_residues ):
 #### to shift sidechains roughly equally the 1st sidechain is shifted to within 3.2A and the second to 2A (pdb2gmx cutoff)
 	if disul_cg_info > residue_number:
 		xyz_cur=np.array([cg_residues[disul_cg_info]['SC1']['coord'][0],cg_residues[disul_cg_info]['SC1']['coord'][1],cg_residues[disul_cg_info]['SC1']['coord'][2]])
@@ -1109,10 +1207,9 @@ def shift_sulphur(residue_number,final_at_residues, disul_at_info, disul_cg_info
 				offset = vector * x 
 				break
 #### applies final shift to the rest of the atoms in the sidechain
-	for atom in final_at_residues:
-		if atom in at_residues[residue_number]['SC1']:
-			final_at_residues[atom]['coord']=final_at_residues[atom]['coord']+offset
-	return final_at_residues
+	for atom in at_residues[residue_number]['SC1']:
+		at_residues[residue_number]['SC1'][atom]['coord']=at_residues[residue_number]['SC1'][atom]['coord']+offset
+	return at_residues[residue_number]
 
 ############################################################ Processes atomistic protein input ################################################################
 
@@ -1539,7 +1636,10 @@ def write_merged_topol(system, protein):
 	with open('topol_final.top', 'w') as topol_write:
 	#### writes topology headers (will probably need updating with other forcefields)
 		topol_write.write('; Include forcefield parameters\n#include \"'+working_dir+'FORCEFIELD/'+forcefield+'.ff/forcefield.itp\"\n')
-		topol_write.write('#include \"'+working_dir+'FORCEFIELD/'+forcefield+'.ff/tip3p.itp\"\n\n#include \"'+working_dir+'FORCEFIELD/'+forcefield+'.ff/ions.itp\"\n\n')
+		if 'SOL' in cg_residues:
+			copyfile(water_dir+water+'.itp', water+'.itp')
+			topol_write.write('#include \"'+water+'.itp\"')
+			topol_write.write('\n#include \"'+working_dir+'/FORCEFIELD/'+forcefield+'.ff/ions.itp\"\n\n')
 	#### runs through residue types and copies to MERGED directory and simplifies the names
 		for residue_type in system:
 			if residue_type not in ['ION','SOL']:
@@ -1665,7 +1765,10 @@ forcefield_number = database_selection(forcefield_available_prov, forcefield_ava
 forcefield_location, forcefield=sort_forcefield(forcefield_available_prov, forcefield_available_user, forcefield_number)
 
 ### reads in and sorts fragment information
-np_residues, p_residues, mod_residues,np_directories, p_directories, mod_directories, water=fetch_residues(fragments_available_prov, fragments_available_user)
+np_residues, p_residues, mod_residues,np_directories, p_directories, mod_directories=fetch_residues(fragments_available_prov, fragments_available_user)
+
+
+
 backbone=fetch_fragment(p_directories)
 
 fragment_selection_time=time.time()
@@ -1673,7 +1776,7 @@ print('\nThis script is now hopefully doing the following (Good luck):\n')
 
 #### read in CG file
 print('Reading in your CG representation\n')
-cg_residues, box_vec = read_initial_pdb()
+cg_residues, box_vec, water_dir, water = read_initial_pdb()
 #### Fix any pbc issues
 
 cg_residues=fix_pbc(cg_residues, box_vec)
