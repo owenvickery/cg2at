@@ -571,6 +571,13 @@ def read_initial_pdb():
 						print()
 						cg_residues[line_sep['residue_name']]={}
 					line_sep['atom_name']=water
+				elif line_sep['residue_name'] in np_residues:
+					if line_sep['residue_name'] not in cg_residues:
+						cg_residues[line_sep['residue_name']]={}
+					if line_sep['residue_name'] == 'ION' and 'water' not in locals():
+						water_dir, water = check_water_molecules()
+						cg_residues['SOL']={}
+						print()
 				else:
 					sys.exit('\n'+line_sep['residue_name']+' is not in the fragment database!')
 #### sets up previous resid id 
@@ -585,6 +592,12 @@ def read_initial_pdb():
 					if line_sep_prev['residue_name'] not in p_residues:
 						cg_residues[line_sep_prev['residue_name']][count]={} ### then create sub dictionary cg_residues[resname][count]
 						cg_residues[line_sep_prev['residue_name']][count]=residue_list ### adds residue list to dictionary key cg_residues[resname][count]
+						if line_sep_prev['residue_name'] == 'ION':
+							cg_residues['SOL'][count]={}
+							sol_res_list={}
+							sol_res_list[water]=residue_list[line_sep_prev['atom_name']]
+							sol_res_list[water]['residue_name']='SOL'
+							cg_residues['SOL'][count]=sol_res_list
 					else:
 						for bead in residue_list:
 							if bead.startswith('B'):
@@ -610,6 +623,12 @@ def read_initial_pdb():
 		if count not in cg_residues[line_sep['residue_name']]:
 			cg_residues[line_sep['residue_name']][count]={}
 		cg_residues[line_sep['residue_name']][count]=residue_list
+		if line_sep['residue_name'] == 'ION':
+			cg_residues['SOL'][count]={}
+			sol_res_list={}
+			sol_res_list[water]=residue_list[line_sep['atom_name']]
+			sol_res_list[water]['residue_name']='SOL'
+			cg_residues['SOL'][count]=sol_res_list
 #### checks if box vectors exist
 	if 'box_vec' not in locals():### stops script if it cannot find box vectors
 		sys.exit('missing box vectors')
@@ -659,7 +678,9 @@ def build_atomistic_system(cg_residues, box_vec):
 	#### creates folder for residue type
 		mkdir_directory(working_dir+residue_type)
 	#### fetches atoms for the residue type and centers then on cg bead
+
 		atomistic_fragments[residue_type] = atomistic_non_protein(residue_type, cg_residues[residue_type])
+		# print(atomistic_fragments[residue_type])
 	#### if the residue type is in ['SOL', 'ION'] a single pdb is created
 		if residue_type in ['SOL', 'ION']:
 			water_count=0     #### resets water counter to 0 
@@ -674,7 +695,7 @@ def build_atomistic_system(cg_residues, box_vec):
 				pdb_sol = open(working_dir+'SOL'+'/SOL_0.pdb', 'a')
 		#### creates ion pdb with header
 			if residue_type == 'ION':
-			#### make minimisation directory and makes homogeneous diectory structure
+			#### make minimisation directory and makes homogeneous directory structure
 				mkdir_directory(working_dir+'ION/min')
 				pdb_ion = create_pdb(working_dir+residue_type+'/'+residue_type+'_merged.pdb')
 	#### loop through all resids of that residue type 
@@ -694,41 +715,33 @@ def build_atomistic_system(cg_residues, box_vec):
 					atomistic_fragments[residue_type][resid][atom]['coord']=coord[atom_val]
 			for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
 			#### separates out the water molecules from the ion in the fragment
-				if residue_type in ['ION', 'SOL']:
-				#### if not restype SOL it creates iontype variable and writes ion to pdb
+				if residue_type in ['SOL']:
+					if atomistic_fragments[residue_type][resid][at_id+1]['frag_mass'] > 1:					
+						water_count+=1
+					pdb_sol.write(pdbline%((at_id+1,atomistic_fragments[residue_type][resid][at_id+1]['atom'],atomistic_fragments[residue_type][resid][at_id+1]['res_type'],' ',1,\
+				atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2]\
+				,atomistic_fragments[residue_type][resid][at_id+1]['extra'],atomistic_fragments[residue_type][resid][at_id+1]['connect']))+'\n')
+				elif residue_type in ['ION']:
+				#### write ion coordinate out
+					pdb_ion.write(pdbline%((at_id+1,atomistic_fragments[residue_type][resid][at_id+1]['atom'],atomistic_fragments[residue_type][resid][at_id+1]['res_type'],' ',1,\
+					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2]\
+					,atomistic_fragments[residue_type][resid][at_id+1]['extra'],atomistic_fragments[residue_type][resid][at_id+1]['connect']))+'\n')
 					if atomistic_fragments[residue_type][resid][at_id+1]['res_type'] != 'SOL':
 						if atomistic_fragments[residue_type][resid][at_id+1]['res_type'] not in system:
 							system[atomistic_fragments[residue_type][resid][at_id+1]['res_type']]=1
 						else:
 							system[atomistic_fragments[residue_type][resid][at_id+1]['res_type']]+=1
-					#### write ion coordinate out
-						pdb_ion.write(pdbline%((at_id+1,atomistic_fragments[residue_type][resid][at_id+1]['atom'],atomistic_fragments[residue_type][resid][at_id+1]['res_type'],' ',1,\
-					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2]\
-					,atomistic_fragments[residue_type][resid][at_id+1]['extra'],atomistic_fragments[residue_type][resid][at_id+1]['connect']))+'\n')
-					else:
-					#### if restype SOL and has a mass over 1 (eg H) adds a count to the water_count also writes to solvent pdb
-						if atomistic_fragments[residue_type][resid][at_id+1]['frag_mass'] > 1:					
-							water_count+=1
-						pdb_sol.write(pdbline%((at_id+1,atomistic_fragments[residue_type][resid][at_id+1]['atom'],atomistic_fragments[residue_type][resid][at_id+1]['res_type'],' ',1,\
-					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2]\
-					,atomistic_fragments[residue_type][resid][at_id+1]['extra'],atomistic_fragments[residue_type][resid][at_id+1]['connect']))+'\n')
-			#### if residue_type not in ['ION', 'SOL'] write out to separate pdb
 				else:
 				#### write residue out to a pdb file
 					pdb_output.write(pdbline%((at_id,atomistic_fragments[residue_type][resid][at_id+1]['atom'],atomistic_fragments[residue_type][resid][at_id+1]['res_type'],' ',1,\
 					atomistic_fragments[residue_type][resid][at_id+1]['coord'][0],atomistic_fragments[residue_type][resid][at_id+1]['coord'][1],atomistic_fragments[residue_type][resid][at_id+1]['coord'][2]\
 					,atomistic_fragments[residue_type][resid][at_id+1]['extra'],atomistic_fragments[residue_type][resid][at_id+1]['connect']))+'\n')
-
-	#### if restype ION add ion to system dictionary and add solvent molecules
-		if residue_type == 'ION':
-			system['SOL']+=water_count
-		else:
 		#### if restype is solvent updates the system dictionary
-			if residue_type == 'SOL':
-				system['SOL']+=water_count
-			else:
-			#### adds retype to system dictionary
-				system[residue_type]=int(resid)+1
+		if residue_type == 'SOL':
+			system['SOL']+=water_count
+		elif residue_type != 'ION':
+		#### adds retype to system dictionary
+			system[residue_type]=int(resid)+1
 	return system 
 
 def check_hydrogens(residue):
@@ -1813,15 +1826,9 @@ if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']])
 	np_system=build_atomistic_system(cg_residues, box_vec)
 	print('\nThis may take some time....(probably time for a coffee)\n')
 	for residue_type in cg_residues:
-		if residue_type not in  ['PROTEIN', 'SOL', 'ION']:
-			print('Minimising individual residues: '+residue_type)
-		if residue_type =='ION' and 'SOL' not in cg_residues:
-			non_protein_minimise(np_system['SOL'], 'SOL')
-			merge_minimised('SOL')
-			minimise_merged('SOL')
-		elif residue_type in np_system:
-			non_protein_minimise(np_system[residue_type], residue_type)
 		if residue_type not in ['PROTEIN', 'ION']:
+			print('Minimising individual residues: '+residue_type)
+			non_protein_minimise(np_system[residue_type], residue_type)
 			merge_minimised(residue_type)
 			print('Minimising merged: '+residue_type)
 			minimise_merged(residue_type)
@@ -1858,6 +1865,10 @@ if len(system)>0:
 			copyfile(working_dir+'MERGED/'+file_name, final_dir+file_name)
 #### calculates final RMS
 if 'PROTEIN' in cg_residues:
+	with open(final_dir+'steered_md.mdp', 'w') as steered_md:
+		steered_md.write('define = -DPOSRES\nintegrator = md\nnsteps = 3000\ndt = 0.001\ncontinuation	= no\nconstraint_algorithm = lincs\nconstraints	= h-bonds\nns_type = grid\nnstlist = 25\n\
+rlist = 1\nrcoulomb	= 1\nrvdw = 1\ncoulombtype	= PME\npme_order = 4\nfourierspacing = 0.16\ntcoupl	= V-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl	= no\n\
+pbc = xyz\nDispCorr	= no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')	
 	RMSD={}
 	if len(cg_residues['PROTEIN'])>0:
 		de_novo_atoms = read_in_atomistic(final_dir+'final_cg2at_de_novo.pdb', system['PROTEIN'])
