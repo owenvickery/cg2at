@@ -25,13 +25,12 @@ ________
 
 Non protein
 -----------
-'DGPE', DLPE', 'DNPE', 'DOPE', 'DPPE', 'DYPE'
-
-PC: 'POPC', 'DGPC', 'DLPC', 'DNPC', 'DOPC', 'DPPC', 'DRPC', 'DYPC'
-PE: 'POPE', 'DGPE', 'DLPE', 'DNPE', 'DOPE', 'DPPE', 'DYPE'
-PG: 'POPG'
-PA: 'POPA'
-PI: 'PIP2'
+SOL: 'tip3p', 'tip4p', 'spc', 'spce'
+PC:  'POPC', 'DGPC', 'DLPC', 'DNPC', 'DOPC', 'DPPC', 'DRPC', 'DYPC'
+PE:  'POPE', 'DGPE', 'DLPE', 'DNPE', 'DOPE', 'DPPE', 'DYPE'
+PG:  'POPG'
+PA:  'POPA'
+PI:  'PIP2'
 Sterols: 'CHOL'
 Lipopolysaccharides: 'LIPA'
 Cardiolipin: 'CARD' (PVCL2) 
@@ -84,10 +83,14 @@ The following flags are available:
 -v (3 level verbosity -vvv) (use just -v to get the run times etc)
 -clean (removes temp file after cg2at) (small amount of cleaning of directories)
 -ter interactive terminal residue selection
+-w choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional
+
+
+
 
 example input.
 
-python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -v -clean 
+python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -v -clean -w tip3p
 
 #############################################################################
 
