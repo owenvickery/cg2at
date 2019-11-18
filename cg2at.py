@@ -28,6 +28,8 @@ parser.add_argument('-ter', help='interactively choose terminal species', action
 parser.add_argument('-clean', help='removes all part files from build', action='store_true')
 # parser.add_argument('-chains', help='list of chains to rigid body fit together, starts at chain 0',metavar='1 2',type=int, nargs='*')
 parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional',metavar='tip3p',type=str)
+parser.add_argument('-ff', help='choose your forcefield. This is optional',metavar='charmm36',type=str)
+parser.add_argument('-fg', help='choose your fragment library. This is optional',metavar='charmm36',type=str, nargs='*')
 args = parser.parse_args()
 options = vars(args)
 
@@ -72,7 +74,6 @@ def read_database_directories():
             break
 #### Read in forcefields provided
     available_provided_database=[]
-    available_user_database=[] ## needed to calculate length of list of 0
     for directory_type in ['forcefields', 'fragments']:
         if os.path.exists(script_dir+'database/'+directory_type):
             for root, dirs, files in os.walk(script_dir+'database/'+directory_type):
@@ -80,51 +81,40 @@ def read_database_directories():
                     break
         else:
             available_provided=[]
-    #### Read in forcefields user provided
-        if args.d != None and os.path.exists(start_dir+args.d+'/database/'+directory_type):
-            for root, dirs, files in os.walk(start_dir+args.d+'/database/'+directory_type):
-                available_user=dirs
-                break
-        else:
-            available_user=[]
 
         available_provided_database.append(available_provided)
-        available_user_database.append(available_user)
-    if len(available_provided_database[0])+len(available_user_database[0]) != 0 and len(available_provided_database[1])+len(available_user_database[1]) != 0:
-        return  available_provided_database[0], available_user_database[0], available_provided_database[1], available_user_database[1]
+
+    if len(available_provided_database[0]) != 0 and len(available_provided_database[1]) != 0:
+        return  available_provided_database[0], available_provided_database[1]
     else:
         sys.exit('no '+selection_type+' found')
 
-def database_selection(provided, user, selection_type):
+def database_selection(provided, selection_type):
 #### print out selection of forcefields
     print('\n\n{0:^45}\n'.format('Provided '+selection_type))
     print('{0:^20}{1:^30}'.format('Selection',selection_type))
     print('{0:^20}{1:^30}'.format('---------','----------'))
     for force_num_prov, line in enumerate(provided):
         print('{0:^20}{1:^30}'.format(force_num_prov,line.split('.')[0]))
-    if len(user) != 0:
-        print('\n{0:^45}\n'.format('User provided '+selection_type))
-        for force_num_user, line in enumerate(user):
-            print('{0:^20}{1:^30}'.format(force_num_user+len(provided),line.split('.')[0])) 
-    return ask_database(provided, user, selection_type)
+    return ask_database(provided,  selection_type)
 
-def ask_database(provided, user, selection_type):
+def ask_database(provided, selection_type):
 #### ask which database to use
     while True:
         try:
-            if len(provided)+len(user)==1:
+            if len(provided)==1:
                 print('\nOnly 1 '+selection_type[:-1]+' database is currently available, therefore you have no choice but to accept the following choice.')
                 return 0
         #### if asking about fragments accept a list of libraries 
             if selection_type=='fragments': 
                 number = np.array(input('\nplease select fragment libraries (in order of importance: eg. "1 0" then ENTER): ').split())
                 number=number.astype(int)
-                if len(number[np.where(number >= len(provided)+len(user))]) == 0:
+                if len(number[np.where(number >= len(provided))]) == 0:
                     return number
         #### if forcefield only accept one selection
             else:
                 number = int(input('\nplease select a forcefield: '))
-                if number < len(provided)+len(user):
+                if number < len(provided):
                     return number
         except KeyboardInterrupt:
             sys.exit('\nInterrupted')
@@ -132,35 +122,35 @@ def ask_database(provided, user, selection_type):
             print("Oops!  That was a invalid choice")
 
 
-def sort_forcefield(forcefield_available_prov, forcefield_available_user, f_number):
+def sort_forcefield(forcefield_available_prov, f_number):
 #### returns forcefield location and forcefield name
 #### if forcefield selection is in provided copy forcefield to FORCEFIELD and FINAL directories
-    if f_number < len(forcefield_available_prov):
-        print('\nYou have selected: '+forcefield_available_prov[f_number].split('.')[0])
-        copy_tree(script_dir+'/database/forcefields/'+forcefield_available_prov[f_number], working_dir+'FORCEFIELD/'+forcefield_available_prov[f_number]+'/.')
-        copy_tree(script_dir+'/database/forcefields/'+forcefield_available_prov[f_number], final_dir+forcefield_available_prov[f_number]+'/.')
-        return script_dir+'/database/forcefields/', forcefield_available_prov[f_number].split('.')[0]
-#### if forcefield selection is in user provided copy forcefield to FORCEFIELD and FINAL directories
-    else:
-        print('\nYou have selected: '+forcefield_available_user[f_number-len(forcefield_available_prov)].split('.')[0]+'\n\nGood luck\n')
-        copy_tree(start_dir+args.d+'/database/forcefields/'+forcefield_available_user[f_number-len(forcefield_available_prov)], working_dir+'FORCEFIELD/'+forcefield_available_user[f_number-len(forcefield_available_prov)]+'/.')
-        copy_tree(start_dir+args.d+'/database/forcefields/'+forcefield_available_user[f_number-len(forcefield_available_prov)], final_dir+forcefield_available_user[f_number-len(forcefield_available_prov)]+'/.')      
-        return start_dir+args.d+'/database/forcefields/', forcefield_available_user[f_number-len(forcefield_available_prov)].split('.')[0]
+    print('\nYou have selected: '+forcefield_available_prov[f_number].split('.')[0])
+    copy_tree(script_dir+'/database/forcefields/'+forcefield_available_prov[f_number], working_dir+'FORCEFIELD/'+forcefield_available_prov[f_number]+'/.')
+    copy_tree(script_dir+'/database/forcefields/'+forcefield_available_prov[f_number], final_dir+forcefield_available_prov[f_number]+'/.')
+    return script_dir+'/database/forcefields/', forcefield_available_prov[f_number].split('.')[0]
 
 
-def fetch_residues(fragments_available_prov, fragments_available_user):
+
+def fetch_residues(fragments_available_prov):
 #### list of directories and water types  [[root, folders...],[root, folders...]]
     np_directories, p_directories,mod_directories=[], [],[]
-    fragment_number = database_selection(fragments_available_prov, fragments_available_user, 'fragments')
+    try: 
+        fragment_number = []
+        for frag in args.fg:
+            fragment_number.append(fragments_available_prov.index(frag))
+    except:
+        if args.fg != None: 
+            print('Cannot find fragment library: '+frag+' please select library from below\n')
+        fragment_number = database_selection(fragments_available_prov, 'fragments')
+
     if type(fragment_number) == int:
         fragment_number=[0]
 #### run through selected fragments
     for database in fragment_number:
+        print('\nYou have selected: '+fragments_available_prov[database])
     #### separate selection between provided and user
-        if database < len(fragments_available_prov):
-            location = script_dir+'database/fragments/'+ fragments_available_prov[database]
-        else:
-            location = start_dir+args.d+'/database/fragments/'+fragments_available_user[database-len(fragments_available_prov)]
+        location = script_dir+'database/fragments/'+ fragments_available_prov[database]
     #### runs through protein and non protein
         for directory_type in ['/non_protein/', '/protein/']:
     #### adds non protein residues locations to np_directories
@@ -259,28 +249,29 @@ def fetch_fragment(p_directories):
     processing={}     ### dictionary of backbone heavy atoms and connecting atoms eg backbone['ASP'][atoms/b_connect]
     for directory in range(len(p_directories)):
         for residue in p_directories[directory][1:]:    
-            atom_list, bb_list, restraint, disulphide, terminal, dihedral=[], [], [], '', False, []
-            for file_name in os.listdir(p_directories[directory][0]+residue):
-                if file_name.endswith('.pdb'):
-                    with open(p_directories[directory][0]+residue+'/'+file_name, 'r') as pdb_input:
-                        for line_nr, line in enumerate(pdb_input.readlines()):
-                            if line.startswith('ATOM'):
-                                line_sep = pdbatom(line)
-                                if 'H' not in line_sep['atom_name']:
-                                    if file_name.startswith('B'):
-                                        atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
-                                    if line_sep['backbone'] == 2:
-                                        bb_list.append(line_sep['atom_name'])  ### connecting atoms
-                                    if line_sep['backbone'] in [3,4,5]:
-                                        restraint.append(line_sep['atom_name'])  ### position restrained atoms
-                                    if line_sep['backbone'] in [5]:
-                                        disulphide = line_sep['atom_name'] ### position restrained atoms
-                                    if line_sep['backbone'] == 4:
-                                        terminal=True
-                                    if line_sep['backbone'] in [6] and file_name.startswith('B'):
-                                        dihedral.append(line_sep['atom_name'])
-            processing[residue]={'atoms':atom_list,'b_connect':bb_list,'restraint':restraint, 'disulphide':disulphide, 'ter':terminal, 'dihedral':dihedral}  ### adds heavy atoms and connecting atoms to backbone dictionary 
-            atom_list, bb_list, restraint=[], [], []  ### resets residue lists of heavy atoms, connecting atoms and restraint 
+            if residue not in processing:
+                atom_list, bb_list, restraint, disulphide, terminal, dihedral=[], [], [], '', False, []
+                for file_name in os.listdir(p_directories[directory][0]+residue):
+                    if file_name.endswith('.pdb'):
+                        with open(p_directories[directory][0]+residue+'/'+file_name, 'r') as pdb_input:
+                            for line_nr, line in enumerate(pdb_input.readlines()):
+                                if line.startswith('ATOM'):
+                                    line_sep = pdbatom(line)
+                                    if 'H' not in line_sep['atom_name']:
+                                        if file_name.startswith('B'):
+                                            atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
+                                        if line_sep['backbone'] == 2:
+                                            bb_list.append(line_sep['atom_name'])  ### connecting atoms
+                                        if line_sep['backbone'] in [3,4,5]:
+                                            restraint.append(line_sep['atom_name'])  ### position restrained atoms
+                                        if line_sep['backbone'] in [5]:
+                                            disulphide = line_sep['atom_name'] ### position restrained atoms
+                                        if line_sep['backbone'] == 4:
+                                            terminal=True
+                                        if line_sep['backbone'] in [6] and file_name.startswith('B'):
+                                            dihedral.append(line_sep['atom_name'])
+                processing[residue]={'atoms':atom_list,'b_connect':bb_list,'restraint':restraint, 'disulphide':disulphide, 'ter':terminal, 'dihedral':dihedral}  ### adds heavy atoms and connecting atoms to backbone dictionary 
+                atom_list, bb_list, restraint=[], [], []  ### resets residue lists of heavy atoms, connecting atoms and restraint 
 #### if verbose prints out all heavy atoms and connecting atoms for each backbone
     if args.v >= 2:
         print('\n{:-<75}'.format('>  Verbose level 2 start'))
@@ -417,7 +408,6 @@ def rotate(at_connections, cg_connections, same):
         if len(dist[0])==2 and same:
             ratio=dist/np.min(dist, axis=1)[:,np.newaxis]
             rotation_index=np.argmin(inter[np.where(np.sum(ratio, axis=1)<np.min(np.sum(ratio, axis=1))*1.02)])
-            # print(np.sum(ratio, axis=1), np.min(np.sum(ratio, axis=1)))
             for i in range(len(ratio)):
                 if np.all(ratio[i]<1.05):
                     if 'rotation_RMS' in locals():
@@ -428,7 +418,7 @@ def rotate(at_connections, cg_connections, same):
                         rotation_RMS=inter[i]
                         rotation_index=i
         else:
-            rotation_index=np.argmin(inter)#int(np.where(inter==np.min(inter))[0])
+            rotation_index=np.argmin(inter)
 
     #### the rotation with the lowest RMS applied to the at_connections
         at_connections = at_connections.dot(xyz_rot[rotation_index])
@@ -672,7 +662,7 @@ def build_atomistic_system(cg_residues, box_vec):
     atomistic_fragments={}
 #### for each residue type covert to atomistic except protein
     for residue_type in [key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]:
-        if residue_type not in system:
+        if residue_type not in system and residue_type != 'ION':
             system[residue_type] = 0
     #### reset counters for each residue type
         print('Converting residue type: ' +residue_type)
@@ -694,7 +684,7 @@ def build_atomistic_system(cg_residues, box_vec):
             else:
                 pdb_sol = open(working_dir+'SOL'+'/SOL_0.pdb', 'a')
         #### creates ion pdb with header
-            if residue_type == 'ION':
+        if residue_type == 'ION':
             #### make minimisation directory and makes homogeneous directory structure
                 mkdir_directory(working_dir+'ION/min')
                 pdb_ion = create_pdb(working_dir+residue_type+'/'+residue_type+'_merged.pdb')
@@ -906,200 +896,83 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         pass
     return at_connections,cg_connections, res
 
-def dihedral(p1,p2,p3,p4):
-#### https://en.wikipedia.org/w/index.php?title=Dihedral_angle&oldid=689165217#Angle_between_three_vectors
-#### dihedral = atan2(([b1xb2]x[b2xb3]).b2/|b2|, [b1xb2].[b2xb3]))
+# def dihedral(p1,p2,p3,p4):
+# #### https://en.wikipedia.org/w/index.php?title=Dihedral_angle&oldid=689165217#Angle_between_three_vectors
+# #### dihedral = atan2(([b1xb2]x[b2xb3]).b2/|b2|, [b1xb2].[b2xb3]))
 
-    b1 = -1.0*(p2 - p1) ## needs to be inverted
-    b2 = p3 - p2
-    b3 = p4 - p3
+#     b1 = -1.0*(p2 - p1) ## needs to be inverted
+#     b2 = p3 - p2
+#     b3 = p4 - p3
 
-    b1_b2 = np.cross(b1, b2)
-    b2_b3 = np.cross(b2, b3)
+#     b1_b2 = np.cross(b1, b2)
+#     b2_b3 = np.cross(b2, b3)
 
-    b1_b2_cross_b2_b3 = np.cross(b1_b2, b2_b3)
-    b2_norm = b2/np.linalg.norm(b2)
+#     b1_b2_cross_b2_b3 = np.cross(b1_b2, b2_b3)
+#     b2_norm = b2/np.linalg.norm(b2)
 
-    x = np.dot(b1_b2_cross_b2_b3, b2_norm)
-    y = np.dot(b1_b2, b2_b3)
+#     x = np.dot(b1_b2_cross_b2_b3, b2_norm)
+#     y = np.dot(b1_b2, b2_b3)
 
-    return np.degrees(np.arctan2(x, y))
+#     return np.degrees(np.arctan2(x, y))
 
-
-def apply_rotation_around_vector(rotate_z, rotate_x, theta_z, coord, center):
-    coord = np.array(coord)-center
-    coord = coord.dot(eulerAnglesToRotationMatrix([0,0,rotate_z]))
-    coord = coord.dot(eulerAnglesToRotationMatrix([rotate_x,0,0]))
-    coord = coord.dot(eulerAnglesToRotationMatrix([0,0,np.radians(theta_z)]))
-    coord = coord.dot(eulerAnglesToRotationMatrix([-rotate_x,0,0]))
-    coord = coord.dot(eulerAnglesToRotationMatrix([0,0,-rotate_z]))
-    return coord+center
-
-def find_angle(a,b,c):
-    AB = a - b
-    BC = c - b
-    ABBC = np.linalg.norm(AB)*np.linalg.norm(BC)
-    AB_dot_BC = AB.dot(BC)
-    angle = np.arccos(AB_dot_BC/ABBC)
-    return np.degrees(angle)
-
-
-def fetch_dihdral_atoms(residue_number, cg, at):
-    center=cg[residue_number]['BB']['coord']
-    cg_angle = find_angle(cg[residue_number-1]['BB']['coord'], cg[residue_number]['BB']['coord'], cg[residue_number+1]['BB']['coord'])
-#### fetch backbone atoms from current residue
-    dih_temp=[]
-    for atom in at[residue_number]['BB']:
-        if at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number]['BB']['residue_name']]['restraint']: 
-            ca_c = at[residue_number]['BB'][atom]['coord']
-        elif at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number]['BB']['residue_name']]['b_connect'][0]: 
-            n_c = at[residue_number]['BB'][atom]['coord']
-        elif at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number]['BB']['residue_name']]['b_connect'][1]:
-            c_c = at[residue_number]['BB'][atom]['coord']
-        elif at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number-1]['BB']['residue_name']]['dihedral']:
-            o_c=at[residue_number]['BB'][atom]['coord']
-
-#### fetch preceeding carbon and crbonyl oxygen atom
-    for atom in at[residue_number-1]['BB']:
-        if at[residue_number-1]['BB'][atom]['atom'] == backbone[cg[residue_number-1]['BB']['residue_name']]['b_connect'][-1]:
-            c_p=at[residue_number-1]['BB'][atom]['coord']
-  
-
-#### fetch next N atom
-    for atom in at[residue_number+1]['BB']:
-        if at[residue_number+1]['BB'][atom]['atom'] == backbone[cg[residue_number+1]['BB']['residue_name']]['b_connect'][0]:
-            n_n=at[residue_number+1]['BB'][atom]['coord']
-            
-    return c_p, n_c, ca_c, c_c, o_c, n_n, center, cg_angle
-
-def align_to_axis(a,b):
-    vector=(a-b)
-    rotate_z = np.arccos( np.sqrt(vector[1]**2)/np.linalg.norm(vector))#    
-    vector_z = vector.dot(eulerAnglesToRotationMatrix([0,0,rotate_z]))
-#### rotate around x to align with z axis 
-    rotate_x = np.arccos(np.sqrt(vector[2]**2)/np.linalg.norm(vector_z))# np.sqrt(vector[0]**2+vector[1]**2+vector[2]**2))
-    return [rotate_z, rotate_x]
-
-def rotate_dihedral(a, b, c, d, myNumber):
-    dih = []
-    for theta in range(0,360):
-        D = d.dot(eulerAnglesToRotationMatrix([0,0,np.radians(theta)]))
-        dih.append(dihedral(a, b, c, D))
-    theta_z = np.radians(np.where(min(dih, key=lambda x:abs(x-myNumber))==dih)[0][0])
-    return theta_z
-
-def minimise_dihedral(residue_number, cg, at):
-
-    martini_angle={96:[-60, -50],134:[-140,130]}  ### rough psi angles -20 = beta, 130 = alpha
-    c_p, n_c, ca_c, c_c, o_c, n_n, center, cg_angle = fetch_dihdral_atoms(residue_number, cg, at)
-
-    rot_centers=[[n_c, ca_c], [ca_c, c_c]]#, [n_c, c_p]]
-    for c_val, centers in enumerate(rot_centers):
-        center = (centers[0]+centers[1])/2
-        rotation = align_to_axis(centers[0],centers[1])
-    # #### apply rotations to dihedral atoms 
-        dih_aligned =[]
-        for at_val, atom in enumerate([c_p, n_c, ca_c, c_c, o_c, n_n]):
-            atom=np.array(atom)-center
-            atom_z = atom.dot(eulerAnglesToRotationMatrix([0,0,rotation[0]]))
-            atom_x = atom_z.dot(eulerAnglesToRotationMatrix([rotation[1],0,0]))
-            dih_aligned.append(atom_x)
-        ### move phi move atom C
-        if c_val == 1:  
-            myNumber = martini_angle[min(martini_angle, key=lambda x:abs(x-cg_angle))][0]
-            theta_z = rotate_dihedral(dih_aligned[0], dih_aligned[1], dih_aligned[2], dih_aligned[3], myNumber)
-            c_c = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, c_c, center)
-            o_c = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, o_c, center)
-            for atom in at[residue_number]['BB']:
-                if at[residue_number]['BB'][atom]['atom'] == backbone[cg[residue_number]['BB']['residue_name']]['b_connect'][-1]:
-                    at[residue_number]['BB'][atom]['coord'] = c_c
-                if at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number]['BB']['residue_name']]['dihedral']:
-                    at[residue_number]['BB'][atom]['coord'] = o_c
-        ### move psi atom N
-        elif c_val == 0:   
-            myNumber = martini_angle[min(martini_angle, key=lambda x:abs(x-cg_angle))][1]
-            theta_z = rotate_dihedral(dih_aligned[1], dih_aligned[2], dih_aligned[3], dih_aligned[5], myNumber)
-            n_n = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, n_n, center)
-            for atom in at[residue_number+1]['BB']:
-                if at[residue_number+1]['BB'][atom]['atom'] == backbone[cg[residue_number+1]['BB']['residue_name']]['b_connect'][0]:
-                    at[residue_number+1]['BB'][atom]['coord'] = n_n
-            for atom in at[residue_number]['BB']:
-                if at[residue_number]['BB'][atom]['atom'] in backbone[cg[residue_number]['BB']['residue_name']]['dihedral']:
-                    at[residue_number]['BB'][atom]['coord'] = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, at[residue_number]['BB'][atom]['coord'], center)
-    return at
+# def find_angle(a,b,c):
+#     AB = a - b
+#     BC = c - b
+#     ABBC = np.linalg.norm(AB)*np.linalg.norm(BC)
+#     AB_dot_BC = AB.dot(BC)
+#     angle = np.arccos(AB_dot_BC/ABBC)
+#     return np.degrees(angle)
 
 def fix_carbonyl(residue_id, cg, at):
     ca=[]
     for index in range(3):
         for atom in at[residue_id+index]['BB']:
+            # print(residue_id+index, at[residue_id+index]['BB'][atom]['atom'], at[residue_id+index]['BB'][atom]['coord'])
             if at[residue_id+index]['BB'][atom]['atom'] in backbone[cg[residue_id+index]['BB']['residue_name']]['restraint']: 
                 ca.append(at[residue_id+index]['BB'][atom]['coord'])
+                # print(at[residue_id+index]['BB'][atom]['atom'], at[residue_id+index]['BB'][atom]['coord'])
             if index == 0 :
-                if at[residue_id]['BB'][atom]['atom'] == backbone[cg[residue_id+index]['BB']['residue_name']]['b_connect'][0]: 
-                    N = at[residue_id]['BB'][atom]['coord']
-                if at[residue_id]['BB'][atom]['atom'] in backbone[cg[residue_id+index]['BB']['residue_name']]['restraint']: 
-                    CA = at[residue_id]['BB'][atom]['coord']
                 if at[residue_id]['BB'][atom]['atom'] == backbone[cg[residue_id+index]['BB']['residue_name']]['b_connect'][1]: 
-                    C = at[residue_id]['BB'][atom]['coord']
+                    C = atom
                 if at[residue_id]['BB'][atom]['atom'] in backbone[cg[residue_id+index]['BB']['residue_name']]['dihedral']:   
-                    O = at[residue_id]['BB'][atom]['coord']        
+                    O = atom       
+            # print(ca)
     # print(ca)
-
     center=cg[residue_id]['BB']['coord']
-    # center=C
-    vector=(N+O)/2-(CA+C)/2
-    # print(vector)
-    rotate_z = np.arccos( np.array([0,1,0]).dot(vector)/np.linalg.norm(vector))  
-    vector_z = vector.dot(eulerAnglesToRotationMatrix([0,0,rotate_z]))
-
-    rotate_x = np.arccos( np.array([0,0,1]).dot(vector_z)/np.linalg.norm(vector_z))
-
-    carbonyl = [rotate_z,rotate_x]
-
-
-    AB = ca[0]-ca[1]
-    AC = ca[0]-ca[2] 
-    b1_b2 = np.cross(AB, AC)
-    
-    # print()
-    # print(residue_id)
-    # print(ca[0], ca[1], ca[2])
-    # print(AB, AC, b1_b2)
-    # print(vector, b1_b2)
-
-    vector=b1_b2
-    rotate_z = np.arccos( np.array([0,1,0]).dot(vector)/np.linalg.norm(vector))  
-    vector_z = vector.dot(eulerAnglesToRotationMatrix([0,0,rotate_z]))
-    rotate_x = np.arccos( np.array([0,0,1]).dot(vector_z)/np.linalg.norm(vector_z))
-    carbonyl_new = [rotate_z,rotate_x]
-
-    for atom in at[residue_id]['BB']:
-        at[residue_id]['BB'][atom]['coord'] = align_vectors(carbonyl[0], carbonyl[1], carbonyl_new[0], carbonyl_new[1], at[residue_id]['BB'][atom]['coord'], center)
-        if at[residue_id]['BB'][atom]['atom'] == backbone[cg[residue_id+index]['BB']['residue_name']]['b_connect'][0]: 
-            N = at[residue_id]['BB'][atom]['coord']
-        if at[residue_id]['BB'][atom]['atom'] in backbone[cg[residue_id+index]['BB']['residue_name']]['restraint']: 
-            CA = at[residue_id]['BB'][atom]['coord']
-        if at[residue_id]['BB'][atom]['atom'] == backbone[cg[residue_id+index]['BB']['residue_name']]['b_connect'][1]: 
-            C = at[residue_id]['BB'][atom]['coord']
-        if at[residue_id]['BB'][atom]['atom'] in backbone[cg[residue_id+index]['BB']['residue_name']]['dihedral']:   
-            O = at[residue_id]['BB'][atom]['coord']   
-    vector=(N+O)/2-(CA+C)/2
-    # print(vector)
+    rotation, cross_vector = align_to_vector(at, ca, at[residue_id]['BB'][C]['coord'], at[residue_id]['BB'][O]['coord'])
+ 
+    center = at[residue_id]['BB'][C]['coord']
+    at[residue_id]['BB'][O]['coord'] = (at[residue_id]['BB'][O]['coord']-center).dot(rotation)+center
 
     return at
 
-def align_vectors(rotate_z_initial, rotate_x_initial, rotate_z_new, rotate_x_new, coord, center):
-    coord = np.array(coord)-center
-    coord = coord.dot(eulerAnglesToRotationMatrix([0,0,rotate_z_initial]))
-    coord = coord.dot(eulerAnglesToRotationMatrix([-rotate_x_initial,0,0]))
-    coord = coord.dot(eulerAnglesToRotationMatrix([rotate_x_new,0,0]))
-    coord = coord.dot(eulerAnglesToRotationMatrix([0,0,-rotate_z_new]))
-    return coord+center
+def align_to_vector(at, ca, C, O):
+    initial_vector= O-C
+    initial_vector = initial_vector/np.linalg.norm(initial_vector)
+    AB = ca[0]-ca[1]
+    AC = ca[0]-ca[2] 
+    cross_vector = np.cross(AB, AC)
+    cross_vector = cross_vector/np.linalg.norm(cross_vector)
+    rotation = rotation_matrix_vectors(initial_vector, cross_vector)
+    # test = find_angle(initial_vector.dot(rotation), np.array([0,0,0]),  cross_vector)
+    return rotation, cross_vector
+
+
+def rotation_matrix_vectors(v1, v2):
+    v = np.cross(v1,v2)
+    c = np.dot(v1,v2)
+    s = np.linalg.norm(v)
+
+    rotation=np.array([[0,    -v[2],  v[1]],
+                       [v[2],     0, -v[0]],
+                       [-v[1], v[0],    0], 
+                       ])
+
+    r = np.identity(3) - rotation + np.matmul(rotation,rotation) * ((1 - c)/(s**2))
+    return r
 
 def fix_dihedrals(atomistic_residues, cg_residues):
     for res_index, residue_id in enumerate(atomistic_residues):
-        # if res_index != 0 and res_index != len(atomistic_residues)-1:# and cg_residues[residue_id]['BB']['residue_name'] not in ['GLY','PRO']:
-        #     atomistic_residues = minimise_dihedral(residue_id, cg_residues, atomistic_residues)
         if res_index < len(atomistic_residues)-2:
             atomistic_residues = fix_carbonyl(residue_id, cg_residues, atomistic_residues)
     final = {}
@@ -1200,7 +1073,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
         #### applies rotation to each atom
             for atom in at_residues[residue_number][cg_fragments]:
                 at_residues[residue_number][cg_fragments][atom]['coord'] = rotate_atom(at_residues[residue_number][cg_fragments][atom]['coord'], center, xyz_rot_apply)     
-
+                # at_residues[residue_number][cg_fragments][atom]['coord'] = (at_residues[residue_number][cg_fragments][atom]['coord'] - center).dot(rotate_matix[0]) + center
     #### if disulphide bond found move the S atoms to within 2 A of each other
         if 'disulphide' in locals():
             if disulphide:
@@ -1599,19 +1472,14 @@ def read_in_protein_pdbs(no_chains, file):
     for chain in range(0,no_chains):
         if os.path.exists(file+'_'+str(chain)+'.pdb'):
             with open(file+'_'+str(chain)+'.pdb', 'r') as pdb_input:
-                merge_temp=[]
                 for line in pdb_input.readlines():
                     if line.startswith('ATOM'):
                         line_sep=pdbatom(line)
-                        merge_temp.append(line_sep)
-            st=time.time()
-            merge, merge_coords = correct_dihedrals(merge_temp,merge, merge_coords)
-            ed=time.time()
-            print(time.time()-st)
+                        merge.append(line_sep)
+                        merge_coords.append([line_sep['x'], line_sep['y'],line_sep['z']])
         else:
             sys.exit('cannot find minimised residue: \n'+'PROTEIN/'+location+'/PROTEIN'+protein+'_'+str(chain)+'.pdb')     
     merged_coords = check_atom_overlap(merge_coords)
-    print(time.time()-ed)
     merged=[]
     for line_val, line in enumerate(merge):
         merged.append(pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
@@ -1623,60 +1491,6 @@ def concat(atom):
     return np.array([atom['x'],atom['y'],atom['z']])
 
 def correct_dihedrals(at,merged, merged_coord):
-
-    martini_angle={96:[-60, -50],134:[-140,130]}  ### rough psi angles -20 = beta, 130 = alpha
-    phi, pis, carbonyl = False, False, False
-    n, ca, c, o =[],[],[],[]
-    for at_id, atom in enumerate(at):
-        if atom['atom_name'] in backbone[atom['residue_name']]['b_connect'][0]:
-            n.append(at_id)
-        elif atom['atom_name'] in backbone[atom['residue_name']]['restraint']:
-            ca.append(at_id)
-        elif atom['atom_name'] == backbone[atom['residue_name']]['b_connect'][-1]:
-            c.append(at_id)
-        elif atom['atom_name'] in backbone[atom['residue_name']]['dihedral']:
-            o.append(at_id)
-    # for residue in range(0,len(n)-2):
-    #     AB = concat(at[ca[residue]])-concat(at[ca[residue+1]])
-    #     AC = concat(at[ca[residue]])-concat(at[ca[residue+2]])
-    #     b1_b2 = np.cross(AB, AC)
-    #     print(concat(at[c[residue]])-concat(at[o[residue]]), concat(at[ca[residue]])-concat(at[ca[residue+1]]))
-    #     print(b1_b2, concat(at[ca[residue]])-concat(at[ca[residue+1]]))
-        # angle = find_angle(concat(at[ca[residue-1]]), concat(at[ca[residue]]), concat(at[ca[residue+1]]))
-    #     c_p, n_c, ca_c, c_c, o_c, n_n = concat(at[c[residue-1]]), concat(at[n[residue]]), concat(at[ca[residue]]), \
-    #                                     concat(at[c[residue]]), concat(at[o[residue]]), concat(at[n[residue+1]])
-    #     rot_centers=[[n_c, ca_c], [ca_c, c_c]]#, [n_c, c_p]]
-    #     for c_val, centers in enumerate(rot_centers):
-    #         center = (centers[0]+centers[1])/2
-    #         rotation = align_to_axis(centers[0],centers[1])
-    #         dih_aligned =[]
-    #         for at_val, atom in enumerate([c_p, n_c, ca_c, c_c, o_c, n_n]):
-    #             atom=np.array(atom)-center
-    #             atom_z = atom.dot(eulerAnglesToRotationMatrix([0,0,rotation[0]]))
-    #             atom_x = atom_z.dot(eulerAnglesToRotationMatrix([rotation[1],0,0]))
-    #             dih_aligned.append(atom_x)
-    #         ### move phi move atom C
-    #         if c_val == 1:  
-    #             myNumber = martini_angle[min(martini_angle, key=lambda x:abs(x-angle))][0]
-    #             theta_z = rotate_dihedral(dih_aligned[0], dih_aligned[1], dih_aligned[2], dih_aligned[3], myNumber)
-    #             c_c = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, c_c, center)
-    #             at[c[residue]]['x'], at[c[residue]]['y'],at[c[residue]]['z'] = c_c[0], c_c[1],c_c[2]
-    #             o_c = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, o_c, center)
-    #             at[o[residue]]['x'], at[o[residue]]['y'],at[o[residue]]['z'] = o_c[0], o_c[1],o_c[2]
-
-    #         ### move psi atom N
-    #         elif c_val == 0:   
-    #             myNumber = martini_angle[min(martini_angle, key=lambda x:abs(x-angle))][1]
-    #             theta_z = rotate_dihedral(dih_aligned[1], dih_aligned[2], dih_aligned[3], dih_aligned[5], myNumber)
-    #             n_n = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, n_n, center)
-    #             at[n[residue+1]]['x'], at[n[residue+1]]['y'],at[n[residue+1]]['z'] = n_n[0], n_n[1],n_n[2]
-    #             o_c = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, o_c, center)
-    #             at[o[residue]]['x'], at[o[residue]]['y'],at[o[residue]]['z'] = o_c[0], o_c[1],o_c[2]
-            # ## fix carbonyl
-            # elif c_val == 2:
-            #     theta_z = rotate_dihedral(dih_aligned[3], dih_aligned[2], dih_aligned[0], dih_aligned[1], np.radians(180))
-            #     o_p = apply_rotation_around_vector(rotation[0], rotation[1], theta_z, o_p, center)
-            #     at[o[residue-1]]['x'], at[o[residue-1]]['y'],at[o[residue-1]]['z'] = o_p[0], o_p[1],o_p[2]
 
     for atom in at:
         merged.append(atom)
@@ -1880,7 +1694,7 @@ def clean():
 
 start_time=time.time()
 
-print('\nInitialisation of CG2AT v2')
+print('\nInitialisation of CG2AT v2\n')
 
 ### finds initial rotation matrices
 x_rot, y_rot, z_rot=[],[],[]
@@ -1915,12 +1729,18 @@ user_at_input = collect_input()
 initialisation_time=time.time()
 
 ### read in and sort forcefield info
-forcefield_available_prov, forcefield_available_user, fragments_available_prov, fragments_available_user = read_database_directories()
-forcefield_number = database_selection(forcefield_available_prov, forcefield_available_user, 'forcefields')
-forcefield_location, forcefield=sort_forcefield(forcefield_available_prov, forcefield_available_user, forcefield_number)
+forcefield_available_prov, fragments_available_prov = read_database_directories()
+
+try: 
+    forcefield_number = forcefield_available_prov.index(args.ff.split('.')[0]+'.ff')
+except:
+    if args.ff != None: 
+        print('Cannot find forcefield: '+args.ff.split('.')[0]+'.ff  please select one from below\n')
+        forcefield_number = database_selection(forcefield_available_prov, 'forcefields')
+forcefield_location, forcefield=sort_forcefield(forcefield_available_prov, forcefield_number)
 
 ### reads in and sorts fragment information
-np_residues, p_residues, mod_residues,np_directories, p_directories, mod_directories=fetch_residues(fragments_available_prov, fragments_available_user)
+np_residues, p_residues, mod_residues,np_directories, p_directories, mod_directories=fetch_residues(fragments_available_prov)
 
 
 
