@@ -1,0 +1,12 @@
+ATOM     89  C33 DGPE    1       7.149  -1.845  57.971  4.00  5.00      MEMB
+ATOM     90  H3X DGPE    1       7.265  -2.902  57.690  4.00  0.00      MEMB
+ATOM     91  H3Y DGPE    1       7.561  -1.273  57.109  4.00  0.00      MEMB
+ATOM     92  C34 DGPE    1       5.671  -1.451  58.161  1.00  0.00      MEMB
+ATOM     93  H4X DGPE    1       5.632  -0.345  58.297  1.00  0.00      MEMB
+ATOM     94  H4Y DGPE    1       5.214  -1.893  59.067  1.00  0.00      MEMB
+ATOM     95  C35 DGPE    1       4.787  -1.796  56.960  1.00  0.00      MEMB
+ATOM     96  H5X DGPE    1       4.395  -2.826  56.940  1.00  0.00      MEMB
+ATOM     97  H5Y DGPE    1       5.391  -1.667  56.038  1.00  0.00      MEMB
+ATOM     98  C36 DGPE    1       3.485  -1.023  56.910  5.00  10.00      MEMB
+ATOM     99  H6X DGPE    1       3.584  -0.037  57.416  5.00  0.00      MEMB
+ATOM    100  H6Y DGPE    1       2.704  -1.608  57.449  5.00  0.00      MEMB

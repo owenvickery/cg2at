@@ -1,0 +1,12 @@
+ATOM     83  C33 DOPE    1      -0.287   2.955  56.911  4.00  5.00      MEMB
+ATOM     84  H3X DOPE    1       0.227   3.156  55.945  4.00  0.00      MEMB
+ATOM     85  H3Y DOPE    1      -0.238   3.886  57.521  4.00  0.00      MEMB
+ATOM     86  C34 DOPE    1      -1.722   2.584  56.624  1.00  0.00      MEMB
+ATOM     87  H4X DOPE    1      -1.865   1.705  55.969  1.00  0.00      MEMB
+ATOM     88  H4Y DOPE    1      -2.079   2.261  57.618  1.00  0.00      MEMB
+ATOM     89  C35 DOPE    1      -2.466   3.840  56.217  1.00  0.00      MEMB
+ATOM     90  H5X DOPE    1      -1.996   4.639  56.824  1.00  0.00      MEMB
+ATOM     91  H5Y DOPE    1      -3.560   3.730  56.375  1.00  0.00      MEMB
+ATOM     92  C36 DOPE    1      -2.246   4.456  54.884  5.00  9.00      MEMB
+ATOM     93  H6X DOPE    1      -1.237   4.926  54.847  5.00  0.00      MEMB
+ATOM     94  H6Y DOPE    1      -2.997   5.270  54.730  5.00  0.00      MEMB

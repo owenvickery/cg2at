@@ -1,0 +1,16 @@
+ATOM     70 C212 DYPC    1       4.018   1.327  44.158  6.00  6.00      MEMB
+ATOM     71 H12R DYPC    1       3.265   0.520  44.066  6.00  0.00      MEMB
+ATOM     72 H12S DYPC    1       4.963   0.944  43.726  6.00  0.00      MEMB
+ATOM     73 C213 DYPC    1       3.469   2.509  43.344  1.00  0.00      MEMB
+ATOM     74 H13R DYPC    1       4.052   3.415  43.602  1.00  0.00      MEMB
+ATOM     75 H13S DYPC    1       2.401   2.676  43.613  1.00  0.00      MEMB
+ATOM     76 C214 DYPC    1       3.567   2.328  41.831  1.00  0.00      MEMB
+ATOM     77 H14R DYPC    1       3.244   3.278  41.340  1.00  0.00      MEMB
+ATOM     78 H14S DYPC    1       2.871   1.533  41.486  1.00  0.00      MEMB
+ATOM     79 C215 DYPC    1       4.977   1.977  41.355  1.00  0.00      MEMB
+ATOM     80 H15R DYPC    1       5.423   1.102  41.861  1.00  0.00      MEMB
+ATOM     81 H15S DYPC    1       5.640   2.852  41.555  1.00  0.00      MEMB
+ATOM     82 C216 DYPC    1       4.938   1.630  39.887  1.00  0.00      MEMB
+ATOM     83 H16R DYPC    1       4.305   0.759  39.639  1.00  0.00      MEMB
+ATOM     84 H16S DYPC    1       4.411   2.468  39.415  1.00  0.00      MEMB
+ATOM     85 H16T DYPC    1       5.955   1.531  39.447  1.00  0.00      MEMB

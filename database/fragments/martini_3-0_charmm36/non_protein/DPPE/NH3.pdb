@@ -1,0 +1,10 @@
+ATOM      1  N   DPPE    1       9.155   4.612  64.139  1.00  0.00      MEMB
+ATOM      2  HN1 DPPE    1       8.370   4.560  63.440  1.00  0.00      MEMB
+ATOM      3  HN2 DPPE    1       9.875   3.897  63.865  1.00  0.00      MEMB
+ATOM      4  HN3 DPPE    1       8.737   4.409  65.061  1.00  0.00      MEMB
+ATOM      5  C12 DPPE    1       9.740   5.972  64.158  1.00  0.00      MEMB
+ATOM      6 H12A DPPE    1      10.538   6.015  64.929  1.00  0.00      MEMB
+ATOM      7 H12B DPPE    1       8.917   6.681  64.390  1.00  0.00      MEMB
+ATOM      8  C11 DPPE    1      10.288   6.318  62.800  20.0  1.00      MEMB
+ATOM      9 H11A DPPE    1      10.753   5.425  62.317  20.0  0.00      MEMB
+ATOM     10 H11B DPPE    1      11.045   7.106  62.993  20.0  0.00      MEMB

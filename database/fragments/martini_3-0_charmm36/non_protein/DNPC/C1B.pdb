@@ -1,0 +1,12 @@
+ATOM    110  C33 DNPC    1      10.647   3.371  61.932  4.00  5.00      MEMB
+ATOM    111  H3X DNPC    1      11.400   3.362  62.749  4.00  0.00      MEMB
+ATOM    112  H3Y DNPC    1      10.952   2.568  61.276  4.00  0.00      MEMB
+ATOM    113  C34 DNPC    1       9.400   2.599  62.098  1.00  0.00      MEMB
+ATOM    114  H4X DNPC    1       8.951   2.724  63.095  1.00  0.00      MEMB
+ATOM    115  H4Y DNPC    1       9.679   1.528  62.016  1.00  0.00      MEMB
+ATOM    116  C35 DNPC    1       8.533   2.960  60.940  1.00  0.00      MEMB
+ATOM    117  H5X DNPC    1       8.947   2.682  59.940  1.00  0.00      MEMB
+ATOM    118  H5Y DNPC    1       8.312   4.053  60.946  1.00  0.00      MEMB
+ATOM    119  C36 DNPC    1       7.240   2.316  61.102  5.00  11.00      MEMB
+ATOM    120  H6X DNPC    1       6.884   2.504  62.147  5.00  0.00      MEMB
+ATOM    121  H6Y DNPC    1       7.294   1.236  60.893  5.00  0.00      MEMB

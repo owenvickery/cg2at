@@ -1,0 +1,13 @@
+ATOM     57  C27 DYPC    1       4.526   0.416  49.537  8.00  5.00      MEMB
+ATOM     58  H7R DYPC    1       4.710  -0.492  50.165  8.00  0.00      MEMB
+ATOM     59  H7S DYPC    1       5.471   0.680  49.011  8.00  0.00      MEMB
+ATOM     60  C28 DYPC    1       3.444   0.036  48.517  1.00  0.00      MEMB
+ATOM     61  H8R DYPC    1       2.677  -0.624  48.987  1.00  0.00      MEMB
+ATOM     62  H8S DYPC    1       4.130  -0.611  48.008  1.00  0.00      MEMB
+ATOM     63  C29 DYPC    1       2.737   0.982  47.567  1.00  0.00      MEMB
+ATOM     64  H9R DYPC    1       1.671   1.026  47.820  1.00  0.00      MEMB
+ATOM     65 C210 DYPC    1       3.075   1.630  46.428  1.00  0.00      MEMB
+ATOM     66 H10R DYPC    1       2.313   2.280  45.973  1.00  0.00      MEMB
+ATOM     67 C211 DYPC    1       4.347   1.663  45.628  9.00  6.00      MEMB
+ATOM     68 H11R DYPC    1       5.109   0.955  46.017  9.00  0.00      MEMB
+ATOM     69 H11S DYPC    1       4.804   2.677  45.630  9.00  0.00      MEMB
