@@ -1063,6 +1063,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
                     backbone_coords[chain_count].append(xyz_cur+[1])
                     initial=False
                     terminal[chain_count].append(backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
+                    sequence[chain_count]+=aas[cg_residues[residue_number]['BB']['residue_name']]
             if cg_residues[residue_number][cg_fragments]['residue_name'] == 'CYS' and cg_fragments != 'BB':
                 at_connections, cg_connections, disulphide, disul_at_info, disul_cg_info= find_closest_cysteine(at_connections, cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center)
         #### finds optimum rotation of fragment
@@ -1179,7 +1180,7 @@ def shift_sulphur(residue_number, disul_at_info, disul_cg_info, at_residues, cg_
 ############################################################ Processes atomistic protein input ################################################################
 
 
-def read_in_atomistic(protein, chain_count):
+def read_in_atomistic(protein, chain_count, check_alignment):
 #### reset location and check if pdb exists  
     os.chdir(start_dir)
     if not os.path.exists(protein):
@@ -1217,7 +1218,8 @@ def read_in_atomistic(protein, chain_count):
                                 N=True
                         #### measures distance between N and C atoms. if the bond is over 3 A it counts as a new protein
                             dist=np.sqrt(((N_ter[0]-C_ter[0])**2)+((N_ter[1]-C_ter[1])**2)+((N_ter[2]-C_ter[2])**2))
-                            if N and C and C_resid != N_resid and dist > 4.5:
+                            if N and C and C_resid != N_resid and dist > 3.5:
+                                # print(dist)
                                 N_ter, C_ter=False, False
                                 ter_residues.append(line_sep['residue_id'])
                                 chain_count+=1
@@ -1234,115 +1236,145 @@ def read_in_atomistic(protein, chain_count):
                                 if atom in mass:
                                     atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=mass[atom]
 
-
-    atomistic_protein_input, sequence_overlap = check_sequence(atomistic_protein_input, chain_count+1)
+    if check_alignment:
+        atomistic_protein_input = check_sequence(atomistic_protein_input, chain_count+1)
 #### check if number of monomers is the same
-    if chain_count+1 != system['PROTEIN']:
+    elif chain_count+1 != system['PROTEIN']:
         sys.exit('number of chains in atomistic protein input ('+str(chain_count+1)+') does not match CG representation ('+str(system['PROTEIN'])+')')
-    return atomistic_protein_input, sequence_overlap
+    return atomistic_protein_input
+
+def align_chain_match(atomistic_protein_input, seq_user):
+    at={}
+    for chain in range(len(final_coordinates_atomistic)):
+        at[chain]={}
+        if len(atomistic_protein_input[chain]) <= len(final_coordinates_atomistic[chain]):
+            s = difflib.SequenceMatcher(None, seq_user[chain], sequence[chain])
+            seq_info = s.get_matching_blocks()
+            temp={}
+            if seq_info[0][2] <= len(seq_user[chain]):
+                for residue in atomistic_protein_input[chain]:
+                    temp[residue+seq_info[0][1]] = atomistic_protein_input[chain][residue]
+                at[chain][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp
+        else:
+            sys.exit('The user supllied chain '+str(chain)+' is longer than CG chain')
+    return at
+
+def align_chain_do_not_match(atomistic_protein_input, seq_user):
+    at={}
+    for chain_at in range(len(atomistic_protein_input)):
+        chain_cg=0
+        s = difflib.SequenceMatcher(None, seq_user[chain_at], sequence[chain_cg])
+        seq_info = s.get_matching_blocks()
+        while seq_info[0][2] != len(seq_user[chain_at]):
+            chain_cg+=1
+            s = difflib.SequenceMatcher(None, seq_user[chain_at], sequence[chain_cg])
+            seq_info = s.get_matching_blocks()
+            if chain_cg > len(final_coordinates_atomistic):
+                sys.exit('Cannot find a match for usesr supplied chain: '+str(chain_at))
+        temp={}
+        if chain_cg not in at:
+            at[chain_cg]={}
+        if seq_info[0][2] == len(seq_user[chain_at]):
+            for resid,  residue in enumerate(atomistic_protein_input[chain_at]):
+                temp[resid + seq_info[0][1]] = atomistic_protein_input[chain_at][residue]
+            at[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
+    return at
 
 def check_sequence(atomistic_protein_input, chain_count):
-    sequence_overlap={}
+    at={}
     seq_user={}
     for chain in range(len(atomistic_protein_input)):
         seq_user[chain]=[]
-        sequence_overlap[chain]= [0, len(final_coordinates_atomistic[chain])]
         for resid in atomistic_protein_input[chain]:
             for atom in atomistic_protein_input[chain][resid]:
                 seq_user[chain]+=aas[atomistic_protein_input[chain][resid][atom]['res_type']]
                 break
-        if chain_count == system['PROTEIN']:
-            if len(atomistic_protein_input[chain])!=len(final_coordinates_atomistic[chain]):
-                s = difflib.SequenceMatcher(None, seq_user[chain], sequence[chain])
-                seq_info = s.get_matching_blocks()
-                sequence_overlap[chain]=[seq_info[0][1], seq_info[0][1]+seq_info[0][2]]
-                temp={}
-                if seq_info[0][2] == len(seq_user[chain]):
-                    for residue in atomistic_protein_input[chain]:
-                        temp[residue+seq_info[0][1]] = atomistic_protein_input[chain][residue]
-                    atomistic_protein_input[chain]={}
-                    atomistic_protein_input[chain]=temp
-        # else:
-        #     if len(atomistic_protein_input[chain])!=len(final_coordinates_atomistic[chain]):
-        #         for chain_2 in range(chain, len(atomistic_protein_input)):
-        #             print(chain_2)
-            #     s = difflib.SequenceMatcher(None, seq_user[chain_2], sequence[chain])
-            #     seq_info = s.get_matching_blocks()
-            # if 
-            # if len(final_coordinates_atomistic[chain]) != len(atomistic_protein_input[chain]):
-            #     for 
-    return atomistic_protein_input, sequence_overlap
-
-
+    if chain_count == len(final_coordinates_atomistic):
+        at = align_chain_match(atomistic_protein_input, seq_user)
+    elif chain_count > len(final_coordinates_atomistic):
+        at = align_chain_do_not_match(atomistic_protein_input, seq_user)
+    return at
 
 def center_atomistic(atomistic_protein_input): 
     cg_com=[]
 #### for each protein chain center on cg representation 
     for chain in range(len(atomistic_protein_input)):
-        protein_mass=[]
-        for residue in atomistic_protein_input[chain]:
-        #### creates a list of all coordinates and masses [[coord, mass],[coord, mass]]
-            for atom in atomistic_protein_input[chain][residue]:
-                short_line=atomistic_protein_input[chain][residue][atom]
-                protein_mass.append([short_line['coord'][0],short_line['coord'][1],short_line['coord'][2],short_line['frag_mass']])
-    #### returns the COM of the atomistic protein
-        atomistic_protein_mass=np.average(np.array(protein_mass)[:,:3], axis=0, weights=np.array(protein_mass)[:,3])#### add center of mass of CG_proteins
-    #### for each chain the COM of the CG representation is stored (only cg is needed)
-        cg_com.append(np.average(np.array(backbone_coords[chain])[sequence_overlap[chain][0]:sequence_overlap[chain][1],:3], axis=0, weights=np.array(backbone_coords[chain])[sequence_overlap[chain][0]:sequence_overlap[chain][1],3]))
-    #### each atoms coord is updated so the monomer COM is the same as the CG
-        for residue in atomistic_protein_input[chain]:
-            for atom in atomistic_protein_input[chain][residue]:
-                atomistic_protein_input[chain][residue][atom]['coord']=atomistic_protein_input[chain][residue][atom]['coord']-(atomistic_protein_mass-cg_com[chain])
-    return atomistic_protein_input, cg_com, sequence_overlap
+        cg_com.append([])
+        for part_val, part in enumerate(atomistic_protein_input[chain]):
+            sls, sle= int(part.split(':')[0]),int(part.split(':')[1])
+            protein_mass=[]
+            for residue in atomistic_protein_input[chain][part]:
+            #### creates a list of all coordinates and masses [[coord, mass],[coord, mass]]
+                for atom in atomistic_protein_input[chain][part][residue]:
+                    short_line=atomistic_protein_input[chain][part][residue][atom]
+                    protein_mass.append([short_line['coord'][0],short_line['coord'][1],short_line['coord'][2],short_line['frag_mass']])
+        #### returns the COM of the atomistic protein
+            atomistic_protein_mass=np.average(np.array(protein_mass)[:,:3], axis=0, weights=np.array(protein_mass)[:,3])#### add center of mass of CG_proteins
+        #### for each chain the COM of the CG representation is stored (only cg is needed)
+            cg_com[chain].append(np.average(np.array(backbone_coords[chain])[sls:sle,:3], axis=0, weights=np.array(backbone_coords[chain])[sls:sle,3]))
+        #### each atoms coord is updated so the monomer COM is the same as the CG
+            for residue in atomistic_protein_input[chain][part]:
+                for atom in atomistic_protein_input[chain][part][residue]:
+                    atomistic_protein_input[chain][part][residue][atom]['coord']=atomistic_protein_input[chain][part][residue][atom]['coord']-(atomistic_protein_mass-cg_com[chain][part_val])
+    return atomistic_protein_input, cg_com
 
 def rotate_protein_monomers(atomistic_protein_centered):
 #### run through each chain in proteins
     for chain in range(len(atomistic_protein_centered)):
     #### creates atomistic pdb
         pdb_output = create_pdb(working_dir+'PROTEIN/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb')
-        at_centers=[]
-    #### runs through every residue and atom  
-        for residue in atomistic_protein_input[chain]:
-        #### gets center of mass of each residue (note only backbone heavy atoms have a mass)
-            at_centers_iter=[]
-            for atom in atomistic_protein_input[chain][residue]:
-                at_centers_iter.append(np.append(atomistic_protein_centered[chain][residue][atom]['coord'],atomistic_protein_centered[chain][residue][atom]['frag_mass']))
-            try:
-                at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
-            except:
-                for atom in atomistic_protein_input[chain][residue]:
-                    print(atomistic_protein_input[chain][residue][atom])
-                sys.exit()
-    #### finds optimal rotation of each monomer  
-        if len(at_centers) == len(np.array(backbone_coords[chain])[sequence_overlap[chain][0]:sequence_overlap[chain][1],:3]):
-            xyz_rot_apply = rotate(np.array(at_centers)-cg_com[chain], np.array(backbone_coords[chain])[sequence_overlap[chain][0]:sequence_overlap[chain][1],:3]-cg_com[chain], False)
-        else:
-            sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
-number of CG residues '+str(len(backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
+        xyz_rot_apply=[]
+        for part_val, part in enumerate(atomistic_protein_input[chain]):
+            sls, sle= int(part.split(':')[0]),int(part.split(':')[1])        
+            at_centers=[]
+        #### runs through every residue and atom  
+            for residue in atomistic_protein_input[chain][part]:
+            #### gets center of mass of each residue (note only backbone heavy atoms have a mass)
+                at_centers_iter=[]
+                for atom in atomistic_protein_input[chain][part][residue]:
+                    at_centers_iter.append(np.append(atomistic_protein_centered[chain][part][residue][atom]['coord'],atomistic_protein_centered[chain][part][residue][atom]['frag_mass']))
+                try:
+                    at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
+                except:
+                    for atom in atomistic_protein_input[chain][part][residue]:
+                        print(atomistic_protein_input[chain][part][residue][atom])
+                    sys.exit()
+        #### finds optimal rotation of each monomer  
+            if len(at_centers) == len(np.array(backbone_coords[chain])[sls:sle,:3]):
+                xyz_rot_apply.append(rotate(np.array(at_centers)-cg_com[chain][part_val], np.array(backbone_coords[chain])[sls:sle,:3]-cg_com[chain][part_val], False))
+            else:
+                sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
+    number of CG residues '+str(len(backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
 
-        if args.v >= 1:
-            print('\nThe proteins chains are rotated around the COM of all the backbone heavy atoms.')
-            print('The COM of chain', chain,'is :', np.round(cg_com[chain][0], 2),',', np.round(cg_com[chain][1], 2),',', np.round(cg_com[chain][2], 2))
-            print('rotating chain ', chain, 'by :',np.round(np.degrees(xyz_rot_apply[0]),2),',',np.round(np.degrees(xyz_rot_apply[1]),2),',',np.round(np.degrees(xyz_rot_apply[2]),2))
-            print()
-    #### applies optimal rotation to each atom 
+            if args.v >= 1:
+                print('\nThe proteins chains are rotated around the COM of all the backbone heavy atoms.')
+                print('The COM of chain', chain,'is :', np.round(cg_com[chain][0], 2),',', np.round(cg_com[chain][1], 2),',', np.round(cg_com[chain][2], 2))
+                print('rotating chain ', chain, 'by :',np.round(np.degrees(xyz_rot_apply[0]),2),',',np.round(np.degrees(xyz_rot_apply[1]),2),',',np.round(np.degrees(xyz_rot_apply[2]),2))
+                print()
+        #### applies optimal rotation to each atom 
         for residue in final_coordinates_atomistic[chain]:
+            exists=False
             for initial_index in final_coordinates_atomistic[chain][residue]:
                 if final_coordinates_atomistic[chain][residue][initial_index]['res_type'] in mod_residues:
                     for atom in final_coordinates_atomistic[chain][residue]:
                         short_line=final_coordinates_atomistic[chain][residue][atom]
                         pdb_output.write(pdbline%((atom,short_line['atom'],short_line['res_type'],ascii_uppercase[chain],residue,
                                         short_line['coord'][0],short_line['coord'][1],short_line['coord'][2],1,0))+'\n')
-                elif residue in atomistic_protein_centered[chain]:
-                    for atom in atomistic_protein_centered[chain][residue]:
-                        short_line = atomistic_protein_centered[chain][residue][atom]
-                        atomistic_protein_centered[chain][residue][atom]['coord'] = rotate_atom(atomistic_protein_centered[chain][residue][atom]['coord'], cg_com[chain], xyz_rot_apply)
-                    #### writes out new pdb for each optimised chain
-                        pdb_output.write(pdbline%((atom,short_line['atom'],short_line['res_type'], ascii_uppercase[chain],
-                                         short_line['resid'],short_line['coord'][0],short_line['coord'][1],short_line['coord'][2],1,0))+'\n')
-                else:
+                elif final_coordinates_atomistic[chain][residue][initial_index]['res_type'] not in mod_residues:
+                    for part_val, part in enumerate(atomistic_protein_input[chain]):
+                        if residue in atomistic_protein_centered[chain][part]:
+                            exists=True
+                            for atom in atomistic_protein_centered[chain][part][residue]:
+                                short_line = atomistic_protein_centered[chain][part][residue][atom]
+                                atomistic_protein_centered[chain][part][residue][atom]['coord'] = rotate_atom(atomistic_protein_centered[chain][part][residue][atom]['coord'], cg_com[chain][part_val], xyz_rot_apply[part_val])
+                            #### writes out new pdb for each optimised chain
+                                pdb_output.write(pdbline%((atom,short_line['atom'],short_line['res_type'], ascii_uppercase[chain],
+                                                 residue,short_line['coord'][0],short_line['coord'][1],short_line['coord'][2],1,0))+'\n')
+                if not exists:
+                    # print(residue)
                     for atom in final_coordinates_atomistic[chain][residue]:
-                        short_line=final_coordinates_atomistic[chain][residue][atom]                    
+                        short_line=final_coordinates_atomistic[chain][residue][atom]  
+                        # print(short_line['res_type'])                  
                         pdb_output.write(pdbline%((atom,short_line['atom'],short_line['res_type'],ascii_uppercase[chain],residue,
                                          short_line['coord'][0],short_line['coord'][1],short_line['coord'][2],1,0))+'\n')
                 break
@@ -1817,8 +1849,8 @@ if 'PROTEIN' in cg_residues:
         protein_de_novo_time=time.time()
         if user_at_input and 'PROTEIN' in system:
         #### reads in atomistic structure   
-            atomistic_protein_input, sequence_overlap = read_in_atomistic(input_directory+'AT_input.pdb', system['PROTEIN'])  
-            atomistic_protein_centered, cg_com, sequence_overlap = center_atomistic(atomistic_protein_input)
+            atomistic_protein_input = read_in_atomistic(input_directory+'AT_input.pdb', system['PROTEIN'], True)  
+            atomistic_protein_centered, cg_com = center_atomistic(atomistic_protein_input)
             rotate_protein_monomers(atomistic_protein_centered)
         minimise_protein()
         merge_protein(system['PROTEIN'], '_novo')
@@ -1885,10 +1917,10 @@ rlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME\npme_order = 4\nfourierspa
 pbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')    
     RMSD={}
     if len(cg_residues['PROTEIN'])>0:
-        de_novo_atoms, sequence_overlap = read_in_atomistic(final_dir+'final_cg2at_de_novo.pdb', system['PROTEIN'])
+        de_novo_atoms = read_in_atomistic(final_dir+'final_cg2at_de_novo.pdb', system['PROTEIN'], False)
         RMSD['de novo '] = RMSD_measure(de_novo_atoms)
         if user_at_input and 'PROTEIN' in system:
-            at_input_atoms, sequence_overlap = read_in_atomistic(final_dir+'final_cg2at_at_rep_user_supplied.pdb', system['PROTEIN'])
+            at_input_atoms = read_in_atomistic(final_dir+'final_cg2at_at_rep_user_supplied.pdb', system['PROTEIN'], False)
             RMSD['at input'] = RMSD_measure(at_input_atoms)         
     print('\n{0:^10}{1:^25}{2:^10}'.format('output ','chain','RMSD ('+chr(197)+')'))
     print('{0:^10}{1:^25}{2:^10}'.format('-------','-----','---------'))
