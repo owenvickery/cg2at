@@ -1218,7 +1218,7 @@ def read_in_atomistic(protein, chain_count, check_alignment):
                                 N=True
                         #### measures distance between N and C atoms. if the bond is over 3 A it counts as a new protein
                             dist=np.sqrt(((N_ter[0]-C_ter[0])**2)+((N_ter[1]-C_ter[1])**2)+((N_ter[2]-C_ter[2])**2))
-                            if N and C and C_resid != N_resid and dist > 3.5:
+                            if N and C and C_resid != N_resid and dist > 3.5:# and aas[line_sep['residue_name']] != sequence[chain_count][line_sep['residue_id']]:
                                 # print(dist)
                                 N_ter, C_ter=False, False
                                 ter_residues.append(line_sep['residue_id'])
@@ -1243,23 +1243,7 @@ def read_in_atomistic(protein, chain_count, check_alignment):
         sys.exit('number of chains in atomistic protein input ('+str(chain_count+1)+') does not match CG representation ('+str(system['PROTEIN'])+')')
     return atomistic_protein_input
 
-def align_chain_match(atomistic_protein_input, seq_user):
-    at={}
-    for chain in range(len(final_coordinates_atomistic)):
-        at[chain]={}
-        if len(atomistic_protein_input[chain]) <= len(final_coordinates_atomistic[chain]):
-            s = difflib.SequenceMatcher(None, seq_user[chain], sequence[chain])
-            seq_info = s.get_matching_blocks()
-            temp={}
-            if seq_info[0][2] <= len(seq_user[chain]):
-                for residue in atomistic_protein_input[chain]:
-                    temp[residue+seq_info[0][1]] = atomistic_protein_input[chain][residue]
-                at[chain][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp
-        else:
-            sys.exit('The user supllied chain '+str(chain)+' is longer than CG chain')
-    return at
-
-def align_chain_do_not_match(atomistic_protein_input, seq_user):
+def align_chains(atomistic_protein_input, seq_user):
     at={}
     for chain_at in range(len(atomistic_protein_input)):
         chain_cg=0
@@ -1289,10 +1273,7 @@ def check_sequence(atomistic_protein_input, chain_count):
             for atom in atomistic_protein_input[chain][resid]:
                 seq_user[chain]+=aas[atomistic_protein_input[chain][resid][atom]['res_type']]
                 break
-    if chain_count == len(final_coordinates_atomistic):
-        at = align_chain_match(atomistic_protein_input, seq_user)
-    elif chain_count > len(final_coordinates_atomistic):
-        at = align_chain_do_not_match(atomistic_protein_input, seq_user)
+    at = align_chains(atomistic_protein_input, seq_user)
     return at
 
 def center_atomistic(atomistic_protein_input): 
