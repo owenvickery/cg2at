@@ -7,8 +7,33 @@ The script will convert any protein using a basic de novo method of fragment ali
 
 The 2nd maps a users supplied atomistic structure onto the the CG representation. 
 The mapped structure is then steered for a very short period to fit the CG coordinates.
+
 Note:
-This now works for incomplete user input files and will write a hybrid system between de novo and user supplied.
+the mapping of the user structure now includes a hybrid approach.
+If any residues are missing from the supplied atomistic structure they are built in using the de novo structure.
+
+for example if you have a signal peptide linked via a flexible linker to the main protein.
+You can just supply the coordinates for the signal peptide and main protein and the script will build in the linker from the de novo.
+
+In martini this is a single protein. (eg a membrane signal helix linked to to a cytosolic protein)
+
+You only have atomistic structures for the helix and the cytoslic protein.
+the script will rigid body fit the helix and cytosolic protein separately and fill in the linker from the de novo construct.
+
+                          CG                        AT from user
+input            helix --------- protein           helix  protein 
+                           |                             |
+                           V                             |
+conversion       helix --------- protein                 |
+ (de novo)                 |                             |
+                           V                             V
+       de novo linker  ---------             user   helix, protein
+                                \                  /
+                                         |
+                                         V
+final hybrid system            helix --------- protein
+
+
 
 The 3rd just does a rigid body fit on the backbone.
 There is no alchembed run on this system as you can use it as a restraint file and pull the steered coordinates into the rigid fit.
@@ -60,8 +85,6 @@ ________
 Non protein
 -----------
 Currently empty
-
-
 
 
 -----------------------------------------------------------------------------

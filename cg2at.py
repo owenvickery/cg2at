@@ -18,7 +18,6 @@ import re
 import datetime
 import glob
 from scipy.spatial import KDTree
-import matplotlib.pyplot as plt
 import difflib
 
 parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', epilog='Enjoy the program and best of luck!\n', allow_abbrev=True)
@@ -1052,18 +1051,27 @@ def build_protein_atomistic_system(cg_residues, box_vec):
                         terminal[chain_count]=[]
                         terminal[chain_count].append(backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
                         sequence[chain_count]=[]
-                        sequence[chain_count]+=aas[cg_residues[residue_number]['BB']['residue_name']]
+                        if cg_residues[residue_number]['BB']['residue_name']  not in mod_residues:
+                            sequence[chain_count]+=aas[cg_residues[residue_number]['BB']['residue_name']]
+                        else:
+                            sequence[chain_count]+='X'
                     else:
                     #### the xyz coord of the BB bead are added to the backbone_coords dictionary
                         backbone_coords[chain_count].append(xyz_cur+[1])
-                        sequence[chain_count]+=aas[cg_residues[residue_number]['BB']['residue_name']]
+                        if cg_residues[residue_number]['BB']['residue_name']  not in mod_residues:
+                            sequence[chain_count]+=aas[cg_residues[residue_number]['BB']['residue_name']]
+                        else:
+                            sequence[chain_count]+='X'
                 #### if not prev residue the xyz coord of the cg_bead are added to the backbone_coords dictionary
                 else:
                     xyz_cur=[cg_residues[residue_number]['BB']['coord'][0],cg_residues[residue_number]['BB']['coord'][1],cg_residues[residue_number]['BB']['coord'][2]]
                     backbone_coords[chain_count].append(xyz_cur+[1])
                     initial=False
                     terminal[chain_count].append(backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
-                    sequence[chain_count]+=aas[cg_residues[residue_number]['BB']['residue_name']]
+                    if cg_residues[residue_number]['BB']['residue_name'] not in mod_residues:
+                        sequence[chain_count]+=aas[cg_residues[residue_number]['BB']['residue_name']]
+                    else:
+                        sequence[chain_count]+='X'
             if cg_residues[residue_number][cg_fragments]['residue_name'] == 'CYS' and cg_fragments != 'BB':
                 at_connections, cg_connections, disulphide, disul_at_info, disul_cg_info= find_closest_cysteine(at_connections, cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center)
         #### finds optimum rotation of fragment
@@ -1271,7 +1279,10 @@ def check_sequence(atomistic_protein_input, chain_count):
         seq_user[chain]=[]
         for resid in atomistic_protein_input[chain]:
             for atom in atomistic_protein_input[chain][resid]:
-                seq_user[chain]+=aas[atomistic_protein_input[chain][resid][atom]['res_type']]
+                if atomistic_protein_input[chain][resid][atom]['res_type']  not in mod_residues:
+                    seq_user[chain]+=aas[atomistic_protein_input[chain][resid][atom]['res_type']]
+                else:
+                    seq_user[chain]+='X'
                 break
     at = align_chains(atomistic_protein_input, seq_user)
     return at
