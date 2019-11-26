@@ -2,6 +2,7 @@
 
 import os, sys
 from time import gmtime, strftime
+import distutils.spawn
 import argparse
 
 
@@ -15,6 +16,7 @@ parser.add_argument('-clean', help='removes all part files from build', action='
 parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional',metavar='tip3p',type=str)
 parser.add_argument('-ff', help='choose your forcefield. This is optional',metavar='charmm36',type=str)
 parser.add_argument('-fg', help='choose your fragment library. This is optional',metavar='charmm36',type=str, nargs='*')
+parser.add_argument('-gromacs', help='gromacs executable name',metavar='gmx_avx',type=str)
 args = parser.parse_args()
 options = vars(args)
 
@@ -34,3 +36,19 @@ aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'
        'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
        'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
 
+
+### finds gromacs installation
+
+gmx=None
+if args.gromacs != None:
+    gmx=distutils.spawn.find_executable(args.gromacs)
+if gmx==None:
+    for root, dirs, files in os.walk(os.environ.get("GMXBIN")):
+        for gro_type in files:
+            if '.' not in gro_type and gro_type.islower():
+                gmx=distutils.spawn.find_executable(gro_type)
+                if gmx != None:
+                    break
+        break
+    if gmx == None:
+        sys.exit('Cannot find gromacs installation')

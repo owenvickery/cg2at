@@ -10,7 +10,7 @@ from pathlib import Path
 import re
 import gen, g_var, f_loc, at_mod
 
-gmx='gmx'
+
 
 def collect_input(cg, at):
     gen.mkdir_directory(g_var.working_dir)
@@ -22,9 +22,9 @@ def collect_input(cg, at):
         copyfile(at, g_var.input_directory+at.split('/')[-1])
     os.chdir(g_var.input_directory)
 #### converts input files into pdb files 
-    gromacs('gmx editconf -f '+cg.split('/')[-1]+' -resnr 0 -o CG_input.pdb')
+    gromacs(g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -o CG_input.pdb')
     if at != None:
-        gromacs('gmx editconf -f '+at.split('/')[-1]+' -resnr 0 -o AT_input.pdb')
+        gromacs(g_var.gmx+' editconf -f '+at.split('/')[-1]+' -resnr 0 -o AT_input.pdb')
         return True
     return False
 
@@ -124,7 +124,7 @@ def ask_terminal(chain, p_system):
 
 def minimise_protein_chain(chain, input, pdb2gmx_selections):
 #### pdb2gmx on on protein chain, creates the topologies    
-    gromacs(gmx+' pdb2gmx -f PROTEIN_'+input+str(chain)+'.pdb -o PROTEIN_'+input+str(chain)+'_gmx.pdb -water none \
+    gromacs(g_var.gmx+' pdb2gmx -f PROTEIN_'+input+str(chain)+'.pdb -o PROTEIN_'+input+str(chain)+'_gmx.pdb -water none \
 -p PROTEIN_'+input+str(chain)+'.top  -i PROTEIN_'+input+str(chain)+'_posre.itp -ter '+pdb2gmx_selections+'\nEOF') #### single chains
 #### converts the topology file and processes it into a itp file
     convert_topology('PROTEIN_'+input, chain)
@@ -133,7 +133,7 @@ def minimise_protein_chain(chain, input, pdb2gmx_selections):
 #### writes restraints file for each chain
     write_posres(chain)
 #### grompps each protein chain
-    gromacs(gmx+' grompp '+
+    gromacs(g_var.gmx+' grompp '+
             '-f em_PROTEIN.mdp '+
             '-p topol_PROTEIN_'+input+str(chain)+'.top '+
             '-c PROTEIN_'+input+str(chain)+'_gmx.pdb '+
@@ -141,7 +141,7 @@ def minimise_protein_chain(chain, input, pdb2gmx_selections):
             '-maxwarn 1 ')
 #### minimises chain
     os.chdir('min')
-    gromacs(gmx+' mdrun -v -deffnm PROTEIN_'+input+str(chain)+' -c PROTEIN_'+input+str(chain)+'.pdb')
+    gromacs(g_var.gmx+' mdrun -v -deffnm PROTEIN_'+input+str(chain)+' -c PROTEIN_'+input+str(chain)+'.pdb')
     os.chdir('..')  
 
 def write_posres(chain):
@@ -170,7 +170,7 @@ def steered_md_atomistic_to_cg_coord(chain):
                         'rcoulomb = 1\nrvdw = 1\ncoulombtype  = PME\npme_order = 4\nfourierspacing = 0.16\ntcoupl = V-rescale\n'+
                         'tc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')    
 #### run grompp on chain 
-    gromacs(gmx+' grompp '+
+    gromacs(g_var.gmx+' grompp '+
             '-f steered_md.mdp '+
             '-p topol_PROTEIN_at_rep_user_supplied_'+str(chain)+'.top '+
             '-c min/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb '+
@@ -178,7 +178,7 @@ def steered_md_atomistic_to_cg_coord(chain):
             '-o steered_md/PROTEIN_at_rep_user_supplied_'+str(chain)+' -maxwarn 1 ')
 #### run mdrun on steered MD
     os.chdir('steered_md')
-    gromacs(gmx+' mdrun -v -deffnm PROTEIN_at_rep_user_supplied_'+str(chain)+' -c PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb')
+    gromacs(g_var.gmx+' mdrun -v -deffnm PROTEIN_at_rep_user_supplied_'+str(chain)+' -c PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb')
 #### if no pdb file is created stop script with error message
     if os.path.exists('PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb'):
         pass
@@ -253,7 +253,7 @@ def non_protein_minimise(resid, residue_type):
     make_min(residue_type)#, fragment_names)
 #### spin up multiprocessing for grompp 
     pool = mp.Pool(mp.cpu_count())
-    pool_process = pool.map_async(gromacs, [(gmx+' grompp '+
+    pool_process = pool.map_async(gromacs, [(g_var.gmx+' grompp '+
                                   '-po md_out-'+residue_type+'_temp_'+str(rid)+' '+
                                   '-f em_'+residue_type+'.mdp '+
                                   '-p topol_'+residue_type+'.top '+
@@ -264,8 +264,8 @@ def non_protein_minimise(resid, residue_type):
 #### close grompp multiprocessing and change to min directory and spin up mdrun multiprocessing
     os.chdir('min')
     pool = mp.Pool(mp.cpu_count())
-    pool.map_async(gromacs, [(gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb') \
-        for rid in range(0, resid)]).get()
+    pool.map_async(gromacs, [(g_var.gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb') \
+                            for rid in range(0, resid)]).get()
     pool.close()
     os.chdir(g_var.working_dir)
 
@@ -305,15 +305,15 @@ def minimise_merged(residue_type, np_system):
     os.chdir(g_var.working_dir+residue_type)
     write_topol(residue_type, np_system[residue_type], '')
 #### grompp with merged system
-    gromacs(gmx+' grompp '+
-        '-po md_out-'+residue_type+
-        ' -f em_'+residue_type+'.mdp '+
-        '-p topol_'+residue_type+'.top '+
-        '-c '+g_var.working_dir+residue_type+'/min/'+residue_type+'_merged.pdb '+
-        '-o '+g_var.working_dir+residue_type+'/min/'+residue_type+'_merged_min -maxwarn 1')
+    gromacs(g_var.gmx+' grompp '+
+            '-po md_out-'+residue_type+' '+
+            '-f em_'+residue_type+'.mdp '+
+            '-p topol_'+residue_type+'.top '+
+            '-c '+g_var.working_dir+residue_type+'/min/'+residue_type+'_merged.pdb '+
+            '-o '+g_var.working_dir+residue_type+'/min/'+residue_type+'_merged_min -maxwarn 1')
 #### change to min directory and minimise
     os.chdir('min') 
-    gromacs(gmx+' mdrun -v -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb')
+    gromacs(g_var.gmx+' mdrun -v -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb')
     os.chdir(g_var.working_dir)
 
 
@@ -360,11 +360,17 @@ def minimise_merged_pdbs(system, protein):
     print('Minimising merged atomistic files : '+protein[1:])
     os.chdir(g_var.working_dir+'MERGED')
 #### grompps final merged systems
-    gromacs(gmx+' grompp -po md_out-merged_cg2at -f em_merged_cg2at.mdp -p topol_final.top \
--r merged_cg2at'+protein+'.pdb -c merged_cg2at'+protein+'.pdb -o min/merged_cg2at'+protein+'_minimised -maxwarn 1')
+    gromacs(g_var.gmx+' grompp '+
+            '-po md_out-merged_cg2at '+
+            '-f em_merged_cg2at.mdp '+
+            '-p topol_final.top '+
+            '-r merged_cg2at'+protein+'.pdb '+
+            '-c merged_cg2at'+protein+'.pdb '+
+            '-o min/merged_cg2at'+protein+'_minimised '+
+            '-maxwarn 1')
     os.chdir('min')
 #### runs minimises final systems
-    gromacs(gmx+' mdrun -v -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb')
+    gromacs(g_var.gmx+' mdrun -v -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb')
 
 
 def alchembed(system):
@@ -376,21 +382,35 @@ def alchembed(system):
         print('Running alchembed on chain: '+str(chain))
     #### creates a alchembed mdp for each chain 
         with open('alchembed_'+str(chain)+'.mdp', 'w') as alchembed:
-            alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 500\ndt = 0.001\ncontinuation = no\nconstraint_algorithm = lincs\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\n\
-rlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME\npme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\ncutoff-scheme = Verlet\n\
-pbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00\ndelta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6\n\
-couple-moltype = protein_'+str(chain)+'\ncouple-lambda0 = none\ncouple-lambda1 = vdw')
+            alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 500\ndt = 0.001\ncontinuation = no\nconstraint_algorithm = lincs')
+            alchembed.write('constraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
+            alchembed.write('pme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\ncutoff-scheme = Verlet')
+            alchembed.write('pbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00')
+            alchembed.write('delta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6couple-moltype = protein_'+str(chain))
+            alchembed.write('couple-lambda0 = none\ncouple-lambda1 = vdw')
     #### if 1st chain use minimised structure for coordinate input
         if chain == 0:
-            gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at_rep_user_supplied_minimised.pdb \
--c min/merged_cg2at_at_rep_user_supplied_minimised.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 1')
+            gromacs(g_var.gmx+' grompp '+
+                    '-po md_out-merged_cg2at_alchembed_'+str(chain)+' '+
+                    '-f alchembed_'+str(chain)+'.mdp '+
+                    '-p topol_final.top '+
+                    '-r min/merged_cg2at_at_rep_user_supplied_minimised.pdb '+
+                    '-c min/merged_cg2at_at_rep_user_supplied_minimised.pdb '+
+                    '-o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' '+
+                    '-maxwarn 1')
     #### if not 1st chain use the previous output of alchembed tfor the input of the next chain 
         else:
-            gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at_rep_user_supplied_minimised.pdb \
--c alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain-1)+'.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 1')          
+            gromacs(g_var.gmx+' grompp '+
+                '-po md_out-merged_cg2at_alchembed_'+str(chain)+' '+
+                '-f alchembed_'+str(chain)+'.mdp '+
+                '-p topol_final.top '+
+                '-r min/merged_cg2at_at_rep_user_supplied_minimised.pdb '+
+                '-c alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain-1)+'.pdb '+
+                '-o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' '+
+                '-maxwarn 1')          
         os.chdir('alchembed')
     #### run alchembed on the chain of interest
-        gromacs(gmx+' mdrun -v -deffnm merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -c merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+'.pdb')
+        gromacs(g_var.gmx+' mdrun -v -deffnm merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -c merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+'.pdb')
         os.chdir('..')
 #### copy final output to the FINAL folder
     copyfile('alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+'.pdb', g_var.final_dir+'final_cg2at_at_rep_user_supplied.pdb')

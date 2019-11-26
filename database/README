@@ -7,23 +7,25 @@ An additional database can be provided using the -d flag but has to conform to t
 The Database directories has a file structure of:
 
 Database
-   --  forcefields 
-       --  forcefield directory from gromacs (eg. charmm36.ff)
-   --  fragments
-       --  forcefield type (eg. charmm36)
-           --  protein
-               --  Aminoacids (eg. cg residue name [ASP])
-                   --  fragment pdb called the same as bead names (eg. BB.pdb)
-               --  MOD
-                   --  modified residues (eg. cg residue name [CYSD])
-                       --  fragment pdb called the same as bead names (eg. BB.pdb)
-           --  non_protein
-               --  non protein molecules (eg. lipids [POPC])
-                   --  fragment pdb called the same as bead names (eg. PO4.pdb)
-                   --  SOL 
-                       --  fragment pdb called the same as bead names (eg. W.pdb), all pdb file names are used to find out what is solvent (martini 3 water=WN, martini 2 water=W) 
-                   --  ION
-                       --  fragment pdb called the same as bead names (eg. NA+.pdb), all pdb file names are used to find out what are ions, as both Na+ and Cl- have the resname ION
+    --  script files
+        --  run files
+    --  forcefields 
+        --  forcefield directory from gromacs (eg. charmm36.ff)
+    --  fragments
+        --  forcefield type (eg. charmm36)
+            --  protein
+                --  Aminoacids (eg. cg residue name [ASP])
+                    --  fragment pdb called the same as bead names (eg. BB.pdb)
+                --  MOD
+                    --  modified residues (eg. cg residue name [CYSD])
+                        --  fragment pdb called the same as bead names (eg. BB.pdb)
+            --  non_protein
+                --  non protein molecules (eg. lipids [POPC])
+                    --  fragment pdb called the same as bead names (eg. PO4.pdb)
+                    --  SOL 
+                        --  fragment pdb called the same as bead names (eg. W.pdb), all pdb file names are used to find out what is solvent (martini 3 water=WN, martini 2  water=W)  
+                    --  ION
+                        --  fragment pdb called the same as bead names (eg. NA+.pdb), all pdb file names are used to find out what are ions, as both Na+ and Cl- have the resname ION
 
 
 each fragment has to be exactly correct else the script fails
@@ -31,14 +33,38 @@ each fragment has to be exactly correct else the script fails
 
 for example the fragments of the Phenylalanine bead.
 
-1) The atom order gives the order the atoms are writen out into the final structures, for example the C,O atoms are writen after the side chain but are still part of the BB bead
+1) The atom order gives the order the atoms are writen out into the final structures, 
+   for example the C,O atoms are writen after the side chain but are still part of the BB bead
 
 2) The number in the column denotes what to do with the atom:
-    2 = The connecting backbone atoms with the pre and proceeding backbone (only needed in the Backbone beads)
-    3 = A harmonic restraint is applied to this atom to steer it towards the CG representation
+    for protein beads:
+
+      [2] = The connecting backbone atoms with the pre and proceeding backbone (only needed in the Backbone beads)
+
+      [3,4,5] = A harmonic restraint is applied to this atom to:q steer it towards the CG representation
+
+      [4] = A flag to know if it's a terminal residue (only needed in the Backbone beads)
+
+      [6] = flag to specify if the atom is the carbonyl oxygen (only needed in the Backbone beads)
+
+    for non protein bead:
+
+      This column is used for specifing carbon and hydrogen blocks only required for connecting atoms.
+      this is used to fix any cases where the hydrogen face the wrong direction (eg CIS double bonds)
+
+      The carboon and 2 hydrogens just have to have a unique number
+
+                                                               2     3
+                                                               |     |
+                                                               V     V      
+
+      ATOM     61 C215 POPA    1      14.313  14.132  45.197  9.00  5.00
+      ATOM     62 H15R POPA    1      15.399  14.280  45.129  9.00  0.00
+      ATOM     63 H15S POPA    1      14.088  15.208  45.218  9.00  0.00  
 
 3) The connectivity between fragments:
-    eg.	Both atom CA atom in BB bead has value '1' and atom CB in SC1 has a value of '1'.  Therefore the script orientates the fragment so the RMS  of the distance between corresponding atoms is smallest.  
+    eg. Both atom CA atom in BB bead has value '1' and atom CB in SC1 has a value of '1'.  
+    Therefore the script orientates the fragment so the RMS  of the distance between corresponding atoms is smallest.  
 
     It doesn't matter if there are multiples of the same number eg. CG, CD1 and CD2 all are of the value 2. 
     The script averages the position of the other 2 connecting atoms eg. if we are rotating the SC1 fragment

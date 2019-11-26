@@ -101,6 +101,7 @@ oplsaam.ff
 #############################################################################
 
 The following flags are available:
+
 -c cg_input.pdb (can accept pdb/gro/tpr [required])
 -a atomistic_input.pdb (can accept pdb/gro/tpr[optional])
 -v (3 level verbosity -vvv) (use just -v to get the run times etc)
@@ -109,11 +110,43 @@ The following flags are available:
 -w choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional
 -ff choose your forcefield. This is optional
 -fg choose your fragment libraries. This is optional
+-gromacs provide gromacs executable name if none standard. This is optional
 
 
 example input.
 
 python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -v -clean -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update
+
+#############################################################################
+
+Script requirements
+
+Gromacs >= v5
+
+Non standard modules
+
+numpy
+scipy
+
+standard modules included in base python install
+
+argparse
+copy
+datetime
+difflib
+distutils
+glob
+math
+multiprocessing
+os
+pathlib
+re
+shutil
+string
+sys
+subprocess
+time
+
 
 #############################################################################
 
