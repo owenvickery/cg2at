@@ -1,23 +1,6 @@
 #!/usr/bin/env python3
-import os, sys
+
 import numpy as np
-from subprocess import Popen, PIPE
-import subprocess, shlex
-from time import gmtime, strftime
-import math
-import multiprocessing as mp
-import argparse
-import copy
-from shutil import copyfile
-from distutils.dir_util import copy_tree
-import time
-from string import ascii_uppercase
-from pathlib import Path
-import re
-import datetime
-import glob
-from scipy.spatial import KDTree
-import difflib
 import gen, g_var
 
 forcefield_available_prov, fragments_available_prov = gen.read_database_directories()
@@ -52,7 +35,6 @@ np_residues, p_residues, mod_residues, np_directories, p_directories, mod_direct
 water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
 
 ### return backbone information
-
 backbone=gen.fetch_fragment(p_directories)
 
 ### finds initial rotation matrices

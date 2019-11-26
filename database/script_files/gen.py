@@ -2,22 +2,9 @@
 
 import os, sys
 import numpy as np
-from subprocess import Popen, PIPE
-import subprocess, shlex
-from time import gmtime, strftime
 import math
-import multiprocessing as mp
-import copy
-from shutil import copyfile
 from distutils.dir_util import copy_tree
-import time
-from string import ascii_uppercase
-from pathlib import Path
-import re
-import datetime
 import glob
-from scipy.spatial import KDTree
-import difflib
 import g_var
 
 

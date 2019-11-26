@@ -1,22 +1,9 @@
+#!/usr/bin/env python3
+
 import os, sys
 import numpy as np
-import numpy.ma as ma
-from subprocess import Popen, PIPE
-import subprocess, shlex
-from time import gmtime, strftime
-import math
-import multiprocessing as mp
-import argparse
 import copy
-from shutil import copyfile
-from distutils.dir_util import copy_tree
-import time
 from string import ascii_uppercase
-from pathlib import Path
-import re
-import datetime
-import glob
-from scipy.spatial import KDTree
 import difflib
 import gen, g_var, f_loc, at_mod
 

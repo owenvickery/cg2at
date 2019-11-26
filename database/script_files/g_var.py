@@ -1,24 +1,9 @@
 #!/usr/bin/env python3
+
 import os, sys
-import numpy as np
-from subprocess import Popen, PIPE
-import subprocess, shlex
 from time import gmtime, strftime
-import math
-import multiprocessing as mp
 import argparse
-import copy
-from shutil import copyfile
-from distutils.dir_util import copy_tree
-import time
-from string import ascii_uppercase
-from pathlib import Path
-import re
-import datetime
-import glob
-from scipy.spatial import KDTree
-import difflib
-import gen
+
 
 parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', epilog='Enjoy the program and best of luck!\n', allow_abbrev=True)
 parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str, required=True)
@@ -32,7 +17,7 @@ parser.add_argument('-ff', help='choose your forcefield. This is optional',metav
 parser.add_argument('-fg', help='choose your fragment library. This is optional',metavar='charmm36',type=str, nargs='*')
 args = parser.parse_args()
 options = vars(args)
-initialisation_time=time.time()
+
 
 c, a, v, ter, clean, w, ff, fg= args.c, args.a, args.v , args.ter, args.clean, args.w, args.ff, args.fg
 

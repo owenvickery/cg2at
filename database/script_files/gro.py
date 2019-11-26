@@ -2,23 +2,12 @@
 
 import os, sys
 import numpy as np
-from subprocess import Popen, PIPE
-import subprocess, shlex
-from time import gmtime, strftime
-import math
+import subprocess 
 import multiprocessing as mp
-import argparse
-import copy
 from shutil import copyfile
 from distutils.dir_util import copy_tree
-import time
-from string import ascii_uppercase
 from pathlib import Path
 import re
-import datetime
-import glob
-from scipy.spatial import KDTree
-import difflib
 import gen, g_var, f_loc, at_mod
 
 gmx='gmx'
@@ -144,12 +133,12 @@ def minimise_protein_chain(chain, input, pdb2gmx_selections):
 #### writes restraints file for each chain
     write_posres(chain)
 #### grompps each protein chain
-    gromacs(gmx+' grompp \
--f em_PROTEIN.mdp \
--p topol_PROTEIN_'+input+str(chain)+'.top \
--c PROTEIN_'+input+str(chain)+'_gmx.pdb \
--o min/PROTEIN_'+input+str(chain)+' \
--maxwarn 1 ')
+    gromacs(gmx+' grompp '+
+            '-f em_PROTEIN.mdp '+
+            '-p topol_PROTEIN_'+input+str(chain)+'.top '+
+            '-c PROTEIN_'+input+str(chain)+'_gmx.pdb '+
+            '-o min/PROTEIN_'+input+str(chain)+' '+
+            '-maxwarn 1 ')
 #### minimises chain
     os.chdir('min')
     gromacs(gmx+' mdrun -v -deffnm PROTEIN_'+input+str(chain)+' -c PROTEIN_'+input+str(chain)+'.pdb')
@@ -177,16 +166,16 @@ def steered_md_atomistic_to_cg_coord(chain):
 #### create bog standard mdp file, simulation is only 3 ps in a vaccum so settings should not have any appreciable effect 
     with open('steered_md.mdp', 'w') as steered_md:
         steered_md.write('define = -DPOSRES_STEERED\nintegrator = md\nnsteps = 3000\ndt = 0.001\ncontinuation   = no\n'+
-        				'constraint_algorithm = lincs\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\n'+
-        				'rcoulomb = 1\nrvdw = 1\ncoulombtype  = PME\npme_order = 4\nfourierspacing = 0.16\ntcoupl = V-rescale\n'+
-        				'tc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')    
+                        'constraint_algorithm = lincs\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\n'+
+                        'rcoulomb = 1\nrvdw = 1\ncoulombtype  = PME\npme_order = 4\nfourierspacing = 0.16\ntcoupl = V-rescale\n'+
+                        'tc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')    
 #### run grompp on chain 
     gromacs(gmx+' grompp '+
-			'-f steered_md.mdp '+
-			'-p topol_PROTEIN_at_rep_user_supplied_'+str(chain)+'.top '+
-			'-c min/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb '+
-			'-r min/PROTEIN_novo_'+str(chain)+'.pdb '+
-			'-o steered_md/PROTEIN_at_rep_user_supplied_'+str(chain)+' -maxwarn 1 ')
+            '-f steered_md.mdp '+
+            '-p topol_PROTEIN_at_rep_user_supplied_'+str(chain)+'.top '+
+            '-c min/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb '+
+            '-r min/PROTEIN_novo_'+str(chain)+'.pdb '+
+            '-o steered_md/PROTEIN_at_rep_user_supplied_'+str(chain)+' -maxwarn 1 ')
 #### run mdrun on steered MD
     os.chdir('steered_md')
     gromacs(gmx+' mdrun -v -deffnm PROTEIN_at_rep_user_supplied_'+str(chain)+' -c PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb')
@@ -264,13 +253,13 @@ def non_protein_minimise(resid, residue_type):
     make_min(residue_type)#, fragment_names)
 #### spin up multiprocessing for grompp 
     pool = mp.Pool(mp.cpu_count())
-    pool_process = pool.map_async(gromacs, [(gmx+' grompp \
-        -po md_out-'+residue_type+'_temp_'+str(rid)+' \
-        -f em_'+residue_type+'.mdp \
-        -p topol_'+residue_type+'.top \
-        -c '+residue_type+'_'+str(rid)+'.pdb \
-        -o min/'+residue_type+'_temp_'+str(rid)+' -maxwarn 1') \
-        for rid in range(0, resid)]).get()          ## minimisation grompp parallised  #        -r '+residue_type+'_'+str(rid)+'.pdb \
+    pool_process = pool.map_async(gromacs, [(gmx+' grompp '+
+                                  '-po md_out-'+residue_type+'_temp_'+str(rid)+' '+
+                                  '-f em_'+residue_type+'.mdp '+
+                                  '-p topol_'+residue_type+'.top '+
+                                  '-c '+residue_type+'_'+str(rid)+'.pdb '+
+                                  '-o min/'+residue_type+'_temp_'+str(rid)+' -maxwarn 1')
+                                  for rid in range(0, resid)]).get()          ## minimisation grompp parallised  
     pool.close()
 #### close grompp multiprocessing and change to min directory and spin up mdrun multiprocessing
     os.chdir('min')
@@ -400,7 +389,6 @@ couple-moltype = protein_'+str(chain)+'\ncouple-lambda0 = none\ncouple-lambda1 =
             gromacs(gmx+' grompp -po md_out-merged_cg2at_alchembed_'+str(chain)+' -f alchembed_'+str(chain)+'.mdp -p topol_final.top -r min/merged_cg2at_at_rep_user_supplied_minimised.pdb \
 -c alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain-1)+'.pdb -o alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -maxwarn 1')          
         os.chdir('alchembed')
-        chain_grompp=time.time()
     #### run alchembed on the chain of interest
         gromacs(gmx+' mdrun -v -deffnm merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -c merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+'.pdb')
         os.chdir('..')

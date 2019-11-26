@@ -1,25 +1,9 @@
+#!/usr/bin/env python3
+
 import os, sys
 import numpy as np
-from subprocess import Popen, PIPE
-import subprocess, shlex
-from time import gmtime, strftime
-import math
-import multiprocessing as mp
-import argparse
-import copy
-from shutil import copyfile
-from distutils.dir_util import copy_tree
-import time
-from string import ascii_uppercase
-from pathlib import Path
-import re
-import datetime
-import glob
 from scipy.spatial import KDTree
-import difflib
 import gen, g_var, f_loc
-
-
 
 def rotate_atom(coord, center,xyz_rot_apply):
     coord =  coord-center  #### centers COM coordinates to 0,0,0
@@ -115,7 +99,7 @@ def fragment_location(residue, fragment):
     sys.exit('cannot find fragment: '+residue+'/'+fragment)
 
 def get_atomistic(residue,cg_fragment, cg_coord,resid):
-    SF=0.8
+    SF=0.8   #### scaling factor for fragments
 #### find atomistic residues
     residue_list={} ## a dictionary of bead in each residue eg residue_list[atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
     frag_location=fragment_location(residue, cg_fragment+'.pdb') ### get fragment location from database
@@ -218,17 +202,10 @@ def merge_system_pdbs(system, protein, cg_residues, box_vec):
     os.chdir(g_var.working_dir+'MERGED')
 #### create merged pdb 
     pdb_output=gen.create_pdb(g_var.working_dir+'MERGED/merged_cg2at'+protein+'.pdb', box_vec) 
-#### using updated dictionary for the edge case of ions and no waters, eg. converting a protein with only its bound ions.
-    if 'ION' in cg_residues and 'SOL' not in cg_residues:
-        cg_updated={}
-        cg_updated['SOL']=[]
-        cg_updated.update(cg_residues)
-    else:
-        cg_updated=cg_residues
     merge=[]
     merge_coords=[]
 #### run through every residue type in cg_residues
-    for segment, residue_type in enumerate(cg_updated):
+    for segment, residue_type in enumerate(cg_residues):
     #### if file contains user input identifier 
         if residue_type != 'PROTEIN':
             input_type=''
