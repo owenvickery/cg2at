@@ -113,6 +113,7 @@ if 'PROTEIN' in cg_residues:
 if g_var.clean:
     gen.clean(cg_residues)
 
+
 final_time=np.array(gmtime()[3:6])
 
 #### prints out system information
