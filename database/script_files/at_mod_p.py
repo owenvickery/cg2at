@@ -290,6 +290,7 @@ def read_in_atomistic(protein, cg_chain_count, sequence, check_alignment):
             #### if line is correct
             if run:
                 if line_sep['residue_name'] in f_loc.p_residues or line_sep['residue_name'] in f_loc.mod_residues:
+                    
                     if 'H' not in line_sep['atom_name'][0] or line_sep['residue_name'] in f_loc.mod_residues:  
                     #### sorts out wrong atoms in terminal residues
                         if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
@@ -308,7 +309,6 @@ def read_in_atomistic(protein, cg_chain_count, sequence, check_alignment):
                         #### measures distance between N and C atoms. if the bond is over 3 A it counts as a new protein
                             dist=np.sqrt(((N_ter[0]-C_ter[0])**2)+((N_ter[1]-C_ter[1])**2)+((N_ter[2]-C_ter[2])**2))
                             if N and C and C_resid != N_resid and dist > 3.5:# and aas[line_sep['residue_name']] != sequence[chain_count][line_sep['residue_id']]:
-                                # print(dist)
                                 N_ter, C_ter=False, False
                                 ter_residues.append(line_sep['residue_id'])
                                 chain_count+=1
@@ -324,7 +324,9 @@ def read_in_atomistic(protein, cg_chain_count, sequence, check_alignment):
                             for atom in line_sep['atom_name']:
                                 if atom in g_var.mass:
                                     atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=g_var.mass[atom]
-
+                else:
+                    if check_alignment:
+                        sys.exit('The residue '+line_sep['residue_name']+' does not exist in the fragment database')
     if check_alignment:
         seq_user = check_sequence(atomistic_protein_input, chain_count+1)
         atomistic_protein_input = align_chains(atomistic_protein_input, seq_user, sequence)
@@ -348,29 +350,35 @@ def align_chains(atomistic_protein_input, seq_user, sequence):
     at={}
     sequence_temp = sequence.copy()
     for chain_at in range(len(atomistic_protein_input)):
+        skip_sequence=False
         chain_cg=0
         s = difflib.SequenceMatcher(None, seq_user[chain_at], sequence[chain_cg])
         seq_info = s.get_matching_blocks()
         while seq_info[0][2] != len(seq_user[chain_at]):
-            chain_cg+=1
-            s = difflib.SequenceMatcher(None, seq_user[chain_at], sequence[chain_cg])
-            seq_info = s.get_matching_blocks()
-            if chain_cg > len(sequence):
-                sys.exit('Cannot find a match for usesr supplied chain: '+str(chain_at))
-        temp={}
-        if chain_cg not in at:
-            at[chain_cg]={}
-        if seq_info[0][2] == len(seq_user[chain_at]):
-            for resid,  residue in enumerate(atomistic_protein_input[chain_at]):
-                temp[resid + seq_info[0][1]] = atomistic_protein_input[chain_at][residue]
-            at[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
-        sequence[chain_cg] = mask_sequence(sequence[chain_cg], seq_info[0][1], seq_info[0][1]+seq_info[0][2])
+            if chain_cg >= len(sequence)-1:
+                print('\nCannot find a match for user supplied chain: '+str(chain_at)+'\n'+str(seq_user[chain_at]),'\nIn\n'+str(sequence))
+                print('Using de novo instead')
+                skip_sequence = True
+                break
+            if not skip_sequence:
+                chain_cg+=1
+                s = difflib.SequenceMatcher(None, seq_user[chain_at], sequence[chain_cg])
+                seq_info = s.get_matching_blocks()
+        if not skip_sequence:
+            temp={}
+            if chain_cg not in at:
+                at[chain_cg]={}
+            if seq_info[0][2] == len(seq_user[chain_at]):
+                for resid,  residue in enumerate(atomistic_protein_input[chain_at]):
+                    temp[resid + seq_info[0][1]] = atomistic_protein_input[chain_at][residue]
+                at[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
+            sequence[chain_cg] = mask_sequence(sequence[chain_cg], seq_info[0][1], seq_info[0][1]+seq_info[0][2])
     return at
 
 def mask_sequence(sequence, st, end):
     for index, residue in enumerate(sequence):
         if st <= index < end:
-            sequence[index]='Z'
+            sequence[index]='-'
     return sequence
 
 def center_atomistic(atomistic_protein_input, backbone_coords): 
@@ -400,7 +408,6 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
 #### run through each chain in proteins
     for chain in range(len(atomistic_protein_centered)):
     #### creates atomistic pdb
-        pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb', box_vec)
         xyz_rot_apply=[]
         for part_val, part in enumerate(atomistic_protein_centered[chain]):
             sls, sle= int(part.split(':')[0]),int(part.split(':')[1])        
@@ -433,33 +440,46 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
                       ',',np.round(np.degrees(xyz_rot_apply[part_val][2]),2))
                 print()
         #### applies optimal rotation to each atom 
-        for residue in final_coordinates_atomistic[chain]:
-            exists=False
-            for initial_index in final_coordinates_atomistic[chain][residue]:
-                if final_coordinates_atomistic[chain][residue][initial_index]['res_type'] in f_loc.mod_residues:
-                    for atom in final_coordinates_atomistic[chain][residue]:
-                        short_line=final_coordinates_atomistic[chain][residue][atom]
-                        pdb_output.write(g_var.pdbline%((atom,short_line['atom'],short_line['res_type'],ascii_uppercase[chain],residue,
-                                        short_line['coord'][0],short_line['coord'][1],short_line['coord'][2],1,0))+'\n')
-                elif final_coordinates_atomistic[chain][residue][initial_index]['res_type'] not in f_loc.mod_residues:
-                    for part_val, part in enumerate(atomistic_protein_centered[chain]):
-                        if residue in atomistic_protein_centered[chain][part]:
-                            exists=True
-                            for atom in atomistic_protein_centered[chain][part][residue]:
-                                short_line = atomistic_protein_centered[chain][part][residue][atom]
-                                atomistic_protein_centered[chain][part][residue][atom]['coord'] = at_mod.rotate_atom(atomistic_protein_centered[chain][part][residue][atom]['coord'], cg_com[chain][part_val], xyz_rot_apply[part_val])
-                            #### writes out new pdb for each optimised chain
-                                pdb_output.write(g_var.pdbline%((atom,short_line['atom'],short_line['res_type'], ascii_uppercase[chain],
-                                                 residue,short_line['coord'][0],short_line['coord'][1],short_line['coord'][2],1,0))+'\n')
-                if not exists:
-                    # print(residue)
-                    for atom in final_coordinates_atomistic[chain][residue]:
-                        short_line=final_coordinates_atomistic[chain][residue][atom]  
-                        # print(short_line['res_type'])                  
-                        pdb_output.write(g_var.pdbline%((atom,short_line['atom'],short_line['res_type'],ascii_uppercase[chain],residue,
-                                         short_line['coord'][0],short_line['coord'][1],short_line['coord'][2],1,0))+'\n')
-                break
+        hybridise_protein_inputs(final_coordinates_atomistic[chain], atomistic_protein_centered[chain], cg_com[chain], xyz_rot_apply, chain, box_vec)
 
+def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_centered, cg_com, xyz_rot_apply, chain, box_vec):
+    pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb', box_vec)
+    final_atom={}
+    coord=[]
+    at_id=0
+    for residue in final_coordinates_atomistic:
+        exists=False
+        for initial_index in final_coordinates_atomistic[residue]:
+            if final_coordinates_atomistic[residue][initial_index]['res_type'] in f_loc.mod_residues:
+                for atom in final_coordinates_atomistic[residue]:
+                    short_line=final_coordinates_atomistic[residue][atom]
+                    final_atom[at_id]={'atom':short_line['atom'], 'res_type':short_line['res_type'], 'chain':ascii_uppercase[chain], 'residue':residue,\
+                                 'x':short_line['coord'][0],'y':short_line['coord'][1],'z':short_line['coord'][2]}
+                    at_id+=1
+                    coord.append(short_line['coord'])
+            elif final_coordinates_atomistic[residue][initial_index]['res_type'] not in f_loc.mod_residues:
+                for part_val, part in enumerate(atomistic_protein_centered):
+                    if residue in atomistic_protein_centered[part]:
+                        exists=True
+                        for atom in atomistic_protein_centered[part][residue]:                               
+                            atomistic_protein_centered[part][residue][atom]['coord'] = at_mod.rotate_atom(atomistic_protein_centered[part][residue][atom]['coord'], cg_com[part_val], xyz_rot_apply[part_val])
+                            short_line = atomistic_protein_centered[part][residue][atom]
+                            final_atom[at_id]={'atom':short_line['atom'], 'res_type':short_line['res_type'], 'chain':ascii_uppercase[chain], 'residue':residue,\
+                                        'x':short_line['coord'][0],'y':short_line['coord'][1],'z':short_line['coord'][2]}
+                            at_id+=1
+                            coord.append(short_line['coord'])
+            if not exists:
+                for atom in final_coordinates_atomistic[residue]:
+                    short_line=final_coordinates_atomistic[residue][atom]  
+                    final_atom[at_id]={'atom':short_line['atom'], 'res_type':short_line['res_type'], 'chain':ascii_uppercase[chain], 'residue':residue,\
+                                'x':short_line['coord'][0],'y':short_line['coord'][1],'z':short_line['coord'][2]}
+                    at_id+=1
+                    coord.append(short_line['coord'])
+            break
+    merge_coords = at_mod.check_atom_overlap(coord)
+    for at_id, coord in enumerate(merge_coords):
+        pdb_output.write(g_var.pdbline%((at_id+1,final_atom[at_id]['atom'],final_atom[at_id]['res_type'],final_atom[at_id]['chain'],final_atom[at_id]['residue'],
+             coord[0],coord[1],coord[2],1,0))+'\n') 
 ################################################################## Merge chains ####################
 
 def merge_protein(no_chains, protein, box_vec):

@@ -130,21 +130,21 @@ for section in system:
 if g_var.v >= 1:
     print('\n{0:^47}{1:^22}'.format('Job','Time'))
     print('{0:^47}{1:^22}'.format('---','----'))
-    t1 = read_in_time-initialisation_time
+    t1 = np.sqrt((read_in_time-initialisation_time)**2)
     print('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
     if user_at_input and 'PROTEIN' in system:
-        t2=protein_de_novo_time-read_in_time
-        t3=final_protein_time-protein_de_novo_time
-        t4=final_protein_time-read_in_time
+        t2=np.sqrt((protein_de_novo_time-read_in_time)**2)
+        t3=np.sqrt((final_protein_time-protein_de_novo_time)**2)
+        t4=np.sqrt((final_protein_time-read_in_time)**2)
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein system: ',t2[0],'hours',t2[1],'min',t2[2],'sec'))        
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein system from provided structure: ',t3[0],'hours',t3[1],'min',t3[2],'sec'))
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein system build: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
     else:
-        t5=final_protein_time-read_in_time
+        t5=np.sqrt((final_protein_time-read_in_time)**2)
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein system: ',t5[0],'hours',t5[1],'min',t5[2],'sec'))
-    t6=non_protein_time-final_protein_time
-    t7=merge_time-non_protein_time
-    t8=final_time-initialisation_time
+    t6=np.sqrt((non_protein_time-final_protein_time)**2)
+    t7=np.sqrt((merge_time-non_protein_time)**2)
+    t8=np.sqrt((final_time-initialisation_time)**2)
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Merge protein and non protein system: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t8[0],'hours',t8[1],'min',t8[2],'sec'))

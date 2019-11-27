@@ -165,10 +165,10 @@ def steered_md_atomistic_to_cg_coord(chain):
     gen.mkdir_directory('steered_md')
 #### create bog standard mdp file, simulation is only 3 ps in a vaccum so settings should not have any appreciable effect 
     with open('steered_md.mdp', 'w') as steered_md:
-        steered_md.write('define = -DPOSRES_STEERED\nintegrator = md\nnsteps = 3000\ndt = 0.001\ncontinuation   = no\n'+
-                        'constraint_algorithm = lincs\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\n'+
-                        'rcoulomb = 1\nrvdw = 1\ncoulombtype  = PME\npme_order = 4\nfourierspacing = 0.16\ntcoupl = V-rescale\n'+
-                        'tc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')    
+        steered_md.write('define = -DPOSRES_STEERED\nintegrator = md\nnsteps = 3000\ndt = 0.001\ncontinuation   = no\n')
+        steered_md.write('constraint_algorithm = lincs\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\n')
+        steered_md.write('rcoulomb = 1\nrvdw = 1\ncoulombtype  = PME\npme_order = 4\nfourierspacing = 0.16\ntcoupl = V-rescale\n')
+        steered_md.write('tc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')    
 #### run grompp on chain 
     gromacs(g_var.gmx+' grompp '+
             '-f steered_md.mdp '+
@@ -383,11 +383,11 @@ def alchembed(system):
     #### creates a alchembed mdp for each chain 
         with open('alchembed_'+str(chain)+'.mdp', 'w') as alchembed:
             alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 500\ndt = 0.001\ncontinuation = no\nconstraint_algorithm = lincs')
-            alchembed.write('constraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
-            alchembed.write('pme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\ncutoff-scheme = Verlet')
-            alchembed.write('pbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00')
-            alchembed.write('delta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6couple-moltype = protein_'+str(chain))
-            alchembed.write('couple-lambda0 = none\ncouple-lambda1 = vdw')
+            alchembed.write('\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
+            alchembed.write('\npme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\ncutoff-scheme = Verlet')
+            alchembed.write('\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00')
+            alchembed.write('\ndelta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6\ncouple-moltype = protein_'+str(chain))
+            alchembed.write('\ncouple-lambda0 = none\ncouple-lambda1 = vdw')
     #### if 1st chain use minimised structure for coordinate input
         if chain == 0:
             gromacs(g_var.gmx+' grompp '+
