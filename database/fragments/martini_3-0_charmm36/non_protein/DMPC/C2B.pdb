@@ -1,0 +1,12 @@
+ATOM     94  C37 DMPC    1       9.153  22.666  50.472  8.00  8.00      MEMB C
+ATOM     95  H7X DMPC    1       8.208  23.132  50.801  8.00  0.00      MEMB H
+ATOM     96  H7Y DMPC    1       9.440  22.007  51.315  8.00  0.00      MEMB H
+ATOM     97  C38 DMPC    1       8.876  21.817  49.235  1.00  0.00      MEMB C
+ATOM     98  H8X DMPC    1       9.732  21.717  48.557  1.00  0.00      MEMB H
+ATOM     99  H8Y DMPC    1       8.115  22.344  48.660  1.00  0.00      MEMB H
+ATOM    100  C39 DMPC    1       8.263  20.484  49.618  1.00  0.00      MEMB C
+ATOM    101  H9X DMPC    1       7.566  20.828  50.385  1.00  0.00      MEMB H
+ATOM    102  H9Y DMPC    1       8.964  19.840  50.174  1.00  0.00      MEMB H
+ATOM    103 C310 DMPC    1       7.569  19.759  48.446  9.00  9.00      MEMB C
+ATOM    104 H10X DMPC    1       6.879  20.436  47.911  9.00  0.00      MEMB H
+ATOM    105 H10Y DMPC    1       6.984  18.882  48.795  9.00  0.00      MEMB H
