@@ -32,14 +32,21 @@ if 'PROTEIN' in cg_residues:
         atomistic_protein_centered, cg_com = at_mod_p.center_atomistic(atomistic_protein_input, backbone_coords)
         at_mod_p.rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, backbone_coords, cg_com, box_vec)
     gro.minimise_protein(system['PROTEIN'], p_system, user_at_input)
-    at_mod_p.merge_protein(system['PROTEIN'], '_novo', box_vec)
+
+    merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/min/PROTEIN_novo', '.pdb')
+    at_mod_p.write_merged_pdb(merge_de_novo, '_novo', box_vec)
+
     if user_at_input and 'PROTEIN' in system:
         print('\tRunning steered MD on input atomistic structure\n')
     #### runs steered MD on atomistic structure on CA and CB atoms
         for chain in range(system['PROTEIN']):
             gro.steered_md_atomistic_to_cg_coord(chain)
-        at_mod_p.merge_protein(system['PROTEIN'], '_at_rep_user_supplied', box_vec)
-        
+        merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/steered_md/PROTEIN_at_rep_user_supplied', '.pdb')
+        at_mod_p.write_merged_pdb(merge_at_user, '_at_rep_user_supplied', box_vec)
+        merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_at_rep_user_supplied', '_gmx.pdb')
+        at_mod_p.write_merged_pdb(merge_at_user_no_steer, '_no_steered', box_vec)
+
+
 final_protein_time=np.array(gmtime()[3:6])
 
 #### converts non protein residues into atomistic and minimises 
@@ -50,7 +57,7 @@ if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']])
         if residue_type not in ['PROTEIN', 'ION']:
             print('Minimising individual residues: '+residue_type)
             gro.non_protein_minimise(np_system[residue_type], residue_type)
-            gro.merge_minimised(residue_type, np_system, box_vec)
+            at_mod_np.merge_minimised(residue_type, np_system, box_vec)
             print('Minimising merged: '+residue_type)
             gro.minimise_merged(residue_type, np_system)
     system.update(np_system)

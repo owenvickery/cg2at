@@ -31,6 +31,9 @@ p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted = gen.
 
 np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories = gen.sort_directories(p_directories_unsorted, 
 																						mod_directories_unsorted, np_directories_unsorted)
+chiral = gen.fetch_chiral(np_directories, p_directories)
+
+
 ### reads in water molecules
 water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
 

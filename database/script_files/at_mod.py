@@ -99,7 +99,7 @@ def fragment_location(residue, fragment):
     sys.exit('cannot find fragment: '+residue+'/'+fragment)
 
 def get_atomistic(residue,cg_fragment, cg_coord,resid):
-    SF=0.8   #### scaling factor for fragments
+    SF=1   #### scaling factor for fragments
 #### find atomistic residues
     residue_list={} ## a dictionary of bead in each residue eg residue_list[atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
     frag_location=fragment_location(residue, cg_fragment+'.pdb') ### get fragment location from database
@@ -172,7 +172,7 @@ def connectivity(bead_number, cg_bead, connect, at_residues, cg_residues, resid)
     return at_connections, cg_connections, center
 
 
-def align_to_vector(ca, C, O):
+def find_cross_vector(ca, C, O):
     initial_vector= O-C
     initial_vector = initial_vector/np.linalg.norm(initial_vector)
     AB = ca[0]-ca[1]
@@ -183,7 +183,7 @@ def align_to_vector(ca, C, O):
     return initial_vector, cross_vector
 
 
-def rotation_matrix_vectors(v1, v2):
+def align_to_vector(v1, v2):
     v = np.cross(v1,v2)
     c = np.dot(v1,v2)
     s = np.linalg.norm(v)
@@ -229,3 +229,53 @@ def merge_system_pdbs(system, protein, cg_residues, box_vec):
             merge_coords[line_val][0],merge_coords[line_val][1],merge_coords[line_val][2],1,0))+'\n')
     pdb_output.write('TER\nENDMDL')
     pdb_output.close()
+
+def fix_chirality(merge, merge_temp, merged_coords):
+    chiral_atoms={}
+    coord=[]
+    for atom in range(len(merge_temp)):
+        if merge_temp[atom]['residue_name'] in f_loc.chiral:
+            if merge_temp[atom]['residue_id'] not in chiral_atoms:
+                chiral_atoms[merge_temp[atom]['residue_id']]={}
+            if merge_temp[atom]['atom_name'] in f_loc.chiral[merge_temp[atom]['residue_name']]['atoms']:
+                chiral_atoms[merge_temp[atom]['residue_id']][merge_temp[atom]['atom_name']]=atom
+        coord.append(np.array([merge_temp[atom]['x'],merge_temp[atom]['y'],merge_temp[atom]['z']]))
+
+    for residue in chiral_atoms:
+        for atom in chiral_atoms[residue]:
+            resname = merge_temp[chiral_atoms[residue][atom]]['residue_name']
+            break
+        for chiral_group in f_loc.chiral[resname]:
+            if chiral_group != 'atoms':
+                stat = merge_temp[chiral_atoms[residue][chiral_group]]
+                move = merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['m']]]
+                c1   = merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['c1']]]
+                c2   = merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['c2']]]
+                c3   = merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['c3']]]
+
+                stat_coord = np.array([stat['x'], stat['y'], stat['z']])
+                move_coord = np.array([move['x'], move['y'], move['z']])
+                c1_coord   = np.array([c1['x'], c1['y'], c1['z']])
+                c2_coord   = np.array([c2['x'], c2['y'], c2['z']])
+                c3_coord   = np.array([c3['x'], c3['y'], c3['z']])
+
+                S_M=move_coord-stat_coord
+                rotation = align_to_vector(S_M, [0,0,1])
+                center = stat_coord
+
+                c1_coord = (c1_coord - center).dot(rotation)
+                c2_coord = (c2_coord - center).dot(rotation)
+                c3_coord = (c3_coord - center).dot(rotation)
+
+                C1_C2_a = gen.angle_clockwise(c1_coord[0:2], c2_coord[0:2])
+                C1_C3_a = gen.angle_clockwise(c1_coord[0:2], c3_coord[0:2])
+                if C1_C2_a > C1_C3_a:
+                    for ax_val, axis in enumerate(['x', 'y', 'z']):
+                        merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['m']]][axis] = merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['m']]][axis] - (3*S_M[ax_val])   
+                        merge_temp[chiral_atoms[residue][chiral_group]][axis] = merge_temp[chiral_atoms[residue][chiral_group]][axis] - (S_M[ax_val])        
+                    coord[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['m']]] = move_coord - (3*S_M) 
+                    coord[chiral_atoms[residue][chiral_group]] = stat_coord - (1.5*S_M) 
+    merge+=merge_temp
+    merged_coords+=coord
+
+    return merge, merged_coords

@@ -6,6 +6,7 @@ import copy
 from string import ascii_uppercase
 import difflib
 import gen, g_var, f_loc, at_mod
+import math
 
 
 
@@ -236,8 +237,8 @@ def fix_carbonyl(residue_id, cg, at):
             #     if at[residue_id+index]['BB'][atom]['atom'] == backbone[cg[residue_id+index]['BB']['residue_name']]['b_connect'][0]: 
             #         Nn = atom                  
 
-    initial_vector, cross_vector = at_mod.align_to_vector( ca, at[residue_id]['BB'][C]['coord'], at[residue_id]['BB'][O]['coord'])
-    rotation = at_mod.rotation_matrix_vectors(initial_vector, cross_vector)
+    initial_vector, cross_vector = at_mod.find_cross_vector( ca, at[residue_id]['BB'][C]['coord'], at[residue_id]['BB'][O]['coord'])
+    rotation = at_mod.align_to_vector(initial_vector, cross_vector)
     center = ca[0]+(ca[1]-ca[0])/3
     at[residue_id]['BB'][C]['coord'] = (at[residue_id]['BB'][C]['coord']-center).dot(rotation)+center
     at[residue_id]['BB'][O]['coord'] = (at[residue_id]['BB'][O]['coord']-center).dot(rotation)+center
@@ -439,7 +440,6 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
                 print('rotating chain ', chain, 'by :',np.round(np.degrees(xyz_rot_apply[part_val][0]),2),',',np.round(np.degrees(xyz_rot_apply[part_val][1]),2),
                       ',',np.round(np.degrees(xyz_rot_apply[part_val][2]),2))
                 print()
-        #### applies optimal rotation to each atom 
         hybridise_protein_inputs(final_coordinates_atomistic[chain], atomistic_protein_centered[chain], cg_com[chain], xyz_rot_apply, chain, box_vec)
 
 def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_centered, cg_com, xyz_rot_apply, chain, box_vec):
@@ -482,36 +482,28 @@ def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_cent
              coord[0],coord[1],coord[2],1,0))+'\n') 
 ################################################################## Merge chains ####################
 
-def merge_protein(no_chains, protein, box_vec):
-#### merge protein chains into single pdb
-    merge = read_in_protein_pdbs(no_chains, g_var.working_dir+'PROTEIN/min/PROTEIN'+protein)
-    if protein!='_at_rep_user_supplied':
-        write_merged_pdb(merge, protein, box_vec)
-    if protein=='_at_rep_user_supplied':
-        write_merged_pdb(merge, '_no_steered', box_vec)
-        merge = read_in_protein_pdbs(no_chains, g_var.working_dir+'PROTEIN/steered_md/PROTEIN'+protein)
-        write_merged_pdb(merge, protein, box_vec)
-
-def read_in_protein_pdbs(no_chains, file):
+def read_in_protein_pdbs(no_chains, file, end):
 #### reads in each chain into merge list
-    merge, merge_coords = [],[]
+    merge, merged_coords = [],[]
     for chain in range(0,no_chains):
-        if os.path.exists(file+'_'+str(chain)+'.pdb'):
-            with open(file+'_'+str(chain)+'.pdb', 'r') as pdb_input:
+        merge_temp = []
+        if os.path.exists(file+'_'+str(chain)+end):
+            with open(file+'_'+str(chain)+end, 'r') as pdb_input:
                 for line in pdb_input.readlines():
                     if line.startswith('ATOM'):
                         line_sep=gen.pdbatom(line)
-                        merge.append(line_sep)
-                        merge_coords.append([line_sep['x'], line_sep['y'],line_sep['z']])
+                        merge_temp.append(line_sep)
         else:
-            sys.exit('cannot find minimised protein chain: '+str(chain))     
+            sys.exit('cannot find minimised protein chain: '+str(chain)) 
+        merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merged_coords)    
     merged_coords = at_mod.check_atom_overlap(merge_coords)
     merged=[]
     for line_val, line in enumerate(merge):
         merged.append(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
             merged_coords[line_val][0],merged_coords[line_val][1],merged_coords[line_val][2],1,0))+'\n')
-
     return merged
+
+
 
 def write_merged_pdb(merge, protein, box_vec):
 #### creates merged pdb and writes chains to it

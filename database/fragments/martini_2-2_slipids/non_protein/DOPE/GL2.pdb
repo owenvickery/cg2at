@@ -1,0 +1,9 @@
+ATOM     27  C3  DOPE    1       3.705   1.564  59.015  16.0  3.00      MEMB
+ATOM     28  HX  DOPE    1       4.029   0.600  59.457  16.0  0.00      MEMB
+ATOM     29  HY  DOPE    1       4.177   1.604  58.015  16.0  0.00      MEMB
+ATOM     30  O31 DOPE    1       2.284   1.546  58.913  1.00  0.00      MEMB
+ATOM     31  C31 DOPE    1       1.813   2.120  57.823  1.00  0.00      MEMB
+ATOM     32  O32 DOPE    1       2.463   2.668  56.953  1.00  0.00      MEMB
+ATOM     33  C32 DOPE    1       0.338   1.844  57.730  17.0  5.00      MEMB
+ATOM     34  H2X DOPE    1       0.160   0.908  57.164  17.0  0.00      MEMB
+ATOM     35  H2Y DOPE    1      -0.101   1.758  58.746  17.0  0.00      MEMB

@@ -8,6 +8,31 @@ import glob
 import g_var
 
 
+def fetch_chiral(np_directories,p_directories):
+    processing={}     
+    for directory_type in [np_directories,p_directories]:
+        for directory in range(len(directory_type)):
+            for residue in directory_type[directory][1:]:   
+                if residue not in processing:
+                    if os.path.exists(directory_type[directory][0]+residue+'/chiral.dat'):
+                        processing[residue]={'atoms':[]}
+                        with open(directory_type[directory][0]+residue+'/chiral.dat', 'r') as chir_input:            #     for file_name in os.listdir(p_directories[directory][0]+residue):
+                            for line_nr, line in enumerate(chir_input.readlines()):
+                                if line[0] != '#':
+                                    line_sep =line.split()
+                                    if len(line_sep) == 5:
+                                        processing[residue]['atoms']+=line_sep
+                                        processing[residue][line_sep[0]]={'m':line_sep[1], 'c1':line_sep[2], 'c2':line_sep[3], 'c3':line_sep[4]}
+                                    else:
+                                        sys.exit('The following chiral group file is incorrect: \n'+directory_type[directory][0]+residue+'/chiral.dat')
+                    else:
+                        pass
+
+    return processing
+
+
+
+
 def fetch_fragment(p_directories):
 #### fetches the Backbone heavy atoms and the connectivity with pre/proceeding residues 
     
@@ -260,6 +285,19 @@ def eulerAnglesToRotationMatrix(theta) :
 
 
     return R
+
+def angle_clockwise(A, B):
+#### find angle between vectors
+    AB = np.linalg.norm(A)*np.linalg.norm(B)
+    A_dot_B = A.dot(B)
+    angle = np.degrees(np.arccos(A_dot_B/AB))
+#### determinant of A, B
+    determinant = np.linalg.det([A,B])
+
+    if determinant < 0: 
+        return angle
+    else: 
+        return 360-angle
 
 ############################################################################################## fragment rotation done #################################################################################
 
