@@ -1,0 +1,12 @@
+ATOM     85  C37 DMPE    1      19.694   6.404  34.405  8.00  8.00      MEMB C
+ATOM     86  H7X DMPE    1      19.872   5.304  34.343  8.00  0.00      MEMB H
+ATOM     87  H7Y DMPE    1      18.599   6.567  34.492  8.00  0.00      MEMB H
+ATOM     88  C38 DMPE    1      20.336   6.844  35.727  1.00  0.00      MEMB C
+ATOM     89  H8X DMPE    1      19.872   6.293  36.575  1.00  0.00      MEMB H
+ATOM     90  H8Y DMPE    1      20.140   7.926  35.891  1.00  0.00      MEMB H
+ATOM     91  C39 DMPE    1      21.824   6.528  35.822  1.00  0.00      MEMB C
+ATOM     92  H9X DMPE    1      22.287   6.850  34.882  1.00  0.00      MEMB H
+ATOM     93  H9Y DMPE    1      22.022   5.444  35.904  1.00  0.00      MEMB H
+ATOM     94 C310 DMPE    1      22.499   7.274  36.960  9.00  9.00      MEMB C
+ATOM     95 H10X DMPE    1      22.913   8.171  36.503  9.00  0.00      MEMB H
+ATOM     96 H10Y DMPE    1      23.407   6.817  37.289  9.00  0.00      MEMB H
