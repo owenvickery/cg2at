@@ -1,0 +1,11 @@
+ATOM     16  C1  DMPE    1      23.445   7.766  25.975  12.0  2.00      MEMB C
+ATOM     17  HA  DMPE    1      23.863   8.647  25.500  12.0  0.00      MEMB H
+ATOM     18  HB  DMPE    1      23.298   7.196  25.046  12.0  0.00      MEMB H
+ATOM     19  C2  DMPE    1      24.542   6.870  26.921  1.00  3.00      MEMB C
+ATOM     20  HS  DMPE    1      25.211   6.347  26.229  1.00  0.00      MEMB H
+ATOM     21  O21 DMPE    1      23.535   5.967  27.404  1.00  0.00      MEMB O
+ATOM     22  C21 DMPE    1      23.750   4.904  28.093  1.00  0.00      MEMB C
+ATOM     23  O22 DMPE    1      24.833   4.403  28.347  1.00  0.00      MEMB O
+ATOM     24  C22 DMPE    1      22.335   4.478  28.605  13.0  4.00      MEMB C
+ATOM     25  H2R DMPE    1      21.641   4.444  27.736  13.0  0.00      MEMB H
+ATOM     26  H2S DMPE    1      21.955   5.235  29.317  13.0  0.00      MEMB H
