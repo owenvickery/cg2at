@@ -88,6 +88,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
 
     final_coordinates_atomistic = finalise_novo_atomistic(temporary_coordinates_atomistic, cg_residues, box_vec)
 
+
     terminal[chain_count].append(f_loc.backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
 
     system['terminal_residue']=terminal
@@ -250,7 +251,7 @@ def fix_dihedrals(atomistic_residues, cg_residues):
     residue_number=0
     final_resid={}
     for residue_id in atomistic_residues:
-        final_resid[residue_id]={}
+        final_resid[residue_number]={}
         residue_length=0
         residue_temp={}
         for cg_fragments in atomistic_residues[residue_id]:
@@ -258,7 +259,7 @@ def fix_dihedrals(atomistic_residues, cg_residues):
         for atom in range(1, len(residue_temp)+1):
             final[atom_count]=residue_temp[atom]
             final[atom_count].update({'resid':residue_number})
-            final_resid[residue_id][atom]=residue_temp[atom]
+            final_resid[residue_number][atom]=residue_temp[atom]
             atom_count+=1
         residue_number+=1
     return final, final_resid
@@ -346,10 +347,10 @@ def align_chains(atomistic_protein_input, seq_user, sequence):
     if g_var.v >= 1:
         print('coarse grain protein sequence:\n')
         for index in sequence:
-            print(sequence[index], '\n')
+            print('chain:', index,sequence[index], '\n')
         print('\nuser supplied structure:\n')
         for index in seq_user:
-            print(seq_user[index], '\n')        
+            print('chain:', index, seq_user[index], '\n')        
 
 
 
@@ -455,6 +456,7 @@ def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_cent
     for residue in final_coordinates_atomistic:
         exists=False
         for initial_index in final_coordinates_atomistic[residue]:
+            
             if final_coordinates_atomistic[residue][initial_index]['res_type'] in f_loc.mod_residues:
                 for atom in final_coordinates_atomistic[residue]:
                     short_line=final_coordinates_atomistic[residue][atom]
@@ -466,7 +468,10 @@ def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_cent
                 for part_val, part in enumerate(atomistic_protein_centered):
                     if residue in atomistic_protein_centered[part]:
                         exists=True
-                        for atom in atomistic_protein_centered[part][residue]:                               
+                        for atom in atomistic_protein_centered[part][residue]:   
+                            if atomistic_protein_centered[part][residue][atom]['res_type'] != final_coordinates_atomistic[residue][initial_index]['res_type']:
+                                print('de_novo' , final_coordinates_atomistic[residue][initial_index]['res_type'],'at_user', atomistic_protein_centered[part][residue][atom]['res_type'])
+                                sys.exit('de novo and at user supplied don\'t match')
                             atomistic_protein_centered[part][residue][atom]['coord'] = at_mod.rotate_atom(atomistic_protein_centered[part][residue][atom]['coord'], cg_com[part_val], xyz_rot_apply[part_val])
                             short_line = atomistic_protein_centered[part][residue][atom]
                             final_atom[at_id]={'atom':short_line['atom'], 'res_type':short_line['res_type'], 'chain':ascii_uppercase[chain], 'residue':residue,\
