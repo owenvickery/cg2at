@@ -180,3 +180,4 @@ def merge_minimised(residue_type, np_system, box_vec):
             merge_coords[line_val][0],merge_coords[line_val][1],merge_coords[line_val][2],1,0))+'\n')
     pdb_output.write('TER\nENDMDL')
     pdb_output.close()
+

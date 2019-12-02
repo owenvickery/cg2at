@@ -269,36 +269,7 @@ def non_protein_minimise(resid, residue_type):
     pool.close()
     os.chdir(g_var.working_dir)
 
-def merge_minimised(residue_type, np_system, box_vec):
-    os.chdir(g_var.working_dir+residue_type+'/min')
-    print('Merging individual residues : '+residue_type)
-#### create merged pdb in min folder
-    pdb_output=gen.create_pdb(g_var.working_dir+residue_type+'/min/'+residue_type+'_merged.pdb', box_vec)  
-    if residue_type =='SOL':
-        resid_range=1
-    else:
-        resid_range=np_system[residue_type]
-    merge,merge_coords=[],[]
-#### run through every resid 
-    for resid in range(resid_range):
-    #### check if it exists
-        if os.path.exists(g_var.working_dir+residue_type+'/min/'+residue_type+'_'+str(resid)+'.pdb'):
-        #### read in resid and write straight to merged pdb
-            with open(g_var.working_dir+residue_type+'/min/'+residue_type+'_'+str(resid)+'.pdb', 'r') as pdb_input:
-                for line in pdb_input.readlines():
-                    if line.startswith('ATOM'):
-                        line_sep = gen.pdbatom(line)
-                        merge.append(line_sep)
-                        merge_coords.append([line_sep['x'],line_sep['y'],line_sep['z']])
-        else:
-            sys.exit('cannot find minimised residue: \n'+ g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
-    if residue_type !='SOL':
-        merge_coords = at_mod.check_atom_overlap(merge_coords)
-    for line_val, line in enumerate(merge):
-        pdb_output.write(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
-            merge_coords[line_val][0],merge_coords[line_val][1],merge_coords[line_val][2],1,0))+'\n')
-    pdb_output.write('TER\nENDMDL')
-    pdb_output.close()
+
 
 def minimise_merged(residue_type, np_system):
 #### write topology for merged system

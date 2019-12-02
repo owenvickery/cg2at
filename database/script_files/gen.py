@@ -27,7 +27,6 @@ def fetch_chiral(np_directories,p_directories):
                                         sys.exit('The following chiral group file is incorrect: \n'+directory_type[directory][0]+residue+'/chiral.dat')
                     else:
                         pass
-
     return processing
 
 
