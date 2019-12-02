@@ -230,12 +230,7 @@ def fix_carbonyl(residue_id, cg, at):
                 if at[residue_id+index]['BB'][atom]['atom'] == f_loc.backbone[cg[residue_id+index]['BB']['residue_name']]['b_connect'][1]: 
                     C = atom
                 if at[residue_id+index]['BB'][atom]['atom'] in f_loc.backbone[cg[residue_id+index]['BB']['residue_name']]['dihedral']:   
-                    O = atom     
-            #     if at[residue_id+index]['BB'][atom]['atom'] == backbone[cg[residue_id+index]['BB']['residue_name']]['b_connect'][0]: 
-            #         N = atom 
-            # if index == 1:
-            #     if at[residue_id+index]['BB'][atom]['atom'] == backbone[cg[residue_id+index]['BB']['residue_name']]['b_connect'][0]: 
-            #         Nn = atom                  
+                    O = atom                 
 
     initial_vector, cross_vector = at_mod.find_cross_vector( ca, at[residue_id]['BB'][C]['coord'], at[residue_id]['BB'][O]['coord'])
     rotation = at_mod.align_to_vector(initial_vector, cross_vector)
@@ -348,6 +343,16 @@ def check_sequence(atomistic_protein_input, chain_count):
     return seq_user
 
 def align_chains(atomistic_protein_input, seq_user, sequence):
+    if g_var.v >= 1:
+        print('coarse grain protein sequence:\n')
+        for index in sequence:
+            print(sequence[index], '\n')
+        print('\nuser supplied structure:\n')
+        for index in seq_user:
+            print(seq_user[index], '\n')        
+
+
+
     at={}
     sequence_temp = sequence.copy()
     for chain_at in range(len(atomistic_protein_input)):
