@@ -1,9 +1,0 @@
-ATOM     76  C33 DLPC    1       5.728   7.215  51.540  4.00  7.00      MEMB
-ATOM     77  H3X DLPC    1       5.240   6.223  51.386  4.00  0.00      MEMB
-ATOM     78  H3Y DLPC    1       6.764   7.023  51.890  4.00  0.00      MEMB
-ATOM     79  C34 DLPC    1       5.769   7.982  50.215  1.00  0.00      MEMB
-ATOM     80  H4X DLPC    1       6.221   8.985  50.366  1.00  0.00      MEMB
-ATOM     81  H4Y DLPC    1       4.726   8.156  49.859  1.00  0.00      MEMB
-ATOM     82  C35 DLPC    1       6.479   7.242  49.078  5.00  8.00      MEMB
-ATOM     83  H5X DLPC    1       6.107   6.192  49.065  5.00  0.00      MEMB
-ATOM     84  H5Y DLPC    1       7.575   7.216  49.255  5.00  0.00      MEMB

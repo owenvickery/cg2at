@@ -1,9 +1,0 @@
-ATOM     27  C3  DYPE    1       2.143   6.737  57.923  14.0  3.00      MEMB
-ATOM     28  HX  DYPE    1       2.306   7.558  57.185  14.0  0.00      MEMB
-ATOM     29  HY  DYPE    1       1.532   7.155  58.750  14.0  0.00      MEMB
-ATOM     30  O31 DYPE    1       1.429   5.623  57.383  1.00  0.00      MEMB
-ATOM     31  C31 DYPE    1       1.728   5.395  56.127  1.00  0.00      MEMB
-ATOM     32  O32 DYPE    1       2.452   6.075  55.418  1.00  0.00      MEMB
-ATOM     33  C32 DYPE    1       1.040   4.129  55.687  15.0  5.00      MEMB
-ATOM     34  H2X DYPE    1       1.555   3.227  56.067  15.0  0.00      MEMB
-ATOM     35  H2Y DYPE    1       0.034   4.168  56.124  15.0  0.00      MEMB

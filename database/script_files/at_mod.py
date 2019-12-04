@@ -83,93 +83,133 @@ def check_atom_overlap(coordinates):
     return coordinates
 
 
-def fragment_location(residue, fragment):  
+def fragment_location(residue, fragments):  
 #### runs through dirctories looking for the atomistic fragments returns the correct location
     if residue in f_loc.p_residues:
         for directory in range(len(f_loc.p_directories)):
-            if os.path.exists(f_loc.p_directories[directory][0]+residue+'/'+fragment):
-                return f_loc.p_directories[directory][0]+residue+'/'+fragment
+            if os.path.exists(f_loc.p_directories[directory][0]+residue+'/'+fragments+'.pdb'):
+                return f_loc.p_directories[directory][0]+residue+'/'+fragments+'.pdb'
         for directory in range(len(f_loc.mod_directories)):
-            if os.path.exists(f_loc.mod_directories[directory][0]+residue+'/'+fragment):
-                return f_loc.mod_directories[directory][0]+residue+'/'+fragment
+            if os.path.exists(f_loc.mod_directories[directory][0]+residue+'/'+fragments+'.pdb'):
+                return f_loc.mod_directories[directory][0]+residue+'/'+fragments+'.pdb'
     else:
         for directory in range(len(f_loc.np_directories)):
-            if os.path.exists(f_loc.np_directories[directory][0]+residue+'/'+fragment):
-                return f_loc.np_directories[directory][0]+residue+'/'+fragment
-    sys.exit('cannot find fragment: '+residue+'/'+fragment)
+            if os.path.exists(f_loc.np_directories[directory][0]+residue+'/'+fragments+'.pdb'):
+                return f_loc.np_directories[directory][0]+residue+'/'+fragments+'.pdb'
+    sys.exit('cannot find fragment: '+residue+'/'+fragments+'.pdb')
 
-def get_atomistic(residue,cg_fragment, cg_coord,resid):
+def get_atomistic(residue, frag_location):
     SF=1   #### scaling factor for fragments
 #### find atomistic residues
-    residue_list={} ## a dictionary of bead in each residue eg residue_list[atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
-    frag_location=fragment_location(residue, cg_fragment+'.pdb') ### get fragment location from database
-    fragment_masses=[] ### list [[coord, mass],[coord, mass]]
+    
 #### read in atomistic fragments into dictionary    
+    residue = {} ## a dictionary of bead in each residue eg residue[group][bead][atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
+    fragment_mass = {}
+    group=0
     with open(frag_location, 'r') as pdb_input:
         for line_nr, line in enumerate(pdb_input.readlines()):
+            if line.startswith('['):
+                line_split=line.split()
+                if not g_var.ind:
+                    bead, group = line_split[1], line_split[2]
+                else:
+                    bead = line_split[1]
+                    group+=1
+                fragment_mass[bead]=[]
+                if group != ']' and group not in residue:
+                    residue[group] = {}
+                if bead not in residue[group]:
+                    residue[group][bead]={}
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line) ## splits up pdb line
-                residue_list[line_sep['atom_number']]={'coord':np.array([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'extra':line_sep['backbone'], 'connect':line_sep['connect'], 'frag_mass':1}
+                residue[group][bead][line_sep['atom_number']]={'coord':np.array([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF]),'atom':line_sep['atom_name'],'resid':line_sep['residue_id'], 'res_type':line_sep['residue_name'],'extra':line_sep['backbone'], 'connect':line_sep['connect'], 'frag_mass':1}
 #### updates fragment mass   
                 if 'H' not in line_sep['atom_name']:
                     for atom in line_sep['atom_name']:
                         if atom in g_var.mass:
-                            residue_list[line_sep['atom_number']]['frag_mass']=g_var.mass[atom]  ### updates atom masses with crude approximations
-                            fragment_masses.append([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF,g_var.mass[atom]])
+                            residue[group][bead][line_sep['atom_number']]['frag_mass']=g_var.mass[atom]  ### updates atom masses with crude approximations
+                            fragment_mass[bead].append([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF,g_var.mass[atom]])
                 else:
-                    fragment_masses.append([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF,1])
-    return align_at_frag_to_CG_frag(fragment_masses, cg_coord, residue_list)
+                    fragment_mass[bead].append([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF,1])
+    return residue, fragment_mass
 
-def align_at_frag_to_CG_frag(fragment_masses, cg_coord, residue_list):
+def rigid_fit(group, frag_mass, resid, cg):
+    rigid_mass_at = []
+    rigid_mass_cg = []
+    for bead in group:
+        rigid_mass_at+=frag_mass[bead]
+        rigid_mass_cg.append(cg[bead]['coord'])      
+    rigid_mass_at = np.average(np.array(rigid_mass_at)[:,:3], axis=0, weights=np.array(rigid_mass_at)[:,3])
+    rigid_mass_cg = np.mean(rigid_mass_cg, axis=0)
+    group, COM_vector = align_at_frag_to_CG_frag(rigid_mass_at, rigid_mass_cg, group)
+    at_frag_centers = {}
+    cg_frag_centers = {}
+    for bead in group:
+        cg_frag_centers[bead] = cg[bead]['coord']
+        at_frag_centers[bead] = np.average(np.array(frag_mass[bead])[:,:3], axis=0, weights=np.array(frag_mass[bead])[:,3])-COM_vector
+    return rigid_mass_cg, at_frag_centers, cg_frag_centers, group
+
+
+def align_at_frag_to_CG_frag(at_com, cg_com, group):
 #### aligns atomistic fragment to cg bead
-    COM_vector=np.average(np.array(fragment_masses)[:,:3], axis=0, weights=np.array(fragment_masses)[:,3])-np.array(cg_coord['coord']) ### gets vector between COM of atoms in fragment and cg bead 
-    for at_id, residue in enumerate(residue_list): ### runs through atoms in fragments and centers on the cg bead 
-        residue_list[residue]['coord']=residue_list[residue]['coord']-COM_vector
-    return residue_list
+    COM_vector=at_com-cg_com ### gets vector between COM of atoms in fragment and cg bead 
+    for bead in group:
+        for atom in group[bead]: ### runs through atoms in fragments and centers on the cg bead 
+            group[bead][atom]['coord']=group[bead][atom]['coord']-COM_vector
+    return group, COM_vector
 
 
-def get_atomistic_fragments(cg_residue_type,cg_residue, cg_resid):
-    at_residues={}
+def connection(residue):
     connect=[]
 #### runs through every in bead in residue 
-    for cg_bead in cg_residue:
-    #### gets atoms from database for each bead 
-        at_residues[cg_bead]=get_atomistic(cg_residue_type,cg_bead, cg_residue[cg_bead], cg_resid+1)
-    #### if not SOL/ION the connectivity is read from the fragment dictionary key (connect)
-        if cg_residue_type not in ['SOL', 'ION']:
-            for atom_num, atom in enumerate(at_residues[cg_bead]):
+    for group in residue:
+        for bead in residue[group]:
+            for atom_num, atom in enumerate(residue[group][bead]):
             #### if atom has a connection which is not zero (0 = does not connect)
-                if at_residues[cg_bead][atom]['connect'] > 0:
-                    connect.append([cg_bead,atom, at_residues[cg_bead][atom]['connect']]) 
+                if residue[group][bead][atom]['connect'] > 0:
+                    connect.append([group, bead, atom, residue[group][bead][atom]['connect']]) 
     connect=np.array(connect)   
-    return at_residues, connect
+    return connect
 
+def connectivity(cg, connect, at_frag_centers, cg_frag_centers, group, group_number):
+    at_connection, cg_connection=[],[]
+    if len(connect) > 0:
+        for info in connect[np.where(str(group_number) == connect[:,0])]:
+            for ind in connect:
+                if info[3] == ind[3] and group_number != ind[0]: 
+                    cg_connection.append(cg[ind[1]]['coord'])
+                    at_connection.append(group[info[1]][int(info[2])]['coord'])  
+        if len(at_frag_centers)  > 1:         
+            for bead in at_frag_centers:
+                cg_connection.append(cg_frag_centers[bead])
+                at_connection.append(at_frag_centers[bead])          
+    return at_connection, cg_connection    
 
-def connectivity(bead_number, cg_bead, connect, at_residues, cg_residues, resid):
-    at_connections,cg_connections=[],[]
-#### finds all beads that the cg_bead is connected to
-    try:
-        run=np.where(connect[:,0]==cg_bead)
-    except:
-        if cg_bead == 'BB':
-            return [],[], cg_residues[resid][cg_bead]['coord']
-        sys.exit('cannot find connectivity for :'+str(cg_bead))
-#### center of mass of cg_bead
-    center=cg_residues[resid][cg_bead]['coord']
-#### loop through bead connections from bead of interest
-    for con_test in connect[run]:
-        cg_temp=[]
-    #### fetch connections which have more than one bead 1 to 2 beads and not self      
-        cg=connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]!=cg_bead))]
-    #### for each connecting bead 
-        for con_bead in cg[:,0]:
-            cg_temp.append(cg_residues[resid][con_bead]['coord']-center)
-    #### average position of connecting bead
-        cg_connections.append(np.mean(cg_temp, axis=0))
-    #### all atoms with bead connections and self. should only ever be one. 
-        at = int(connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]==cg_bead))][:,1])
-        at_connections.append(at_residues[cg_bead][at]['coord']-center)
-    return at_connections, cg_connections, center
+# def connectivity(bead_number, cg_bead, connect, at_residues, cg_residues, resid):
+#     at_connections,cg_connections=[],[]
+# #### finds all beads that the cg_bead is connected to
+#     try:
+#         run=np.where(connect[:,0]==cg_bead)
+#     except:
+#         if cg_bead == 'BB':
+#             return [],[], cg_residues[resid][cg_bead]['coord']
+#         sys.exit('cannot find connectivity for :'+str(cg_bead))
+# #### center of mass of cg_bead
+#     center=cg_residues[resid][cg_bead]['coord']
+# #### loop through bead connections from bead of interest
+#     for con_test in connect[run]:
+#         cg_temp=[]
+#     #### fetch connections which have more than one bead 1 to 2 beads and not self      
+#         cg=connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]!=cg_bead))]
+#     #### for each connecting bead 
+#         for con_bead in cg[:,0]:
+#             cg_temp.append(cg_residues[resid][con_bead]['coord']-center)
+#     #### average position of connecting bead
+#         cg_connections.append(np.mean(cg_temp, axis=0))
+#     #### all atoms with bead connections and self. should only ever be one. 
+#         at = int(connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]==cg_bead))][:,1])
+#         at_connections.append(at_residues[cg_bead][at]['coord']-center)
+#     return at_connections, cg_connections, center
 
 
 def find_cross_vector(ca, C, O):

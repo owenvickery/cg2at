@@ -223,43 +223,34 @@ def sort_directories(p_directories, mod_directories, np_directories):
     return np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories
 
 def check_water_molecules(water_input, np_directories):
-    exists = False
-    if water_input != None:
-        for directory in np_directories:
-            if os.path.exists(directory[0]+'SOL/'+water_input+'.pdb'):
-                return directory[0]+'SOL/', water_input
-    if not exists:
+    water=[]
+    for directory in np_directories:
+        if os.path.exists(directory[0]+'SOL/SOL.pdb'):
+            with open(directory[0]+'SOL/SOL.pdb', 'r') as sol_input:
+                for line_nr, line in enumerate(sol_input.readlines()):
+                    if line.startswith('['):
+                        water.append(line.split()[1])
+    if water_input in water:
+        return directory[0]+'SOL/', water_input
+    else:
         if water_input != None:
             print('\nThe water type '+water_input+' doesn\'t exist')
-        water=[]
-        for directory in np_directories:
-            water.append([directory[0]+'SOL/'])
-            for root, dirs, files in os.walk(directory[0]+'SOL/'):
-                for file in files:
-                    if file.endswith('.pdb'):
-                        water[-1].append(file)
-                break
         print('\nPlease select a water molecule from below:\n')
         print('{0:^20}{1:^30}'.format('Selection','water_molecule'))
         print('{0:^20}{1:^30}'.format('---------','----------'))
         offset=0
-        for d_val, directory in enumerate(np_directories):
-            print('the following water models are found in: \n\n'+water[d_val][0]+'\n')
-            for selection, water_file in enumerate(water[d_val][1:]):
-                print('{0:^20}{1:^30}'.format(selection+offset,water_file.split('.')[0]))
-            offset+=len(water[d_val][1:])
+        print('the following water models are found in: \n\n'+directory[0]+'SOL/'+'\n')
+        for selection, water_model in enumerate(water):
+            print('{0:^20}{1:^30}'.format(selection,water_model))
     while True:
         try:
-            number = int(input('\nplease select a water molecule: '))
-            minim = 0
-            for water_val, water_selection in enumerate(water):
-                if minim <= number < minim + len(water_selection):
-                    return water_selection[0], water_selection[number-minim+water_val+1].split('.')[0]
-                minim += len(water_selection)
+            number = int(input('\nplease select a water model: '))
+            if number < len(water):
+                return directory[0]+'SOL/', water[number]
         except KeyboardInterrupt:
             sys.exit('\nInterrupted')
         except:
-            print("Oops!  That was a invalid choice")    
+            print("Oops!  That was a invalid choice")                             
 
 ############################################################################################## fragment rotation #################################################################################
 

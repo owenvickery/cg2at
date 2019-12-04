@@ -11,130 +11,122 @@ import math
 
 
 
+
 def build_protein_atomistic_system(cg_residues, box_vec):
 #### initisation of counters
-    chain_information=[]
     chain_count=0
     system={}
-    at_residues={}
     backbone_coords={}
     backbone_coords[chain_count]=[]
     terminal={}
     terminal[chain_count]=[]
-    temporary_coordinates_atomistic={}
-    temporary_coordinates_atomistic[chain_count]={}
+    coordinates_atomistic={}
+    coordinates_atomistic[chain_count]={}
     sequence={}
     sequence[chain_count]=[]
-    res=0
     print('Converting Protein')
     gen.mkdir_directory(g_var.working_dir+'PROTEIN')  ### make and change to protein directory
 #### create new pdb file for chain 0 
     pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_novo_'+str(chain_count)+'.pdb', box_vec)
 #### for each residue in protein
     initial=True
-
+    residue_type={}
+    residue_type_mass={}
     for cg_residue_id, residue_number in enumerate(cg_residues):
-    #### temporary index/dictionaries       
-        at_residues[residue_number]={}
-    #### fetch fragments in residue and connectivity
-        at_residues[residue_number], connect=at_mod.get_atomistic_fragments(cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name'],cg_residues[residue_number], residue_number)
-    #### if residue contains BB bead a index of the BB connectivity is collected
-        if 'BB' in at_residues[residue_number]:
-            BB_connect=[] ### backbone connectivity
-            for atom_num, atom in enumerate(at_residues[residue_number]['BB']):
-                if at_residues[residue_number]['BB'][atom]['atom'] in f_loc.backbone[cg_residues[residue_number]['BB']['residue_name']]['b_connect']:
-                    BB_connect.append(atom)
-        
-    #### for each bead in residue
-        for frag_val,cg_fragments in enumerate(cg_residues[residue_number]):
-        #### gets connectivity between fragents 
-            at_connections, cg_connections, center=at_mod.connectivity(frag_val, cg_fragments, connect, at_residues[residue_number], cg_residues, residue_number)
-        #### if BB bead adds the N and C terminal atoms to connectivity
-            if cg_fragments=='BB':
-                at_connections, cg_connections, res = BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center)
-            #### measures the distance between BB beads. 
-                if not initial:
-                    residue_number, terminal, chain_count, temporary_coordinates_atomistic, backbone_coords, chain_information, res, sequence = check_chain(
-                        cg_residues, residue_number, terminal, chain_count, temporary_coordinates_atomistic, backbone_coords, chain_information, res, sequence)
-                #### if not prev residue the xyz coord of the cg_bead are added to the backbone_coords dictionary
-                else:
-                    xyz_cur=[cg_residues[residue_number]['BB']['coord'][0],cg_residues[residue_number]['BB']['coord'][1],cg_residues[residue_number]['BB']['coord'][2]]
-                    backbone_coords[chain_count].append(xyz_cur+[1])
-                    initial=False
-                    terminal[chain_count].append(f_loc.backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
-                    sequence = at_mod.add_to_sequence(sequence, cg_residues[residue_number]['BB']['residue_name'], chain_count)
-            if cg_residues[residue_number][cg_fragments]['residue_name'] == 'CYS' and cg_fragments != 'BB':
-                at_connections, cg_connections, disulphide, disul_at_info, disul_cg_info= find_closest_cysteine(at_connections, cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center)
-        #### finds optimum rotation of fragment
-            if len(at_connections) == len(cg_connections):
-                if cg_residues[residue_number][cg_fragments]['residue_name'] == 'PRO' and cg_fragments != 'BB':
-                    xyz_rot_apply=at_mod.rotate(np.array(at_connections), np.array(cg_connections), True)
-                else:
-                    xyz_rot_apply=at_mod.rotate(np.array(at_connections), np.array(cg_connections), False)
+        resname = cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name']
+        if cg_residue_id == 0:
+            terminal[chain_count].append(f_loc.backbone[resname]['ter'])
+        coordinates_atomistic[chain_count][residue_number]={}
+        frag_location=at_mod.fragment_location(resname, resname) ### get fragment location from database
+        residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(resname, frag_location)
+        connect = at_mod.connection(residue_type[resname])
+        for group in residue_type[resname]:
+            center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[resname][group], residue_type_mass[resname], residue_number, cg_residues[residue_number])
+
+            at_connect, cg_connect = at_mod.connectivity(cg_residues[residue_number], connect, at_frag_centers, cg_frag_centers, group_fit, group)
+            if 'BB' in group_fit:
+                BB_connect = []
+                for atom in group_fit['BB']:
+                    if group_fit['BB'][atom]['atom'] in f_loc.backbone[resname]['b_connect']:
+                        BB_connect.append(atom)
+                at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit['BB'], residue_number, BB_connect)
+                sequence = at_mod.add_to_sequence(sequence, resname, chain_count)
+                backbone_coords[chain_count].append(np.append(cg_residues[residue_number]['BB']['coord'], 1))
+
+            if resname == 'CYS' and 'BB' not in group_fit:
+                at_connect, cg_connect, disulphide, disul_at_info, disul_cg_info= find_closest_cysteine(at_connect, cg_connect, cg_residues, group_fit, residue_number)
+
+            if len(at_connect) == len(cg_connect):
+                xyz_rot_apply=at_mod.rotate(np.array(at_connect)-center, np.array(cg_connect)-center, False)
             else:
                 print('atom connections: '+str(len(at_connections))+' does not equal CG connections: '+str(len(cg_connections)))
-                sys.exit('residue number: '+str(residue_number)+', residue type: '+str(cg_residues[residue_number][cg_fragments]['residue_name'])+', bead: '+cg_fragments)
+                sys.exit('residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
 
+            for bead in group_fit:
+                for atom in group_fit[bead]:
+                    group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   
+                    # print(group_fit[bead][atom])
+                    atom_new = group_fit[bead][atom].copy()
+                    coordinates_atomistic[chain_count][residue_number][atom] = atom_new
+        #### if disulphide bond found move the S atoms to within 2 A of each other
+            if 'disulphide' in locals():
+                if disulphide:
+                    coordinates_atomistic[chain_count][residue_number] = shift_sulphur(residue_number, disul_at_info, disul_cg_info, coordinates_atomistic[chain_count], cg_residues) 
+                    disulphide = False
 
-        #### applies rotation to each atom
-            for atom in at_residues[residue_number][cg_fragments]:
-                at_residues[residue_number][cg_fragments][atom]['coord'] = at_mod.rotate_atom(at_residues[residue_number][cg_fragments][atom]['coord'], center, xyz_rot_apply)     
-    #### if disulphide bond found move the S atoms to within 2 A of each other
-        if 'disulphide' in locals():
-            if disulphide:
-                at_residues[residue_number] = shift_sulphur(residue_number, disul_at_info, disul_cg_info, at_residues, cg_residues) 
-                disulphide = False
-        temporary_coordinates_atomistic[chain_count][residue_number]=at_residues[residue_number]
-
-    final_coordinates_atomistic = finalise_novo_atomistic(temporary_coordinates_atomistic, cg_residues, box_vec)
-
-
-    terminal[chain_count].append(f_loc.backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
-
-    system['terminal_residue']=terminal
-    system['PROTEIN']=chain_count+1
+        if new_chain:
+            terminal[chain_count].append(f_loc.backbone[resname]['ter'])
+            chain_count+=1
+            if cg_residue_id+1 != len(cg_residues):
+                backbone_coords[chain_count]=[]
+                coordinates_atomistic[chain_count]={}
+                terminal[chain_count]=[]
+                terminal[chain_count].append(f_loc.backbone[cg_residues[residue_number+1]['BB']['residue_name']]['ter'])
+                sequence[chain_count]=[]
     if g_var.v >=1:
         print('\n{:-<75}'.format('>  Verbose level 1 start'))
-        print('\nchain number\tDelta A\t\tno in pdb\tlength of chain')
-        print('------------\t-------\t\t---------\t---------------')
-        for chain in range(chain_count):
-            print('\t',chain,'\t',np.round(chain_information[chain][0], 1),'\t\t',chain_information[chain][1]-chain_information[chain][2]+1,'-',chain_information[chain][1],'\t\t',chain_information[chain][2])
-        if chain_count >1:
-            print('\t', chain_count,'\tN/A\t\t',chain_information[chain][1]+2,'-',residue_number+1,'\t\t',residue_number-res)
+        print('\n{0:^15}{1:^12}'.format('chain number', 'length of chain')) #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
+        print('\n{0:^15}{1:^12}'.format('------------', '---------------'))
+        for chain in sequence:
+            print('{0:^15}{1:^12}'.format(chain, len(sequence[chain])))
+        print()
+    final_coordinates_atomistic = finalise_novo_atomistic(coordinates_atomistic, cg_residues, box_vec)
+    system['terminal_residue']=terminal
+    system['PROTEIN']=chain_count
+    return system, backbone_coords, final_coordinates_atomistic, sequence    
+
+
+def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_connect):
+#### connect to preceeding backbone bead in chain
+    new_chain=False
+    try:
+        xyz_cur = cg_residues[residue_number]['BB']['coord']
+        xyz_prev = cg_residues[residue_number-1]['BB']['coord']
+        dist=np.sqrt(((xyz_prev[0]-xyz_cur[0])**2)+((xyz_prev[1]-xyz_cur[1])**2)+((xyz_prev[2]-xyz_cur[2])**2))
+        if dist < 5:
+            cg_connections.append(cg_residues[residue_number-1]['BB']['coord'])
+            at_connections.append(at_residues[BB_connect[0]]['coord'])
+    except:
+        pass
+#### connect to next backbone bead in chain
+    try:
+        xyz_cur = cg_residues[residue_number]['BB']['coord']
+        xyz_next = cg_residues[residue_number+1]['BB']['coord']
+        dist=np.sqrt(((xyz_next[0]-xyz_cur[0])**2)+((xyz_next[1]-xyz_cur[1])**2)+((xyz_next[2]-xyz_cur[2])**2))
+        if dist < 5:
+            cg_connections.append(cg_residues[residue_number+1]['BB']['coord'])
+            at_connections.append(at_residues[BB_connect[1]]['coord'])
         else:
-            print('\t', chain_count,'\tN/A\t\t',res+2,'-',residue_number+1,'\t\t',residue_number-res)
-
-        print('\n{:-<75}'.format('>  Verbose level 1 end\n'))
-    return system, backbone_coords, final_coordinates_atomistic, sequence
-
-def check_chain(cg_residues, residue_number, terminal, chain_count, temporary_coordinates_atomistic, backbone_coords, chain_information, res, sequence):
-    xyz_prev=[cg_residues[residue_number-1]['BB']['coord'][0],cg_residues[residue_number-1]['BB']['coord'][1],cg_residues[residue_number-1]['BB']['coord'][2]]              
-    xyz_cur=[cg_residues[residue_number]['BB']['coord'][0],cg_residues[residue_number]['BB']['coord'][1],cg_residues[residue_number]['BB']['coord'][2]]
-    dist=np.sqrt(((xyz_prev[0]-xyz_cur[0])**2)+((xyz_prev[1]-xyz_cur[1])**2)+((xyz_prev[2]-xyz_cur[2])**2))
-#### if distance between BB beads is more than 5 A then it is considered a new chain.
-    if dist > 5:
-        terminal[chain_count].append(f_loc.backbone[cg_residues[residue_number-1]['BB']['residue_name']]['ter'])
-        chain_count+=1  ### adds to to the protein count
-        temporary_coordinates_atomistic[chain_count]={}
-        backbone_coords[chain_count]=[]   #### creates another dictionary key for bb fragments 
-        backbone_coords[chain_count].append(xyz_cur+[1])  #### adds xyz coord and mass of 1 to list
-        chain_information.append([dist, residue_number, residue_number-res])  ### info for verbose flag
-        res=residue_number-1 #### updates residue
-        terminal[chain_count]=[]
-        terminal[chain_count].append(f_loc.backbone[cg_residues[residue_number]['BB']['residue_name']]['ter'])
-        sequence[chain_count]=[]
-        sequence = at_mod.add_to_sequence(sequence, cg_residues[residue_number]['BB']['residue_name'], chain_count)
-
-    else:
-    #### the xyz coord of the BB bead are added to the backbone_coords dictionary
-        backbone_coords[chain_count].append(xyz_cur+[1])
-        sequence = at_mod.add_to_sequence(sequence, cg_residues[residue_number]['BB']['residue_name'], chain_count)
-    return residue_number, terminal, chain_count, temporary_coordinates_atomistic, backbone_coords, chain_information, res, sequence
+            new_chain=True
+    except:
+        new_chain=True
+        pass
+    return at_connections,cg_connections, new_chain
 
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
 #### 
 
-def find_closest_cysteine(at_connections, cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center):
+def find_closest_cysteine(at_connections, cg_connections, cg_residues, group, residue_number):
     disulphide, atom_number=False, 0
     for res_id in cg_residues: 
         try:
@@ -143,11 +135,11 @@ def find_closest_cysteine(at_connections, cg_connections, cg_residues, at_residu
                 xyz_cur=[cg_residues[residue_number]['SC1']['coord'][0],cg_residues[residue_number]['SC1']['coord'][1],cg_residues[residue_number]['SC1']['coord'][2]] ### cysteine of interest
                 xyz_check=[cg_residues[res_id]['SC1']['coord'][0],cg_residues[res_id]['SC1']['coord'][1],cg_residues[res_id]['SC1']['coord'][2]] ### cysteine to check distance
                 dist=np.sqrt(((xyz_check[0]-xyz_cur[0])**2)+((xyz_check[1]-xyz_cur[1])**2)+((xyz_check[2]-xyz_cur[2])**2)) ### distance
-                if dist < 6:
-                    for atom_number in at_residues[residue_number]['SC1']:
-                        if at_residues[residue_number]['SC1'][atom_number]['atom']==f_loc.backbone[cg_residues[residue_number]['SC1']['residue_name']]['disulphide']: ### if sulphur
-                            at_connections.append(at_residues[residue_number]['SC1'][atom_number]['coord']-center) ### add at centered coordinates
-                    cg_connections.append(cg_residues[res_id]['SC1']['coord']-center) ### add cg centered coordinates
+                if dist < g_var.cys:
+                    for atom_number in group['SC1']:
+                        if group['SC1'][atom_number]['atom']==f_loc.backbone[cg_residues[residue_number]['SC1']['residue_name']]['disulphide']: ### if sulphur
+                            at_connections.append(group['SC1'][atom_number]['coord']) ### add at centered coordinates
+                    cg_connections.append(cg_residues[res_id]['SC1']['coord']) ### add cg centered coordinates
                     disulphide=True
                     break
         except:
@@ -160,10 +152,9 @@ def shift_sulphur(residue_number, disul_at_info, disul_cg_info, at_residues, cg_
         xyz_cur=np.array([cg_residues[disul_cg_info]['SC1']['coord'][0],cg_residues[disul_cg_info]['SC1']['coord'][1],cg_residues[disul_cg_info]['SC1']['coord'][2]])
         cutoff=3.2
     else:
-        xyz_cur=np.array([at_residues[disul_cg_info]['SC1'][disul_at_info]['coord'][0],at_residues[disul_cg_info]['SC1'][disul_at_info]['coord'][1],at_residues[disul_cg_info]['SC1'][disul_at_info]['coord'][2]])
+        xyz_cur=np.array([at_residues[disul_cg_info][disul_at_info]['coord'][0],at_residues[disul_cg_info][disul_at_info]['coord'][1],at_residues[disul_cg_info][disul_at_info]['coord'][2]])
         cutoff=2
-
-    xyz_check=np.array([at_residues[residue_number]['SC1'][disul_at_info]['coord'][0],at_residues[residue_number]['SC1'][disul_at_info]['coord'][1],at_residues[residue_number]['SC1'][disul_at_info]['coord'][2]])
+    xyz_check=np.array([at_residues[residue_number][disul_at_info]['coord'][0],at_residues[residue_number][disul_at_info]['coord'][1],at_residues[residue_number][disul_at_info]['coord'][2]])
     dist=np.sqrt(((xyz_check[0]-xyz_cur[0])**2)+((xyz_check[1]-xyz_cur[1])**2)+((xyz_check[2]-xyz_cur[2])**2))
 #### moves sidechains closer together in increments of 5% of the length of the vector 
     offset=0
@@ -179,90 +170,60 @@ def shift_sulphur(residue_number, disul_at_info, disul_cg_info, at_residues, cg_
                 offset = vector * x 
                 break
 #### applies final shift to the rest of the atoms in the sidechain
-    for atom in at_residues[residue_number]['SC1']:
-        at_residues[residue_number]['SC1'][atom]['coord']=at_residues[residue_number]['SC1'][atom]['coord']+offset
+    for atom in at_residues[residue_number]:
+        at_residues[residue_number][atom]['coord']=at_residues[residue_number][atom]['coord']+offset
     return at_residues[residue_number]
 
-def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_connect, res, center):
-#### connect to preceeding backbone bead in chain
-    try:
-        cg_connections.append(cg_residues[residue_number-1]['BB']['coord']-center)
-        at_connections.append(at_residues[residue_number]['BB'][BB_connect[0]]['coord']-center)
-    except:
-        res=residue_number
-        pass
-#### connect to next backbone bead in chain
-    try:
-        cg_connections.append(cg_residues[residue_number+1]['BB']['coord']-center)
-        at_connections.append(at_residues[residue_number]['BB'][BB_connect[1]]['coord']-center)
-    except:
-        pass
-    return at_connections,cg_connections, res
-
-def finalise_novo_atomistic(temporary_coordinates_atomistic, cg_residues, box_vec):
+def finalise_novo_atomistic(atomistic, cg_residues, box_vec):
     final_at_residues={}
-    final_at_resids = {}
-    for chain in temporary_coordinates_atomistic:
-        pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_novo_'+str(chain)+'.pdb', box_vec)
-        final_at_residues[chain], final_at_resids[chain] = fix_dihedrals(temporary_coordinates_atomistic[chain], cg_residues)
-    #### check if any atom overlap if so give the atom a kick
+    final_at = {}
+    for chain in atomistic: 
+        at_number=0    
+        final_at_residues[chain]={}  
+        final_at[chain]={}
         coords=[]
-        for atom in final_at_residues[chain]:
-            coords.append(final_at_residues[chain][atom]['coord'])
+        pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_novo_'+str(chain)+'.pdb', box_vec)
+        for res_index, residue_id in enumerate(atomistic[chain]):
+            if res_index < len(atomistic[chain])-2:
+                atomistic[chain][residue_id] = fix_carbonyl(residue_id, cg_residues, atomistic[chain][residue_id])
+            else:
+                atomistic[chain][residue_id] = atomistic[chain][residue_id]
+            for at_val, atom in enumerate(atomistic[chain][residue_id]):
+                atomistic[chain][residue_id][at_val+1]['resid'] = res_index
+                coords.append(atomistic[chain][residue_id][at_val+1]['coord'])
+                final_at[chain][at_number]=atomistic[chain][residue_id][at_val+1]
+                at_number+=1
+            final_at_residues[chain][res_index]=atomistic[chain][residue_id]
+
         coords = at_mod.check_atom_overlap(coords)
-        for line_index, atom in enumerate(final_at_residues[chain]):
-            final_at_residues[chain][atom]['coord']=coords[line_index]
-            pdb_output.write(g_var.pdbline%((line_index,final_at_residues[chain][atom]['atom'],final_at_residues[chain][atom]['res_type'],ascii_uppercase[chain],\
-                final_at_residues[chain][atom]['resid'],final_at_residues[chain][atom]['coord'][0],final_at_residues[chain][atom]['coord'][1],final_at_residues[chain][atom]['coord'][2],1,0))+'\n')
+        for atom in final_at[chain]:
+            final_at[chain][atom]['coord']=coords[atom]
+            final_at_residues[chain][final_at[chain][atom]['resid']][atom]=final_at[chain][atom]
+            pdb_output.write(g_var.pdbline%((atom,final_at[chain][atom]['atom'],final_at[chain][atom]['res_type'],ascii_uppercase[chain],\
+                            final_at[chain][atom]['resid'],final_at[chain][atom]['coord'][0],final_at[chain][atom]['coord'][1],final_at[chain][atom]['coord'][2],1,0))+'\n')
         pdb_output.close()
-    return final_at_resids
+    return final_at_residues
 
 
 ########################################### fix carbonyl section 
 
-
 def fix_carbonyl(residue_id, cg, at):
     ca=[]
     for index in range(3):
-        for atom in at[residue_id+index]['BB']:
-            if at[residue_id+index]['BB'][atom]['atom'] in f_loc.backbone[cg[residue_id+index]['BB']['residue_name']]['restraint']: 
-                ca.append(at[residue_id+index]['BB'][atom]['coord'])
-            if index == 0 :
-                if at[residue_id+index]['BB'][atom]['atom'] == f_loc.backbone[cg[residue_id+index]['BB']['residue_name']]['b_connect'][1]: 
-                    C = atom
-                if at[residue_id+index]['BB'][atom]['atom'] in f_loc.backbone[cg[residue_id+index]['BB']['residue_name']]['dihedral']:   
-                    O = atom                 
+        ca.append(cg[residue_id+index]['BB']['coord'])
 
-    initial_vector, cross_vector = at_mod.find_cross_vector( ca, at[residue_id]['BB'][C]['coord'], at[residue_id]['BB'][O]['coord'])
+    for atom in at:
+        if at[atom]['atom'] == 'C': 
+            C = atom
+        if at[atom]['atom'] in 'O':   
+            O = atom                 
+
+    initial_vector, cross_vector = at_mod.find_cross_vector( ca, at[C]['coord'], at[O]['coord'])
     rotation = at_mod.align_to_vector(initial_vector, cross_vector)
     center = ca[0]+(ca[1]-ca[0])/3
-    at[residue_id]['BB'][C]['coord'] = (at[residue_id]['BB'][C]['coord']-center).dot(rotation)+center
-    at[residue_id]['BB'][O]['coord'] = (at[residue_id]['BB'][O]['coord']-center).dot(rotation)+center
+    at[C]['coord'] = (at[C]['coord']-center).dot(rotation)+center
+    at[O]['coord'] = (at[O]['coord']-center).dot(rotation)+center
     return at
-
-
-
-def fix_dihedrals(atomistic_residues, cg_residues):
-    for res_index, residue_id in enumerate(atomistic_residues):
-        if res_index < len(atomistic_residues)-2:
-            atomistic_residues = fix_carbonyl(residue_id, cg_residues, atomistic_residues)
-    final = {}
-    atom_count=0
-    residue_number=0
-    final_resid={}
-    for residue_id in atomistic_residues:
-        final_resid[residue_number]={}
-        residue_length=0
-        residue_temp={}
-        for cg_fragments in atomistic_residues[residue_id]:
-            residue_temp.update(atomistic_residues[residue_id][cg_fragments])
-        for atom in range(1, len(residue_temp)+1):
-            final[atom_count]=residue_temp[atom]
-            final[atom_count].update({'resid':residue_number})
-            final_resid[residue_number][atom]=residue_temp[atom]
-            atom_count+=1
-        residue_number+=1
-    return final, final_resid
 
 ##################################################################  User supplied protein ##############
 
@@ -351,9 +312,6 @@ def align_chains(atomistic_protein_input, seq_user, sequence):
         print('\nuser supplied structure:\n')
         for index in seq_user:
             print('chain:', index, seq_user[index], '\n')        
-
-
-
     at={}
     sequence_temp = sequence.copy()
     for chain_at in range(len(atomistic_protein_input)):

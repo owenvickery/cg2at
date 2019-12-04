@@ -1,9 +1,0 @@
-ATOM     60 C211 DPPE    1       4.426   5.447  49.537  10.0  7.00      MEMB
-ATOM     61 H11R DPPE    1       4.844   6.475  49.451  10.0  0.00      MEMB
-ATOM     62 H11S DPPE    1       3.443   5.518  50.015  10.0  0.00      MEMB
-ATOM     63 C212 DPPE    1       4.252   4.863  48.155  1.00  0.00      MEMB
-ATOM     64 H12R DPPE    1       3.583   3.982  48.232  1.00  0.00      MEMB
-ATOM     65 H12S DPPE    1       5.185   4.442  47.751  1.00  0.00      MEMB
-ATOM     66 C213 DPPE    1       3.703   5.958  47.238  11.0  8.00      MEMB
-ATOM     67 H13R DPPE    1       4.472   6.719  47.010  11.0  0.00      MEMB
-ATOM     68 H13S DPPE    1       2.866   6.461  47.768  11.0  0.00      MEMB
