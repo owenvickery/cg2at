@@ -40,25 +40,25 @@ def fetch_fragment(p_directories):
         for residue in p_directories[directory][1:]:    
             if residue not in processing:
                 atom_list, bb_list, restraint, disulphide, terminal, dihedral=[], [], [], '', False, []
-                for file_name in os.listdir(p_directories[directory][0]+residue):
-                    if file_name.endswith('.pdb'):
-                        with open(p_directories[directory][0]+residue+'/'+file_name, 'r') as pdb_input:
-                            for line_nr, line in enumerate(pdb_input.readlines()):
-                                if line.startswith('ATOM'):
-                                    line_sep = pdbatom(line)
-                                    if 'H' not in line_sep['atom_name']:
-                                        if file_name.startswith('B'):
-                                            atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
-                                        if line_sep['backbone'] == 2:
-                                            bb_list.append(line_sep['atom_name'])  ### connecting atoms
-                                        if line_sep['backbone'] in [3,4,5]:
-                                            restraint.append(line_sep['atom_name'])  ### position restrained atoms
-                                        if line_sep['backbone'] in [5]:
-                                            disulphide = line_sep['atom_name'] ### position restrained atoms
-                                        if line_sep['backbone'] == 4:
-                                            terminal=True
-                                        if line_sep['backbone'] in [6] and file_name.startswith('B'):
-                                            dihedral.append(line_sep['atom_name'])
+                with open(p_directories[directory][0]+residue+'/'+residue+'.pdb', 'r') as pdb_input:
+                    for line_nr, line in enumerate(pdb_input.readlines()):
+                        if line.startswith('['):
+                            bead = line.split()[1]
+                        if line.startswith('ATOM'):
+                            line_sep = pdbatom(line)
+                            if 'H' not in line_sep['atom_name']:
+                                if bead.startswith('B'):
+                                    atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
+                                if line_sep['backbone'] == 2:
+                                    bb_list.append(line_sep['atom_name'])  ### connecting atoms
+                                if line_sep['backbone'] in [3,4,5]:
+                                    restraint.append(line_sep['atom_name'])  ### position restrained atoms
+                                if line_sep['backbone'] in [5]:
+                                    disulphide = line_sep['atom_name'] ### position restrained atoms
+                                if line_sep['backbone'] == 4:
+                                    terminal=True
+                                if line_sep['backbone'] in [6]:
+                                    dihedral.append(line_sep['atom_name'])
                 processing[residue]={'atoms':atom_list,'b_connect':bb_list,'restraint':restraint, 'disulphide':disulphide, 'ter':terminal, 'dihedral':dihedral}  ### adds heavy atoms and connecting atoms to backbone dictionary 
                 atom_list, bb_list, restraint=[], [], []  ### resets residue lists of heavy atoms, connecting atoms and restraint 
 #### if verbose prints out all heavy atoms and connecting atoms for each backbone
