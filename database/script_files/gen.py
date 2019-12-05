@@ -29,9 +29,6 @@ def fetch_chiral(np_directories,p_directories):
                         pass
     return processing
 
-
-
-
 def fetch_fragment(p_directories):
 #### fetches the Backbone heavy atoms and the connectivity with pre/proceeding residues 
     

@@ -13,12 +13,16 @@ import gen, g_var, f_loc, at_mod
 
 
 def collect_input(cg, at):
+    if not os.path.exists(cg):
+        sys.exit('\nPrint cannot find CG input file: '+cg)
     gen.mkdir_directory(g_var.working_dir)
     gen.mkdir_directory(g_var.final_dir)
     gen.mkdir_directory(g_var.input_directory)
 #### collates all input files in input directory
     copyfile(cg, g_var.input_directory+cg.split('/')[-1])
     if at != None:
+        if not os.path.exists(at):
+            sys.exit('Print cannot find AT input file: '+at)
         copyfile(at, g_var.input_directory+at.split('/')[-1])
     os.chdir(g_var.input_directory)
 #### converts input files into pdb files 
@@ -52,6 +56,8 @@ def gromacs(cmd):
             sys.exit('\n'+out)
         elif 'but did not reach the requested Fmax' in out:
             sys.exit('\n'+out)
+        elif 'number of atoms in the topology (' in out:
+            sys.exit('\n'+out+'\n\nIf it is only 2 atoms out check cysteine distances, and increase -cys cutoff')
 
 
 def make_min(residue):#, fragments):

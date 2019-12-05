@@ -16,6 +16,7 @@ def read_initial_pdb():
 #### separates lines
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)
+                line_sep['residue_name'] = swap(line_sep['residue_name'])
 #### set up resnames in dictionaries
                 cg_residues = add_residue_to_dictionary(cg_residues, line_sep)
 #### sets up previous resid id 
@@ -120,3 +121,9 @@ def fix_pbc(cg_residues, box_vec):
                     elif res_val == 0 and residue_type == 'PROTEIN':
                         bead_prev=bead
     return cg_residues
+
+def swap(residue):
+    if residue in f_loc.swap_dict:
+        return f_loc.swap_dict[residue]
+    else:
+        return residue

@@ -83,20 +83,20 @@ def check_atom_overlap(coordinates):
     return coordinates
 
 
-def fragment_location(residue, fragments):  
+def fragment_location(residue):  
 #### runs through dirctories looking for the atomistic fragments returns the correct location
     if residue in f_loc.p_residues:
         for directory in range(len(f_loc.p_directories)):
-            if os.path.exists(f_loc.p_directories[directory][0]+residue+'/'+fragments+'.pdb'):
-                return f_loc.p_directories[directory][0]+residue+'/'+fragments+'.pdb'
+            if os.path.exists(f_loc.p_directories[directory][0]+residue+'/'+residue+'.pdb'):
+                return f_loc.p_directories[directory][0]+residue+'/'+residue+'.pdb'
         for directory in range(len(f_loc.mod_directories)):
-            if os.path.exists(f_loc.mod_directories[directory][0]+residue+'/'+fragments+'.pdb'):
-                return f_loc.mod_directories[directory][0]+residue+'/'+fragments+'.pdb'
+            if os.path.exists(f_loc.mod_directories[directory][0]+residue+'/'+residue+'.pdb'):
+                return f_loc.mod_directories[directory][0]+residue+'/'+residue+'.pdb'
     else:
         for directory in range(len(f_loc.np_directories)):
-            if os.path.exists(f_loc.np_directories[directory][0]+residue+'/'+fragments+'.pdb'):
-                return f_loc.np_directories[directory][0]+residue+'/'+fragments+'.pdb'
-    sys.exit('cannot find fragment: '+residue+'/'+fragments+'.pdb')
+            if os.path.exists(f_loc.np_directories[directory][0]+residue+'/'+residue+'.pdb'):
+                return f_loc.np_directories[directory][0]+residue+'/'+residue+'.pdb'
+    sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
 
 def get_atomistic(residue, frag_location):
     SF=1   #### scaling factor for fragments
@@ -133,20 +133,29 @@ def get_atomistic(residue, frag_location):
                     fragment_mass[bead].append([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF,1])
     return residue, fragment_mass
 
+def COM(mass, fragment):
+    if np.any(np.array(mass)[:,3]):      
+        mass = np.average(np.array(mass)[:,:3], axis=0, weights=np.array(mass)[:,3])
+    else:
+        print('bead has no mass: \n')
+        sys.exit(fragment)
+    return mass
+
 def rigid_fit(group, frag_mass, resid, cg):
     rigid_mass_at = []
     rigid_mass_cg = []
     for bead in group:
         rigid_mass_at+=frag_mass[bead]
-        rigid_mass_cg.append(cg[bead]['coord'])      
-    rigid_mass_at = np.average(np.array(rigid_mass_at)[:,:3], axis=0, weights=np.array(rigid_mass_at)[:,3])
+        rigid_mass_cg.append(cg[bead]['coord'])
+    rigid_mass_at = COM(rigid_mass_at, group)
     rigid_mass_cg = np.mean(rigid_mass_cg, axis=0)
     group, COM_vector = align_at_frag_to_CG_frag(rigid_mass_at, rigid_mass_cg, group)
     at_frag_centers = {}
     cg_frag_centers = {}
     for bead in group:
         cg_frag_centers[bead] = cg[bead]['coord']
-        at_frag_centers[bead] = np.average(np.array(frag_mass[bead])[:,:3], axis=0, weights=np.array(frag_mass[bead])[:,3])-COM_vector
+        at_frag_centers[bead] = COM(frag_mass[bead], bead)
+        at_frag_centers[bead] -= COM_vector
     return rigid_mass_cg, at_frag_centers, cg_frag_centers, group
 
 

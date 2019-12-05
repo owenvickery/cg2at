@@ -19,10 +19,14 @@ parser.add_argument('-ff', help='choose your forcefield. This is optional',metav
 parser.add_argument('-fg', help='choose your fragment library. This is optional',metavar='charmm36',type=str, nargs='*')
 parser.add_argument('-gromacs', help='gromacs executable name',metavar='gmx_avx',type=str)
 parser.add_argument('-cys', help='cutoff for disulphide bonds, sometimes CYS are too far apart',metavar='6.5',type=float, default=7)
+parser.add_argument('-swap', help='creates a swap dictionary supply residues as PIP2:PVCL2',metavar='charmm36',type=str, nargs='*')
 args = parser.parse_args()
 options = vars(args)
 
-c, a, v, ter, clean, w, ff, fg, ind, cys = args.c, args.a, args.v , args.ter, args.clean, args.w, args.ff, args.fg, args.ind, args.cys
+
+
+
+c, a, v, ter, clean, w, ff, fg, ind, cys, swap = args.c, args.a, args.v , args.ter, args.clean, args.w, args.ff, args.fg, args.ind, args.cys, args.swap
 
 timestamp       =  strftime("%Y-%m-%d_%H-%M-%S", gmtime())
 start_dir       = os.getcwd()+'/'  ### initial working directory

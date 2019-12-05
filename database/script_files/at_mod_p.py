@@ -37,7 +37,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
         if cg_residue_id == 0:
             terminal[chain_count].append(f_loc.backbone[resname]['ter'])
         coordinates_atomistic[chain_count][residue_number]={}
-        frag_location=at_mod.fragment_location(resname, resname) ### get fragment location from database
+        frag_location=at_mod.fragment_location(resname) ### get fragment location from database
         residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(resname, frag_location)
         connect = at_mod.connection(residue_type[resname])
         for group in residue_type[resname]:
@@ -360,9 +360,8 @@ def center_atomistic(atomistic_protein_input, backbone_coords):
                     short_line=atomistic_protein_input[chain][part][residue][atom]
                     protein_mass.append([short_line['coord'][0],short_line['coord'][1],short_line['coord'][2],short_line['frag_mass']])
         #### returns the COM of the atomistic protein
-            atomistic_protein_mass=np.average(np.array(protein_mass)[:,:3], axis=0, weights=np.array(protein_mass)[:,3])#### add center of mass of CG_proteins
-        #### for each chain the COM of the CG representation is stored (only cg is needed)
-            cg_com[chain].append(np.average(np.array(backbone_coords[chain])[sls:sle,:3], axis=0, weights=np.array(backbone_coords[chain])[sls:sle,3]))
+            atomistic_protein_mass = at_mod.COM(protein_mass, 'protein at: '+str(chain)+' '+part)#### add center of mass of CG_proteins
+            cg_com[chain].append(at_mod.COM(backbone_coords[chain][sls:sle], 'protein cg: '+str(chain)+' '+part))
         #### each atoms coord is updated so the monomer COM is the same as the CG
             for residue in atomistic_protein_input[chain][part]:
                 for atom in atomistic_protein_input[chain][part][residue]:

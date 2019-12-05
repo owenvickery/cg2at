@@ -95,7 +95,7 @@ def atomistic_non_protein_non_solvent(cg_residue_type,cg_residues):
     residue_type_mass={}
     for cg_resid, cg_residue in enumerate(cg_residues):
         atomistic_fragments[cg_resid]={}
-        frag_location=at_mod.fragment_location(cg_residue_type, cg_residue_type) ### get fragment location from database
+        frag_location=at_mod.fragment_location(cg_residue_type) ### get fragment location from database
         residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(cg_residue_type, frag_location)
         connect = at_mod.connection(residue_type[cg_residue_type])
         for group in residue_type[cg_residue_type]:
@@ -126,7 +126,7 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
             fragment = bead
             break
         atomistic_fragments[cg_resid]={}
-        frag_location=at_mod.fragment_location(cg_residue_type, cg_residue_type) ### get fragment location from database
+        frag_location=at_mod.fragment_location(cg_residue_type) ### get fragment location from database
         residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(cg_residue_type, frag_location)
         for res_type in residue_type[cg_residue_type]:
             if fragment in residue_type[cg_residue_type][res_type]:
