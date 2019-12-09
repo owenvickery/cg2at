@@ -114,6 +114,7 @@ def ask_ter_question(default_ter, ter_name, ter_val, chain):
         except:
             print("Oops!  That was a invalid choice")
     return default_ter
+
 def ask_terminal(chain, p_system):
 #### default termini is neutral, however if ter flag is supplied you interactively choose termini 
     default_ter=[1,1]
@@ -138,7 +139,7 @@ def ask_terminal(chain, p_system):
 def minimise_protein_chain(chain, input, pdb2gmx_selections):
 #### pdb2gmx on on protein chain, creates the topologies    
     gromacs(g_var.gmx+' pdb2gmx -f PROTEIN_'+input+str(chain)+'.pdb -o PROTEIN_'+input+str(chain)+'_gmx.pdb -water none \
--p PROTEIN_'+input+str(chain)+'.top  -i PROTEIN_'+input+str(chain)+'_posre.itp -ter '+pdb2gmx_selections+'\nEOF') #### single chains
+-p PROTEIN_'+input+str(chain)+'.top  -i PROTEIN_'+input+str(chain)+'_posre.itp '+g_var.vs+' -ter '+pdb2gmx_selections+'\nEOF') #### single chains
 #### converts the topology file and processes it into a itp file
     convert_topology('PROTEIN_'+input, chain)
 #### writes topology overview for each chain 
@@ -178,8 +179,8 @@ def steered_md_atomistic_to_cg_coord(chain):
     gen.mkdir_directory('steered_md')
 #### create bog standard mdp file, simulation is only 3 ps in a vaccum so settings should not have any appreciable effect 
     with open('steered_md.mdp', 'w') as steered_md:
-        steered_md.write('define = -DPOSRES_STEERED\nintegrator = md\nnsteps = 3000\ndt = 0.001\ncontinuation   = no\n')
-        steered_md.write('constraint_algorithm = lincs\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\n')
+        steered_md.write('define = -DPOSRES_STEERED\nintegrator = md\nnsteps = 3000\ndt = '+g_var.vst+'\ncontinuation   = no\n')
+        steered_md.write('constraint_algorithm = lincs\nconstraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\n')
         steered_md.write('rcoulomb = 1\nrvdw = 1\ncoulombtype  = PME\npme_order = 4\nfourierspacing = 0.16\ntcoupl = V-rescale\n')
         steered_md.write('tc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')    
 #### run grompp on chain 
@@ -367,7 +368,7 @@ def alchembed(system):
     #### creates a alchembed mdp for each chain 
         with open('alchembed_'+str(chain)+'.mdp', 'w') as alchembed:
             alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 500\ndt = 0.001\ncontinuation = no\nconstraint_algorithm = lincs')
-            alchembed.write('\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
+            alchembed.write('\nconstraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
             alchembed.write('\npme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\ncutoff-scheme = Verlet')
             alchembed.write('\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00')
             alchembed.write('\ndelta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6\ncouple-moltype = protein_'+str(chain))

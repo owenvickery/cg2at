@@ -23,6 +23,7 @@ parser.add_argument('-gromacs', help='gromacs executable name',metavar='gmx_avx'
 parser.add_argument('-cys', help='cutoff for disulphide bonds, sometimes CYS are too far apart',metavar='6.5',type=float, default=7)
 parser.add_argument('-swap', help='creates a swap dictionary supply residues as PIP2,D3A:PVCL2,C3A',metavar='charmm36',type=str, nargs='*')
 parser.add_argument('-box', help='box size in Angstrom (0 = use input file)',metavar='100 100 100',type=float, nargs=3)
+parser.add_argument('-vs', help='virtual sites', action='store_true')
 args = parser.parse_args()
 options = vars(args)
 
@@ -32,6 +33,13 @@ c, a = args.c, args.a
 w, ff, fg, ind = args.w, args.ff, args.fg, args.ind
 cys, swap = args.cys, args.swap
 ter, nt, ct = args.ter, args.nt, args.ct
+vs=args.vs
+if args.vs:
+    vst='0.004'
+    vs = '-vsite h'
+else:
+    vst='0.002'
+    vs = ''
 box = args.box
 # extra bits
 v, clean,  = args.v, args.clean
