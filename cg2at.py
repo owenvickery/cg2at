@@ -17,8 +17,14 @@ print('\nThis script is now hopefully doing the following (Good luck):\n')
 
 #### read in CG file
 print('Reading in your CG representation\n')
-cg_residues, box_vec = cg_mod.read_initial_pdb()
-cg_residues=cg_mod.fix_pbc(cg_residues, box_vec)
+cg_residues, box_vec_initial = cg_mod.read_initial_pdb()
+
+if g_var.box != None:
+    box_vec = gen.new_box_vec(box_vec_initial, g_var.box)
+else:
+    box_vec=box_vec_initial
+
+cg_residues =cg_mod.fix_pbc(cg_residues, box_vec_initial, box_vec)
 read_in_time=np.array(gmtime()[3:6])
 system={}
 ### convert protein to atomistic

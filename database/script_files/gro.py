@@ -101,24 +101,31 @@ def histidine_protonation(chain, input, chain_ter):
     pdb2gmx_selections+='\n'+str(chain_ter[0])+'\n'+str(chain_ter[1])
     return pdb2gmx_selections
 
+def ask_ter_question(default_ter, ter_name, ter_val, chain):
+    print('\n please select species for '+ter_name[ter_val]+' residue in chain '+str(chain)+' :\n 0: charged\n 1: neutral')
+    while True:
+        try:
+            number = int(input('\nplease select terminal species: '))
+            if number in [0,1]:
+                default_ter[ter_val]=number
+                break
+        except KeyboardInterrupt:
+            sys.exit('\nInterrupted')
+        except:
+            print("Oops!  That was a invalid choice")
+    return default_ter
 def ask_terminal(chain, p_system):
 #### default termini is neutral, however if ter flag is supplied you interactively choose termini 
     default_ter=[1,1]
     ter_name=['N terminal','C terminal']
     for ter_val,  ter_residue in enumerate(p_system['terminal_residue'][chain]):
         if not ter_residue:
-            if g_var.ter:
-                print('\n please select species for '+ter_name[ter_val]+' residue in chain '+str(chain)+' :\n 0: charged\n 1: neutral')
-                while True:
-                    try:
-                        number = int(input('\nplease select terminal species: '))
-                        if number in [0,1]:
-                            default_ter[ter_val]=number
-                            break
-                    except KeyboardInterrupt:
-                        sys.exit('\nInterrupted')
-                    except:
-                        print("Oops!  That was a invalid choice")
+            if g_var.nt and ter_val==0:
+                default_ter[ter_val]=0
+            elif g_var.ct and ter_val==1:
+                default_ter[ter_val]=0
+            elif g_var.ter:
+                default_ter = ask_ter_question(default_ter, ter_name, ter_val, chain)          
         else:
             if g_var.ter:
                 print('\n The '+ter_name[ter_val]+' residue is non adjustable')

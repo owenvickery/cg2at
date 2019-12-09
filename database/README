@@ -2,8 +2,6 @@ Once upon a time in the database. There were 2 folders, one liked to know how th
 
 
 
-An additional database can be provided using the -d flag but has to conform to the following database structure.
-
 The Database directories has a file structure of:
 
 Database
@@ -15,18 +13,17 @@ Database
         --  forcefield type (eg. charmm36)
             --  protein
                 --  Aminoacids (eg. cg residue name [ASP])
-                    --  fragment pdb called the same as bead names (eg. BB.pdb)
+                    --  fragment pdb called the same as bead names (eg. ASP.pdb)
+                    --  chiral file called chiral.dat (optional)
                 --  MOD
                     --  modified residues (eg. cg residue name [CYSD])
-                        --  fragment pdb called the same as bead names (eg. BB.pdb)
+                        --  fragment pdb called the same as bead names (eg. CYSD.pdb)
+                        --  chiral file called chiral.dat (optional)
             --  non_protein
                 --  non protein molecules (eg. lipids [POPC])
-                    --  fragment pdb called the same as bead names (eg. PO4.pdb)
-                    --  SOL 
-                        --  fragment pdb called the same as bead names (eg. W.pdb), all pdb file names are used to find out what is solvent (martini 3 water=WN, martini 2  water=W)  
-                    --  ION
-                        --  fragment pdb called the same as bead names (eg. NA+.pdb), all pdb file names are used to find out what are ions, as both Na+ and Cl- have the resname ION
-
+                    --  fragment pdb called the same as residue names (eg. POPC.pdb)
+                    --  itp file of residue called the same as residue names (eg. POPC.itp)
+                    --  chiral file called chiral.dat (optional)
 
 each fragment has to be exactly correct else the script fails
 

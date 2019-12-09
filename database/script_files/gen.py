@@ -5,8 +5,48 @@ import numpy as np
 import math
 from distutils.dir_util import copy_tree
 import glob
+import re
 import g_var
 
+def sort_swap_group():
+    s_res_d = {}
+    if g_var.swap != None:
+        s_res_d = {}
+        # print(g_var.swap)
+        for swap in g_var.swap:
+            res_s = re.split(':', swap)[0].split(',')
+            res_e = re.split(':', swap)[1].split(',')
+
+            if len(res_s) == len(res_e):
+                s_res_d[res_s[0]]={}
+                if len(res_s) == 1:
+                    s_res_d[res_s[0]][res_s[0]+':'+res_e[0]]={'ALL':'ALL'}
+                else:
+                    s_res_d[res_s[0]][res_s[0]+':'+res_e[0]]={}
+                    for bead in range(1,len(res_s)):
+                      s_res_d[res_s[0]][res_s[0]+':'+res_e[0]][res_s[bead]]=res_e[bead]
+            else:
+                sys.exit('The length of your swap groups do not match')
+
+        print('\nYou have chosen to swap the following residues\n')
+        print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}'.format('residue', 'bead', '     ', 'residue', 'bead'))
+        print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}'.format('-------', '----', '     ', '-------', '----'))
+        for residue in s_res_d:
+            for swap in s_res_d[residue]:
+                bead_s, bead_e='', ''
+                for bead in s_res_d[residue][swap]:
+                    bead_s+=bead+' '
+                    bead_e+=s_res_d[residue][swap][bead]+' '
+                print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}'.format(swap.split(':')[0], bead_s, ' --> ', swap.split(':')[1], bead_e))
+    return s_res_d
+
+def new_box_vec(box_vec, box):
+    box_vec_values = box_vec.split()[1:4]
+    for xyz_val, xyz in enumerate(box):
+        if xyz != 0:
+            box_vec_values[xyz_val] =  np.round(float(xyz), 3)
+    box_vec = g_var.box_line%(box_vec_values[0], box_vec_values[1], box_vec_values[2])
+    return box_vec
 
 def fetch_chiral(np_directories,p_directories):
     processing={}     

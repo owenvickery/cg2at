@@ -1,5 +1,14 @@
 the script is a fragment based conversion of CG representation into atomistic.
 
+This script requires:
+numpy
+scipy
+gromacs > v5
+
+you can supply 2 input files:
+coarse grain input as a pdb/gro/tpr
+atomistic representation as a pdb/gro/tpr
+
 The script has 3 outputs:
 
 The 1st requires no information other than the fragment corresponding to the bead
@@ -43,6 +52,30 @@ add "define = -DPOSRES" to the MDP file applies restraints to all heavy atoms
 gmx grompp -f md.mdp -c final_cg2at_at_rep_user_supplied.pdb -r final_cg2at_no_steered.pdb -p topol_final.top -o rigid_fit.tpr
 gmx mdrun -v -deffnm rigid_fit
 
+
+#############################################################################
+
+The following flags are available:
+
+-c cg_input.pdb (can accept pdb/gro/tpr [required])
+-a atomistic_input.pdb (can accept pdb/gro/tpr[optional])
+-v (3 level verbosity -vvv) (use just -v to get the run times etc)
+-clean (removes temp file after cg2at) (small amount of cleaning of directories)
+-ter interactive terminal residue selection
+-nt charged N terminal residue
+-ct charged C terminal residue
+-swap allows the swapping of residues/beads eg PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip
+-box new box vectors in Angstrom, (0 is ignored and uses input) eg 100 150 100 
+-w choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional
+-ff choose your forcefield. This is optional
+-fg choose your fragment libraries. This is optional
+-gromacs provide gromacs executable name if none standard. This is optional
+
+
+example input.
+
+python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -v -clean -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update -swap GLU,SC2:ASP,skip PIP2,D3B:PIP2,C3B -box 0 100 100 -nt -ct
+
 ############################################################################
 
 Available fragments
@@ -57,10 +90,11 @@ PC:  'POPC', 'DGPC', 'DLPC', 'DNPC', 'DOPC', 'DPPC', 'DRPC', 'DYPC'
 PE:  'POPE', 'DGPE', 'DLPE', 'DNPE', 'DOPE', 'DPPE', 'DYPE'
 PG:  'POPG'
 PA:  'POPA'
-PI:  'PIP2'
+PI:  'PIP2', 'POPI2C', 'POPI2D'
 Sterols: 'CHOL'
 Lipopolysaccharides: 'LIPA'
 Cardiolipin: 'CARD' (PVCL2) 
+misc: 'SPA', 'SPU'
 
 Protein
 -------
@@ -97,25 +131,6 @@ charmm36-mar2019.ff
 charmm36-jul2017-updated.ff
 oplsaam.ff
 
-
-#############################################################################
-
-The following flags are available:
-
--c cg_input.pdb (can accept pdb/gro/tpr [required])
--a atomistic_input.pdb (can accept pdb/gro/tpr[optional])
--v (3 level verbosity -vvv) (use just -v to get the run times etc)
--clean (removes temp file after cg2at) (small amount of cleaning of directories)
--ter interactive terminal residue selection
--w choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional
--ff choose your forcefield. This is optional
--fg choose your fragment libraries. This is optional
--gromacs provide gromacs executable name if none standard. This is optional
-
-
-example input.
-
-python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -v -clean -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update
 
 #############################################################################
 

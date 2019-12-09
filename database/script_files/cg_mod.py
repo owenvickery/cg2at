@@ -3,6 +3,7 @@
 import sys
 import numpy as np
 import copy
+# from string import upper
 import gen, g_var, f_loc
 
 def read_initial_pdb():
@@ -16,39 +17,40 @@ def read_initial_pdb():
 #### separates lines
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)
-                line_sep['residue_name'] = swap(line_sep['residue_name'])
+                line_sep['atom_name'], line_sep['residue_name'] = swap(line_sep['atom_name'], line_sep['residue_name'])
+                if line_sep['atom_name'].upper() != 'SKIP' and line_sep['residue_name'].upper() != 'SKIP':
 #### set up resnames in dictionaries
-                cg_residues = add_residue_to_dictionary(cg_residues, line_sep)
-#### sets up previous resid id 
-                if 'residue_prev' not in locals(): 
-                    residue_prev=line_sep['residue_id'] 
-#### if resid the same as previous line
-                if residue_prev == line_sep['residue_id']:   ### if resid is the same as the previous line, it adds resname and coordinates to the atom name key in residue_list 
-                    residue_list[line_sep['atom_name']]={'residue_name':line_sep['residue_name'],'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']])}
-                    line_sep_prev=line_sep.copy()
-#### if resids are different then the residue list is added to cg_residues
-                else: 
-                    if line_sep_prev['residue_name'] not in f_loc.p_residues:
-                        cg_residues[line_sep_prev['residue_name']][count]={} ### then create sub dictionary cg_residues[resname][count]
-                        cg_residues[line_sep_prev['residue_name']][count]=residue_list ### adds residue list to dictionary key cg_residues[resname][count]
-                        if line_sep_prev['residue_name'] == 'ION':
-                            cg_residues['SOL'][count]={}
-                            sol_res_list={}
-                            sol_res_list[f_loc.water]=residue_list[line_sep_prev['atom_name']]
-                            sol_res_list[f_loc.water]['residue_name']='SOL'
-                            cg_residues['SOL'][count]=sol_res_list
-                    else:
-                        for bead in residue_list:
-                            if bead.startswith('B'):
-                                residue_list['BB']= residue_list.pop(bead)
-                        cg_residues['PROTEIN'][count]={} ### then create sub dictionary cg_residues['PROTEIN'][count]
-                        cg_residues['PROTEIN'][count]=residue_list ### adds residue list to dictionary key cg_residues['PROTEIN'][count]
-#### updates dictionaries and counters
-                    residue_list={}  ### resets residue list
-                    count+=1 ### moves counter along to next residue
-                    residue_list[line_sep['atom_name']]={'residue_name':line_sep['residue_name'],'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']])} ### it adds resname and coordinates to the atom name key in residue_list
-                    residue_prev=line_sep['residue_id']   ### updates residue_prev with new resid
-                    line_sep_prev=line_sep.copy()
+                    cg_residues = add_residue_to_dictionary(cg_residues, line_sep)
+    #### sets up previous resid id 
+                    if 'residue_prev' not in locals(): 
+                        residue_prev=line_sep['residue_id'] 
+    #### if resid the same as previous line
+                    if residue_prev == line_sep['residue_id']:   ### if resid is the same as the previous line, it adds resname and coordinates to the atom name key in residue_list 
+                        residue_list[line_sep['atom_name']]={'residue_name':line_sep['residue_name'],'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']])}
+                        line_sep_prev=line_sep.copy()
+    #### if resids are different then the residue list is added to cg_residues
+                    else: 
+                        if line_sep_prev['residue_name'] not in f_loc.p_residues:
+                            cg_residues[line_sep_prev['residue_name']][count]={} ### then create sub dictionary cg_residues[resname][count]
+                            cg_residues[line_sep_prev['residue_name']][count]=residue_list ### adds residue list to dictionary key cg_residues[resname][count]
+                            if line_sep_prev['residue_name'] == 'ION':
+                                cg_residues['SOL'][count]={}
+                                sol_res_list={}
+                                sol_res_list[f_loc.water]=residue_list[line_sep_prev['atom_name']]
+                                sol_res_list[f_loc.water]['residue_name']='SOL'
+                                cg_residues['SOL'][count]=sol_res_list
+                        else:
+                            for bead in residue_list:
+                                if bead.startswith('B'):
+                                    residue_list['BB']= residue_list.pop(bead)
+                            cg_residues['PROTEIN'][count]={} ### then create sub dictionary cg_residues['PROTEIN'][count]
+                            cg_residues['PROTEIN'][count]=residue_list ### adds residue list to dictionary key cg_residues['PROTEIN'][count]
+    #### updates dictionaries and counters
+                        residue_list={}  ### resets residue list
+                        count+=1 ### moves counter along to next residue
+                        residue_list[line_sep['atom_name']]={'residue_name':line_sep['residue_name'],'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']])} ### it adds resname and coordinates to the atom name key in residue_list
+                        residue_prev=line_sep['residue_id']   ### updates residue_prev with new resid
+                        line_sep_prev=line_sep.copy()
 #### finds box vectors
             if line.startswith('CRYST'): ### collects box vectors from pdb
                 box_vec=line
@@ -93,37 +95,58 @@ def add_residue_to_dictionary(cg_residues, line_sep):
     return cg_residues
 
 
+def check_new_box(coord,box, new_box):
+    for xyz_val, xyz in enumerate(new_box):
+        if g_var.box[xyz_val] != 0:
+            lower, upper = (float(box[xyz_val])/2)-(float(xyz)/2), (float(box[xyz_val])/2)+(float(xyz)/2)
+            if  lower >= coord[xyz_val] or coord[xyz_val] >= upper: 
+                return True
+    return False
 
-def fix_pbc(cg_residues, box_vec):
+def fix_pbc(cg_residues, box_vec, new_box):
 #### fixes box PBC
     box = box_vec.split()[1:4]
-    # print(residues_all)
+    new_box = new_box.split()[1:4]
     for residue_type in cg_residues:
-        if residue_type not in ['ION','SOL']:
-            for res_val, residue in enumerate(cg_residues[residue_type]):
-                for bead_val, bead in enumerate(cg_residues[residue_type][residue]):
-                    if bead_val != 0:
-                        for xyz in range(3):
-                        #### for x, y, z if the distance between bead is more than half the box length
-                            if np.sqrt((cg_residues[residue_type][residue][bead]['coord'][xyz]-cg_residues[residue_type][residue][bead_prev]['coord'][xyz])**2) > float(box[xyz])/2:
-                            #### if the bead if in the opposite 1/3 of the box the position the box length is add/subtracted
-                                if cg_residues[residue_type][residue][bead]['coord'][xyz] <= float(box[xyz])/2:
-                                    temp = cg_residues[residue_type][residue][bead]['coord'][xyz]+float(box[xyz])
-                                elif cg_residues[residue_type][residue][bead]['coord'][xyz] > float(box[xyz])/2:
-                                    temp = cg_residues[residue_type][residue][bead]['coord'][xyz]-float(box[xyz])
-                            #### if distance between corrected coordinate is still > 1/2 the box length then counts as a new chain
-                                if np.sqrt((temp-cg_residues[residue_type][residue][bead_prev]['coord'][xyz])**2) > 8:
-                                    bead_prev=bead
-                                else:
-                                    cg_residues[residue_type][residue][bead]['coord'][xyz] = temp
-                    if residue_type != 'PROTEIN':
-                        bead_prev=bead
-                    elif res_val == 0 and residue_type == 'PROTEIN':
-                        bead_prev=bead
+        cut_keys=[]
+        for res_val, residue in enumerate(cg_residues[residue_type]):
+            for bead_val, bead in enumerate(cg_residues[residue_type][residue]):
+                if g_var.box != None and residue_type not in ['PROTEIN']:
+                    cut = check_new_box(cg_residues[residue_type][residue][bead]['coord'],box, new_box)
+                    if cut:
+                        cut_keys.append(residue)
+                        break
+                if bead_val != 0 and residue_type not in ['ION','SOL']:
+                    for xyz in range(3):
+                    #### for x, y, z if the distance between bead is more than half the box length
+                        if np.sqrt((cg_residues[residue_type][residue][bead]['coord'][xyz]-cg_residues[residue_type][residue][bead_prev]['coord'][xyz])**2) > float(box[xyz])/2:
+                        #### if the bead if in the opposite 1/3 of the box the position the box length is add/subtracted
+                            if cg_residues[residue_type][residue][bead]['coord'][xyz] <= float(box[xyz])/2:
+                                temp = cg_residues[residue_type][residue][bead]['coord'][xyz]+float(box[xyz])
+                            elif cg_residues[residue_type][residue][bead]['coord'][xyz] > float(box[xyz])/2:
+                                temp = cg_residues[residue_type][residue][bead]['coord'][xyz]-float(box[xyz])
+                        #### if distance between corrected coordinate is still > 1/2 the box length then counts as a new chain
+                            if np.sqrt((temp-cg_residues[residue_type][residue][bead_prev]['coord'][xyz])**2) > 8:
+                                bead_prev=bead
+                            else:
+                                cg_residues[residue_type][residue][bead]['coord'][xyz] = temp
+                if residue_type != 'PROTEIN':
+                    bead_prev=bead
+                elif res_val == 0 and residue_type == 'PROTEIN':
+                    bead_prev=bead
+        for key in cut_keys:
+            cg_residues[residue_type].pop(key)
     return cg_residues
 
-def swap(residue):
+def swap(atom, residue):
     if residue in f_loc.swap_dict:
-        return f_loc.swap_dict[residue]
+        for key, value in f_loc.swap_dict[residue].items():
+            break
+        if 'ALL' in f_loc.swap_dict[residue][key]:
+            return atom, key.split(':')[1]
+        elif atom in f_loc.swap_dict[residue][key]:
+            return f_loc.swap_dict[residue][key][atom], key.split(':')[1]
+        else:
+            return atom, key.split(':')[1]
     else:
-        return residue
+        return atom, residue

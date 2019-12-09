@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import numpy as np
 import gen, g_var
 
@@ -40,17 +39,8 @@ water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
 ### return backbone information
 backbone=gen.fetch_fragment(p_directories)
 
-swap_dict = {}
-if g_var.swap != None:
-    swap_dict = {}
-    for swap in g_var.swap:
-        swap_dict[swap.split(':')[0]]=swap.split(':')[1]
-    print('\nYou have chosen to swap the following residues\n')
-    print('{0:^10}{1:^5}{2:^11}'.format('residue', '     ', 'residue'))
-    print('{0:^10}{1:^5}{2:^11}'.format('-------', '     ', '-------'))
-    for residue in swap_dict:
-        print('{0:^10}{1:^5}{2:^11}'.format(residue, ' --> ', swap_dict[residue]))
 
+swap_dict=gen.sort_swap_group()
 
 
 ### finds initial rotation matrices
