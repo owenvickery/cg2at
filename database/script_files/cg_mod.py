@@ -10,14 +10,13 @@ def read_initial_pdb():
 #### initialisation of dictionaries etc
     cg_residues={}  ## dictionary of CG beads eg cg_residues[residue type(POPE)][resid(1)][bead name(BB)][residue_name(PO4)/coordinates(coord)]
     residue_list={} ## a dictionary of bead in each residue eg residue_list[bead name(BB)][residue_name(PO4)/coordinates(coord)]
-    box_line="CRYST1 %8.3f %8.3f %8.3f  90.00  90.00  90.00 P 1           1\n"  ## box vectors format for pdbs
     count=0  ### residue counter initialisation
     with open(g_var.input_directory+'CG_input.pdb', 'r') as pdb_input:
         for line in pdb_input.readlines():
 #### separates lines
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)
-                line_sep['atom_name'], line_sep['residue_name'] = swap(line_sep['atom_name'], line_sep['residue_name'])
+                line_sep['atom_name'], line_sep['residue_name'] = swap(line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id'])
                 if line_sep['atom_name'].upper() != 'SKIP' and line_sep['residue_name'].upper() != 'SKIP':
 #### set up resnames in dictionaries
                     cg_residues = add_residue_to_dictionary(cg_residues, line_sep)
@@ -138,15 +137,12 @@ def fix_pbc(cg_residues, box_vec, new_box):
             cg_residues[residue_type].pop(key)
     return cg_residues
 
-def swap(atom, residue):
+def swap(atom, residue, resid):
     if residue in f_loc.swap_dict:
         for key, value in f_loc.swap_dict[residue].items():
             break
-        if 'ALL' in f_loc.swap_dict[residue][key]:
-            return atom, key.split(':')[1]
-        elif atom in f_loc.swap_dict[residue][key]:
-            return f_loc.swap_dict[residue][key][atom], key.split(':')[1]
-        else:
-            return atom, key.split(':')[1]
-    else:
-        return atom, residue
+        if 'ALL' in f_loc.swap_dict[residue][key]['resid'] or resid in f_loc.swap_dict[residue][key]['resid']:
+            if atom in f_loc.swap_dict[residue][key]:
+                atom = f_loc.swap_dict[residue][key][atom]
+            residue = key.split(':')[1]
+    return atom, residue

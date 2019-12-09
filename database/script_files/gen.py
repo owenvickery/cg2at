@@ -16,28 +16,50 @@ def sort_swap_group():
         for swap in g_var.swap:
             res_s = re.split(':', swap)[0].split(',')
             res_e = re.split(':', swap)[1].split(',')
-
+            try:
+                res_range = re.split(':', swap)[2].split(',')
+                res_id = []
+                for resid_section in res_range:
+                    if '-' in resid_section:
+                        spt = resid_section.split('-')
+                        for res in range(int(spt[0]), int(spt[1])+1):
+                            res_id.append(res)
+                    else:
+                        res_id.append(resid_section)
+            except:
+                res_range, res_id = 'ALL', 'ALL'
             if len(res_s) == len(res_e):
-                s_res_d[res_s[0]]={}
+                if res_s[0] not in s_res_d:
+                    s_res_d[res_s[0]]={}
                 if len(res_s) == 1:
                     s_res_d[res_s[0]][res_s[0]+':'+res_e[0]]={'ALL':'ALL'}
                 else:
                     s_res_d[res_s[0]][res_s[0]+':'+res_e[0]]={}
                     for bead in range(1,len(res_s)):
-                      s_res_d[res_s[0]][res_s[0]+':'+res_e[0]][res_s[bead]]=res_e[bead]
+                        s_res_d[res_s[0]][res_s[0]+':'+res_e[0]][res_s[bead]]=res_e[bead]
+                s_res_d[res_s[0]][res_s[0]+':'+res_e[0]]['resid']=res_id
             else:
                 sys.exit('The length of your swap groups do not match')
 
         print('\nYou have chosen to swap the following residues\n')
-        print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}'.format('residue', 'bead', '     ', 'residue', 'bead'))
-        print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}'.format('-------', '----', '     ', '-------', '----'))
+        print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format('residue', 'bead', '     ', 'residue', 'bead', 'range'))
+        print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format('-------', '----', '     ', '-------', '----', '-----'))
         for residue in s_res_d:
             for swap in s_res_d[residue]:
                 bead_s, bead_e='', ''
                 for bead in s_res_d[residue][swap]:
-                    bead_s+=bead+' '
-                    bead_e+=s_res_d[residue][swap][bead]+' '
-                print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}'.format(swap.split(':')[0], bead_s, ' --> ', swap.split(':')[1], bead_e))
+                    if bead != 'resid':
+                        bead_s+=bead+' '
+                        bead_e+=s_res_d[residue][swap][bead]+' '
+                    else:
+                        if res_range != 'ALL':
+                            ran=''
+                            for resid_section in res_range:
+                                ran += resid_section+', '
+                            ran = ran[:-2]
+                        else:
+                            ran = res_range
+                print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format(swap.split(':')[0], bead_s, ' --> ', swap.split(':')[1], bead_e, ran))
     return s_res_d
 
 def new_box_vec(box_vec, box):
