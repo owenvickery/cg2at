@@ -44,7 +44,7 @@ box = args.box
 # extra bits
 v, clean,  = args.v, args.clean
 
-
+variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-ind':ind, '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, '-vs':args.vs, '-box':box}
 
 
 timestamp       =  strftime("%Y-%m-%d_%H-%M-%S", gmtime())
@@ -76,3 +76,4 @@ if gmx==None:
         break
     if gmx == None:
         sys.exit('Cannot find gromacs installation')
+

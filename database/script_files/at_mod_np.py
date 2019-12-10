@@ -187,17 +187,7 @@ def merge_minimised(residue_type, np_system, box_vec):
     merge,merge_coords=[],[]
 #### run through every resid 
     for resid in range(resid_range):
-    #### check if it exists
-        merge_temp = []
-        if os.path.exists(g_var.working_dir+residue_type+'/min/'+residue_type+'_'+str(resid)+'.pdb'):
-        #### read in resid and write straight to merged pdb
-            with open(g_var.working_dir+residue_type+'/min/'+residue_type+'_'+str(resid)+'.pdb', 'r') as pdb_input:
-                for line in pdb_input.readlines():
-                    if line.startswith('ATOM'):
-                        line_sep=gen.pdbatom(line)
-                        merge_temp.append(line_sep)
-        else:
-            sys.exit('cannot find minimised residue: \n'+ g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
+        merge_temp ,dump = at_mod.read_in_merged_pdbs([], [], g_var.working_dir+residue_type+'/min/'+residue_type+'_'+str(resid)+'.pdb')
         merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merge_coords)    
     if residue_type !='SOL':
         merge_coords = at_mod.check_atom_overlap(merge_coords)

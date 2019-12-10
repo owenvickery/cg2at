@@ -8,6 +8,22 @@ import glob
 import re
 import g_var
 
+
+def flags_used():
+    os.chdir(g_var.input_directory)
+    with open('script_inputs.dat', 'w') as scr_input:
+        for var in g_var.variables_to_save:
+            line='{0:15}{1:15}\n'.format(var,str(g_var.variables_to_save[var]))
+            # line = var + '\t' + str(g_var.variables_to_save[var])+'\n'
+            scr_input.write(line)
+
+def fix_time(t1, t2):
+    t1_t2=t2-t1
+    for t_val, t_unit in enumerate(t1_t2):
+        if t_unit < 0:
+            t1_t2[t_val]=t_unit*-1
+    return t1_t2
+
 def sort_swap_group():
     s_res_d = {}
     if g_var.swap != None:

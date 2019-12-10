@@ -6,6 +6,7 @@ from scipy.spatial import KDTree
 import gen, g_var, f_loc
 
 def sanity_check_fragments(res, cg, sin_bead):
+#### fetches bead and atom info from fragment database
     location = fragment_location(res)
     residue, fragment_mass = get_atomistic(location)
     atom_list = []
@@ -23,15 +24,18 @@ def sanity_check_fragments(res, cg, sin_bead):
     return bead_list, atom_list
 
 def sanity_check_atoms(atom_list, res):
+#### checks atom order
     for at_num in range(1, len(atom_list)+1):
         if at_num not in atom_list:
-            sys.exit('atom number '+str(at_num)+' is missing from fragment library: '+res)
+            sys.exit('atom number '+str(at_num)+' is missing from fragment library: '+res+'\n')
 def sanity_check_beads(bead_list, cg, res):
+#### checks if bead is in fragment library
     for bead in cg:
         if bead not in bead_list:
-            sys.exit('The bead '+bead+' is missing from the fragment library: '+res)   
+            sys.exit('The bead '+bead+' is missing from the fragment library: '+res+'\n')   
 
 def sanity_check(cg_residues):
+#### runs through every bead and checks whether it exists
     for res_type in cg_residues:
         if res_type == 'PROTEIN':
             for p_res in cg_residues['PROTEIN']:
@@ -46,17 +50,17 @@ def sanity_check(cg_residues):
                 for bead in cg_residues[res_type][p_res]:
                     sin_bead=bead
                     break
-                bead_list, atom_list = sanity_check_fragments(res_type, cg_residues[res_type][p_res], sin_bead )
+                bead_list, atom_list = sanity_check_fragments(res_type, cg_residues[res_type][p_res], sin_bead)
                 sanity_check_beads(bead_list, cg_residues[res_type][p_res], res_type) 
                 sanity_check_atoms(atom_list, res_type)
         else:
             bead_list, atom_list = sanity_check_fragments(res_type, cg_residues[res_type], False)
+            sanity_check_atoms(atom_list, res_type)
             for residue in cg_residues[res_type]:
                 sanity_check_beads(bead_list, cg_residues[res_type][residue], res_type) 
-                sanity_check_atoms(atom_list, res_type)
-
-
+                
 def rotate_atom(coord, center,xyz_rot_apply):
+#### rotates atom around center
     coord =  coord-center  #### centers COM coordinates to 0,0,0
     coord =  coord.dot(gen.eulerAnglesToRotationMatrix([xyz_rot_apply[0],0,0]))  #### rotates coord around x
     coord =  coord.dot(gen.eulerAnglesToRotationMatrix([0,xyz_rot_apply[1],0]))  #### rotates coord around y
@@ -150,9 +154,7 @@ def fragment_location(residue):
     sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
 
 def get_atomistic(frag_location):
-    SF=1   #### scaling factor for fragments
-#### find atomistic residues
-    
+    SF=1   #### scaling factor for fragments   
 #### read in atomistic fragments into dictionary    
     residue = {} ## a dictionary of bead in each residue eg residue[group][bead][atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
     fragment_mass = {}
@@ -185,6 +187,7 @@ def get_atomistic(frag_location):
     return residue, fragment_mass
 
 def COM(mass, fragment):
+#### returns center of mass of fragment
     if np.any(np.array(mass)[:,3]):      
         mass = np.average(np.array(mass)[:,:3], axis=0, weights=np.array(mass)[:,3])
     else:
@@ -193,6 +196,7 @@ def COM(mass, fragment):
     return mass
 
 def rigid_fit(group, frag_mass, resid, cg):
+#### rigid fits group to CG beads
     rigid_mass_at = []
     rigid_mass_cg = []
     for bead in group:
@@ -232,6 +236,7 @@ def connection(residue):
     return connect
 
 def connectivity(cg, connect, at_frag_centers, cg_frag_centers, group, group_number):
+#### returns the connections between the atomistic and coarse grain beads
     at_connection, cg_connection=[],[]
     if len(connect) > 0:
         for info in connect[np.where(str(group_number) == connect[:,0])]:
@@ -252,22 +257,22 @@ def connectivity(cg, connect, at_frag_centers, cg_frag_centers, group, group_num
     return at_connection, cg_connection    
 
 def find_cross_vector(ca, C, O):
+#### finds cross vector of the atoms CA, CA+1, CA+2 and the vector OC
     initial_vector= O-C
     initial_vector = initial_vector/np.linalg.norm(initial_vector)
     AB = ca[0]-ca[1]
     AC = ca[0]-ca[2] 
     cross_vector = np.cross(AB, AC)
     cross_vector = cross_vector/np.linalg.norm(cross_vector)
-    
     return initial_vector, cross_vector
 
-
 def align_to_vector(v1, v2):
+#### returns the rotation matrix to rotate v1 to v2
     v = np.cross(v1,v2)
     c = np.dot(v1,v2)
     s = np.linalg.norm(v)
 
-    rotation=np.array([[0,    -v[2],  v[1]],
+    rotation=np.array([[   0, -v[2],  v[1]],
                        [v[2],     0, -v[0]],
                        [-v[1], v[0],    0], 
                        ])
@@ -290,16 +295,7 @@ def merge_system_pdbs(system, protein, cg_residues, box_vec):
             input_type=''
         else:
             input_type=protein
-        if os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb'):
-        #### opens pdb files and writes straight to merged_cg2at pdb
-            with open(g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb', 'r') as pdb_input:
-                for line in pdb_input.readlines():
-                    if line.startswith('ATOM'):
-                        line_sep = gen.pdbatom(line)
-                        merge.append(line_sep)
-                        merge_coords.append([line_sep['x'],line_sep['y'],line_sep['z']])
-        else:
-            sys.exit('cannot find minimised residue: \n'+ g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
+        merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
     if protein in ['_at_rep_user_supplied','_novo']:
         print('checking for atom overlap in : '+protein[1:])
         merge_coords = check_atom_overlap(merge_coords)
@@ -309,7 +305,21 @@ def merge_system_pdbs(system, protein, cg_residues, box_vec):
     pdb_output.write('TER\nENDMDL')
     pdb_output.close()
 
-def fix_chirality(merge, merge_temp, merged_coords):
+def read_in_merged_pdbs(merge, merge_coords, location):
+    if os.path.exists(location):
+    #### opens pdb files and writes straight to merged_cg2at pdb
+        with open(location, 'r') as pdb_input:
+            for line in pdb_input.readlines():
+                if line.startswith('ATOM'):
+                    line_sep = gen.pdbatom(line)
+                    merge.append(line_sep)
+                    merge_coords.append([line_sep['x'],line_sep['y'],line_sep['z']])
+        return merge, merge_coords
+    else:
+        sys.exit('cannot find minimised residue: \n'+ g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb') 
+
+
+def fetch_chiral_coord(merge_temp):
     chiral_atoms={}
     coord=[]
     for atom in range(len(merge_temp)):
@@ -319,6 +329,11 @@ def fix_chirality(merge, merge_temp, merged_coords):
             if merge_temp[atom]['atom_name'] in f_loc.chiral[merge_temp[atom]['residue_name']]['atoms']:
                 chiral_atoms[merge_temp[atom]['residue_id']][merge_temp[atom]['atom_name']]=atom
         coord.append(np.array([merge_temp[atom]['x'],merge_temp[atom]['y'],merge_temp[atom]['z']]))
+    return chiral_atoms, coord
+
+def fix_chirality(merge, merge_temp, merged_coords):
+#### fixes chiral groups
+    chiral_atoms, coord= fetch_chiral_coord(merge_temp)
 
     for residue in chiral_atoms:
         for atom in chiral_atoms[residue]:
@@ -334,17 +349,14 @@ def fix_chirality(merge, merge_temp, merged_coords):
 
                 stat_coord = np.array([stat['x'], stat['y'], stat['z']])
                 move_coord = np.array([move['x'], move['y'], move['z']])
-                c1_coord   = np.array([c1['x'], c1['y'], c1['z']])
-                c2_coord   = np.array([c2['x'], c2['y'], c2['z']])
-                c3_coord   = np.array([c3['x'], c3['y'], c3['z']])
 
                 S_M=move_coord-stat_coord
                 rotation = align_to_vector(S_M, [0,0,1])
                 center = stat_coord
 
-                c1_coord = (c1_coord - center).dot(rotation)
-                c2_coord = (c2_coord - center).dot(rotation)
-                c3_coord = (c3_coord - center).dot(rotation)
+                c1_coord = (np.array([c1['x'], c1['y'], c1['z']]) - center).dot(rotation)
+                c2_coord = (np.array([c2['x'], c2['y'], c2['z']]) - center).dot(rotation)
+                c3_coord = (np.array([c3['x'], c3['y'], c3['z']]) - center).dot(rotation)
 
                 C1_C2_a = gen.angle_clockwise(c1_coord[0:2], c2_coord[0:2])
                 C1_C3_a = gen.angle_clockwise(c1_coord[0:2], c3_coord[0:2])

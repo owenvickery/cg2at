@@ -3,7 +3,6 @@
 import sys
 import numpy as np
 import copy
-# from string import upper
 import gen, g_var, f_loc
 
 def read_initial_pdb():

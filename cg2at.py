@@ -12,6 +12,7 @@ import gen, gro, at_mod, at_mod_p, at_mod_np, cg_mod, g_var, f_loc
 initialisation_time=np.array(gmtime()[3:6])
 
 user_at_input = gro.collect_input(g_var.c, g_var.a)
+gen.flags_used()
 
 print('\nThis script is now hopefully doing the following (Good luck):\n')
 
@@ -140,26 +141,26 @@ print('{0:^20}{1:^10}'.format('---------','------'))
 for section in system:
     print('{0:^20}{1:^10}'.format(section, system[section]))
 
-
 #### prints out script timings for each section
 if g_var.v >= 1:
     print('\n{0:^47}{1:^22}'.format('Job','Time'))
     print('{0:^47}{1:^22}'.format('---','----'))
-    t1 = np.sqrt((read_in_time-initialisation_time)**2)
+    t1 = gen.fix_time(read_in_time, initialisation_time)
     print('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
     if user_at_input and 'PROTEIN' in system:
-        t2=np.sqrt((protein_de_novo_time-read_in_time)**2)
-        t3=np.sqrt((final_protein_time-protein_de_novo_time)**2)
-        t4=np.sqrt((final_protein_time-read_in_time)**2)
+        t2=gen.fix_time(protein_de_novo_time,read_in_time)
+        t3=gen.fix_time(final_protein_time,protein_de_novo_time)
+        t4=gen.fix_time(final_protein_time,read_in_time)
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein system: ',t2[0],'hours',t2[1],'min',t2[2],'sec'))        
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein system from provided structure: ',t3[0],'hours',t3[1],'min',t3[2],'sec'))
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein system build: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
     else:
-        t5=np.sqrt((final_protein_time-read_in_time)**2)
+        t5=gen.fix_time(final_protein_time,read_in_time)
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein system: ',t5[0],'hours',t5[1],'min',t5[2],'sec'))
-    t6=np.sqrt((non_protein_time-final_protein_time)**2)
-    t7=np.sqrt((merge_time-non_protein_time)**2)
-    t8=np.sqrt((final_time-initialisation_time)**2)
+    t6=gen.fix_time(non_protein_time,final_protein_time)
+    t7=gen.fix_time(merge_time,non_protein_time)
+    t8=gen.fix_time(final_time,initialisation_time)
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Merge protein and non protein system: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t8[0],'hours',t8[1],'min',t8[2],'sec'))
+
