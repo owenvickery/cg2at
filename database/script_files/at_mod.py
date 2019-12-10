@@ -5,6 +5,57 @@ import numpy as np
 from scipy.spatial import KDTree
 import gen, g_var, f_loc
 
+def sanity_check_fragments(res, cg, sin_bead):
+    location = fragment_location(res)
+    residue, fragment_mass = get_atomistic(location)
+    atom_list = []
+    bead_list = []
+    for group in residue:
+        for bead in residue[group]:
+            bead_list.append(bead)
+            if not sin_bead:
+                for atom in residue[group][bead]:
+                    atom_list.append(atom)
+            else:
+                if bead ==sin_bead:
+                    for atom in residue[group][bead]:
+                        atom_list.append(atom)
+    return bead_list, atom_list
+
+def sanity_check_atoms(atom_list, res):
+    for at_num in range(1, len(atom_list)+1):
+        if at_num not in atom_list:
+            sys.exit('atom number '+str(at_num)+' is missing from fragment library: '+res)
+def sanity_check_beads(bead_list, cg, res):
+    for bead in cg:
+        if bead not in bead_list:
+            sys.exit('The bead '+bead+' is missing from the fragment library: '+res)   
+
+def sanity_check(cg_residues):
+    for res_type in cg_residues:
+        if res_type == 'PROTEIN':
+            for p_res in cg_residues['PROTEIN']:
+                for bead in cg_residues['PROTEIN'][p_res]:
+                    resname = cg_residues['PROTEIN'][p_res][bead]['residue_name']
+                    break
+                bead_list, atom_list = sanity_check_fragments(resname, cg_residues['PROTEIN'][p_res], False)
+                sanity_check_beads(bead_list, cg_residues['PROTEIN'][p_res], resname)  
+                sanity_check_atoms(atom_list, resname)
+        elif res_type in ['SOL', 'ION']:
+            for p_res in cg_residues[res_type]:
+                for bead in cg_residues[res_type][p_res]:
+                    sin_bead=bead
+                    break
+                bead_list, atom_list = sanity_check_fragments(res_type, cg_residues[res_type][p_res], sin_bead )
+                sanity_check_beads(bead_list, cg_residues[res_type][p_res], res_type) 
+                sanity_check_atoms(atom_list, res_type)
+        else:
+            bead_list, atom_list = sanity_check_fragments(res_type, cg_residues[res_type], False)
+            for residue in cg_residues[res_type]:
+                sanity_check_beads(bead_list, cg_residues[res_type][residue], res_type) 
+                sanity_check_atoms(atom_list, res_type)
+
+
 def rotate_atom(coord, center,xyz_rot_apply):
     coord =  coord-center  #### centers COM coordinates to 0,0,0
     coord =  coord.dot(gen.eulerAnglesToRotationMatrix([xyz_rot_apply[0],0,0]))  #### rotates coord around x
@@ -98,7 +149,7 @@ def fragment_location(residue):
                 return f_loc.np_directories[directory][0]+residue+'/'+residue+'.pdb'
     sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
 
-def get_atomistic(residue, frag_location):
+def get_atomistic(frag_location):
     SF=1   #### scaling factor for fragments
 #### find atomistic residues
     
@@ -186,40 +237,19 @@ def connectivity(cg, connect, at_frag_centers, cg_frag_centers, group, group_num
         for info in connect[np.where(str(group_number) == connect[:,0])]:
             for ind in connect:
                 if info[3] == ind[3] and group_number != ind[0]: 
-                    cg_connection.append(cg[ind[1]]['coord'])
-                    at_connection.append(group[info[1]][int(info[2])]['coord'])  
+                    try:
+                        cg_connection.append(cg[ind[1]]['coord'])
+                    except:
+                        sys.exit('cannot find CG bead: '+ind[1])
+                    try:
+                        at_connection.append(group[info[1]][int(info[2])]['coord'])  
+                    except:
+                        sys.exit('cannot find atomistic bead: '+info[1])
         if len(at_frag_centers)  > 1:         
             for bead in at_frag_centers:
                 cg_connection.append(cg_frag_centers[bead])
                 at_connection.append(at_frag_centers[bead])          
     return at_connection, cg_connection    
-
-# def connectivity(bead_number, cg_bead, connect, at_residues, cg_residues, resid):
-#     at_connections,cg_connections=[],[]
-# #### finds all beads that the cg_bead is connected to
-#     try:
-#         run=np.where(connect[:,0]==cg_bead)
-#     except:
-#         if cg_bead == 'BB':
-#             return [],[], cg_residues[resid][cg_bead]['coord']
-#         sys.exit('cannot find connectivity for :'+str(cg_bead))
-# #### center of mass of cg_bead
-#     center=cg_residues[resid][cg_bead]['coord']
-# #### loop through bead connections from bead of interest
-#     for con_test in connect[run]:
-#         cg_temp=[]
-#     #### fetch connections which have more than one bead 1 to 2 beads and not self      
-#         cg=connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]!=cg_bead))]
-#     #### for each connecting bead 
-#         for con_bead in cg[:,0]:
-#             cg_temp.append(cg_residues[resid][con_bead]['coord']-center)
-#     #### average position of connecting bead
-#         cg_connections.append(np.mean(cg_temp, axis=0))
-#     #### all atoms with bead connections and self. should only ever be one. 
-#         at = int(connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]==cg_bead))][:,1])
-#         at_connections.append(at_residues[cg_bead][at]['coord']-center)
-#     return at_connections, cg_connections, center
-
 
 def find_cross_vector(ca, C, O):
     initial_vector= O-C

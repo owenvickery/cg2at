@@ -25,6 +25,8 @@ else:
     box_vec=box_vec_initial
 
 cg_residues =cg_mod.fix_pbc(cg_residues, box_vec_initial, box_vec)
+at_mod.sanity_check(cg_residues)
+
 read_in_time=np.array(gmtime()[3:6])
 system={}
 ### convert protein to atomistic

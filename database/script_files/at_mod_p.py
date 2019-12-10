@@ -38,7 +38,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
             terminal[chain_count].append(f_loc.backbone[resname]['ter'])
         coordinates_atomistic[chain_count][residue_number]={}
         frag_location=at_mod.fragment_location(resname) ### get fragment location from database
-        residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(resname, frag_location)
+        residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(frag_location)
         connect = at_mod.connection(residue_type[resname])
         for group in residue_type[resname]:
             center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[resname][group], residue_type_mass[resname], residue_number, cg_residues[residue_number])
@@ -284,6 +284,7 @@ def read_in_atomistic(protein, cg_chain_count, sequence, check_alignment):
                                     atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=g_var.mass[atom]
                 else:
                     if check_alignment:
+                        print(check_alignment)
                         sys.exit('The residue '+line_sep['residue_name']+' does not exist in the fragment database')
     if check_alignment:
         seq_user = check_sequence(atomistic_protein_input, chain_count+1)
