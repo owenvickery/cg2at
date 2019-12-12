@@ -2,7 +2,7 @@
 
 import os, sys
 import numpy as np
-from scipy.spatial import KDTree
+from scipy.spatial import cKDTree
 import gen, g_var, f_loc
 
 def sanity_check_fragments(res, cg, sin_bead):
@@ -116,7 +116,7 @@ def add_to_sequence(sequence, residue, chain_count):
 
 def check_atom_overlap(coordinates):
 #### creates tree of atom coordinates
-    tree = KDTree(coordinates)
+    tree = cKDTree(coordinates)
 #### provides index of any atoms that are within 0.3A of each other
     overlapped_ndx = tree.query_ball_tree(tree, r=0.3)  ### takes a while 
     done=[]
@@ -163,7 +163,7 @@ def get_atomistic(frag_location):
         for line_nr, line in enumerate(pdb_input.readlines()):
             if line.startswith('['):
                 line_split=line.split()
-                if not g_var.ind:
+                if not g_var.mod:
                     bead, group = line_split[1], line_split[2]
                 else:
                     bead = line_split[1]

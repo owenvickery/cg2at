@@ -19,7 +19,7 @@ parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, 
 parser.add_argument('-ff', help='choose your forcefield. (Optional)',metavar='charmm36',type=str)
 parser.add_argument('-fg', help='choose your fragment library. (Optional)',metavar='martini-2-2',type=str, nargs='*')
 parser.add_argument('-gromacs', help='gromacs executable name (Optional)',metavar='gmx_avx',type=str)
-parser.add_argument('-cys', help='cutoff for disulphide bonds, sometimes CYS are too far apart (Optional)',metavar='6.5',type=float, default=7)
+parser.add_argument('-cys', help='cutoff for disulphide bonds, sometimes CYS are too far apart (Optional)',metavar='7',type=float, default=7)
 parser.add_argument('-swap', help='creates a swap dictionary supply residues as PIP2,D3A:PVCL2,C3A (Optional)',metavar='PIP2,D3A:PVCL2,C3A',type=str, nargs='*')
 parser.add_argument('-box', help='box size in Angstrom (0 = use input file) (Optional)',metavar='100',type=float, nargs=3)
 parser.add_argument('-vs', help='use virtual sites (Optional)', action='store_true')
@@ -29,7 +29,7 @@ options = vars(args)
 # input files  
 c, a = args.c, args.a
 # forcfield and fragment inputs
-w, ff, fg, ind = args.w, args.ff, args.fg, args.ind
+w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
 cys, swap = args.cys, args.swap
 ter, nt, ct = args.ter, args.nt, args.ct
 vs=args.vs
@@ -43,7 +43,7 @@ box = args.box
 # extra bits
 v, clean,  = args.v, args.clean
 
-variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-ind':ind, '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, '-vs':args.vs, '-box':box}
+variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, '-vs':args.vs, '-box':box}
 
 
 timestamp       =  strftime("%Y-%m-%d_%H-%M-%S", gmtime())
