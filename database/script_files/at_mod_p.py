@@ -8,10 +8,6 @@ import difflib
 import gen, g_var, f_loc, at_mod
 import math
 
-
-
-
-
 def build_protein_atomistic_system(cg_residues, box_vec):
 #### initisation of counters
     chain_count=0
@@ -65,7 +61,6 @@ def build_protein_atomistic_system(cg_residues, box_vec):
             for bead in group_fit:
                 for atom in group_fit[bead]:
                     group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   
-                    # print(group_fit[bead][atom])
                     atom_new = group_fit[bead][atom].copy()
                     coordinates_atomistic[chain_count][residue_number][atom] = atom_new
         #### if disulphide bond found move the S atoms to within 2 A of each other
@@ -284,7 +279,6 @@ def read_in_atomistic(protein, cg_chain_count, sequence, check_alignment):
                                     atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=g_var.mass[atom]
                 else:
                     if check_alignment:
-                        print(check_alignment)
                         sys.exit('The residue '+line_sep['residue_name']+' does not exist in the fragment database')
     if check_alignment:
         seq_user = check_sequence(atomistic_protein_input, chain_count+1)

@@ -159,6 +159,20 @@ def fragment_location(residue):
                 return f_loc.np_directories[directory][0]+residue+'/'+residue+'.pdb'
     sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
 
+
+def split_fragment_names(line, residue, group):
+    line_split=line.split()
+    if not g_var.mod:
+        bead, group = line_split[1], line_split[2]
+    else:
+        bead = line_split[1]
+        group+=1
+    if group != ']' and group not in residue:
+        residue[group] = {}
+    if bead not in residue[group]:
+        residue[group][bead]={} 
+    return residue, group, bead   
+
 def get_atomistic(frag_location):
 #### read in atomistic fragments into dictionary    
     residue = {} ## a dictionary of bead in each residue eg residue[group][bead][atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
@@ -167,17 +181,8 @@ def get_atomistic(frag_location):
     with open(frag_location, 'r') as pdb_input:
         for line_nr, line in enumerate(pdb_input.readlines()):
             if line.startswith('['):
-                line_split=line.split()
-                if not g_var.mod:
-                    bead, group = line_split[1], line_split[2]
-                else:
-                    bead = line_split[1]
-                    group+=1
+                residue, group, bead = split_fragment_names(line, residue, group)
                 fragment_mass[bead]=[]
-                if group != ']' and group not in residue:
-                    residue[group] = {}
-                if bead not in residue[group]:
-                    residue[group][bead]={}
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line) ## splits up pdb line
                 residue[group][bead][line_sep['atom_number']]={'coord':np.array([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf]),'atom':line_sep['atom_name'],'resid':line_sep['residue_id'], 'res_type':line_sep['residue_name'],'extra':line_sep['backbone'], 'connect':line_sep['connect'], 'frag_mass':1}

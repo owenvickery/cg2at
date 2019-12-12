@@ -6,27 +6,27 @@ import math
 import gen, g_var, f_loc, at_mod
 
 
-def build_atomistic_system(cg_residues, box_vec):
+def build_atomistic_system(cg_residues,residue_type, box_vec):
     system={}
     atomistic_fragments={}
 #### for each residue type covert to atomistic except protein
-    for residue_type in [key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]:
-        if residue_type not in system and residue_type != 'ION':
-            system[residue_type] = 0
-    #### reset counters for each residue type
-        print('Converting residue type: ' +residue_type)
-    #### creates folder for residue type
-        gen.mkdir_directory(g_var.working_dir+residue_type)
+    # for residue_type in [key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]:
+    if residue_type not in system and residue_type != 'ION':
+        system[residue_type] = 0
+#### reset counters for each residue type
+    print('Converting residue type: ' +residue_type)
+#### creates folder for residue type
+    gen.mkdir_directory(g_var.working_dir+residue_type)
 
-        if residue_type in ['ION']:
-            atomistic_fragments[residue_type] = atomistic_non_protein_solvent(residue_type, cg_residues[residue_type])
-            system, atomistic_fragments = solvent_ion(box_vec, system, atomistic_fragments, residue_type)
-        elif residue_type in ['SOL']:
-            atomistic_fragments[residue_type] = atomistic_non_protein_solvent(residue_type, cg_residues[residue_type])
-            system, atomistic_fragments = solvent_sol(box_vec, system, atomistic_fragments, residue_type)
-        else:
-            atomistic_fragments[residue_type] = atomistic_non_protein_non_solvent(residue_type, cg_residues[residue_type])
-            system, atomistic_fragments = non_solvent( box_vec, system, atomistic_fragments, residue_type)
+    if residue_type in ['ION']:
+        atomistic_fragments[residue_type] = atomistic_non_protein_solvent(residue_type, cg_residues[residue_type])
+        system, atomistic_fragments = solvent_ion(box_vec, system, atomistic_fragments, residue_type)
+    elif residue_type in ['SOL']:
+        atomistic_fragments[residue_type] = atomistic_non_protein_solvent(residue_type, cg_residues[residue_type])
+        system, atomistic_fragments = solvent_sol(box_vec, system, atomistic_fragments, residue_type)
+    else:
+        atomistic_fragments[residue_type] = atomistic_non_protein_non_solvent(residue_type, cg_residues[residue_type])
+        system, atomistic_fragments = non_solvent( box_vec, system, atomistic_fragments, residue_type)
 
     return system 
 

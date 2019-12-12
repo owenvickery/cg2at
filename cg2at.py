@@ -5,6 +5,7 @@ import numpy as np
 from shutil import copyfile
 from time import gmtime
 import datetime
+import multiprocessing as mp
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/database/script_files')
 import gen, gro, at_mod, at_mod_p, at_mod_np, cg_mod, g_var, f_loc
 
@@ -55,12 +56,16 @@ if 'PROTEIN' in cg_residues:
         merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_at_rep_user_supplied', '_gmx.pdb')
         at_mod_p.write_merged_pdb(merge_at_user_no_steer, '_no_steered', box_vec)
 
-
 final_protein_time=np.array(gmtime()[3:6])
 
 #### converts non protein residues into atomistic and minimises 
 if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]) > 0:
-    np_system=at_mod_np.build_atomistic_system(cg_residues, box_vec)
+    np_system={}
+    pool = mp.Pool(mp.cpu_count())
+    pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(cg_residues, residue_type, box_vec) for residue_type in [key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]]).get()          ## minimisation grompp parallised  
+    pool.close()
+    for residue_type in pool_process:
+        np_system.update(residue_type)
     print('\nThis may take some time....(probably time for a coffee)\n')
     for residue_type in cg_residues:
         if residue_type not in ['PROTEIN', 'ION']:
