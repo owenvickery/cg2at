@@ -57,19 +57,24 @@ gmx mdrun -v -deffnm rigid_fit
 
 The following flags are available:
 
--c cg_input.pdb (can accept pdb/gro/tpr [required])
--a atomistic_input.pdb (can accept pdb/gro/tpr[optional])
--v (3 level verbosity -vvv) (use just -v to get the run times etc)
--clean (removes temp file after cg2at) (small amount of cleaning of directories)
--ter interactive terminal residue selection
--nt charged N terminal residue
--ct charged C terminal residue
--swap allows the swapping of residues/beads eg PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip
--box new box vectors in Angstrom, (0 is ignored and uses input) eg 100 150 100 
--w choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional
--ff choose your forcefield. This is optional
--fg choose your fragment libraries. This is optional
--gromacs provide gromacs executable name if none standard. This is optional
+REQUIRED
+-c          coarse grain input (pdb/gro/tpr)
+
+OPTIONAL
+-a          atomistic_input.pdb (pdb/gro/tpr)
+-v          verbose with 3 levels  of verbosity (-vvv) 
+-mod        treats every fragment individually 
+-sf         scale factor for fragments, shrinks fragments before minimisation (default=0.9)
+-clean      removes temp file after cg2at 
+-ter        interactive terminal residue selection
+-nt         charged N terminal residue
+-ct         charged C terminal residue
+-swap       allows the swapping of residues/beads (eg PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip)
+-box        new box vectors in Angstrom, (0 is ignored and uses input eg 100 150 100 )
+-w          choose your solvent, common choices are: tip3p, tip4p, spc and spce. 
+-ff         choose your forcefield. 
+-fg         choose your fragment libraries. 
+-gromacs    provide gromacs executable name if none standard. 
 
 
 example input.

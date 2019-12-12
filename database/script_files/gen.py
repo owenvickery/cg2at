@@ -114,7 +114,7 @@ def fetch_fragment(p_directories):
     for directory in range(len(p_directories)):
         for residue in p_directories[directory][1:]:    
             if residue not in processing:
-                atom_list, bb_list, restraint, disulphide, terminal, dihedral=[], [], [], '', False, []
+                atom_list, bb_list, restraint, disulphide, terminal=[], [], [], '', False
                 with open(p_directories[directory][0]+residue+'/'+residue+'.pdb', 'r') as pdb_input:
                     for line_nr, line in enumerate(pdb_input.readlines()):
                         if line.startswith('['):
@@ -132,9 +132,7 @@ def fetch_fragment(p_directories):
                                     disulphide = line_sep['atom_name'] ### position restrained atoms
                                 if line_sep['backbone'] == 4:
                                     terminal=True
-                                if line_sep['backbone'] in [6]:
-                                    dihedral.append(line_sep['atom_name'])
-                processing[residue]={'atoms':atom_list,'b_connect':bb_list,'restraint':restraint, 'disulphide':disulphide, 'ter':terminal, 'dihedral':dihedral}  ### adds heavy atoms and connecting atoms to backbone dictionary 
+                processing[residue]={'atoms':atom_list,'b_connect':bb_list,'restraint':restraint, 'disulphide':disulphide, 'ter':terminal}  ### adds heavy atoms and connecting atoms to backbone dictionary 
                 atom_list, bb_list, restraint=[], [], []  ### resets residue lists of heavy atoms, connecting atoms and restraint 
 #### if verbose prints out all heavy atoms and connecting atoms for each backbone
 
@@ -144,7 +142,7 @@ def fetch_fragment(p_directories):
         for residue in processing:
             print(residue, '\tbackbone atoms:', processing[residue]['atoms'], '\n\tbackbone connecting atoms:',
                   processing[residue]['b_connect'], '\n\trestrained atoms:', processing[residue]['restraint'],
-                  '\n\tTerminal residue:', processing[residue]['ter'],'\n\tdihedral atoms:', processing[residue]['dihedral'],'\n')
+                  '\n\tTerminal residue:', processing[residue]['ter'],'\n')
         print('\n{:-<75}'.format('>  Verbose level 2 end\n'))
     return processing
 
@@ -285,7 +283,7 @@ def sort_directories(p_directories, mod_directories, np_directories):
         np_directories[directory].sort()
         np_residues+=np_directories[directory][1:]
 #### if verbose prints all fragments found
-    if g_var.v >= 1:
+    if g_var.v >= 2:
         print('\n{:-<75}'.format('>  Verbose level 1 start'))
         for directory in range(len(np_directories)):
             print('\nnon protein residues fragment directories found: \n\nroot file system\n')

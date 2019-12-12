@@ -2,6 +2,7 @@
 
 import os, sys
 import numpy as np
+import itertools
 from scipy.spatial import cKDTree
 import gen, g_var, f_loc
 
@@ -114,27 +115,32 @@ def add_to_sequence(sequence, residue, chain_count):
         sequence[chain_count]+='X'    
     return sequence
 
+
+
+
+def overlapping_atoms(tree):
+    overlapped_ndx = tree.query_ball_tree(tree, r=0.3)
+    overlapped_cut = [ndx for ndx in overlapped_ndx if len(ndx) >1]
+    overlapped_cut.sort()
+    overlapped=list(overlapped_cut for overlapped_cut,_ in itertools.groupby(overlapped_cut))
+    return overlapped
+
 def check_atom_overlap(coordinates):
 #### creates tree of atom coordinates
     tree = cKDTree(coordinates)
-#### provides index of any atoms that are within 0.3A of each other
-    overlapped_ndx = tree.query_ball_tree(tree, r=0.3)  ### takes a while 
+    overlapped = overlapping_atoms(tree)
     done=[]
     moved_coord=[]
     dist=0.35
 #### runs through overlapping atoms and moves atom in a random diection until it is no longer overlapping
-    for ndx in overlapped_ndx:
-        if len(ndx) == 2 and ndx[0] not in done:
+    while len(overlapped) > 0:
+        for ndx in overlapped:
             xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
-            if len(moved_coord)>0:
-                dist=np.min(np.sqrt(((xyz_check[0]-np.array(moved_coord)[:,0])**2)+((xyz_check[1]-np.array(moved_coord)[:,1])**2)+((xyz_check[2]-np.array(moved_coord)[:,2])**2)))
-            while len(tree.query_ball_point(xyz_check, r=0.3)) == 2 or dist < 0.3:
-                if len(moved_coord)>0:
-                    dist=np.min(np.sqrt(((xyz_check[0]-np.array(moved_coord)[:,0])**2)+((xyz_check[1]-np.array(moved_coord)[:,1])**2)+((xyz_check[2]-np.array(moved_coord)[:,2])**2)))
+            while len(tree.query_ball_point(xyz_check, r=0.3)) > 1:
                 xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
             coordinates[ndx[0]]=xyz_check
-            moved_coord.append(xyz_check)
-            done.append(ndx[0])
+            tree = cKDTree(coordinates)
+        overlapped = overlapping_atoms(tree)
     return coordinates
 
 
@@ -154,7 +160,6 @@ def fragment_location(residue):
     sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
 
 def get_atomistic(frag_location):
-    SF=1   #### scaling factor for fragments   
 #### read in atomistic fragments into dictionary    
     residue = {} ## a dictionary of bead in each residue eg residue[group][bead][atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
     fragment_mass = {}
@@ -175,15 +180,15 @@ def get_atomistic(frag_location):
                     residue[group][bead]={}
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line) ## splits up pdb line
-                residue[group][bead][line_sep['atom_number']]={'coord':np.array([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF]),'atom':line_sep['atom_name'],'resid':line_sep['residue_id'], 'res_type':line_sep['residue_name'],'extra':line_sep['backbone'], 'connect':line_sep['connect'], 'frag_mass':1}
+                residue[group][bead][line_sep['atom_number']]={'coord':np.array([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf]),'atom':line_sep['atom_name'],'resid':line_sep['residue_id'], 'res_type':line_sep['residue_name'],'extra':line_sep['backbone'], 'connect':line_sep['connect'], 'frag_mass':1}
 #### updates fragment mass   
                 if 'H' not in line_sep['atom_name']:
                     for atom in line_sep['atom_name']:
                         if atom in g_var.mass:
                             residue[group][bead][line_sep['atom_number']]['frag_mass']=g_var.mass[atom]  ### updates atom masses with crude approximations
-                            fragment_mass[bead].append([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF,g_var.mass[atom]])
+                            fragment_mass[bead].append([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf,g_var.mass[atom]])
                 else:
-                    fragment_mass[bead].append([line_sep['x']*SF,line_sep['y']*SF,line_sep['z']*SF,1])
+                    fragment_mass[bead].append([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf,1])
     return residue, fragment_mass
 
 def COM(mass, fragment):

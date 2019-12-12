@@ -23,6 +23,7 @@ parser.add_argument('-cys', help='cutoff for disulphide bonds, sometimes CYS are
 parser.add_argument('-swap', help='creates a swap dictionary supply residues as PIP2,D3A:PVCL2,C3A (Optional)',metavar='PIP2,D3A:PVCL2,C3A',type=str, nargs='*')
 parser.add_argument('-box', help='box size in Angstrom (0 = use input file) (Optional)',metavar='100',type=float, nargs=3)
 parser.add_argument('-vs', help='use virtual sites (Optional)', action='store_true')
+parser.add_argument('-sf', help='scale factor for fragments, shrinks fragments before minimisation',metavar='0.9',type=float, default=0.9)
 args = parser.parse_args()
 options = vars(args)
 
@@ -31,14 +32,17 @@ c, a = args.c, args.a
 # forcfield and fragment inputs
 w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
 cys, swap = args.cys, args.swap
+
 ter, nt, ct = args.ter, args.nt, args.ct
 vs=args.vs
 if args.vs:
     vst='0.004'
     vs = '-vsite h'
+    sf = args.sf-0.1
 else:
     vst='0.002'
     vs = ''
+    sf=args.sf
 box = args.box
 # extra bits
 v, clean,  = args.v, args.clean
