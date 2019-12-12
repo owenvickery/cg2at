@@ -22,11 +22,12 @@ print('Reading in your CG representation\n')
 cg_residues, box_vec_initial = cg_mod.read_initial_pdb()
 
 if g_var.box != None:
-    box_vec = gen.new_box_vec(box_vec_initial, g_var.box)
+    box_vec, box_shift = gen.new_box_vec(box_vec_initial, g_var.box)
 else:
     box_vec=box_vec_initial
+    box_shift=np.array([0,0,0])
 
-cg_residues =cg_mod.fix_pbc(cg_residues, box_vec_initial, box_vec)
+cg_residues =cg_mod.fix_pbc(cg_residues, box_vec_initial, box_vec, box_shift)
 at_mod.sanity_check(cg_residues)
 
 read_in_time=np.array(gmtime()[3:6])

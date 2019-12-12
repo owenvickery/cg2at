@@ -61,6 +61,14 @@ def solvent_sol(box_vec, system, atomistic_fragments, residue_type):
     else:
         pdb_sol = open(g_var.working_dir+'SOL'+'/SOL_0.pdb', 'a')
     for resid in atomistic_fragments[residue_type]:
+    ####### check if any atoms in residue overlap #######
+        coord=[]
+        for atom in atomistic_fragments[residue_type][resid]:
+            coord.append(atomistic_fragments[residue_type][resid][atom]['coord'])
+        coord=at_mod.check_atom_overlap(coord)
+        for atom_val, atom in enumerate(atomistic_fragments[residue_type][resid]):
+            atomistic_fragments[residue_type][resid][atom]['coord']=coord[atom_val]
+
         for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
         #### separates out the water molecules from the ion in the fragment
             if atomistic_fragments[residue_type][resid][at_id+1]['frag_mass'] > 1:                  

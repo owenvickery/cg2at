@@ -101,7 +101,7 @@ def check_new_box(coord,box, new_box):
                 return True
     return False
 
-def fix_pbc(cg_residues, box_vec, new_box):
+def fix_pbc(cg_residues, box_vec, new_box, box_shift):
 #### fixes box PBC
     box = box_vec.split()[1:4]
     new_box = new_box.split()[1:4]
@@ -128,6 +128,8 @@ def fix_pbc(cg_residues, box_vec, new_box):
                                 bead_prev=bead
                             else:
                                 cg_residues[residue_type][residue][bead]['coord'][xyz] = temp
+                if g_var.box != None:
+                    cg_residues[residue_type][residue][bead]['coord'] = cg_residues[residue_type][residue][bead]['coord']-box_shift
                 if residue_type != 'PROTEIN':
                     bead_prev=bead
                 elif res_val == 0 and residue_type == 'PROTEIN':

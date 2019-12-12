@@ -85,12 +85,17 @@ def print_swap_residues(s_res_d, res_range):
     
 
 def new_box_vec(box_vec, box):
-    box_vec_values = box_vec.split()[1:4]
+    box_vec_split = box_vec.split()[1:4]
+    box_vec_values, box_shift = [], []
     for xyz_val, xyz in enumerate(box):
         if xyz != 0:
-            box_vec_values[xyz_val] =  np.round(float(xyz), 3)
+            box_shift.append((float(box_vec_split[xyz_val])/2) - (float(xyz)/2))
+            box_vec_values.append(np.round(float(xyz), 3))
+        else:
+            box_shift.append(0)
+            box_vec_values.append(float(box_vec_split[xyz_val]))
     box_vec = g_var.box_line%(box_vec_values[0], box_vec_values[1], box_vec_values[2])
-    return box_vec
+    return box_vec, np.array(box_shift)
 
 def fetch_chiral(np_directories,p_directories):
     processing={}     
