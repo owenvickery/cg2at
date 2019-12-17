@@ -37,7 +37,7 @@ chiral = gen.fetch_chiral(np_directories, p_directories)
 water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
 
 ### return backbone information
-backbone=gen.fetch_fragment(p_directories)
+backbone, sorted_connect, hydrogen = gen.fetch_fragment(p_residues, p_directories, mod_directories,  np_directories)
 
 
 swap_dict=gen.sort_swap_group()
@@ -50,3 +50,5 @@ for angle in range(0,360, 5):
     x_rot.append(gen.eulerAnglesToRotationMatrix([angle,0,0]))
     y_rot.append(gen.eulerAnglesToRotationMatrix([0,angle,0]))
     z_rot.append(gen.eulerAnglesToRotationMatrix([0,0,angle]))
+
+

@@ -3,6 +3,7 @@
 import os, sys
 import numpy as np
 import math
+from scipy.spatial import cKDTree
 import gen, g_var, f_loc, at_mod
 
 
@@ -18,12 +19,12 @@ def build_atomistic_system(cg_residues,residue_type, box_vec):
 #### creates folder for residue type
     gen.mkdir_directory(g_var.working_dir+residue_type)
 
-    if residue_type in ['ION']:
+    if residue_type in ['ION','SOL']:
         atomistic_fragments[residue_type] = atomistic_non_protein_solvent(residue_type, cg_residues[residue_type])
-        system, atomistic_fragments = solvent_ion(box_vec, system, atomistic_fragments, residue_type)
-    elif residue_type in ['SOL']:
-        atomistic_fragments[residue_type] = atomistic_non_protein_solvent(residue_type, cg_residues[residue_type])
-        system, atomistic_fragments = solvent_sol(box_vec, system, atomistic_fragments, residue_type)
+        if residue_type in ['ION']:
+            system, atomistic_fragments = solvent_ion(box_vec, system, atomistic_fragments, residue_type)
+        else:
+            system, atomistic_fragments = solvent_sol(box_vec, system, atomistic_fragments, residue_type)   
     else:
         atomistic_fragments[residue_type] = atomistic_non_protein_non_solvent(residue_type, cg_residues[residue_type])
         system, atomistic_fragments = non_solvent( box_vec, system, atomistic_fragments, residue_type)
@@ -105,18 +106,16 @@ def atomistic_non_protein_non_solvent(cg_residue_type,cg_residues):
         atomistic_fragments[cg_resid]={}
         frag_location=at_mod.fragment_location(cg_residue_type) ### get fragment location from database
         residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
-        connect = at_mod.connection(residue_type[cg_residue_type])
         for group in residue_type[cg_residue_type]:
             # print(residue_type[cg_residue_type][group], '\n')
             center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][group], residue_type_mass[cg_residue_type], cg_residue, cg_residues[cg_residue])
-            at_connect, cg_connect = at_mod.connectivity(cg_residues[cg_residue], connect, at_frag_centers, cg_frag_centers, group_fit, group)
+            at_connect, cg_connect = at_mod.connectivity(cg_residues[cg_residue], at_frag_centers, cg_frag_centers, group_fit, group)
 
             if len(at_connect) == len(cg_connect):
                 xyz_rot_apply=at_mod.rotate(np.array(at_connect)-center, np.array(cg_connect)-center, False)
             else:
                 print('atom connections: '+str(len(at_connections))+' does not equal CG connections: '+str(len(cg_connections)))
                 sys.exit('residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
-
             for bead in group_fit:
                 for atom in group_fit[bead]:
                     group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   
@@ -150,37 +149,39 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
 
 def check_hydrogens(residue):
 #### finds the connecting carbons and their associated carbons [carbon atom, hydrogen ref number, connecting ref number]    
+    # connect=[]
     connect=[]
+    con_coord = []
+    h_atom = []
     for atom_num, atom in enumerate(residue):
-        if residue[atom]['connect'] > 0 and residue[atom]['extra'] > 0:
-            connect.append([atom, residue[atom]['extra'],  residue[atom]['connect']]) 
-    connect=np.array(connect)
-    for atom_num, carbon in enumerate(connect):
-        h_coord=[]
-        h_atoms=[]
-    #### strips coordinates 
-        for atom_num, atom in enumerate(residue):
-            if residue[atom]['extra'] == carbon[1] and atom != carbon[0]:
-                h_coord.append(residue[atom]['coord'])
-                h_atoms.append(atom)
-            if residue[atom]['connect'] == carbon[2] and atom != carbon[0]:
-                connecting_coord=residue[atom]['coord']
-        h_coord=np.array(h_coord)
-    #### gets COM of Hydrogens
-        h_com=np.array([np.mean(h_coord[:,0]),np.mean(h_coord[:,1]),np.mean(h_coord[:,2])]) ### center of mass of hydrogens
-    #### vector between H COM and bonded carbon 
-        vector=np.array([h_com[0]-residue[carbon[0]]['coord'][0],h_com[1]-residue[carbon[0]]['coord'][1],h_com[2]-residue[carbon[0]]['coord'][2]])
-    #### flips  
-        h_com_f=h_com+vector*2
-        d1 = np.sqrt((h_com[0]-connecting_coord[0])**2+(h_com[1]-connecting_coord[1])**2+(h_com[2]-connecting_coord[2])**2)
-        d2 = np.sqrt((h_com_f[0]-connecting_coord[0])**2+(h_com_f[1]-connecting_coord[1])**2+(h_com_f[2]-connecting_coord[2])**2)
-        if d2<d1 and len(h_coord) == 2:
-            for h_at in h_atoms:
-                residue[h_at]['coord']=residue[h_at]['coord']+vector*2
-        elif d2>d1 and len(h_coord) == 1: 
-            for h_at in h_atoms:
-                residue[h_at]['coord']=residue[h_at]['coord']-vector*2
+        resname=residue[atom]['res_type']
+        for bead in f_loc.sorted_connect[resname]:
+            if residue[atom]['atom'] in f_loc.sorted_connect[residue[atom]['res_type']][bead]:
+                connect.append(atom)
+                con_coord.append(residue[atom]['coord'])
+        if residue[atom]['atom'] in f_loc.hydrogen[residue[atom]['res_type']]:
+            h_atom.append(atom)    
+    for atom in h_atom:
+        connected_atom = residue[atom]['coord']
+        dist=np.sqrt(((np.array(con_coord)[:,0] - np.array(residue[atom]['coord'])[0])**2)+((np.array(con_coord)[:,1] - np.array(residue[atom]['coord'])[1])**2)+((np.array(con_coord)[:,2] - np.array(residue[atom]['coord'])[2])**2))
+        connecting_atom = residue[connect[np.argmin(dist)]]['coord']
+        hc = []
+        hc_at_index = []
+        for atom_num, res_atom in enumerate(residue):
+            if residue[res_atom]['atom'] in f_loc.hydrogen[resname][residue[atom]['atom']]:
+                hc.append(residue[res_atom]['coord'])
+                hc_at_index.append(res_atom)
+        h_com=np.mean(np.array(hc), axis=0)             
 
+    # #### vector between H COM and bonded carbon 
+        vector=np.array([h_com[0]-connected_atom[0],h_com[1]-connected_atom[1],h_com[2]-connected_atom[2]])
+    # #### flips  
+        h_com_f=h_com+vector*2
+        d1 = np.sqrt((h_com[0]-connecting_atom[0])**2+(h_com[1]-connecting_atom[1])**2+(h_com[2]-connecting_atom[2])**2)
+        d2 = np.sqrt((h_com_f[0]-connecting_atom[0])**2+(h_com_f[1]-connecting_atom[1])**2+(h_com_f[2]-connecting_atom[2])**2)
+        if d2 > d1:
+            for h_at in hc_at_index:
+                residue[h_at]['coord']=residue[h_at]['coord']+vector*2
     return residue
 
 def merge_minimised(residue_type, np_system, box_vec):

@@ -160,14 +160,14 @@ def fragment_location(residue):
     sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
 
 
-def split_fragment_names(line, residue, group):
-    line_split=line.split()
+def split_fragment_names(line, residue, group, frag_location):
+    fragment_header = gen.sep_fragments_header(line, frag_location)
     if not g_var.mod:
-        bead, group = line_split[1], line_split[2]
+        bead, group = fragment_header['frag'], fragment_header['group']
     else:
-        bead = line_split[1]
+        bead = fragment_header['frag']
         group+=1
-    if group != ']' and group not in residue:
+    if group not in residue:
         residue[group] = {}
     if bead not in residue[group]:
         residue[group][bead]={} 
@@ -181,7 +181,7 @@ def get_atomistic(frag_location):
     with open(frag_location, 'r') as pdb_input:
         for line_nr, line in enumerate(pdb_input.readlines()):
             if line.startswith('['):
-                residue, group, bead = split_fragment_names(line, residue, group)
+                residue, group, bead = split_fragment_names(line, residue, group, frag_location)
                 fragment_mass[bead]=[]
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line) ## splits up pdb line
@@ -233,37 +233,28 @@ def align_at_frag_to_CG_frag(at_com, cg_com, group):
     return group, COM_vector
 
 
-def connection(residue):
-    connect=[]
-#### runs through every in bead in residue 
-    for group in residue:
-        for bead in residue[group]:
-            for atom_num, atom in enumerate(residue[group][bead]):
-            #### if atom has a connection which is not zero (0 = does not connect)
-                if residue[group][bead][atom]['connect'] > 0:
-                    connect.append([group, bead, atom, residue[group][bead][atom]['connect']]) 
-    connect=np.array(connect)   
-    return connect
-
-def connectivity(cg, connect, at_frag_centers, cg_frag_centers, group, group_number):
+def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
 #### returns the connections between the atomistic and coarse grain beads
     at_connection, cg_connection=[],[]
-    if len(connect) > 0:
-        for info in connect[np.where(str(group_number) == connect[:,0])]:
-            for ind in connect:
-                if info[3] == ind[3] and group_number != ind[0]: 
-                    try:
-                        cg_connection.append(cg[ind[1]]['coord'])
-                    except:
-                        sys.exit('cannot find CG bead: '+ind[1])
-                    try:
-                        at_connection.append(group[info[1]][int(info[2])]['coord'])  
-                    except:
-                        sys.exit('cannot find atomistic bead: '+info[1])
-        if len(at_frag_centers)  > 1:         
-            for bead in at_frag_centers:
-                cg_connection.append(cg_frag_centers[bead])
-                at_connection.append(at_frag_centers[bead])          
+    for bead in cg:
+        resname = cg[bead]['residue_name']
+        break
+    if resname in f_loc.sorted_connect:
+        if len(f_loc.sorted_connect[resname]) > 0:
+            for group_bead in group: 
+                for bead_atom in group[group_bead]:
+                    if group[group_bead][bead_atom]['atom'] in f_loc.sorted_connect[resname][group_number]:
+                        for bead_connect in f_loc.sorted_connect[resname][group_number][group[group_bead][bead_atom]['atom']]:
+                            if 'cg_connect' not in locals():
+                                cg_connect = [cg[bead_connect]['coord']]
+                            else:
+                                cg_connect.append(cg[bead_connect]['coord'])
+                        at_connection.append(group[group_bead][bead_atom]['coord'])
+                        cg_connection.append(np.mean(np.array(cg_connect), axis=0))    
+    if len(at_frag_centers)  > 1:         
+        for bead in at_frag_centers:
+            cg_connection.append(cg_frag_centers[bead])
+            at_connection.append(at_frag_centers[bead])     
     return at_connection, cg_connection    
 
 def find_cross_vector(ca, C, O):

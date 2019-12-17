@@ -1,4 +1,4 @@
-[ NC3 1 ]
+[ frag 'NC3'  group '1' con 'C11:PO4' hydrogen 'C11:H11A,H11B']
 ATOM      1  N   DLPC    1       5.882   7.332  56.987  0.00  0.00      MEMB
 ATOM      2  C13 DLPC    1       4.914   8.459  56.763  0.00  0.00      MEMB
 ATOM      3 H13A DLPC    1       4.605   8.507  55.727  0.00  0.00      MEMB
@@ -18,13 +18,13 @@ ATOM     16 H12B DLPC    1       4.690   6.031  55.754  0.00  0.00      MEMB
 ATOM     17  C11 DLPC    1       3.989   5.627  57.710  1.00  1.00      MEMB
 ATOM     18 H11A DLPC    1       4.339   5.547  58.761  1.00  0.00      MEMB
 ATOM     19 H11B DLPC    1       3.602   4.623  57.420  1.00  0.00      MEMB
-[ PO4 2 ]
+[ frag 'PO4' group '2' hydrogen 'C11:H11A,H11B'  con 'O11:NC3 O12:GL1' ]
 ATOM     20  P   DLPC    1       1.498   6.483  58.232  0.00  0.00      MEMB
 ATOM     21  O13 DLPC    1       1.239   7.610  59.168  0.00  0.00      MEMB
 ATOM     22  O14 DLPC    1       1.254   5.128  58.761  0.00  0.00      MEMB
 ATOM     23  O11 DLPC    1       0.635   6.658  56.902  0.00  1.00      MEMB
 ATOM     24  O12 DLPC    1       2.975   6.604  57.629  0.00  2.00      MEMB
-[ GL1 3 ]
+[ frag 'GL1' group '3' hydrogen 'C1:HA,HB C22:H2R,H2S' con 'C1:PO4 O2:GL2 C22:C1A' ]
 ATOM     25  C1  DLPC    1       1.096   7.500  55.834  2.00  2.00      MEMB
 ATOM     26  HA  DLPC    1       2.114   7.920  55.987  2.00  0.00      MEMB
 ATOM     27  HB  DLPC    1       0.400   8.361  55.760  2.00  0.00      MEMB
@@ -36,7 +36,7 @@ ATOM     32  O22 DLPC    1       1.556   5.194  52.168  0.00  0.00      MEMB
 ATOM     33  C22 DLPC    1       3.141   3.888  53.478  3.00  3.00      MEMB
 ATOM     34  H2R DLPC    1       2.732   3.316  54.256  3.00  0.00      MEMB
 ATOM     35  H2S DLPC    1       4.121   4.217  53.842  3.00  0.00      MEMB
-[ GL2 4 ]
+[ frag 'GL2' group '4' hydrogen 'C3:HX,HY C33:H2X,H2Y' con 'C3:GL1 C32:C1B' ]
 ATOM     36  C3  DLPC    1       1.406   7.835  53.337  4.00  6.00      MEMB
 ATOM     37  HX  DLPC    1       0.870   8.791  53.518  4.00  0.00      MEMB
 ATOM     38  HY  DLPC    1       1.028   7.437  52.363  4.00  0.00      MEMB
@@ -46,7 +46,7 @@ ATOM     41  O32 DLPC    1       2.957   7.683  51.228  0.00  0.00      MEMB
 ATOM     42  C32 DLPC    1       4.959   8.014  52.602  5.00  7.00      MEMB
 ATOM     43  H2X DLPC    1       5.162   7.607  53.613  5.00  0.00      MEMB
 ATOM     44  H2Y DLPC    1       5.243   9.088  52.583  5.00  0.00      MEMB
-[ C1A 5 ]
+[ frag 'C1A' group '5' hydrogen 'C23:H3R,H3S C25:H5R,H5S' con 'C23:GL1 C25:C2A' ]
 ATOM     45  C23 DLPC    1       3.125   2.728  52.490  6.00  3.00      MEMB
 ATOM     46  H3R DLPC    1       2.088   2.442  52.191  6.00  0.00      MEMB
 ATOM     47  H3S DLPC    1       3.614   1.821  52.904  6.00  0.00      MEMB
@@ -56,7 +56,7 @@ ATOM     50  H4S DLPC    1       3.609   4.291  51.255  0.00  0.00      MEMB
 ATOM     51  C25 DLPC    1       3.662   2.526  50.089  7.00  4.00      MEMB
 ATOM     52  H5R DLPC    1       2.565   2.408  49.936  7.00  0.00      MEMB
 ATOM     53  H5S DLPC    1       4.099   1.503  50.145  7.00  0.00      MEMB
-[ C2A 6 ]
+[ frag 'C2A' group '6' hydrogen 'C26:H6R,H6S C29:H9R,H9S' con 'C26:C1A C29:C3A' ]
 ATOM     54  C26 DLPC    1       4.325   3.440  49.067  8.00  4.00      MEMB
 ATOM     55  H6R DLPC    1       4.496   2.885  48.128  8.00  0.00      MEMB
 ATOM     56  H6S DLPC    1       5.318   3.714  49.500  8.00  0.00      MEMB
@@ -69,7 +69,7 @@ ATOM     62  H8S DLPC    1       1.625   3.939  48.941  0.00  0.00      MEMB
 ATOM     63  C29 DLPC    1       1.468   5.934  48.053  9.00  5.00      MEMB
 ATOM     64  H9R DLPC    1       2.160   6.698  47.646  9.00  0.00      MEMB
 ATOM     65  H9S DLPC    1       1.168   6.273  49.075  9.00  0.00      MEMB
-[ C3A 7 ]
+[ frag 'C3A' group '7' hydrogen 'C210:H10R,H10S' con 'C210:C2A' ]
 ATOM     66 C210 DLPC    1       0.215   5.866  47.175  10.0  5.00      MEMB
 ATOM     67 H10R DLPC    1      -0.600   6.503  47.579  10.0  0.00      MEMB
 ATOM     68 H10S DLPC    1      -0.104   4.824  47.233  10.0  0.00      MEMB
@@ -80,7 +80,7 @@ ATOM     72 C212 DLPC    1       1.240   4.888  45.086  0.00  0.00      MEMB
 ATOM     73 H12R DLPC    1       0.951   3.907  45.526  0.00  0.00      MEMB
 ATOM     74 H12S DLPC    1       2.306   5.046  45.335  0.00  0.00      MEMB
 ATOM     75 H12T DLPC    1       1.119   4.809  43.990  0.00  0.00      MEMB
-[ C1B 8 ]
+[ frag 'C1B'  group '8' hydrogen 'C33:H3X,H3Y C35:H5X,H5Y' con 'C33:GL2 C35:C2B' ]
 ATOM     76  C33 DLPC    1       5.728   7.215  51.540  11.0  7.00      MEMB
 ATOM     77  H3X DLPC    1       5.240   6.223  51.386  11.0  0.00      MEMB
 ATOM     78  H3Y DLPC    1       6.764   7.023  51.890  11.0  0.00      MEMB
@@ -90,7 +90,7 @@ ATOM     81  H4Y DLPC    1       4.726   8.156  49.859  0.00  0.00      MEMB
 ATOM     82  C35 DLPC    1       6.479   7.242  49.078  12.0  8.00      MEMB
 ATOM     83  H5X DLPC    1       6.107   6.192  49.065  12.0  0.00      MEMB
 ATOM     84  H5Y DLPC    1       7.575   7.216  49.255  12.0  0.00      MEMB
-[ C2B 9 ]
+[ frag 'C2B'  group '9' hydrogen 'C36:H6X,H6Y C39:H9X,H9Y' con 'C36:C1B C39:C3B' ]
 ATOM     85  C36 DLPC    1       6.143   7.901  47.730  13.0  8.00      MEMB
 ATOM     86  H6X DLPC    1       6.656   8.885  47.657  13.0  0.00      MEMB
 ATOM     87  H6Y DLPC    1       5.046   8.106  47.722  13.0  0.00      MEMB
@@ -103,7 +103,7 @@ ATOM     93  H8Y DLPC    1       5.767   8.538  45.103  0.00  0.00      MEMB
 ATOM     94  C39 DLPC    1       4.252   6.974  45.241  14.0  9.00      MEMB
 ATOM     95  H9X DLPC    1       3.760   7.358  46.163  14.0  0.00      MEMB
 ATOM     96  H9Y DLPC    1       4.247   5.863  45.308  14.0  0.00      MEMB
-[ C3B 10 ]
+[ frag 'C3B' group '10' hydrogen 'C310:H10X,H10Y' con 'C310:C2B' ]
 ATOM     97 C310 DLPC    1       3.397   7.428  44.038  15.0  9.00      MEMB
 ATOM     98 H10X DLPC    1       3.315   8.535  44.028  15.0  0.00      MEMB
 ATOM     99 H10Y DLPC    1       2.367   7.053  44.195  15.0  0.00      MEMB

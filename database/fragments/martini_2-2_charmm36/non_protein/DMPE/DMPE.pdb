@@ -1,4 +1,4 @@
-[ NH3 1 ]
+[ frag 'NH3'  group '1' con 'C11:PO4' hydrogen 'C11:H11A,H11B']
 ATOM      1  N   DMPE    1      18.276   7.073  24.053  0.00  0.00      MEMB N
 ATOM      2  HN1 DMPE    1      17.280   6.858  24.226  0.00  0.00      MEMB H
 ATOM      3  HN2 DMPE    1      18.659   6.543  23.238  0.00  0.00      MEMB H
@@ -9,13 +9,13 @@ ATOM      7 H12B DMPE    1      18.729   7.461  26.084  0.00  0.00      MEMB H
 ATOM      8  C11 DMPE    1      20.524   6.919  24.971  1.00  0.00      MEMB C
 ATOM      9 H11A DMPE    1      20.901   6.251  24.168  1.00  1.00      MEMB H
 ATOM     10 H11B DMPE    1      21.058   6.532  25.884  1.00  0.00      MEMB H
-[ PO4 2 ]
+[ frag 'PO4' group '2' hydrogen 'C11:H11A,H11B'  con 'O11:NH3 O12:GL1' ]
 ATOM     11  P   DMPE    1      21.119   9.259  25.773  0.00  0.00      MEMB P
 ATOM     12  O13 DMPE    1      19.871   9.440  26.560  0.00  0.00      MEMB O
 ATOM     13  O14 DMPE    1      21.796  10.482  25.299  0.00  0.00      MEMB O
 ATOM     14  O11 DMPE    1      22.136   8.225  26.471  0.00  2.00      MEMB O
 ATOM     15  O12 DMPE    1      20.751   8.301  24.585  0.00  1.00      MEMB O
-[ GL1 3 ]
+[ frag 'GL1' group '3' hydrogen 'C1:HA,HB C22:H2R,H2S' con 'C1:PO4 O2:GL2 C22:C1A' ]
 ATOM     16  C1  DMPE    1      23.445   7.766  25.975  2.00  2.00      MEMB C
 ATOM     17  HA  DMPE    1      23.863   8.647  25.500  2.00  0.00      MEMB H
 ATOM     18  HB  DMPE    1      23.298   7.196  25.046  2.00  0.00      MEMB H
@@ -27,7 +27,7 @@ ATOM     23  O22 DMPE    1      24.833   4.403  28.347  0.00  0.00      MEMB O
 ATOM     24  C22 DMPE    1      22.335   4.478  28.605  3.00  4.00      MEMB C
 ATOM     25  H2R DMPE    1      21.641   4.444  27.736  3.00  0.00      MEMB H
 ATOM     26  H2S DMPE    1      21.955   5.235  29.317  3.00  0.00      MEMB H
-[ GL2 4 ]
+[ frag 'GL2' group '4' hydrogen 'C3:HX,HY C33:H2X,H2Y' con 'C3:GL1 C32:C1B' ]
 ATOM     27  C3  DMPE    1      25.696   7.418  28.192  4.00  3.00      MEMB C
 ATOM     28  HX  DMPE    1      26.567   7.640  27.561  4.00  0.00      MEMB H
 ATOM     29  HY  DMPE    1      26.141   6.516  28.665  4.00  0.00      MEMB H
@@ -37,7 +37,7 @@ ATOM     32  O32 DMPE    1      25.380   7.455  30.483  0.00  0.00      MEMB O
 ATOM     33  C32 DMPE    1      23.710   9.957  30.769  5.00  5.00      MEMB C
 ATOM     34  H2X DMPE    1      23.128  10.460  30.023  5.00  0.00      MEMB H
 ATOM     35  H2Y DMPE    1      24.349  10.707  31.167  5.00  0.00      MEMB H
-[ C1A 5 ]
+[ frag 'C1A' group '5' hydrogen 'C23:H3R,H3S C26:H6R,H6S' con 'C23:GL1 C26:C2A' ]
 ATOM     36  C23 DMPE    1      22.320   3.105  29.272  6.00  4.00      MEMB C
 ATOM     37  H3R DMPE    1      22.906   2.479  28.602  6.00  0.00      MEMB H
 ATOM     38  H3S DMPE    1      21.308   2.651  29.336  6.00  0.00      MEMB H
@@ -50,7 +50,7 @@ ATOM     44  H5S DMPE    1      21.575   4.314  31.758  0.00  0.00      MEMB H
 ATOM     45  C26 DMPE    1      22.463   2.898  33.104  7.00  6.00      MEMB C
 ATOM     46  H6R DMPE    1      22.830   1.845  33.114  7.00  0.00      MEMB H
 ATOM     47  H6S DMPE    1      21.697   2.968  33.904  7.00  0.00      MEMB H
-[ C2A 6 ]
+[ frag 'C2A' group '6' hydrogen 'C27:H7R,H7S C210:H10R,H10S' con 'C27:C1A C210:C3A' ]
 ATOM     48  C27 DMPE    1      23.519   3.934  33.421  8.00  6.00      MEMB C
 ATOM     49  H7R DMPE    1      23.142   4.964  33.330  8.00  0.00      MEMB H
 ATOM     50  H7S DMPE    1      24.393   3.883  32.730  8.00  0.00      MEMB H
@@ -63,7 +63,7 @@ ATOM     56  H9S DMPE    1      25.935   4.843  34.822  0.00  0.00      MEMB H
 ATOM     57 C210 DMPE    1      24.946   4.813  36.670  9.00  7.00      MEMB C
 ATOM     58 H10R DMPE    1      25.583   3.946  37.007  9.00  0.00      MEMB H
 ATOM     59 H10S DMPE    1      23.964   4.712  37.183  9.00  0.00      MEMB H
-[ C3A 7 ]
+[ frag 'C3A' group '7' hydrogen 'C211:H11R,H11S' con 'C211:C2A' ]
 ATOM     60 C211 DMPE    1      25.527   6.130  36.971  10.0  7.00      MEMB C
 ATOM     61 H11R DMPE    1      25.148   7.132  36.711  10.0  0.00      MEMB H
 ATOM     62 H11S DMPE    1      26.533   6.171  36.469  10.0  0.00      MEMB H
@@ -77,7 +77,7 @@ ATOM     69 C214 DMPE    1      24.573   7.083  40.169  0.00  0.00      MEMB C
 ATOM     70 H14R DMPE    1      24.646   7.843  39.347  0.00  0.00      MEMB H
 ATOM     71 H14S DMPE    1      25.450   7.331  40.790  0.00  0.00      MEMB H
 ATOM     72 H14T DMPE    1      23.710   7.241  40.798  0.00  0.00      MEMB H
-[ C1B 8 ]
+[ frag 'C1B' group '8' hydrogen 'C33:H3X,H3Y C36:H6X,H6Y' con 'C33:GL2 C36:C2B' ]
 ATOM     73  C33 DMPE    1      22.093   9.996  31.670  11.0  5.00      MEMB C
 ATOM     74  H3X DMPE    1      21.989  10.850  32.353  11.0  0.00      MEMB H
 ATOM     75  H3Y DMPE    1      22.125   9.116  32.309  11.0  0.00      MEMB H
@@ -90,7 +90,7 @@ ATOM     81  H5Y DMPE    1      20.317   9.099  33.841  0.00  0.00      MEMB H
 ATOM     82  C36 DMPE    1      20.218   7.062  33.091  12.0  8.00      MEMB C
 ATOM     83  H6X DMPE    1      21.291   6.798  33.008  12.0  0.00      MEMB H
 ATOM     84  H6Y DMPE    1      19.681   6.534  32.271  12.0  0.00      MEMB H
-[ C2B 9 ]
+[ frag 'C2B' group '9' hydrogen 'C37:H7X,H7Y C310:H10X,H10Y' con 'C37:C1B C310:C3B' ]
 ATOM     85  C37 DMPE    1      19.694   6.404  34.405  13.0  8.00      MEMB C
 ATOM     86  H7X DMPE    1      19.872   5.304  34.343  13.0  0.00      MEMB H
 ATOM     87  H7Y DMPE    1      18.599   6.567  34.492  13.0  0.00      MEMB H
@@ -103,7 +103,7 @@ ATOM     93  H9Y DMPE    1      22.022   5.444  35.904  0.00  0.00      MEMB H
 ATOM     94 C310 DMPE    1      22.499   7.274  36.960  14.0  9.00      MEMB C
 ATOM     95 H10X DMPE    1      22.913   8.171  36.503  14.0  0.00      MEMB H
 ATOM     96 H10Y DMPE    1      23.407   6.817  37.289  14.0  0.00      MEMB H
-[ C3B 10 ]
+[ frag 'C3B' group '10' hydrogen 'C311:H11X,H11Y' con 'C311:C2B' ]
 ATOM     97 C311 DMPE    1      21.697   7.436  38.254  15.0  9.00      MEMB C
 ATOM     98 H11X DMPE    1      20.675   7.796  38.087  15.0  0.00      MEMB H
 ATOM     99 H11Y DMPE    1      22.236   8.163  38.911  15.0  0.00      MEMB H

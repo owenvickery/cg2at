@@ -34,7 +34,8 @@ def read_initial_pdb():
                             if line_sep_prev['residue_name'] == 'ION':
                                 cg_residues['SOL'][count]={}
                                 sol_res_list={}
-                                sol_res_list[f_loc.water]=residue_list[line_sep_prev['atom_name']]
+
+                                sol_res_list[f_loc.water]=residue_list[line_sep_prev['atom_name']].copy()
                                 sol_res_list[f_loc.water]['residue_name']='SOL'
                                 cg_residues['SOL'][count]=sol_res_list
                         else:
@@ -64,7 +65,7 @@ def read_initial_pdb():
         if line_sep['residue_name'] == 'ION':
             cg_residues['SOL'][count]={}
             sol_res_list={}
-            sol_res_list[f_loc.water]=residue_list[line_sep['atom_name']]
+            sol_res_list[f_loc.water]=residue_list[line_sep['atom_name']].copy()
             sol_res_list[f_loc.water]['residue_name']='SOL'
             cg_residues['SOL'][count]=sol_res_list
 #### checks if box vectors exist

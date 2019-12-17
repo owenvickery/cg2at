@@ -35,17 +35,18 @@ def build_protein_atomistic_system(cg_residues, box_vec):
         coordinates_atomistic[chain_count][residue_number]={}
         frag_location=at_mod.fragment_location(resname) ### get fragment location from database
         residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(frag_location)
-        connect = at_mod.connection(residue_type[resname])
         for group in residue_type[resname]:
             center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[resname][group], residue_type_mass[resname], residue_number, cg_residues[residue_number])
 
-            at_connect, cg_connect = at_mod.connectivity(cg_residues[residue_number], connect, at_frag_centers, cg_frag_centers, group_fit, group)
+            at_connect, cg_connect = at_mod.connectivity(cg_residues[residue_number], at_frag_centers, cg_frag_centers, group_fit, group)
             if 'BB' in group_fit:
                 BB_connect = []
                 for atom in group_fit['BB']:
-                    if group_fit['BB'][atom]['atom'] in f_loc.backbone[resname]['b_connect']:
-                        BB_connect.append(atom)
-                at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit['BB'], residue_number, BB_connect)
+                    if group_fit['BB'][atom]['atom'] == f_loc.backbone[resname]['N_ter']:
+                        N_ter=atom
+                    if group_fit['BB'][atom]['atom'] == f_loc.backbone[resname]['C_ter']:
+                        C_ter=atom
+                at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit['BB'], residue_number, N_ter, C_ter)
                 sequence = at_mod.add_to_sequence(sequence, resname, chain_count)
                 backbone_coords[chain_count].append(np.append(cg_residues[residue_number]['BB']['coord'], 1))
 
@@ -55,7 +56,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
             if len(at_connect) == len(cg_connect):
                 xyz_rot_apply=at_mod.rotate(np.array(at_connect)-center, np.array(cg_connect)-center, False)
             else:
-                print('atom connections: '+str(len(at_connections))+' does not equal CG connections: '+str(len(cg_connections)))
+                print('atom connections: '+str(len(at_connect))+' does not equal CG connections: '+str(len(cg_connect)))
                 sys.exit('residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
 
             for bead in group_fit:
@@ -91,7 +92,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
     return system, backbone_coords, final_coordinates_atomistic, sequence    
 
 
-def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_connect):
+def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, N_ter, C_ter):
 #### connect to preceeding backbone bead in chain
     new_chain=False
     try:
@@ -99,8 +100,10 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         xyz_prev = cg_residues[residue_number-1]['BB']['coord']
         dist=np.sqrt(((xyz_prev[0]-xyz_cur[0])**2)+((xyz_prev[1]-xyz_cur[1])**2)+((xyz_prev[2]-xyz_cur[2])**2))
         if dist < 5:
-            cg_connections.append(cg_residues[residue_number-1]['BB']['coord'])
-            at_connections.append(at_residues[BB_connect[0]]['coord'])
+            cg_n = cg_residues[residue_number-1]['BB']['coord']
+            at_n = at_residues[N_ter]['coord']
+            cg_connections.append(cg_n)
+            at_connections.append(at_n)
     except:
         pass
 #### connect to next backbone bead in chain
@@ -109,8 +112,10 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         xyz_next = cg_residues[residue_number+1]['BB']['coord']
         dist=np.sqrt(((xyz_next[0]-xyz_cur[0])**2)+((xyz_next[1]-xyz_cur[1])**2)+((xyz_next[2]-xyz_cur[2])**2))
         if dist < 5:
-            cg_connections.append(cg_residues[residue_number+1]['BB']['coord'])
-            at_connections.append(at_residues[BB_connect[1]]['coord'])
+            cg_c = cg_residues[residue_number+1]['BB']['coord']
+            at_c = at_residues[C_ter]['coord']
+            cg_connections.append(cg_c)
+            at_connections.append(at_c)
         else:
             new_chain=True
     except:
@@ -132,7 +137,7 @@ def find_closest_cysteine(at_connections, cg_connections, cg_residues, group, re
                 dist=np.sqrt(((xyz_check[0]-xyz_cur[0])**2)+((xyz_check[1]-xyz_cur[1])**2)+((xyz_check[2]-xyz_cur[2])**2)) ### distance
                 if dist < g_var.cys:
                     for atom_number in group['SC1']:
-                        if group['SC1'][atom_number]['atom']==f_loc.backbone[cg_residues[residue_number]['SC1']['residue_name']]['disulphide']: ### if sulphur
+                        if group['SC1'][atom_number]['atom']==f_loc.backbone[cg_residues[residue_number]['SC1']['residue_name']]['sul']: ### if sulphur
                             at_connections.append(group['SC1'][atom_number]['coord']) ### add at centered coordinates
                     cg_connections.append(cg_residues[res_id]['SC1']['coord']) ### add cg centered coordinates
                     disulphide=True
@@ -249,13 +254,13 @@ def read_in_atomistic(protein, cg_chain_count, sequence, check_alignment):
                         if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
                             line_sep['atom_name']='O'
                     #### makes C_terminal connecting atom variable  
-                        if line_sep['atom_name'] == f_loc.backbone[line_sep['residue_name']]['b_connect'][1]:
+                        if line_sep['atom_name'] == f_loc.backbone[line_sep['residue_name']]['C_ter']:
                             C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
                             C_resid=line_sep['residue_id']
                             C=True
                         try:
                         #### tries to make a N_terminal connecting atom variable
-                            if line_sep['atom_name'] == f_loc.backbone[line_sep['residue_name']]['b_connect'][0]:
+                            if line_sep['atom_name'] == f_loc.backbone[line_sep['residue_name']]['N_ter']:
                                 N_resid=line_sep['residue_id']
                                 N_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
                                 N=True
@@ -490,6 +495,7 @@ def RMSD_measure(structure_atoms, system, backbone_coords):
             try:
                 at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
             except:
+                print('The fragment probably has no mass\n')
                 for atom in structure_atoms[chain][residue]:
                     print(structure_atoms[chain][residue][atom])
                 sys.exit()

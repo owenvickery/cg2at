@@ -171,7 +171,7 @@ def write_posres(chain):
                     line_sep = gen.pdbatom(line)
                     at_counter+=1
                 #### if atom is in the restraint list for that residue add to position restraint file
-                    if line_sep['atom_name'] in f_loc.backbone[line_sep['residue_name']]['restraint']:
+                    if line_sep['atom_name'] in f_loc.backbone[line_sep['residue_name']]['posres']:
                         posres_output.write(str(at_counter)+'     1  1000  1000  1000\n')
 
 def steered_md_atomistic_to_cg_coord(chain):
@@ -192,7 +192,7 @@ def steered_md_atomistic_to_cg_coord(chain):
             '-o steered_md/PROTEIN_at_rep_user_supplied_'+str(chain)+' -maxwarn 1 ')
 #### run mdrun on steered MD
     os.chdir('steered_md')
-    gromacs(g_var.gmx+' mdrun -v -deffnm PROTEIN_at_rep_user_supplied_'+str(chain)+' -c PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb')
+    gromacs(g_var.gmx+' mdrun -v -pin on -deffnm PROTEIN_at_rep_user_supplied_'+str(chain)+' -c PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb')
 #### if no pdb file is created stop script with error message
     if os.path.exists('PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb'):
         pass
@@ -278,7 +278,7 @@ def non_protein_minimise(resid, residue_type):
 #### close grompp multiprocessing and change to min directory and spin up mdrun multiprocessing
     os.chdir('min')
     pool = mp.Pool(mp.cpu_count())
-    pool.map_async(gromacs, [(g_var.gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb') \
+    pool.map_async(gromacs, [(g_var.gmx+' mdrun -v -nt 1 -pin on -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb') \
                             for rid in range(0, resid)]).get()
     pool.close()
     os.chdir(g_var.working_dir)
@@ -298,7 +298,7 @@ def minimise_merged(residue_type, np_system):
             '-o '+g_var.working_dir+residue_type+'/min/'+residue_type+'_merged_min -maxwarn 1')
 #### change to min directory and minimise
     os.chdir('min') 
-    gromacs(g_var.gmx+' mdrun -v -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb')
+    gromacs(g_var.gmx+' mdrun -v -pin on -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb')
     os.chdir(g_var.working_dir)
 
 
@@ -355,7 +355,7 @@ def minimise_merged_pdbs(system, protein):
             '-maxwarn 1')
     os.chdir('min')
 #### runs minimises final systems
-    gromacs(g_var.gmx+' mdrun -v -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb')
+    gromacs(g_var.gmx+' mdrun -v -pin on -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb')
 
 
 def alchembed(system):
@@ -395,7 +395,7 @@ def alchembed(system):
                 '-maxwarn 1')          
         os.chdir('alchembed')
     #### run alchembed on the chain of interest
-        gromacs(g_var.gmx+' mdrun -v -deffnm merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -c merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+'.pdb')
+        gromacs(g_var.gmx+' mdrun -v -pin on -deffnm merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+' -c merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+'.pdb')
         os.chdir('..')
 #### copy final output to the FINAL folder
     copyfile('alchembed/merged_cg2at_at_rep_user_supplied_alchembed_'+str(chain)+'.pdb', g_var.final_dir+'final_cg2at_at_rep_user_supplied.pdb')

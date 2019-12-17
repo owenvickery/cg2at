@@ -3,14 +3,13 @@
 import os, sys
 import numpy as np
 from shutil import copyfile
-from time import gmtime
-import datetime
+import time
 import multiprocessing as mp
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/database/script_files')
 import gen, gro, at_mod, at_mod_p, at_mod_np, cg_mod, g_var, f_loc
 
-
-initialisation_time=np.array(gmtime()[3:6])
+time_counter = {}
+time_counter['i_t']=time.time()
 
 user_at_input = gro.collect_input(g_var.c, g_var.a)
 gen.flags_used()
@@ -30,13 +29,13 @@ else:
 cg_residues =cg_mod.fix_pbc(cg_residues, box_vec_initial, box_vec, box_shift)
 at_mod.sanity_check(cg_residues)
 
-read_in_time=np.array(gmtime()[3:6])
+time_counter['r_i_t']=time.time()
 system={}
 ### convert protein to atomistic
 if 'PROTEIN' in cg_residues:
     p_system, backbone_coords, final_coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec)
     system['PROTEIN']=p_system['PROTEIN']
-    protein_de_novo_time=np.array(gmtime()[3:6])
+    time_counter['p_d_n_t']=time.time()
     if user_at_input and 'PROTEIN' in system:
     #### reads in atomistic structure   
         atomistic_protein_input = at_mod_p.read_in_atomistic(g_var.input_directory+'AT_input.pdb', system['PROTEIN'], sequence, True)  
@@ -57,7 +56,7 @@ if 'PROTEIN' in cg_residues:
         merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_at_rep_user_supplied', '_gmx.pdb')
         at_mod_p.write_merged_pdb(merge_at_user_no_steer, '_no_steered', box_vec)
 
-final_protein_time=np.array(gmtime()[3:6])
+time_counter['f_p_t']=time.time()
 
 #### converts non protein residues into atomistic and minimises 
 if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]) > 0:
@@ -68,17 +67,16 @@ if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']])
     for residue_type in pool_process:
         np_system.update(residue_type)
     print('\nThis may take some time....(probably time for a coffee)\n')
-    for residue_type in cg_residues:
-        if residue_type not in ['PROTEIN', 'ION']:
-            print('Minimising individual residues: '+residue_type)
-            gro.non_protein_minimise(np_system[residue_type], residue_type)
-            at_mod_np.merge_minimised(residue_type, np_system, box_vec)
-            print('Minimising merged: '+residue_type)
-            gro.minimise_merged(residue_type, np_system)
+    for residue_type in [key for value, key in enumerate(cg_residues) if key not in ['PROTEIN', 'ION']]:
+        print('Minimising individual residues: '+residue_type)
+        gro.non_protein_minimise(np_system[residue_type], residue_type)
+        at_mod_np.merge_minimised(residue_type, np_system, box_vec)
+        print('Minimising merged: '+residue_type)
+        gro.minimise_merged(residue_type, np_system)
     system.update(np_system)
-    build_non_protein_time=np.array(gmtime()[3:6])
+    time_counter['b_n_p_t']=time.time()
 
-non_protein_time=np.array(gmtime()[3:6])
+time_counter['n_p_t']=time.time()
 
 #### creates merged folder
 print('\nMerging all residue types to single file. (Or a possibly tea)\n')
@@ -103,7 +101,7 @@ if len(system)>0:
     at_mod.merge_system_pdbs(system, '_novo', cg_residues, box_vec)
     gro.minimise_merged_pdbs(system, '_novo')
     copyfile('merged_cg2at_novo_minimised.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')
-    merge_time=np.array(gmtime()[3:6])
+    time_counter['m_t']=time.time()
 
 #### copies all itp files and topologies from whereever they are stored
     for file_name in os.listdir(g_var.working_dir+'MERGED'):
@@ -122,6 +120,8 @@ if 'PROTEIN' in cg_residues:
     RMSD={}
     de_novo_atoms = at_mod_p.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb', system['PROTEIN'], sequence, False)
     RMSD['de novo '] = at_mod_p.RMSD_measure(de_novo_atoms, system,backbone_coords)
+    print(1)
+
     if user_at_input and 'PROTEIN' in system:
         at_input_atoms = at_mod_p.read_in_atomistic(g_var.final_dir+'final_cg2at_at_rep_user_supplied.pdb', system['PROTEIN'], sequence, False)
         RMSD['at input'] = at_mod_p.RMSD_measure(at_input_atoms, system,backbone_coords)         
@@ -136,7 +136,7 @@ if g_var.clean:
     gen.clean(cg_residues)
 
 
-final_time=np.array(gmtime()[3:6])
+time_counter['f_t']=time.time()
 
 #### prints out system information
 
@@ -148,25 +148,9 @@ for section in system:
     print('{0:^20}{1:^10}'.format(section, system[section]))
 
 #### prints out script timings for each section
+
 if g_var.v >= 1:
-    print('\n{0:^47}{1:^22}'.format('Job','Time'))
-    print('{0:^47}{1:^22}'.format('---','----'))
-    t1 = gen.fix_time(read_in_time, initialisation_time)
-    print('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
-    if user_at_input and 'PROTEIN' in system:
-        t2=gen.fix_time(protein_de_novo_time,read_in_time)
-        t3=gen.fix_time(final_protein_time,protein_de_novo_time)
-        t4=gen.fix_time(final_protein_time,read_in_time)
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein system: ',t2[0],'hours',t2[1],'min',t2[2],'sec'))        
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein system from provided structure: ',t3[0],'hours',t3[1],'min',t3[2],'sec'))
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein system build: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
-    else:
-        t5=gen.fix_time(final_protein_time,read_in_time)
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein system: ',t5[0],'hours',t5[1],'min',t5[2],'sec'))
-    t6=gen.fix_time(non_protein_time,final_protein_time)
-    t7=gen.fix_time(merge_time,non_protein_time)
-    t8=gen.fix_time(final_time,initialisation_time)
-    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
-    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Merge protein and non protein system: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
-    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t8[0],'hours',t8[1],'min',t8[2],'sec'))
+    gen.print_script_timings(time_counter, system, user_at_input)
+
+
 

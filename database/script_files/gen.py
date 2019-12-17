@@ -6,6 +6,7 @@ import math
 from distutils.dir_util import copy_tree
 import glob
 import re
+import shlex
 import g_var
 
 
@@ -16,13 +17,6 @@ def flags_used():
             line='{0:15}{1:15}\n'.format(var,str(g_var.variables_to_save[var]))
             # line = var + '\t' + str(g_var.variables_to_save[var])+'\n'
             scr_input.write(line)
-
-def fix_time(t1, t2):
-    t1_t2=t2-t1
-    for t_val, t_unit in enumerate(t1_t2):
-        if t_unit < 0:
-            t1_t2[t_val]=t_unit*-1
-    return t1_t2
 
 def split_swap(swap):
     try:
@@ -45,7 +39,10 @@ def sort_swap_group():
         s_res_d = {}
         for swap in g_var.swap:
             res_s = re.split(':', swap)[0].split(',')
-            res_e = re.split(':', swap)[1].split(',')
+            if re.split(':', swap)[1].split(',') is not type(int):
+                res_e = re.split(':', swap)[1].split(',')
+            else:
+                sys.exit('swap layout is not correct')
             if len(res_s) == len(res_e):
                 res_range, res_id = split_swap(swap)
                 if res_s[0] not in s_res_d:
@@ -117,44 +114,128 @@ def fetch_chiral(np_directories,p_directories):
                     pass
     return processing
 
-def fetch_fragment(p_directories):
+def sep_fragments_header(line, residue_name):
+    line_sep = shlex.split(line)
+    residue = {}
+    residue['ter']=False
+    # residue = {'C_ter':False, 'N_ter':False, 'posres':[], 'ter':False, 'sul':False, 'hydrogen':
+    for top in line_sep:
+        if top not in ['[',']']:
+            try:
+                if top in ['frag', 'group', 'C_ter', 'N_ter', 'posres', 'ter', 'sul', 'con', 'hydrogen']:
+                    t_header = top
+                    residue[top]={}
+                elif top.count(':') >= 1:
+                    top_split_grouped = top.split()
+                    for group in top_split_grouped: 
+                        group_split=group.split(':')
+                        residue[t_header][group_split[0]]=group_split[1].split(',')
+                elif top.count(',') >= 1:
+                    residue[t_header]=top.split(',')
+                elif 't_header' in locals() and len(top) > 0 :
+                    residue[t_header]=top  
+            except:
+                print('Something is wrong in the residue: ',residue_name,'\n',line)
+                sys.exit()
+    return residue
+
+def sort_connectivity(connectivity):
+    cut_group = {}
+    if len(connectivity) > 0:
+        for group in connectivity:
+            cut_group[group]={}
+            for con in connectivity[group]['con']:
+                for con_bead in connectivity[group]['con'][con]:
+                    if con_bead not in connectivity[group]['g_frag']:
+                        if con not in cut_group[group]:
+                            cut_group[group][con] = [con_bead]
+                        else:
+                            cut_group[group][con].append(con_bead)
+                    else:
+                        pass
+    return cut_group
+
+def fetch_fragment(p_residues, p_directories, mod_directories, np_directories):
 #### fetches the Backbone heavy atoms and the connectivity with pre/proceeding residues 
     
     processing={}     ### dictionary of backbone heavy atoms and connecting atoms eg backbone['ASP'][atoms/b_connect]
+    sorted_connect={}
+    hydrogen = {}
     for directory in range(len(p_directories)):
         for residue in p_directories[directory][1:]:    
             if residue not in processing:
-                atom_list, bb_list, restraint, disulphide, terminal=[], [], [], '', False
-                with open(p_directories[directory][0]+residue+'/'+residue+'.pdb', 'r') as pdb_input:
-                    for line_nr, line in enumerate(pdb_input.readlines()):
-                        if line.startswith('['):
-                            bead = line.split()[1]
-                        if line.startswith('ATOM'):
-                            line_sep = pdbatom(line)
-                            if 'H' not in line_sep['atom_name']:
-                                if bead.startswith('B'):
-                                    atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
-                                if line_sep['backbone'] == 2:
-                                    bb_list.append(line_sep['atom_name'])  ### connecting atoms
-                                if line_sep['backbone'] in [3,4,5]:
-                                    restraint.append(line_sep['atom_name'])  ### position restrained atoms
-                                if line_sep['backbone'] in [5]:
-                                    disulphide = line_sep['atom_name'] ### position restrained atoms
-                                if line_sep['backbone'] == 4:
-                                    terminal=True
-                processing[residue]={'atoms':atom_list,'b_connect':bb_list,'restraint':restraint, 'disulphide':disulphide, 'ter':terminal}  ### adds heavy atoms and connecting atoms to backbone dictionary 
-                atom_list, bb_list, restraint=[], [], []  ### resets residue lists of heavy atoms, connecting atoms and restraint 
-#### if verbose prints out all heavy atoms and connecting atoms for each backbone
+                location = fragment_location(residue,p_residues, p_directories, mod_directories, np_directories)
+                processing, sorted_connect, hydrogen  = get_fragment_topology(residue, location, processing, sorted_connect, hydrogen)
+    for directory in range(len(np_directories)):
+        for residue in np_directories[directory][1:]:    
+            if residue not in processing:
+                location = fragment_location(residue,p_residues, p_directories, mod_directories, np_directories)
+                processing, sorted_connect, hydrogen  = get_fragment_topology(residue, location, processing, sorted_connect, hydrogen)
+    return processing, sorted_connect, hydrogen 
 
-    if g_var.v >= 2:
-        print('\n{:-<75}'.format('>  Verbose level 2 start'))
-        print('backbone atoms for each residue and connecting atoms:\n')
-        for residue in processing:
-            print(residue, '\tbackbone atoms:', processing[residue]['atoms'], '\n\tbackbone connecting atoms:',
-                  processing[residue]['b_connect'], '\n\trestrained atoms:', processing[residue]['restraint'],
-                  '\n\tTerminal residue:', processing[residue]['ter'],'\n')
-        print('\n{:-<75}'.format('>  Verbose level 2 end\n'))
-    return processing
+def get_fragment_topology(residue, location, processing, sorted_connect, hydrogen):
+    with open(location, 'r') as pdb_input:
+        processing[residue] = {'C_ter':False, 'N_ter':False, 'posres':[], 'ter':False, 'sul':False}
+        sorted_connect[residue]={}
+        group=1
+        atom_list=[]
+        connectivity={}
+        
+        for line_nr, line in enumerate(pdb_input.readlines()):
+            if line.startswith('['):
+                header_line = sep_fragments_header(line, residue)
+                if g_var.mod:
+                    header_line['group']=group
+                    group+=1
+                if 'con' in header_line:
+                    if header_line['group'] not in connectivity:
+                        connectivity[header_line['group']] = {'con':header_line['con'],'g_frag':[header_line['frag']]}
+                    else:
+                        connectivity[header_line['group']]['con'].update(header_line['con'])
+                        connectivity[header_line['group']]['g_frag'].append(header_line['frag'])
+                    # print(header_line)
+                    if 'hydrogen' in header_line:
+                        # print(header_line['hydrogen'])
+                        if residue not in hydrogen:
+                            hydrogen[residue] = {}
+                        hydrogen[residue].update(header_line['hydrogen'])
+                for top in processing[residue]:
+                    if top in header_line and not processing[residue][top]:
+                        if top == 'posres':
+                            processing[residue][top].append(header_line[top])
+                        else:
+                            processing[residue][top] = header_line[top]
+                    elif top == 'posres' and 'posres' in header_line:
+                        processing[residue][top].append(header_line[top])
+            try:
+                if header_line['frag'] == 'BB':
+                    if line.startswith('ATOM'):
+                        line_sep = pdbatom(line)
+                        if 'H' not in line_sep['atom_name']:
+                            atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
+                    processing[residue]['atoms']=atom_list
+            except:
+                sys.exit('The residue: '+residue+' is missing fragment information')
+    sorted_connect[residue]  = sort_connectivity(connectivity)
+    return processing, sorted_connect, hydrogen 
+
+def fragment_location(residue, p_residues,  p_directories, mod_directories, np_directories):  
+#### runs through dirctories looking for the atomistic fragments returns the correct location
+    if residue in p_residues:
+        for directory in range(len(p_directories)):
+            if os.path.exists(p_directories[directory][0]+residue+'/'+residue+'.pdb'):
+                return p_directories[directory][0]+residue+'/'+residue+'.pdb'
+        for directory in range(len(mod_directories)):
+            if os.path.exists(mod_directories[directory][0]+residue+'/'+residue+'.pdb'):
+                return mod_directories[directory][0]+residue+'/'+residue+'.pdb'
+    else:
+        for directory in range(len(np_directories)):
+            if os.path.exists(np_directories[directory][0]+residue+'/'+residue+'.pdb'):
+                return np_directories[directory][0]+residue+'/'+residue+'.pdb'
+    sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
+
+
+
 
 # def get_forcefields_from_gromacs():
 # #### maybe implement fetching forcefields from gromacs install
@@ -239,6 +320,13 @@ def sort_forcefield(forcefield_available_prov, f_number):
     copy_tree(g_var.database_dir+'/forcefields/'+forcefield_available_prov[f_number], g_var.final_dir+forcefield_available_prov[f_number]+'/.')
     return g_var.database_dir+'/forcefields/', forcefield_available_prov[f_number].split('.')[0]
 
+def add_to_list(root, dirs, list_to_add):
+    list_to_add.append([])
+    list_to_add[-1].append(root)
+    list_to_add[-1]+=dirs
+    list_to_add[-1] = [x for x in list_to_add[-1] if not x.startswith('_')]    
+    return list_to_add
+
 def fetch_residues(fragments_available_prov, fragment_number):
 #### list of directories and water types  [[root, folders...],[root, folders...]]
     np_directories, p_directories,mod_directories=[], [],[]
@@ -257,24 +345,16 @@ def fetch_residues(fragments_available_prov, fragment_number):
             if os.path.exists(location+directory_type):
                 for root, dirs, files in os.walk(location+directory_type):
                     if directory_type =='/non_protein/':
-                        np_directories.append([])
-                        np_directories[-1].append(root)
-                        np_directories[-1]+=dirs
+                        np_directories = add_to_list(root, dirs, np_directories)
         #### adds protein residues locations to p_directories
                     else:
-                        p_directories.append([])
-                        p_directories[-1].append(root)
-                        p_directories[-1]+=dirs 
+                        p_directories = add_to_list(root, dirs, p_directories)
                     #### adds modified residues to mod directories and removes MOD from p_directories
                         if os.path.exists(location+directory_type+'MOD/'):
                             p_directories[-1].remove('MOD')
-                            p_directories.append([])
                             for root, dirs, files in os.walk(location+directory_type+'MOD/'):
-                                p_directories[-1].append(root)
-                                p_directories[-1]+=dirs
-                                mod_directories.append([])
-                                mod_directories[-1].append(root)
-                                mod_directories[-1]+=dirs
+                                p_directories = add_to_list(root, dirs, p_directories)
+                                mod_directories = add_to_list(root, dirs, mod_directories)
                                 break
                     break
     return p_directories, mod_directories, np_directories
@@ -312,7 +392,8 @@ def check_water_molecules(water_input, np_directories):
             with open(directory[0]+'SOL/SOL.pdb', 'r') as sol_input:
                 for line_nr, line in enumerate(sol_input.readlines()):
                     if line.startswith('['):
-                        water.append(line.split()[1])
+                        frag_header = sep_fragments_header(line, 'SOL')
+                        water.append(frag_header['frag'])
     if water_input in water:
         return directory[0]+'SOL/', water_input
     else:
@@ -439,4 +520,32 @@ def clean(cg_residues):
             for file in file_list:
                 os.remove(file) 
 
+def fix_time(t1, t2):
+    minutes, seconds= divmod(t1-t2, 60)
+    if minutes > 60:
+        hours, minutes = divmod(minutes, 60)
+    else:
+        hours = 0
+    return int(np.round(hours)), int(np.round(minutes)), int(np.round(seconds,0))
 
+def print_script_timings(tc, system, user_at_input):
+    print('\n{0:^47}{1:^22}'.format('Job','Time'))
+    print('{0:^47}{1:^22}'.format('---','----'))
+    t1 = fix_time(tc['r_i_t'], tc['i_t'])
+    print('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
+    if user_at_input and 'PROTEIN' in system:
+        t2=fix_time(tc['p_d_n_t'],tc['r_i_t'])
+        t3=fix_time(tc['f_p_t'],tc['p_d_n_t'])
+        t4=fix_time(tc['f_p_t'],tc['r_i_t'])
+        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein system: ',t2[0],'hours',t2[1],'min',t2[2],'sec'))        
+        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein system from provided structure: ',t3[0],'hours',t3[1],'min',t3[2],'sec'))
+        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein system build: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
+    else:
+        t5=fix_time(tc['f_p_t'],tc['r_i_t'])
+        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein system: ',t5[0],'hours',t5[1],'min',t5[2],'sec'))
+    t6=fix_time(tc['n_p_t'],tc['f_p_t'])
+    t7=fix_time(tc['m_t'],tc['n_p_t'])
+    t8=fix_time(tc['f_t'],tc['i_t'])
+    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
+    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Merge protein and non protein system: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
+    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t8[0],'hours',t8[1],'min',t8[2],'sec'))
