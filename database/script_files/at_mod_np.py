@@ -112,7 +112,10 @@ def atomistic_non_protein_non_solvent(cg_residue_type,cg_residues):
             at_connect, cg_connect = at_mod.connectivity(cg_residues[cg_residue], at_frag_centers, cg_frag_centers, group_fit, group)
 
             if len(at_connect) == len(cg_connect):
-                xyz_rot_apply=at_mod.rotate(np.array(at_connect)-center, np.array(cg_connect)-center, False)
+                try:
+                    xyz_rot_apply=at_mod.rotate(np.array(at_connect)-center, np.array(cg_connect)-center, False)
+                except:
+                    sys.exit('There is a issue with residue: '+cg_residue_type+' in group: '+str(group))
             else:
                 print('atom connections: '+str(len(at_connections))+' does not equal CG connections: '+str(len(cg_connections)))
                 sys.exit('residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
