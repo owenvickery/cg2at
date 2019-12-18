@@ -115,28 +115,30 @@ def fetch_chiral(np_directories,p_directories):
     return processing
 
 def sep_fragments_header(line, residue_name):
+    line = line.replace('[','')
+    line = line.replace(']','')
     line_sep = shlex.split(line)
     residue = {}
     residue['ter']=False
-    # residue = {'C_ter':False, 'N_ter':False, 'posres':[], 'ter':False, 'sul':False, 'hydrogen':
     for top in line_sep:
-        if top not in ['[',']']:
-            try:
-                if top in ['frag', 'group', 'C_ter', 'N_ter', 'posres', 'ter', 'sul', 'con', 'hydrogen']:
-                    t_header = top
-                    residue[top]={}
-                elif top.count(':') >= 1:
-                    top_split_grouped = top.split()
-                    for group in top_split_grouped: 
-                        group_split=group.split(':')
-                        residue[t_header][group_split[0]]=group_split[1].split(',')
-                elif top.count(',') >= 1:
-                    residue[t_header]=top.split(',')
-                elif 't_header' in locals() and len(top) > 0 :
-                    residue[t_header]=top  
-            except:
-                print('Something is wrong in the residue: ',residue_name,'\n',line)
-                sys.exit()
+        try:
+            if top in ['frag', 'group', 'C_ter', 'N_ter', 'posres', 'sul', 'con', 'hydrogen']:
+                t_header = top
+                residue[top]={}
+            elif top == 'ter':
+                residue['ter']=True
+            elif top.count(':') >= 1:
+                top_split_grouped = top.split()
+                for group in top_split_grouped: 
+                    group_split=group.split(':')
+                    residue[t_header][group_split[0]]=group_split[1].split(',')
+            elif top.count(',') >= 1:
+                residue[t_header]=top.split(',')
+            elif 't_header' in locals() and len(top) > 0 :
+                residue[t_header]=top  
+        except:
+            print('Something is wrong in the residue: ',residue_name,'\n',line)
+            sys.exit()
     return residue
 
 def sort_connectivity(connectivity):
