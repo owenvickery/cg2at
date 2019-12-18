@@ -1,26 +1,26 @@
-[ frag 'GL0'  group '1' con 'C3:PO2 C1:PO1' hydrogen 'C3:1HG3,2HG3 C1:1HG1,2HG1']
+[ frag 'GL0'  group '1' con 'C3:PO2 C1:PO1' hydrogen 'C3:HG31,HG32 C1:HG11,2HG1']
 ATOM      1  C3  CARD    1      47.135  47.654  61.834  1.00  13.0           C
-ATOM      2 1HG3 CARD    1      47.982  47.166  61.304  1.00  0.00           H
-ATOM      3 2HG3 CARD    1      47.144  47.264  62.869  1.00  0.00           H
+ATOM      2 HG31 CARD    1      47.982  47.166  61.304  1.00  0.00           H
+ATOM      3 HG32 CARD    1      47.144  47.264  62.869  1.00  0.00           H
 ATOM     12  C2  CARD    1      47.376  49.171  61.827  0.00  0.00           C
-ATOM     13 2HG2 CARD    1      47.242  49.460  60.762  0.00  0.00           H
-ATOM     14 2OG1 CARD    1      46.364  49.741  62.637  0.00  0.00           O
-ATOM     15 2HO1 CARD    1      45.637  49.116  62.471  0.00  0.00           H
+ATOM     13 HG22 CARD    1      47.242  49.460  60.762  0.00  0.00           H
+ATOM     14 OG12 CARD    1      46.364  49.741  62.637  0.00  0.00           O
+ATOM     15 HO12 CARD    1      45.637  49.116  62.471  0.00  0.00           H
 ATOM     16  C1  CARD    1      48.714  49.782  62.267  2.00  1.00           C
-ATOM     17 1HG1 CARD    1      48.882  49.539  63.340  2.00  0.00           H
-ATOM     18 2HG1 CARD    1      48.598  50.894  62.172  2.00  0.00           H
-[ frag 'PO2' group '2' con '1OP3:GL0 2OP3:GL3' ]
+ATOM     17 HG11 CARD    1      48.882  49.539  63.340  2.00  0.00           H
+ATOM     18 HG12 CARD    1      48.598  50.894  62.172  2.00  0.00           H
+[ frag 'PO2' group '2' con 'OP31:GL0 OP32:GL3' ]
 ATOM      4  P3  CARD    1      45.627  47.067  59.711  0.00  0.00           P
-ATOM      5 3OP3 CARD    1      45.027  48.283  59.135  0.00  0.00           O
-ATOM      6 4OP3 CARD    1      44.906  45.787  59.555  0.00  0.00           O
-ATOM      7 1OP3 CARD    1      45.844  47.381  61.256  0.00  13.0           O
-ATOM      8 2OP3 CARD    1      47.082  46.900  59.211  0.00  14.0           O
-[ frag 'PO1' group '3' con '1OP1:GL0 2OP1:GL1' ]
+ATOM      5 OP33 CARD    1      45.027  48.283  59.135  0.00  0.00           O
+ATOM      6 OP34 CARD    1      44.906  45.787  59.555  0.00  0.00           O
+ATOM      7 OP31 CARD    1      45.844  47.381  61.256  0.00  13.0           O
+ATOM      8 OP32 CARD    1      47.082  46.900  59.211  0.00  14.0           O
+[ frag 'PO1' group '3' con 'OP11:GL0 OP12:GL1' ]
 ATOM     19  P1  CARD    1      50.112  49.903  60.029  0.00  0.00           P
-ATOM     20 3OP1 CARD    1      51.111  50.991  60.164  0.00  0.00           O
-ATOM     21 4OP1 CARD    1      50.448  48.751  59.164  0.00  0.00           O
-ATOM     22 1OP1 CARD    1      49.805  49.317  61.482  0.00  1.00           O
-ATOM     23 2OP1 CARD    1      48.732  50.547  59.529  0.00  2.00           O
+ATOM     20 OP13 CARD    1      51.111  50.991  60.164  0.00  0.00           O
+ATOM     21 OP14 CARD    1      50.448  48.751  59.164  0.00  0.00           O
+ATOM     22 OP11 CARD    1      49.805  49.317  61.482  0.00  1.00           O
+ATOM     23 OP12 CARD    1      48.732  50.547  59.529  0.00  2.00           O
 [ frag 'GL1' group '4' hydrogen 'C11:H11J,H11K CA2:H2A,H2B' con 'C11:PO1 C12:GL2 CA2:C1B' ]
 ATOM     24  C11 CARD    1      48.198  50.421  58.198  3.00  2.00           C
 ATOM     25 H11J CARD    1      47.110  50.662  58.233  3.00  0.00           H
@@ -88,32 +88,32 @@ ATOM     78  H8B CARD    1      48.975  56.776  51.679  0.00  0.00           H
 ATOM     79  CA9 CARD    1      50.293  55.756  50.364  14.0  5.00           C
 ATOM     80  H9A CARD    1      50.232  54.861  51.003  14.0  0.00           H
 ATOM     81  H9B CARD    1      51.345  55.878  50.046  14.0  0.00           H
-[ frag 'D3B' group '10' hydrogen '0CA1:H10A,H10B 3C21:H13A,H13B' con '0CA1:C2B 3C21:C4B' ]
-ATOM     82 0CA1 CARD    1      49.290  55.640  49.227  15.0  5.00           C
+[ frag 'D3B' group '10' hydrogen 'CA10:H10A,H10B 3C21:H13A,H13B' con 'CA10:C2B 3C21:C4B' ]
+ATOM     82 CA10 CARD    1      49.290  55.640  49.227  15.0  5.00           C
 ATOM     83 H10A CARD    1      48.249  55.685  49.597  15.0  0.00           H
 ATOM     84 H10B CARD    1      49.475  54.672  48.722  15.0  0.00           H
-ATOM     85 1CA1 CARD    1      49.497  56.730  48.256  0.00  0.00           C
+ATOM     85 CA11 CARD    1      49.497  56.730  48.256  0.00  0.00           C
 ATOM     86 H11A CARD    1      48.931  57.630  48.277  0.00  0.00           H
-ATOM     87 2CA1 CARD    1      50.388  56.767  47.349  0.00  0.00           C
+ATOM     87 CA12 CARD    1      50.388  56.767  47.349  0.00  0.00           C
 ATOM     88 H12A CARD    1      50.550  57.782  46.962  0.00  0.00           H
-ATOM     89 3CA1 CARD    1      51.381  55.690  47.140  16.0  6.00           C
+ATOM     89 CA13 CARD    1      51.381  55.690  47.140  16.0  6.00           C
 ATOM     90 H13A CARD    1      51.644  55.180  48.087  16.0  0.00           H
 ATOM     91 H13B CARD    1      52.198  56.369  47.037  16.0  0.00
-[ frag 'C4B' group '11' hydrogen '4CA1:H14A,H14B 5C21:H15A,H15B' con '4CA1:D3B 5C21:C5B' ]
-ATOM     92 4CA1 CARD    1      51.269  54.596  46.020  17.0  6.00           C
+[ frag 'C4B' group '11' hydrogen 'CA14:H14A,H14B 5C21:H15A,H15B' con 'CA14:D3B 5C21:C5B' ]
+ATOM     92 CA14 CARD    1      51.269  54.596  46.020  17.0  6.00           C
 ATOM     93 H14A CARD    1      50.275  54.123  46.147  17.0  0.00           H
 ATOM     94 H14B CARD    1      52.079  53.876  46.256  17.0  0.00           H
-ATOM     95 5CA1 CARD    1      51.447  55.039  44.543  18.0  7.00           C
+ATOM     95 CA15 CARD    1      51.447  55.039  44.543  18.0  7.00           C
 ATOM     96 H15A CARD    1      52.389  55.633  44.539  18.0  0.00           H
 ATOM     97 H15B CARD    1      50.506  55.578  44.326  18.0  0.00           H
-[ frag 'C5B' group '12' hydrogen '6CA1:H16A,H16B' con '6CA1:C4B' ]
-ATOM     98 6CA1 CARD    1      51.550  54.120  43.304  19.0  7.00           C
+[ frag 'C5B' group '12' hydrogen 'CA16:H16A,H16B' con 'CA16:C4B' ]
+ATOM     98 CA16 CARD    1      51.550  54.120  43.304  19.0  7.00           C
 ATOM     99 H16A CARD    1      50.567  53.621  43.171  19.0  0.00           H
 ATOM    100 H16B CARD    1      52.340  53.410  43.547  19.0  0.00           H
-ATOM    101 7CA1 CARD    1      51.990  54.660  41.903  0.00  0.00           C
+ATOM    101 CA17 CARD    1      51.990  54.660  41.903  0.00  0.00           C
 ATOM    102 H17A CARD    1      52.832  54.039  41.520  0.00  0.00           H
 ATOM    103 H17B CARD    1      52.410  55.686  41.942  0.00  0.00           H
-ATOM    104 8CA1 CARD    1      50.905  54.542  40.829  0.00  0.00           C
+ATOM    104 CA18 CARD    1      50.905  54.542  40.829  0.00  0.00           C
 ATOM    105 H18A CARD    1      51.273  54.676  39.815  0.00  0.00           H
 ATOM    106 H18B CARD    1      50.193  55.352  40.857  0.00  0.00           H
 ATOM    107 H18C CARD    1      50.310  53.615  40.894  0.00  0.00           H
@@ -130,7 +130,7 @@ ATOM    116  H5E CARD    1      52.005  50.978  51.410  0.00  0.00           H
 ATOM    117  CB6 CARD    1      52.817  51.347  49.453  21.0  10.0           C
 ATOM    118  H6D CARD    1      53.698  50.807  49.872  21.0  0.00           H
 ATOM    119  H6E CARD    1      53.067  52.432  49.442  21.0  0.00           H
-[ frag 'C2A' group '14' hydrogen 'CB7:H7D,H7E 0CB1:H10D,H10E' con 'CB3:C1A 0CB1:C3A' ]
+[ frag 'C2A' group '14' hydrogen 'CB7:H7D,H7E CB10:H10D,H10E' con 'CB3:C1A CB10:C3A' ]
 ATOM    120  CB7 CARD    1      52.616  50.866  48.010  22.0  10.0           C
 ATOM    121  H7D CARD    1      51.773  51.428  47.553  22.0  0.00           H
 ATOM    122  H7E CARD    1      52.342  49.785  48.014  22.0  0.00           H
@@ -140,27 +140,27 @@ ATOM    125  H8E CARD    1      54.237  52.138  47.294  0.00  0.00           H
 ATOM    126  CB9 CARD    1      53.900  50.631  45.759  0.00  0.00           C
 ATOM    127  H9D CARD    1      53.603  49.582  45.815  0.00  0.00           H
 ATOM    128  H9E CARD    1      54.928  50.675  45.330  0.00  0.00           H
-ATOM    129 0CB1 CARD    1      52.943  51.341  44.800  23.0  11.0           C
+ATOM    129 CB10 CARD    1      52.943  51.341  44.800  23.0  11.0           C
 ATOM    130 H10D CARD    1      53.527  52.199  44.402  23.0  0.00           H
 ATOM    131 H10E CARD    1      52.040  51.724  45.321  23.0  0.00           H
-[ frag 'C3A' group '15' hydrogen '1CB1:H11D,H11E 3CB1:H13D,H13E' con '1CB1:C2A 3CB1:C4A' ]
-ATOM    132 1CB1 CARD    1      52.493  50.440  43.631  24.0  11.0           C
+[ frag 'C3A' group '15' hydrogen 'CB11:H11D,H11E CB13:H13D,H13E' con 'CB11:C2A CB13:C4A' ]
+ATOM    132 CB11 CARD    1      52.493  50.440  43.631  24.0  11.0           C
 ATOM    133 H11D CARD    1      51.731  49.720  44.003  24.0  0.00           H
 ATOM    134 H11E CARD    1      53.381  49.870  43.286  24.0  0.00           H
-ATOM    135 2CB1 CARD    1      51.907  51.198  42.431  0.00  0.00           C
+ATOM    135 CB12 CARD    1      51.907  51.198  42.431  0.00  0.00           C
 ATOM    136 H12D CARD    1      52.661  51.935  42.072  0.00  0.00           H
 ATOM    137 H12E CARD    1      50.986  51.716  42.765  0.00  0.00           H
-ATOM    138 3CB1 CARD    1      51.517  50.349  41.230  25.0  12.0           C
+ATOM    138 CB13 CARD    1      51.517  50.349  41.230  25.0  12.0           C
 ATOM    139 H13D CARD    1      50.981  50.969  40.478  25.0  0.00           H
 ATOM    140 H13E CARD    1      50.806  49.567  41.553  25.0  0.00           H
-[ frag 'C4A' group '16' hydrogen '4CB1:H14D,H14E' con '4CB1:C3A' ]
-ATOM    141 4CB1 CARD    1      52.743  49.727  40.586  26.0  12.0           C
+[ frag 'C4A' group '16' hydrogen 'CB14:H14D,H14E' con 'CB14:C3A' ]
+ATOM    141 CB14 CARD    1      52.743  49.727  40.586  26.0  12.0           C
 ATOM    142 H14D CARD    1      53.338  49.173  41.346  26.0  0.00           H
 ATOM    143 H14E CARD    1      53.400  50.517  40.159  26.0  0.00           H
-ATOM    144 5CB1 CARD    1      52.367  48.748  39.498  0.00  0.00           C
+ATOM    144 CB15 CARD    1      52.367  48.748  39.498  0.00  0.00           C
 ATOM    145 H15D CARD    1      51.955  49.296  38.623  0.00  0.00           H
 ATOM    146 H15E CARD    1      51.560  48.076  39.873  0.00  0.00           H
-ATOM    147 6CB1 CARD    1      53.593  47.942  39.104  0.00  0.00           C
+ATOM    147 CB16 CARD    1      53.593  47.942  39.104  0.00  0.00           C
 ATOM    148 H16D CARD    1      54.520  48.543  39.101  0.00  0.00           H
 ATOM    149 H16E CARD    1      53.449  47.572  38.068  0.00  0.00           H
 ATOM    150 H16F CARD    1      53.716  47.088  39.814  0.00  0.00           H
@@ -187,32 +187,32 @@ ATOM    168  H8S CARD    1      52.752  45.460  49.192  0.00  0.00           H
 ATOM    169  CC9 CARD    1      54.650  45.667  48.272  30.0  17.0           C
 ATOM    170  H9R CARD    1      54.880  44.679  48.739  30.0  0.00           H
 ATOM    171  H9S CARD    1      55.529  46.327  48.421  30.0  0.00           H
-[ frag 'D3D' group '19' hydrogen '0CC1:H10R,H10S 3CC1:H13R,H13S' con '0CC1:C2D 3CC1:C4D' ]
-ATOM    172 0CC1 CARD    1      54.470  45.456  46.732  31.0  17.0           C
+[ frag 'D3D' group '19' hydrogen 'CC10:H10R,H10S CC13:H13R,H13S' con 'CC10:C2D CC13:C4D' ]
+ATOM    172 CC10 CARD    1      54.470  45.456  46.732  31.0  17.0           C
 ATOM    173 H10R CARD    1      53.842  44.577  46.489  31.0  0.00           H
 ATOM    174 H10S CARD    1      55.428  44.987  46.416  31.0  0.00           H
-ATOM    175 1CC1 CARD    1      54.287  46.693  45.842  0.00  0.00           C
+ATOM    175 CC11 CARD    1      54.287  46.693  45.842  0.00  0.00           C
 ATOM    176 H11R CARD    1      55.215  47.270  45.822  0.00  0.00           H
-ATOM    177 2CC1 CARD    1      53.228  47.290  45.192  0.00  0.00           C
+ATOM    177 CC12 CARD    1      53.228  47.290  45.192  0.00  0.00           C
 ATOM    178 H12R CARD    1      53.412  48.159  44.562  0.00  0.00           H
-ATOM    179 3CC1 CARD    1      51.790  46.940  45.071  32.0  18.0           C
+ATOM    179 CC13 CARD    1      51.790  46.940  45.071  32.0  18.0           C
 ATOM    180 H13R CARD    1      51.091  47.655  45.569  32.0  0.00           H
 ATOM    181 H13S CARD    1      51.761  45.970  45.531  32.0  0.00           H
-[ frag 'C4D' group '20' hydrogen '4CC1:H14R,H14S 5CC1:H15R,H15S' con '4CC1:D3D 5CC1:C5D' ]
-ATOM    182 4CC1 CARD    1      51.095  46.446  43.844  0.00  18.0           C
+[ frag 'C4D' group '20' hydrogen 'CC14:H14R,H14S CC15:H15R,H15S' con 'CC14:D3D CC15:C5D' ]
+ATOM    182 CC14 CARD    1      51.095  46.446  43.844  0.00  18.0           C
 ATOM    183 H14R CARD    1      50.116  46.028  44.195  0.00  0.00           H
 ATOM    184 H14S CARD    1      51.784  45.672  43.447  0.00  0.00           H
-ATOM    185 5CC1 CARD    1      50.854  47.260  42.636  33.0  19.0           C
+ATOM    185 CC15 CARD    1      50.854  47.260  42.636  33.0  19.0           C
 ATOM    186 H15R CARD    1      51.877  47.509  42.266  33.0  0.00           H
 ATOM    187 H15S CARD    1      50.257  48.153  42.865  33.0  0.00           H
-[ frag 'C5D' group '21' hydrogen '6CC1:H16R,H16S' con '6CC1:C4D' ]
-ATOM    188 6CC1 CARD    1      50.148  46.273  41.713  34.0  19.0           C
+[ frag 'C5D' group '21' hydrogen 'CC16:H16R,H16S' con 'CC16:C4D' ]
+ATOM    188 CC16 CARD    1      50.148  46.273  41.713  34.0  19.0           C
 ATOM    189 H16R CARD    1      50.685  45.345  41.931  34.0  0.00           H
 ATOM    190 H16S CARD    1      50.312  46.495  40.650  34.0  0.00           H
-ATOM    191 7CC1 CARD    1      48.697  45.899  42.063  0.00  0.00           C
+ATOM    191 CC17 CARD    1      48.697  45.899  42.063  0.00  0.00           C
 ATOM    192 H17R CARD    1      48.140  46.833  42.074  0.00  0.00           H
 ATOM    193 H17S CARD    1      48.627  45.398  43.055  0.00  0.00           H
-ATOM    194 8CC1 CARD    1      48.047  44.937  41.095  0.00  0.00           C
+ATOM    194 CC18 CARD    1      48.047  44.937  41.095  0.00  0.00           C
 ATOM    195 H18R CARD    1      48.478  45.119  40.085  0.00  0.00           H
 ATOM    196 H18S CARD    1      46.943  44.982  41.051  0.00  0.00           H
 ATOM    197 H18T CARD    1      48.309  43.906  41.420  0.00  0.00           H
@@ -229,7 +229,7 @@ ATOM    206  H5Y CARD    1      46.259  49.111  53.815  0.00  0.00           H
 ATOM    207  CD6 CARD    1      46.598  48.364  51.869  36.0  22.0           C
 ATOM    208  H6X CARD    1      46.621  49.434  51.578  36.0  0.00           H
 ATOM    209  H6Y CARD    1      45.676  47.876  51.477  36.0  0.00           H
-[ frag 'C2C' group '23' hydrogen 'CD7:H7X,H7Y 0CD1:H10X,H10Y' con 'CD7:C1C 0CD1:C3C' ]
+[ frag 'C2C' group '23' hydrogen 'CD7:H7X,H7Y CD10:H10X,H10Y' con 'CD7:C1C CD10:C3C' ]
 ATOM    210  CD7 CARD    1      47.759  47.708  51.187  37.0  22.0           C
 ATOM    211  H7X CARD    1      47.660  46.692  51.639  37.0  0.00           H
 ATOM    212  H7Y CARD    1      48.759  48.107  51.464  37.0  0.00           H
@@ -239,27 +239,27 @@ ATOM    215  H8Y CARD    1      47.967  46.520  49.684  0.00  0.00           H
 ATOM    216  CD9 CARD    1      48.303  48.513  48.721  0.00  0.00           C
 ATOM    217  H9X CARD    1      49.402  48.476  48.901  0.00  0.00           H
 ATOM    218  H9Y CARD    1      47.964  49.544  48.965  0.00  0.00           H
-ATOM    219 0CD1 CARD    1      48.044  48.287  47.206  38.0  23.0           C
+ATOM    219 CD10 CARD    1      48.044  48.287  47.206  38.0  23.0           C
 ATOM    220 H10X CARD    1      46.949  48.319  47.029  38.0  0.00           H
 ATOM    221 H10Y CARD    1      48.366  47.294  46.835  38.0  0.00           H
-[ frag 'C3C' group '24' hydrogen '1CD1:H11X,H11Y 3CD1:H13X,H13Y' con '1CD1:C2C 3CD1:C4C' ]
-ATOM    222 1CD1 CARD    1      48.775  49.284  46.290  39.0  23.0           C
+[ frag 'C3C' group '24' hydrogen 'CD11:H11X,H11Y CD13:H13X,H13Y' con 'CD11:C2C CD13:C4C' ]
+ATOM    222 CD11 CARD    1      48.775  49.284  46.290  39.0  23.0           C
 ATOM    223 H11X CARD    1      49.868  49.244  46.499  39.0  0.00           H
 ATOM    224 H11Y CARD    1      48.428  50.316  46.512  39.0  0.00           H
-ATOM    225 2CD1 CARD    1      48.539  48.989  44.799  0.00  0.00           C
+ATOM    225 CD12 CARD    1      48.539  48.989  44.799  0.00  0.00           C
 ATOM    226 H12X CARD    1      48.768  47.919  44.587  0.00  0.00           H
 ATOM    227 H12Y CARD    1      49.234  49.606  44.188  0.00  0.00           H
-ATOM    228 3CD1 CARD    1      47.088  49.298  44.408  40.0  24.0           C
+ATOM    228 CD13 CARD    1      47.088  49.298  44.408  40.0  24.0           C
 ATOM    229 H13X CARD    1      46.845  50.326  44.748  40.0  0.00           H
 ATOM    230 H13Y CARD    1      46.432  48.588  44.960  40.0  0.00           H
-[ frag 'C4C' group '25' hydrogen '4CD1:H14X,H14Y' con '4CD1:C3C' ]
-ATOM    231 4CD1 CARD    1      46.749  49.163  42.916  41.0  24.0           C
+[ frag 'C4C' group '25' hydrogen 'CD14:H14X,H14Y' con 'CD14:C3C' ]
+ATOM    231 CD14 CARD    1      46.749  49.163  42.916  41.0  24.0           C
 ATOM    232 H14X CARD    1      45.652  49.286  42.787  41.0  0.00           H
 ATOM    233 H14Y CARD    1      46.958  48.129  42.620  41.0  0.00           H
-ATOM    234 5CD1 CARD    1      47.463  50.134  41.962  0.00  0.00           C
+ATOM    234 CD15 CARD    1      47.463  50.134  41.962  0.00  0.00           C
 ATOM    235 H15X CARD    1      47.200  49.834  40.921  0.00  0.00           H
 ATOM    236 H15Y CARD    1      48.567  50.030  42.056  0.00  0.00           H
-ATOM    237 6CD1 CARD    1      47.067  51.597  42.166  0.00  0.00           C
+ATOM    237 CD16 CARD    1      47.067  51.597  42.166  0.00  0.00           C
 ATOM    238 H16X CARD    1      47.462  51.977  43.133  0.00  0.00           H
 ATOM    239 H16Y CARD    1      45.960  51.700  42.171  0.00  0.00           H
 ATOM    240 H16Z CARD    1      47.475  52.229  41.348  0.00  0.00           H

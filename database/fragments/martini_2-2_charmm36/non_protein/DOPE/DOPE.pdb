@@ -53,7 +53,7 @@ ATOM     47  H6S DOPE    1       2.285   5.632  54.798  0.00  0.00      MEMB
 ATOM     48  C27 DOPE    1       1.472   7.355  53.678  7.00  6.00      MEMB
 ATOM     49  H7R DOPE    1       0.692   8.123  53.901  7.00  0.00      MEMB
 ATOM     50  H7S DOPE    1       1.055   6.649  52.932  7.00  0.00      MEMB
-[ frag 'D2A' group '6' hydrogen 'C28:H8R,H8S 1C21:H11R,H11S' con 'C28:C1A 1C21:C3A' ]
+[ frag 'D2A' group '6' hydrogen 'C28:H8R,H8S C211:H11R,H11S' con 'C28:C1A C211:C3A' ]
 ATOM     51  C28 DOPE    1       2.672   8.138  53.101  8.00  6.00      MEMB
 ATOM     52  H8R DOPE    1       2.905   8.991  53.775  8.00  0.00      MEMB
 ATOM     53  H8S DOPE    1       2.336   8.602  52.147  8.00  0.00      MEMB
@@ -64,7 +64,7 @@ ATOM     57 H10R DOPE    1       5.291   6.308  51.709  0.00  0.00      MEMB
 ATOM     58 C211 DOPE    1       3.432   6.352  50.597  9.00  7.00      MEMB
 ATOM     59 H11R DOPE    1       2.415   6.801  50.620  9.00  0.00      MEMB
 ATOM     60 H11S DOPE    1       3.298   5.246  50.521  9.00  0.00      MEMB
-[ frag 'C3A'  group '7' hydrogen '2C21:H12R,H12S 4C21:H14R,H14S' con '2C21:D2A 4C21:C4A' ]
+[ frag 'C3A'  group '7' hydrogen 'C212:H12R,H12S C214:H14R,H14S' con 'C212:D2A C214:C4A' ]
 ATOM     61 C212 DOPE    1       4.211   6.812  49.374  10.0  7.00      MEMB
 ATOM     62 H12R DOPE    1       5.270   6.462  49.402  10.0  0.00      MEMB
 ATOM     63 H12S DOPE    1       4.215   7.925  49.324  10.0  0.00      MEMB
@@ -74,7 +74,7 @@ ATOM     66 H13S DOPE    1       3.704   5.113  48.139  0.00  0.00      MEMB
 ATOM     67 C214 DOPE    1       4.150   6.786  46.866  11.0  8.00      MEMB
 ATOM     68 H14R DOPE    1       5.220   6.506  46.738  11.0  0.00      MEMB
 ATOM     69 H14S DOPE    1       4.091   7.900  46.900  11.0  0.00      MEMB
-[ frag 'C4A'  group '8' hydrogen '5C21:H15R,H15S' con '5C21:C3A' ]
+[ frag 'C4A'  group '8' hydrogen 'C215:H15R,H15S' con 'C215:C3A' ]
 ATOM     70 C215 DOPE    1       3.322   6.273  45.704  12.0  8.00      MEMB
 ATOM     71 H15R DOPE    1       2.241   6.269  45.972  12.0  0.00      MEMB
 ATOM     72 H15S DOPE    1       3.626   5.236  45.439  12.0  0.00      MEMB
@@ -104,7 +104,7 @@ ATOM     94  H6Y DOPE    1      -2.997   5.270  54.730  0.00  0.00      MEMB
 ATOM     95  C37 DOPE    1      -2.411   3.348  53.898  14.0  9.00      MEMB
 ATOM     96  H7X DOPE    1      -1.767   2.483  54.157  14.0  0.00      MEMB
 ATOM     97  H7Y DOPE    1      -3.485   3.038  53.909  14.0  0.00      MEMB
-[ frag 'D2B' group '10' hydrogen 'C38:H8R,H8S 1C31:H11R,H11S' con 'C38:C1B 1C31:C3B' ]
+[ frag 'D2B' group '10' hydrogen 'C38:H8R,H8S C311:H11R,H11S' con 'C38:C1B C311:C3B' ]
 ATOM     98  C38 DOPE    1      -1.980   3.871  52.576  15.0  9.00      MEMB
 ATOM     99  H8X DOPE    1      -1.028   4.446  52.695  15.0  0.00      MEMB
 ATOM    100  H8Y DOPE    1      -2.800   4.530  52.300  15.0  0.00      MEMB
@@ -115,7 +115,7 @@ ATOM    104 H10X DOPE    1      -1.240   1.928  49.821  0.00  0.00      MEMB
 ATOM    105 C311 DOPE    1      -0.260   3.911  50.181  16.0  10.0      MEMB
 ATOM    106 H11X DOPE    1      -0.817   4.701  49.628  16.0  0.00      MEMB
 ATOM    107 H11Y DOPE    1       0.176   4.398  51.082  16.0  0.00      MEMB
-[ frag 'C3B'  group '11' hydrogen '2C31:H12R,H12S 4C31:H14R,H14S' con '2C31:D2B 4C31:C4B' ]
+[ frag 'C3B'  group '11' hydrogen 'C312:H12R,H12S C314:H14R,H14S' con 'C312:D2B C314:C4B' ]
 ATOM    108 C312 DOPE    1       0.917   3.440  49.330  17.0  10.0      MEMB
 ATOM    109 H12X DOPE    1       1.434   2.571  49.796  17.0  0.00      MEMB
 ATOM    110 H12Y DOPE    1       1.650   4.277  49.279  17.0  0.00      MEMB
@@ -125,7 +125,7 @@ ATOM    113 H13Y DOPE    1      -0.150   3.964  47.552  0.00  0.00      MEMB
 ATOM    114 C314 DOPE    1       1.683   2.960  46.979  18.0  11.0      MEMB
 ATOM    115 H14X DOPE    1       2.303   2.097  47.307  18.0  0.00      MEMB
 ATOM    116 H14Y DOPE    1       2.304   3.879  47.030  18.0  0.00      MEMB
-[ frag 'C4B'  group '12' hydrogen '5C31:H15R,H15S' con '5C31:C3B' ]
+[ frag 'C4B'  group '12' hydrogen 'C315:H15R,H15S' con 'C315:C3B' ]
 ATOM    117 C315 DOPE    1       1.275   2.741  45.535  19.0  11.0      MEMB
 ATOM    118 H15X DOPE    1       0.688   1.798  45.446  19.0  0.00      MEMB
 ATOM    119 H15Y DOPE    1       2.190   2.630  44.908  19.0  0.00      MEMB

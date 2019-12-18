@@ -106,7 +106,7 @@ ATOM     97  H6Y DYPC    1       7.822   1.091  52.106  0.00  0.00      MEMB
 ATOM     98  C37 DYPC    1       8.963   2.590  51.052  13.0  8.00      MEMB
 ATOM     99  H7X DYPC    1       9.600   3.482  51.253  13.0  0.00      MEMB
 ATOM    100  H7Y DYPC    1       9.562   1.729  50.769  13.0  0.00      MEMB
-[ frag 'D2B'  group '10' hydrogen 'C37:H7X,H7Y 0C31:H10X,H10Y' con 'C37:C1B 0C31:C3B' ]
+[ frag 'D2B'  group '10' hydrogen 'C37:H7X,H7Y C310:H10X,H10Y' con 'C37:C1B C310:C3B' ]
 ATOM    101  C38 DYPC    1       7.988   2.777  49.890  14.0  8.00      MEMB
 ATOM    102  H8X DYPC    1       7.123   3.360  50.256  14.0  0.00      MEMB
 ATOM    103  H8Y DYPC    1       7.597   1.765  49.642  14.0  0.00      MEMB

@@ -97,7 +97,7 @@ ATOM     87  H5Y DPPE    1       9.308   6.672  56.324  0.00  0.00      MEMB
 ATOM     88  C36 DPPE    1       9.623   8.056  54.667  14.0  9.00      MEMB
 ATOM     89  H6X DPPE    1      10.114   8.908  55.191  14.0  0.00      MEMB
 ATOM     90  H6Y DPPE    1       9.034   8.479  53.827  14.0  0.00      MEMB
-[ frag 'C2B'  group '10' hydrogen 'C37:H7X,H7Y 0C31:H10X,H10Y' con 'C37:C1B C310:C3B' ]
+[ frag 'C2B'  group '10' hydrogen 'C37:H7X,H7Y C310:H10X,H10Y' con 'C37:C1B C310:C3B' ]
 ATOM     91  C37 DPPE    1      10.664   7.091  54.110  15.0  9.00      MEMB
 ATOM     92  H7X DPPE    1      11.201   6.666  54.992  15.0  0.00      MEMB
 ATOM     93  H7Y DPPE    1      11.408   7.634  53.490  15.0  0.00      MEMB
@@ -110,7 +110,7 @@ ATOM     99  H9Y DPPE    1      10.388   6.800  51.377  0.00  0.00      MEMB
 ATOM    100 C310 DPPE    1       8.920   5.174  51.140  16.0  10.0      MEMB
 ATOM    101 H10X DPPE    1       8.041   4.785  51.686  16.0  0.00      MEMB
 ATOM    102 H10Y DPPE    1       9.674   4.357  51.129  16.0  0.00      MEMB
-[ frag 'C3B'  group '11' hydrogen 'C311:H11X,H11Y 3C31:H13X,H13Y' con 'C311:C2B C313:C4B' ]
+[ frag 'C3B'  group '11' hydrogen 'C311:H11X,H11Y C313:H13X,H13Y' con 'C311:C2B C313:C4B' ]
 ATOM    103 C311 DPPE    1       8.523   5.476  49.678  17.0  10.0      MEMB
 ATOM    104 H11X DPPE    1       9.272   6.170  49.257  17.0  0.00      MEMB
 ATOM    105 H11Y DPPE    1       7.579   6.060  49.672  17.0  0.00      MEMB

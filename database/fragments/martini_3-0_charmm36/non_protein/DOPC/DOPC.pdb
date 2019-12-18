@@ -62,7 +62,7 @@ ATOM     56  H6S DOPC    1       7.498   5.130  53.149  0.00  0.00      MEMB
 ATOM     57  C27 DOPC    1       8.636   3.761  51.779  8.00  6.00      MEMB
 ATOM     58  H7R DOPC    1       7.931   2.946  51.934  8.00  0.00      MEMB
 ATOM     59  H7S DOPC    1       9.656   3.320  51.776  8.00  0.00      MEMB
-[ frag 'D2A' group '6' hydrogen 'C28:H8R,H8S 1C21:H11R,H11S' con 'C28:C1A 1C21:C3A' ]
+[ frag 'D2A' group '6' hydrogen 'C28:H8R,H8S C211:H11R,H11S' con 'C28:C1A C211:C3A' ]
 ATOM     60  C28 DOPC    1       8.460   4.542  50.460  9.00  6.00      MEMB
 ATOM     61  H8R DOPC    1       8.474   3.834  49.605  9.00  0.00      MEMB
 ATOM     62  H8S DOPC    1       9.350   5.201  50.368  9.00  0.00      MEMB
@@ -73,7 +73,7 @@ ATOM     66 H10R DOPC    1       6.038   7.116  50.390  0.00  0.00      MEMB
 ATOM     67 C211 DOPC    1       8.139   7.702  50.033  10.0  7.00      MEMB
 ATOM     68 H11R DOPC    1       9.097   7.392  50.507  10.0  0.00      MEMB
 ATOM     69 H11S DOPC    1       7.901   8.676  50.495  10.0  0.00      MEMB
-[ frag 'C3A'  group '7' hydrogen '2C21:H12R,H12S 4C21:H14R,H14S' con '2C21:D2A 4C21:C4A' ]
+[ frag 'C3A'  group '7' hydrogen 'C212:H12R,H12S C214:H14R,H14S' con 'C212:D2A C214:C4A' ]
 ATOM     70 C212 DOPC    1       8.375   7.936  48.525  11.0  7.00      MEMB
 ATOM     71 H12R DOPC    1       8.567   6.963  48.031  11.0  0.00      MEMB
 ATOM     72 H12S DOPC    1       9.263   8.596  48.407  11.0  0.00      MEMB
@@ -83,7 +83,7 @@ ATOM     75 H13S DOPC    1       6.355   7.785  47.788  0.00  0.00      MEMB
 ATOM     76 C214 DOPC    1       7.540   8.852  46.269  12.0  8.00      MEMB
 ATOM     77 H14R DOPC    1       8.455   9.483  46.252  12.0  0.00      MEMB
 ATOM     78 H14S DOPC    1       6.698   9.437  45.836  12.0  0.00      MEMB
-[ frag 'C4A'  group '8' hydrogen '5C21:H15R,H15S' con '5C21:C3A' ]
+[ frag 'C4A'  group '8' hydrogen 'C215:H15R,H15S' con 'C215:C3A' ]
 ATOM     79 C215 DOPC    1       7.750   7.642  45.382  13.0  8.00      MEMB
 ATOM     80 H15R DOPC    1       8.460   6.955  45.870  13.0  0.00      MEMB
 ATOM     81 H15S DOPC    1       8.171   7.966  44.418  13.0  0.00      MEMB
@@ -113,7 +113,7 @@ ATOM    103  H6Y DOPC    1       5.032   3.846  54.141  0.00  0.00      MEMB
 ATOM    104  C37 DOPC    1       3.999   2.932  52.494  15.0  9.00      MEMB
 ATOM    105  H7X DOPC    1       3.231   2.641  53.236  15.0  0.00      MEMB
 ATOM    106  H7Y DOPC    1       3.471   3.285  51.587  15.0  0.00      MEMB
-[ frag 'D2B' group '10' hydrogen 'C38:H8R,H8S 1C31:H11R,H11S' con 'C38:C1B 1C31:C3B' ]
+[ frag 'D2B' group '10' hydrogen 'C38:H8R,H8S C311:H11R,H11S' con 'C38:C1B C311:C3B' ]
 ATOM    107  C38 DOPC    1       4.759   1.621  52.178  16.0  9.00      MEMB
 ATOM    108  H8X DOPC    1       4.066   0.805  51.887  16.0  0.00      MEMB
 ATOM    109  H8Y DOPC    1       5.291   1.290  53.100  16.0  0.00      MEMB
@@ -124,7 +124,7 @@ ATOM    113 H10X DOPC    1       6.497   2.507  49.274  0.00  0.00      MEMB
 ATOM    114 C311 DOPC    1       4.331   2.545  49.117  17.0  10.0      MEMB
 ATOM    115 H11X DOPC    1       3.435   2.194  49.674  17.0  0.00      MEMB
 ATOM    116 H11Y DOPC    1       4.299   2.080  48.105  17.0  0.00      MEMB
-[ frag 'C3B'  group '11' hydrogen '2C31:H12R,H12S 4C31:H14R,H14S' con '2C31:D2B 4C31:C4B' ]
+[ frag 'C3B'  group '11' hydrogen 'C312:H12R,H12S C314:H14R,H14S' con 'C312:D2B C314:C4B' ]
 ATOM    117 C312 DOPC    1       4.318   4.059  48.981  18.0  10.0      MEMB
 ATOM    118 H12X DOPC    1       5.161   4.436  48.364  18.0  0.00      MEMB
 ATOM    119 H12Y DOPC    1       4.409   4.527  49.990  18.0  0.00      MEMB
@@ -134,7 +134,7 @@ ATOM    122 H13Y DOPC    1       2.215   4.025  49.014  0.00  0.00      MEMB
 ATOM    123 C314 DOPC    1       2.859   6.039  48.608  19.0  11.0      MEMB
 ATOM    124 H14X DOPC    1       1.780   6.187  48.677  19.0  0.00      MEMB
 ATOM    125 H14Y DOPC    1       3.278   6.373  49.582  19.0  0.00      MEMB
-[ frag 'C4B'  group '12' hydrogen '5C31:H15R,H15S' con '5C31:C3B' ]
+[ frag 'C4B'  group '12' hydrogen 'C315:H15R,H15S' con 'C315:C3B' ]
 ATOM    126 C315 DOPC    1       3.393   6.904  47.464  20.0  11.0      MEMB
 ATOM    127 H15X DOPC    1       4.495   6.834  47.450  20.0  0.00      MEMB
 ATOM    128 H15Y DOPC    1       3.129   7.965  47.671  20.0  0.00      MEMB
