@@ -181,11 +181,12 @@ def steered_md_atomistic_to_cg_coord(chain):
     os.chdir(g_var.working_dir+'PROTEIN')
     gen.mkdir_directory('steered_md')
 #### create bog standard mdp file, simulation is only 3 ps in a vaccum so settings should not have any appreciable effect 
-    with open('steered_md.mdp', 'w') as steered_md:
-        steered_md.write('define = -DPOSRES_STEERED\nintegrator = md\nnsteps = 3000\ndt = '+g_var.vst+'\ncontinuation   = no\n')
-        steered_md.write('constraint_algorithm = lincs\nconstraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\n')
-        steered_md.write('rcoulomb = 1\nrvdw = 1\ncoulombtype  = PME\npme_order = 4\nfourierspacing = 0.16\ntcoupl = V-rescale\n')
-        steered_md.write('tc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')    
+    if not os.path.exists('steered_md.mdp'):
+        with open('steered_md.mdp', 'w') as steered_md:
+            steered_md.write('define = -DPOSRES_STEERED\nintegrator = md\nnsteps = 3000\ndt = '+g_var.vst+'\ncontinuation   = no\n')
+            steered_md.write('constraint_algorithm = lincs\nconstraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\n')
+            steered_md.write('rcoulomb = 1\nrvdw = 1\ncoulombtype  = PME\npme_order = 4\nfourierspacing = 0.16\ntcoupl = V-rescale\n')
+            steered_md.write('tc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')    
 #### run grompp on chain 
     gromacs(g_var.gmx+' grompp '+
             '-f steered_md.mdp '+
@@ -313,39 +314,40 @@ def minimise_merged(residue_type, np_system):
 
 def write_merged_topol(system, protein):
     os.chdir(g_var.working_dir+'MERGED')
-    with open('topol_final.top', 'w') as topol_write:
-    #### writes topology headers (will probably need updating with other forcefields)
-        topol_write.write('; Include forcefield parameters\n#include \"'+g_var.working_dir+'FORCEFIELD/'+f_loc.forcefield+'.ff/forcefield.itp\"\n')
-        if 'SOL' in system:
-            gen.file_copy_and_check(f_loc.water_dir+f_loc.water+'.itp', f_loc.water+'.itp')
-            topol_write.write('#include \"'+f_loc.water+'.itp\"')
-            topol_write.write('\n#include \"'+g_var.working_dir+'/FORCEFIELD/'+f_loc.forcefield+'.ff/ions.itp\"\n\n')
-    #### runs through residue types and copies to MERGED directory and simplifies the names
-        for residue_type in system:
-            if residue_type not in ['ION','SOL']:
-            #### copies 1st itp file it comes across 
-                for directory in f_loc.np_directories:
-                    if os.path.exists(directory[0]+residue_type+'/'+residue_type+'.itp'):       
-                        topol_write.write('#include \"'+residue_type+'.itp\"\n')
-                        gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'.itp', residue_type+'.itp')
-                        break
-            #### copies across protein itp files and simplifies the names 
-                if residue_type == 'PROTEIN':
-                    for protein_unit in range(system[residue_type]): 
-                        topol_write.write('#include \"PROTEIN_'+str(protein_unit)+'.itp\"\n')
-                        gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'.itp', 'PROTEIN_'+str(protein_unit)+'.itp')
-                        gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_steered_posre.itp', 'PROTEIN_'+str(protein_unit)+'_steered_posre.itp')
-                        gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'_posre.itp', 'PROTEIN_'+str(protein_unit)+'_posre.itp')
+    if not os.path.exists('topol_final.top'):
+        with open('topol_final.top', 'w') as topol_write:
+        #### writes topology headers (will probably need updating with other forcefields)
+            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.working_dir+'FORCEFIELD/'+f_loc.forcefield+'.ff/forcefield.itp\"\n')
+            if 'SOL' in system:
+                gen.file_copy_and_check(f_loc.water_dir+f_loc.water+'.itp', f_loc.water+'.itp')
+                topol_write.write('#include \"'+f_loc.water+'.itp\"')
+                topol_write.write('\n#include \"'+g_var.working_dir+'/FORCEFIELD/'+f_loc.forcefield+'.ff/ions.itp\"\n\n')
+        #### runs through residue types and copies to MERGED directory and simplifies the names
+            for residue_type in system:
+                if residue_type not in ['ION','SOL']:
+                #### copies 1st itp file it comes across 
+                    for directory in f_loc.np_directories:
+                        if os.path.exists(directory[0]+residue_type+'/'+residue_type+'.itp'):       
+                            topol_write.write('#include \"'+residue_type+'.itp\"\n')
+                            gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'.itp', residue_type+'.itp')
+                            break
+                #### copies across protein itp files and simplifies the names 
+                    if residue_type == 'PROTEIN':
+                        for protein_unit in range(system[residue_type]): 
+                            topol_write.write('#include \"PROTEIN_'+str(protein_unit)+'.itp\"\n')
+                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'.itp', 'PROTEIN_'+str(protein_unit)+'.itp')
+                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_steered_posre.itp', 'PROTEIN_'+str(protein_unit)+'_steered_posre.itp')
+                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'_posre.itp', 'PROTEIN_'+str(protein_unit)+'_posre.itp')
 
-        topol_write.write('[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
-    #### adds number of residues to the topology
-        for residue_type in system:
-            if residue_type not in  ['PROTEIN']:
-                topol_write.write(residue_type+'    '+str(system[residue_type])+'\n')   
-        #### adds monomers separately
-            if residue_type == 'PROTEIN':
-                for protein_unit in range(system[residue_type]):
-                    topol_write.write('PROTEIN_'+str(protein_unit)+'    1\n')    
+            topol_write.write('[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
+        #### adds number of residues to the topology
+            for residue_type in system:
+                if residue_type not in  ['PROTEIN']:
+                    topol_write.write(residue_type+'    '+str(system[residue_type])+'\n')   
+            #### adds monomers separately
+                if residue_type == 'PROTEIN':
+                    for protein_unit in range(system[residue_type]):
+                        topol_write.write('PROTEIN_'+str(protein_unit)+'    1\n')    
 
 def minimise_merged_pdbs(system, protein):
     print('Minimising merged atomistic files : '+protein[1:])
@@ -372,13 +374,14 @@ def alchembed(system):
     for chain in range(system):
         print('Running alchembed on chain: '+str(chain))
     #### creates a alchembed mdp for each chain 
-        with open('alchembed_'+str(chain)+'.mdp', 'w') as alchembed:
-            alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 500\ndt = 0.001\ncontinuation = no\nconstraint_algorithm = lincs')
-            alchembed.write('\nconstraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
-            alchembed.write('\npme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\ncutoff-scheme = Verlet')
-            alchembed.write('\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00')
-            alchembed.write('\ndelta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6\ncouple-moltype = protein_'+str(chain))
-            alchembed.write('\ncouple-lambda0 = none\ncouple-lambda1 = vdw')
+        if not os.path.exists('alchembed_'+str(chain)+'.mdp'):
+            with open('alchembed_'+str(chain)+'.mdp', 'w') as alchembed:
+                alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 500\ndt = 0.001\ncontinuation = no\nconstraint_algorithm = lincs')
+                alchembed.write('\nconstraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
+                alchembed.write('\npme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\ncutoff-scheme = Verlet')
+                alchembed.write('\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00')
+                alchembed.write('\ndelta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6\ncouple-moltype = protein_'+str(chain))
+                alchembed.write('\ncouple-lambda0 = none\ncouple-lambda1 = vdw')
     #### if 1st chain use minimised structure for coordinate input
         if chain == 0:
             gromacs(g_var.gmx+' grompp '+
