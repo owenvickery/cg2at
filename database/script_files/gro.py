@@ -207,52 +207,54 @@ def convert_topology(topol, protein_number):
 #### reads in topology 
     if Path(topol+str(protein_number)+'.top').exists():
         read=False
-        with open(topol+str(protein_number)+'.itp', 'w') as itp_write:
-            for line in open(topol+str(protein_number)+'.top', 'r').readlines():
-            #### copies between moleculetype and position restraint section
-                if len(line.split()) > 1: 
-                    if read == False and line.split()[1] == 'moleculetype':
-                        read = True
-                    if read == True and line.split()[1] == 'POSRES':
-                        read = False
-                #### sorts out chain naming
-                    if line.split()[0][:-1] == 'Protein_chain_':
-                        line= re.sub('Protein_chain_.?', 'protein_'+str(protein_number),line)
-            #### writes to itp file copied section          
-                if read:
-                    itp_write.write(line)
-        #### adds position restraint section to end of itp file         
-            itp_write.write('#ifdef POSRES\n#include \"PROTEIN_'+str(protein_number)+'_posre.itp\"\n#endif\n') 
-            itp_write.write('\n; Include CA Position restraint file\n#ifdef POSRES_STEERED\n#include \"PROTEIN_'+str(protein_number)+'_steered_posre.itp\"\n#endif')
+        if os.path.exists(topol+str(protein_number)+'.itp'):
+            with open(topol+str(protein_number)+'.itp', 'w') as itp_write:
+                for line in open(topol+str(protein_number)+'.top', 'r').readlines():
+                #### copies between moleculetype and position restraint section
+                    if len(line.split()) > 1: 
+                        if read == False and line.split()[1] == 'moleculetype':
+                            read = True
+                        if read == True and line.split()[1] == 'POSRES':
+                            read = False
+                    #### sorts out chain naming
+                        if line.split()[0][:-1] == 'Protein_chain_':
+                            line= re.sub('Protein_chain_.?', 'protein_'+str(protein_number),line)
+                #### writes to itp file copied section          
+                    if read:
+                        itp_write.write(line)
+            #### adds position restraint section to end of itp file         
+                itp_write.write('#ifdef POSRES\n#include \"PROTEIN_'+str(protein_number)+'_posre.itp\"\n#endif\n') 
+                itp_write.write('\n; Include CA Position restraint file\n#ifdef POSRES_STEERED\n#include \"PROTEIN_'+str(protein_number)+'_steered_posre.itp\"\n#endif')
     else:
         sys.exit('cannot find : '+topol+'_'+str(protein_number)+'.top')
 
 def write_topol(residue_type, residue_number, chain):
 #### open topology file
-    found=False
-    with open('topol_'+residue_type+chain+'.top', 'w') as topol_write:
-    #### add standard headers may need to be changed dependant on forcefield
-        topol_write.write('; Include forcefield parameters\n#include \"'+g_var.working_dir+'FORCEFIELD/'+f_loc.forcefield+'.ff/forcefield.itp\"\n')
-        if 'SOL' == residue_type:
-            topol_write.write('#include \"'+f_loc.water_dir+f_loc.water+'.itp\"\n\n#include \"'+g_var.working_dir+'/FORCEFIELD/'+f_loc.forcefield+'.ff/ions.itp\"\n\n')
-    #### add location of residue topology file absolute file locations
-        if residue_type not in ['ION','SOL']:
-            for directory in range(len(f_loc.np_directories)):
-                if os.path.exists(f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp'):
-                    topol_write.write('#include \"'+f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp\"\n')
+    if not os.path.exists('topol_'+residue_type+chain+'.top'):
+        found=False
+        with open('topol_'+residue_type+chain+'.top', 'w') as topol_write:
+        #### add standard headers may need to be changed dependant on forcefield
+            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.working_dir+'FORCEFIELD/'+f_loc.forcefield+'.ff/forcefield.itp\"\n')
+            if 'SOL' == residue_type:
+                topol_write.write('#include \"'+f_loc.water_dir+f_loc.water+'.itp\"\n\n#include \"'+g_var.working_dir+'/FORCEFIELD/'+f_loc.forcefield+'.ff/ions.itp\"\n\n')
+        #### add location of residue topology file absolute file locations
+            if residue_type not in ['ION','SOL']:
+                for directory in range(len(f_loc.np_directories)):
+                    if os.path.exists(f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp'):
+                        topol_write.write('#include \"'+f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp\"\n')
+                        found=True
+                        break
+                if os.path.exists(g_var.working_dir+'/PROTEIN/'+residue_type+chain+'.itp'):
+                    topol_write.write('#include \"'+residue_type+chain+'.itp\"\n')
                     found=True
-                    break
-            if os.path.exists(g_var.working_dir+'/PROTEIN/'+residue_type+chain+'.itp'):
-                topol_write.write('#include \"'+residue_type+chain+'.itp\"\n')
-                found=True
-            if not found:
-                sys.exit('cannot find itp : '+residue_type+'/'+residue_type+chain)
-    #### topology section headers
-        topol_write.write('\n\n[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
-    #### individual number of residues
-        if residue_type.split('_')[0] == 'PROTEIN':
-             residue_type='PROTEIN_'
-        topol_write.write(residue_type+chain+'    '+str(residue_number))
+                if not found:
+                    sys.exit('cannot find itp : '+residue_type+'/'+residue_type+chain)
+        #### topology section headers
+            topol_write.write('\n\n[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
+        #### individual number of residues
+            if residue_type.split('_')[0] == 'PROTEIN':
+                 residue_type='PROTEIN_'
+            topol_write.write(residue_type+chain+'    '+str(residue_number))
 
 
 #################################################################   Non protein
