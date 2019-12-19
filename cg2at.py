@@ -79,7 +79,7 @@ if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']])
 time_counter['n_p_t']=time.time()
 
 #### creates merged folder
-print('\nMerging all residue types to single file. (Or a possibly tea)\n')
+print('\nMerging all residue types to single file. (Or possibly tea)\n')
 
 if len(system)>0:
     gen.mkdir_directory(g_var.working_dir+'MERGED')
@@ -95,18 +95,18 @@ if len(system)>0:
         if len(system) > 1:
             gro.alchembed(system['PROTEIN'])
         else:
-            copyfile(g_var.working_dir+'MERGED/min/merged_cg2at_at_rep_user_supplied_minimised.pdb', g_var.final_dir+'final_cg2at_at_rep_user_supplied.pdb')
-            copyfile(g_var.working_dir+'MERGED/merged_cg2at_no_steered.pdb', g_var.final_dir+'final_cg2at_no_steered.pdb')
+            gen.file_copy_and_check(g_var.working_dir+'MERGED/min/merged_cg2at_at_rep_user_supplied_minimised.pdb', g_var.final_dir+'final_cg2at_at_rep_user_supplied.pdb')
+            gen.file_copy_and_check(g_var.working_dir+'MERGED/merged_cg2at_no_steered.pdb', g_var.final_dir+'final_cg2at_no_steered.pdb')
 #### merges de novo protein and residues types into a single pdb file into merged directory
     at_mod.merge_system_pdbs(system, '_novo', cg_residues, box_vec)
     gro.minimise_merged_pdbs(system, '_novo')
-    copyfile('merged_cg2at_novo_minimised.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')
+    gen.file_copy_and_check('merged_cg2at_novo_minimised.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')
     time_counter['m_t']=time.time()
 
 #### copies all itp files and topologies from whereever they are stored
     for file_name in os.listdir(g_var.working_dir+'MERGED'):
         if file_name.endswith('.itp') or file_name.endswith('final.top'):
-            copyfile(g_var.working_dir+'MERGED/'+file_name, g_var.final_dir+file_name)
+            gen.file_copy_and_check(g_var.working_dir+'MERGED/'+file_name, g_var.final_dir+file_name)
 
 
 if 'PROTEIN' in cg_residues:

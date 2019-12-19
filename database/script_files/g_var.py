@@ -9,6 +9,7 @@ from pathlib import Path
 parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', epilog='Enjoy the program and best of luck!\n', allow_abbrev=True)
 parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str, required=True)
 parser.add_argument('-a', help='atomistic coordinates (Optional)',metavar='pdb/gro/tpr',type=str)
+parser.add_argument('-loc', help='output folder name, (default = CG2AT_timestamp)',metavar='CG2AT',type=str)
 parser.add_argument('-v', action="count", default=0, help="increase output verbosity (eg -vv, 3 levels) (Optional)")
 parser.add_argument('-ter', help='interactively choose terminal species (Optional)', action='store_true')
 parser.add_argument('-nt', help='choose charged N terminal (Optional)', action='store_true')
@@ -27,6 +28,9 @@ parser.add_argument('-sf', help='scale factor for fragments, shrinks fragments b
 args = parser.parse_args()
 options = vars(args)
 
+
+
+### convert argparser into global variables to be read by the other files
 # input files  
 c, a = args.c, args.a
 # forcfield and fragment inputs
@@ -44,25 +48,36 @@ else:
     vs = ''
     sf=args.sf
 box = args.box
-# extra bits
 v, clean,  = args.v, args.clean
 
-variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, '-vs':args.vs, '-box':box}
 
+### hardcoded variables for use elsewhere in the script
 
-timestamp       =  strftime("%Y-%m-%d_%H-%M-%S", gmtime())
-start_dir       = os.getcwd()+'/'  ### initial working directory
-working_dir     = os.getcwd()+'/CG2AT_'+timestamp+'/'   ### working directory 
-final_dir       = os.getcwd()+'/CG2AT_'+timestamp+'/FINAL/'  ### final directory for run files
-input_directory = os.getcwd()+'/CG2AT_'+timestamp+'/INPUT/'  ### contains input run files
-scripts_dir     = os.path.dirname(os.path.realpath(__file__))+'/' ### contains script files
-database_dir    = str(Path(*Path(scripts_dir).parts[:-1]))+'/' ### contains database files
+variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, '-vs':args.vs, '-box':box,'-loc':args.loc}
+topology = ['frag', 'group', 'C_ter', 'N_ter', 'posres', 'sul', 'con', 'hydrogen']
 box_line="CRYST1 %8.3f %8.3f %8.3f  90.00  90.00  90.00 P 1           1\n"
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
 mass = {'H': 0,'C': 12,'N': 14,'O': 16,'P': 31,'M': 0, 'B': 32 ,'S': 32} 
 aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'E', 
        'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
        'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
+
+### CG2AT folder locations
+
+timestamp       =  strftime("%Y-%m-%d_%H-%M-%S", gmtime())
+
+if args.loc != None:
+    working_dir_name = args.loc
+else:
+    working_dir_name =  'CG2AT_'+timestamp
+
+start_dir       = os.getcwd()+'/'  ### initial working directory
+working_dir     = os.getcwd()+'/'+working_dir_name+'/'   ### working directory 
+final_dir       = os.getcwd()+'/'+working_dir_name+'/FINAL/'  ### final directory for run files
+input_directory = os.getcwd()+'/'+working_dir_name+'/INPUT/'  ### contains input run files
+scripts_dir     = os.path.dirname(os.path.realpath(__file__))+'/' ### contains script files
+database_dir    = str(Path(*Path(scripts_dir).parts[:-1]))+'/' ### contains database files
+
 
 ### finds gromacs installation
 

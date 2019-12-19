@@ -22,8 +22,6 @@ def build_protein_atomistic_system(cg_residues, box_vec):
     sequence[chain_count]=[]
     print('Converting Protein')
     gen.mkdir_directory(g_var.working_dir+'PROTEIN')  ### make and change to protein directory
-#### create new pdb file for chain 0 
-    pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_novo_'+str(chain_count)+'.pdb', box_vec)
 #### for each residue in protein
     initial=True
     residue_type={}
@@ -182,7 +180,9 @@ def finalise_novo_atomistic(atomistic, cg_residues, box_vec):
         final_at_residues[chain]={}  
         final_at[chain]={}
         coords=[]
-        pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_novo_'+str(chain)+'.pdb', box_vec)
+        skip = os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_novo_'+str(chain)+'.pdb')
+        if not skip:
+            pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_novo_'+str(chain)+'.pdb', box_vec)
         for res_index, residue_id in enumerate(atomistic[chain]):
             if res_index < len(atomistic[chain])-2:
                 atomistic[chain][residue_id] = fix_carbonyl(residue_id, cg_residues, atomistic[chain][residue_id])
@@ -199,8 +199,10 @@ def finalise_novo_atomistic(atomistic, cg_residues, box_vec):
         for atom in final_at[chain]:
             final_at[chain][atom]['coord']=coords[atom]
             final_at_residues[chain][final_at[chain][atom]['resid']][atom]=final_at[chain][atom]
-            pdb_output.write(g_var.pdbline%((atom,final_at[chain][atom]['atom'],final_at[chain][atom]['res_type'],ascii_uppercase[chain],\
-                            final_at[chain][atom]['resid'],final_at[chain][atom]['coord'][0],final_at[chain][atom]['coord'][1],final_at[chain][atom]['coord'][2],1,0))+'\n')
+            if not skip:
+                pdb_output.write(g_var.pdbline%((atom,final_at[chain][atom]['atom'],final_at[chain][atom]['res_type'],ascii_uppercase[chain],\
+                                final_at[chain][atom]['resid'],final_at[chain][atom]['coord'][0],final_at[chain][atom]['coord'][1],final_at[chain][atom]['coord'][2],1,0))+'\n')
+    if 'pdb_output' in locals():
         pdb_output.close()
     return final_at_residues
 
@@ -474,10 +476,11 @@ def read_in_protein_pdbs(no_chains, file, end):
 
 def write_merged_pdb(merge, protein, box_vec):
 #### creates merged pdb and writes chains to it
-    pdb_output=gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_merged.pdb', box_vec)
-    for line in merge:
-        pdb_output.write(line)
-    pdb_output.close()
+    if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_merged.pdb'):
+        pdb_output=gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_merged.pdb', box_vec)
+        for line in merge:
+            pdb_output.write(line)
+        pdb_output.close()
 
 
 ########################################################### RMSD

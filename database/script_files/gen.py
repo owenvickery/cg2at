@@ -4,18 +4,26 @@ import os, sys
 import numpy as np
 import math
 from distutils.dir_util import copy_tree
+from shutil import copyfile
 import glob
 import re
 import shlex
 import g_var
 
 
+def file_copy_and_check(file_in,file_out):
+    if not os.path.exists(file_out):
+        copyfile(file_in, file_out)
+
+def folder_copy_and_check(folder_in,folder_out):
+    if not os.path.exists(folder_out):
+        copy_tree(folder_in, folder_out)
+
 def flags_used():
     os.chdir(g_var.input_directory)
     with open('script_inputs.dat', 'w') as scr_input:
         for var in g_var.variables_to_save:
             line='{0:15}{1:15}\n'.format(var,str(g_var.variables_to_save[var]))
-            # line = var + '\t' + str(g_var.variables_to_save[var])+'\n'
             scr_input.write(line)
 
 def split_swap(swap):
@@ -122,7 +130,7 @@ def sep_fragments_header(line, residue_name):
     residue['ter']=False
     for top in line_sep:
         try:
-            if top in ['frag', 'group', 'C_ter', 'N_ter', 'posres', 'sul', 'con', 'hydrogen']:
+            if top in g_var.topology:
                 t_header = top
                 residue[top]={}
             elif top == 'ter':
@@ -141,14 +149,14 @@ def sep_fragments_header(line, residue_name):
             sys.exit()
     return residue
 
-def sort_connectivity(connectivity):
+def sort_connectivity(connect):
     cut_group = {}
-    if len(connectivity) > 0:
-        for group in connectivity:
+    if len(connect) > 0:
+        for group in connect:
             cut_group[group]={}
-            for con in connectivity[group]['con']:
-                for con_bead in connectivity[group]['con'][con]:
-                    if con_bead not in connectivity[group]['g_frag']:
+            for con in connect[group]['con']:
+                for con_bead in connect[group]['con'][con]:
+                    if con_bead not in connect[group]['g_frag']:
                         if con not in cut_group[group]:
                             cut_group[group][con] = [con_bead]
                         else:
@@ -181,7 +189,7 @@ def get_fragment_topology(residue, location, processing, sorted_connect, hydroge
         sorted_connect[residue]={}
         group=1
         atom_list=[]
-        connectivity={}
+        connect={}
         
         for line_nr, line in enumerate(pdb_input.readlines()):
             if line.startswith('['):
@@ -190,25 +198,16 @@ def get_fragment_topology(residue, location, processing, sorted_connect, hydroge
                     header_line['group']=group
                     group+=1
                 if 'con' in header_line:
-                    if header_line['group'] not in connectivity:
-                        connectivity[header_line['group']] = {'con':header_line['con'],'g_frag':[header_line['frag']]}
+                    if header_line['group'] not in connect:
+                        connect[header_line['group']] = {'con':header_line['con'],'g_frag':[header_line['frag']]}
                     else:
-                        connectivity[header_line['group']]['con'].update(header_line['con'])
-                        connectivity[header_line['group']]['g_frag'].append(header_line['frag'])
-                    # print(header_line)
-                    if 'hydrogen' in header_line:
-                        # print(header_line['hydrogen'])
-                        if residue not in hydrogen:
-                            hydrogen[residue] = {}
-                        hydrogen[residue].update(header_line['hydrogen'])
-                for top in processing[residue]:
-                    if top in header_line and not processing[residue][top]:
-                        if top == 'posres':
-                            processing[residue][top].append(header_line[top])
-                        else:
-                            processing[residue][top] = header_line[top]
-                    elif top == 'posres' and 'posres' in header_line:
-                        processing[residue][top].append(header_line[top])
+                        connect[header_line['group']]['con'].update(header_line['con'])
+                        connect[header_line['group']]['g_frag'].append(header_line['frag'])
+                if 'hydrogen' in header_line:
+                    if residue not in hydrogen:
+                        hydrogen[residue] = {}
+                    hydrogen[residue].update(header_line['hydrogen'])
+                processing = get_posres(residue, processing, header_line)
             try:
                 if header_line['frag'] == 'BB':
                     if line.startswith('ATOM'):
@@ -218,8 +217,19 @@ def get_fragment_topology(residue, location, processing, sorted_connect, hydroge
                     processing[residue]['atoms']=atom_list
             except:
                 sys.exit('The residue: '+residue+' is missing fragment information')
-    sorted_connect[residue]  = sort_connectivity(connectivity)
+    sorted_connect[residue]  = sort_connectivity(connect)
     return processing, sorted_connect, hydrogen 
+
+def get_posres(residue, processing, header_line):
+    for top in processing[residue]:
+        if top in header_line and not processing[residue][top]:
+            if top == 'posres':
+                processing[residue][top].append(header_line[top])
+            else:
+                processing[residue][top] = header_line[top]
+        elif top == 'posres' and 'posres' in header_line:
+            processing[residue][top].append(header_line[top])
+    return processing
 
 def fragment_location(residue, p_residues,  p_directories, mod_directories, np_directories):  
 #### runs through dirctories looking for the atomistic fragments returns the correct location
@@ -235,8 +245,6 @@ def fragment_location(residue, p_residues,  p_directories, mod_directories, np_d
             if os.path.exists(np_directories[directory][0]+residue+'/'+residue+'.pdb'):
                 return np_directories[directory][0]+residue+'/'+residue+'.pdb'
     sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
-
-
 
 
 # def get_forcefields_from_gromacs():
@@ -318,8 +326,8 @@ def sort_forcefield(forcefield_available_prov, f_number):
 #### returns forcefield location and forcefield name
 #### if forcefield selection is in provided copy forcefield to FORCEFIELD and FINAL directories
     print('\nYou have selected: '+forcefield_available_prov[f_number].split('.')[0])
-    copy_tree(g_var.database_dir+'/forcefields/'+forcefield_available_prov[f_number], g_var.working_dir+'FORCEFIELD/'+forcefield_available_prov[f_number]+'/.')
-    copy_tree(g_var.database_dir+'/forcefields/'+forcefield_available_prov[f_number], g_var.final_dir+forcefield_available_prov[f_number]+'/.')
+    folder_copy_and_check(g_var.database_dir+'/forcefields/'+forcefield_available_prov[f_number], g_var.working_dir+'FORCEFIELD/'+forcefield_available_prov[f_number])
+    folder_copy_and_check(g_var.database_dir+'/forcefields/'+forcefield_available_prov[f_number], g_var.final_dir+forcefield_available_prov[f_number])
     return g_var.database_dir+'/forcefields/', forcefield_available_prov[f_number].split('.')[0]
 
 def add_to_list(root, dirs, list_to_add):
@@ -335,7 +343,6 @@ def fetch_residues(fragments_available_prov, fragment_number):
 
     if type(fragment_number) == int:
         fragment_number=[0]
-
 #### run through selected fragments
     for database in fragment_number:
         print('\nYou have selected: '+fragments_available_prov[database])
@@ -384,8 +391,29 @@ def sort_directories(p_directories, mod_directories, np_directories):
             print('\nprotein residues fragment directories found: \n\nroot file system\n')
             print(p_directories[directory][0],'\n\nresidues\n\n',p_directories[directory][1:], '\n')
         print('\n{:-<75}'.format('>  Verbose level 1 end\n'))
-
     return np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories
+
+def print_water_selection(water_input, water, directory):
+    if water_input != None:
+        print('\nThe water type '+water_input+' doesn\'t exist')
+    print('\nPlease select a water molecule from below:\n')
+    print('{0:^20}{1:^30}'.format('Selection','water_molecule'))
+    print('{0:^20}{1:^30}'.format('---------','----------'))
+    offset=0
+    print('the following water models are found in: \n\n'+directory[0]+'SOL/'+'\n')
+    for selection, water_model in enumerate(water):
+        print('{0:^20}{1:^30}'.format(selection,water_model))
+
+def ask_for_water_model(directory, water):
+    while True:
+        try:
+            number = int(input('\nplease select a water model: '))
+            if number < len(water):
+                return directory[0]+'SOL/', water[number]
+        except KeyboardInterrupt:
+            sys.exit('\nInterrupted')
+        except:
+            print("Oops!  That was a invalid choice")
 
 def check_water_molecules(water_input, np_directories):
     water=[]
@@ -399,29 +427,13 @@ def check_water_molecules(water_input, np_directories):
     if water_input in water:
         return directory[0]+'SOL/', water_input
     else:
-        if water_input != None:
-            print('\nThe water type '+water_input+' doesn\'t exist')
-        print('\nPlease select a water molecule from below:\n')
-        print('{0:^20}{1:^30}'.format('Selection','water_molecule'))
-        print('{0:^20}{1:^30}'.format('---------','----------'))
-        offset=0
-        print('the following water models are found in: \n\n'+directory[0]+'SOL/'+'\n')
-        for selection, water_model in enumerate(water):
-            print('{0:^20}{1:^30}'.format(selection,water_model))
-    while True:
-        try:
-            number = int(input('\nplease select a water model: '))
-            if number < len(water):
-                return directory[0]+'SOL/', water[number]
-        except KeyboardInterrupt:
-            sys.exit('\nInterrupted')
-        except:
-            print("Oops!  That was a invalid choice")                             
+        print_water_selection(water_input, water, directory)
+    return ask_for_water_model(directory, water)                         
 
 ############################################################################################## fragment rotation #################################################################################
 
 def eulerAnglesToRotationMatrix(theta) :
-#### rotaion matrices for the rotation of fragments. theta is [x,y,z] in radians     
+#### rotation matrices for the rotation of fragments. theta is [x,y,z] in radians     
     R_x = np.array([[1,         0,                  0                   ],
                     [0,         math.cos(theta[0]), -math.sin(theta[0]) ],
                     [0,         math.sin(theta[0]), math.cos(theta[0])  ]
