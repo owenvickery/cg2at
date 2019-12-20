@@ -208,7 +208,7 @@ def convert_topology(topol, protein_number):
 #### reads in topology 
     if Path(topol+str(protein_number)+'.top').exists():
         read=False
-        if os.path.exists(topol+str(protein_number)+'.itp'):
+        if not os.path.exists(topol+str(protein_number)+'.itp'):
             with open(topol+str(protein_number)+'.itp', 'w') as itp_write:
                 for line in open(topol+str(protein_number)+'.top', 'r').readlines():
                 #### copies between moleculetype and position restraint section

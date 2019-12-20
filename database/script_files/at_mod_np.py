@@ -160,8 +160,12 @@ def check_hydrogens(residue):
     connect=[]
     con_coord = []
     h_atom = []
+
     for atom_num, atom in enumerate(residue):
         resname=residue[atom]['res_type']
+        for i in f_loc.hydrogen[resname]:
+            print(i, f_loc.hydrogen[resname][i])
+        # sys.exit()
         for bead in f_loc.sorted_connect[resname]:
             if residue[atom]['atom'] in f_loc.sorted_connect[residue[atom]['res_type']][bead]:
                 connect.append(atom)
