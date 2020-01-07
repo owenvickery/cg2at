@@ -291,7 +291,7 @@ def add_to_bonded(bond_1, bond_2, heavy_bond, heavy_dict, conversion, residue, p
 
 def get_fragment_topology(residue, location, processing, heavy_bond):
     with open(location, 'r') as pdb_input:
-        processing[residue] = {'C_ter':False, 'N_ter':False, 'posres':[], 'ter':False, 'sul':False}
+        processing[residue] = {'C_ter':'C', 'N_ter':'N', 'posres':[], 'ter':False, 'sul':False}
         group=1
         atom_list=[]
         connect={}
@@ -312,16 +312,16 @@ def get_fragment_topology(residue, location, processing, heavy_bond):
             if line.startswith('ATOM'):
                 line_sep = pdbatom(line)
                 grouped_atoms[int(header_line['group'])][header_line['frag']].append(line_sep['atom_number'])
-            ### not sure what the point of this was
-            # try:
-            #     if header_line['frag'] == 'BB':
-            #         if line.startswith('ATOM'):
-            #             line_sep = pdbatom(line)
-            #             if 'H' not in line_sep['atom_name']:
-            #                 atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
-            #         processing[residue]['atoms']=atom_list
-            # except:
-            #     sys.exit('The residue: '+residue+' is missing fragment information')
+            ### return backbone info for each aminoacid residue
+            try:
+                if header_line['frag'] == 'BB':
+                    if line.startswith('ATOM'):
+                        line_sep = pdbatom(line)
+                        if 'H' not in line_sep['atom_name']:
+                            atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
+                    processing[residue]['atoms']=atom_list
+            except:
+                sys.exit('The residue: '+residue+' is missing fragment information')
     
     return processing, grouped_atoms, heavy_bond[residue], connect
 

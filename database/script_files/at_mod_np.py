@@ -37,7 +37,7 @@ def non_solvent(box_vec, system, atomistic_fragments, residue_type):
         skip = os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')
         if not skip:
             pdb_output = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb', box_vec)         
-            atomistic_fragments[residue_type][resid] = at_mod.check_hydrogens(atomistic_fragments[residue_type][resid], atomistic_fragments)
+            atomistic_fragments[residue_type][resid] = at_mod.check_hydrogens(atomistic_fragments[residue_type][resid])
         ####### check if any atoms in residue overlap #######
             coord=[]
             for atom in atomistic_fragments[residue_type][resid]:

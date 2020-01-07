@@ -18,6 +18,7 @@ def collect_input(cg, at):
     gen.mkdir_directory(g_var.working_dir)
     gen.mkdir_directory(g_var.final_dir)
     gen.mkdir_directory(g_var.input_directory)
+    gen.mkdir_directory(g_var.merged_directory)
 #### collates all input files in input directory
     gen.file_copy_and_check(cg, g_var.input_directory+cg.split('/')[-1])
     if at != None:
@@ -231,7 +232,7 @@ def convert_topology(topol, protein_number):
 
 def write_topol(residue_type, residue_number, chain):
 #### open topology file
-    if not os.path.exists('topol_'+residue_type+chain+'.top'):
+    # if not os.path.exists('topol_'+residue_type+chain+'.top'):
         found=False
         with open('topol_'+residue_type+chain+'.top', 'w') as topol_write:
         #### add standard headers may need to be changed dependant on forcefield

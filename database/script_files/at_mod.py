@@ -369,7 +369,7 @@ def fix_chirality(merge, merge_temp, merged_coords):
 
     return merge, merged_coords
 
-def check_hydrogens(residue, atomistic_fragments):
+def check_hydrogens(residue):
 #### finds the connecting carbons and their associated carbons [carbon atom, hydrogen ref number, connecting ref number]    
     for atom_num, atom in enumerate(residue):
         resname=residue[atom]['res_type']

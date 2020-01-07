@@ -93,6 +93,8 @@ atom_names = fetch_itp_atom_names(args.i)
 pdb_lines = read_pdb_in(args.f)
 copyfile(args.f, '_'+args.f)
 parse_pdb(args.f, pdb_lines)
+# os.system('gawk -i inplace -F\'hydrogen\' \'{print $1}\' '+args.f)
+# os.system('gawk -i inplace -F\'con\' \'{print $1"  "}\' '+args.f)
 
 
 
