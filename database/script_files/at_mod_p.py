@@ -184,6 +184,8 @@ def finalise_novo_atomistic(atomistic, cg_residues, box_vec):
         if not skip:
             pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_novo_'+str(chain)+'.pdb', box_vec)
         for res_index, residue_id in enumerate(atomistic[chain]):
+            if atomistic[chain][residue_id][1]['res_type'] in f_loc.mod_residues:
+                atomistic[chain][residue_id] = at_mod.check_hydrogens(atomistic[chain][residue_id])
             if res_index < len(atomistic[chain])-2:
                 atomistic[chain][residue_id] = fix_carbonyl(residue_id, cg_residues, atomistic[chain][residue_id])
             else:

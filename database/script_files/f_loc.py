@@ -37,10 +37,13 @@ chiral = gen.fetch_chiral(np_directories, p_directories)
 water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
 
 ### return backbone information
-backbone, sorted_connect, hydrogen = gen.fetch_fragment(p_residues, p_directories, mod_directories,  np_directories)
+backbone, sorted_connect, hydrogen, heavy_bond = gen.fetch_fragment(p_residues, p_directories, mod_directories,  
+                                                                    np_directories, forcefield_location+forcefield+'.ff', mod_residues)
 
 
 swap_dict=gen.sort_swap_group()
+
+
 
 
 ### finds initial rotation matrices

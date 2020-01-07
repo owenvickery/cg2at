@@ -24,7 +24,10 @@ parser.add_argument('-cys', help='cutoff for disulphide bonds, sometimes CYS are
 parser.add_argument('-swap', help='creates a swap dictionary supply residues as PIP2,D3A:PVCL2,C3A (Optional)',metavar='PIP2,D3A:PVCL2,C3A',type=str, nargs='*')
 parser.add_argument('-box', help='box size in Angstrom (0 = use input file) (Optional)',metavar='100',type=float, nargs=3)
 parser.add_argument('-vs', help='use virtual sites (Optional)', action='store_true')
+parser.add_argument('-al', help='switches of alchembed (WARNING may cause issues with lipids and rings)', action='store_false')
 parser.add_argument('-sf', help='scale factor for fragments, shrinks fragments before minimisation',metavar='0.9',type=float, default=0.9)
+
+
 args = parser.parse_args()
 options = vars(args)
 
@@ -37,7 +40,7 @@ c, a = args.c, args.a
 w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
 cys, swap = args.cys, args.swap
 
-ter, nt, ct = args.ter, args.nt, args.ct
+ter, nt, ct, alchembed = args.ter, args.nt, args.ct, args.al
 vs=args.vs
 if args.vs:
     vst='0.004'
@@ -48,13 +51,13 @@ else:
     vs = ''
     sf=args.sf
 box = args.box
-v, clean,  = args.v, args.clean
+v, clean  = args.v, args.clean
 
 
 ### hardcoded variables for use elsewhere in the script
 
 variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, '-vs':args.vs, '-box':box,'-loc':args.loc}
-topology = ['frag', 'group', 'C_ter', 'N_ter', 'posres', 'sul', 'con', 'hydrogen']
+topology = ['frag', 'group', 'C_ter', 'N_ter', 'posres', 'sul']
 box_line="CRYST1 %8.3f %8.3f %8.3f  90.00  90.00  90.00 P 1           1\n"
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
 mass = {'H': 0,'C': 12,'N': 14,'O': 16,'P': 31,'M': 0, 'B': 32 ,'S': 32} 
@@ -75,6 +78,7 @@ start_dir       = os.getcwd()+'/'  ### initial working directory
 working_dir     = os.getcwd()+'/'+working_dir_name+'/'   ### working directory 
 final_dir       = os.getcwd()+'/'+working_dir_name+'/FINAL/'  ### final directory for run files
 input_directory = os.getcwd()+'/'+working_dir_name+'/INPUT/'  ### contains input run files
+merged_directory = os.getcwd()+'/'+working_dir_name+'/MERGED/'  ### contains input run files
 scripts_dir     = os.path.dirname(os.path.realpath(__file__))+'/' ### contains script files
 database_dir    = str(Path(*Path(scripts_dir).parts[:-1]))+'/' ### contains database files
 

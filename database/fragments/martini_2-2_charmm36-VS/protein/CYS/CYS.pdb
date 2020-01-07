@@ -1,8 +1,8 @@
-[ frag 'BB'  group '1' posres 'CA' N_ter 'N' C_ter 'C' con 'CA:SC1' ]
+[ frag 'BB'  group '1' posres 'CA' N_ter 'N' C_ter 'C' ]
 ATOM      1  N   CYS     1      14.070   6.270   3.050  2.00  0.00           N
 ATOM      2  CA  CYS     1      15.510   6.190   2.780  3.00  1.00           C
 ATOM      5  C   CYS     1      16.270   7.190   3.620  2.00  0.00           C
 ATOM      6  O   CYS     1      15.880   8.360   3.750  6.00  0.00           O
-[ frag 'SC1'  group '2' con 'CB:BB' sul 'SG' ]
+[ frag 'SC1'  group '2' sul 'SG' ]
 ATOM      3  CB  CYS     1      15.730   6.400   1.270  1.00  1.00           C
 ATOM      4  SG  CYS     1      17.470   6.150   0.840  5.00  0.00           S

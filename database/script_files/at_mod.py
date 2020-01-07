@@ -115,9 +115,6 @@ def add_to_sequence(sequence, residue, chain_count):
         sequence[chain_count]+='X'    
     return sequence
 
-
-
-
 def overlapping_atoms(tree):
     overlapped_ndx = tree.query_ball_tree(tree, r=0.3)
     overlapped_cut = [ndx for ndx in overlapped_ndx if len(ndx) >1]
@@ -243,8 +240,8 @@ def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
         if len(f_loc.sorted_connect[resname]) > 0:
             for group_bead in group: 
                 for bead_atom in group[group_bead]:
-                    if group[group_bead][bead_atom]['atom'] in f_loc.sorted_connect[resname][group_number]:
-                        for bead_connect in f_loc.sorted_connect[resname][group_number][group[group_bead][bead_atom]['atom']]:
+                    if bead_atom in f_loc.sorted_connect[resname][int(group_number)]:
+                        for bead_connect in f_loc.sorted_connect[resname][int(group_number)][bead_atom]:
                             if 'cg_connect' not in locals():
                                 cg_connect = [cg[bead_connect]['coord']]
                             else:
@@ -371,3 +368,31 @@ def fix_chirality(merge, merge_temp, merged_coords):
     merged_coords+=coord
 
     return merge, merged_coords
+
+def check_hydrogens(residue):
+#### finds the connecting carbons and their associated carbons [carbon atom, hydrogen ref number, connecting ref number]    
+    for atom_num, atom in enumerate(residue):
+        resname=residue[atom]['res_type']
+        break
+
+    for atom in f_loc.hydrogen[resname]:
+        h_coord = []
+        for group in f_loc.sorted_connect[resname]:
+            if atom in f_loc.sorted_connect[resname][group]:
+                for hydrogen in f_loc.hydrogen[resname][atom]:
+                    h_coord.append(residue[hydrogen]['coord'])
+                h_com=np.mean(np.array(h_coord), axis=0)
+                for heavy_bond in f_loc.heavy_bond[resname][atom]:
+                    for group_check in f_loc.sorted_connect[resname]:
+                        if heavy_bond in f_loc.sorted_connect[resname][group_check] and group_check != group:
+                            con_heavy_atom = heavy_bond
+                            con_heavy_atom_co =  residue[con_heavy_atom]['coord']
+            #### vector between H COM and bonded carbon 
+                vector=np.array([h_com[0]-residue[atom]['coord'][0],h_com[1]-residue[atom]['coord'][1],h_com[2]-residue[atom]['coord'][2]])
+                h_com_f=h_com+vector*2
+                d1 = np.sqrt((h_com[0]-con_heavy_atom_co[0])**2+(h_com[1]-con_heavy_atom_co[1])**2+(h_com[2]-con_heavy_atom_co[2])**2)
+                d2 = np.sqrt((h_com_f[0]-con_heavy_atom_co[0])**2+(h_com_f[1]-con_heavy_atom_co[1])**2+(h_com_f[2]-con_heavy_atom_co[2])**2)
+                if d2 < d1:
+                    for h_at in f_loc.hydrogen[resname][atom]:
+                        residue[h_at]['coord']=residue[h_at]['coord']-vector*2
+    return residue

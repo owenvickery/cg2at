@@ -10,7 +10,6 @@ import re
 import shlex
 import g_var
 
-
 def file_copy_and_check(file_in,file_out):
     if not os.path.exists(file_out):
         copyfile(file_in, file_out)
@@ -149,65 +148,171 @@ def sep_fragments_header(line, residue_name):
             sys.exit()
     return residue
 
-def sort_connectivity(connect):
+def switch_num_name(dictionary, input_val, num_to_letter):
+    if num_to_letter:
+        dictionary = {v: k for k, v in dictionary.items()}
+    if input_val in dictionary:
+        return dictionary[input_val]
+    else:
+        return input_val        
+
+def sort_connectivity(atom_dict, heavy_bond, connect):
     cut_group = {}
-    if len(connect) > 0:
-        for group in connect:
+    if len(atom_dict) > 1:
+        for group in atom_dict:
             cut_group[group]={}
-            for con in connect[group]['con']:
-                for con_bead in connect[group]['con'][con]:
-                    if con_bead not in connect[group]['g_frag']:
-                        if con not in cut_group[group]:
-                            cut_group[group][con] = [con_bead]
-                        else:
-                            cut_group[group][con].append(con_bead)
-                    else:
-                        pass
+            for frag in atom_dict[group]:
+                for atom in atom_dict[group][frag]:
+                    if atom in heavy_bond:
+                        # print(atom)
+                        for bond in heavy_bond[atom]:
+                            for group_2 in atom_dict:
+                                if group_2 != group:
+                                    for frag in atom_dict[group_2]:                          
+                                        if bond in atom_dict[group_2][frag]:
+                                            cut_group[group][atom] = [frag]
+                    # else:
+                    #     print(atom)
     return cut_group
 
-def fetch_fragment(p_residues, p_directories, mod_directories, np_directories):
+def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, forcefield_location, mod_residues):
 #### fetches the Backbone heavy atoms and the connectivity with pre/proceeding residues 
-    
+    amino_acid_itp = fetch_amino_rtp_file_location(forcefield_location) 
     processing={}     ### dictionary of backbone heavy atoms and connecting atoms eg backbone['ASP'][atoms/b_connect]
     sorted_connect={}
     hydrogen = {}
+    heavy_bond = {}
+    atoms_dict={}
     for directory in range(len(p_directories)):
         for residue in p_directories[directory][1:]:    
             if residue not in processing:
+                atoms_dict={}
                 location = fragment_location(residue,p_residues, p_directories, mod_directories, np_directories)
-                processing, sorted_connect, hydrogen  = get_fragment_topology(residue, location, processing, sorted_connect, hydrogen)
+                hydrogen[residue], heavy_bond[residue] = fetch_bond_info(residue, amino_acid_itp, mod_residues, p_residues)
+                processing, grouped_atoms, heavy_bond[residue], connect = get_fragment_topology(residue, location, processing, heavy_bond)
+                sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue], connect)
     for directory in range(len(np_directories)):
         for residue in np_directories[directory][1:]:    
             if residue not in processing:
+                atoms_dict={}
                 location = fragment_location(residue,p_residues, p_directories, mod_directories, np_directories)
-                processing, sorted_connect, hydrogen  = get_fragment_topology(residue, location, processing, sorted_connect, hydrogen)
-    return processing, sorted_connect, hydrogen 
+                if residue in ['SOL','ION']: 
+                    hydrogen[residue], heavy_bond[residue], atoms_dict = {},{},{}
+                else:
+                    hydrogen[residue], heavy_bond[residue] = fetch_bond_info(residue, location[:-4]+'.itp', mod_residues, p_residues)
+                processing, grouped_atoms, heavy_bond[residue], connect = get_fragment_topology(residue, location, processing, heavy_bond)
+                if residue in ['SOL', 'ION']: 
+                    sorted_connect[residue]={}
+                else:
+                    sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue], connect)
+    return processing, sorted_connect, hydrogen, heavy_bond 
 
-def get_fragment_topology(residue, location, processing, sorted_connect, hydrogen):
+def atom_bond_check(line_sep):
+    if line_sep[1] == 'atoms':
+        return True, False
+    elif line_sep[1] == 'bonds':
+        return False,True
+    else:
+        return False, False
+
+def fetch_amino_rtp_file_location(forcefield_loc):
+    for file in os.listdir(forcefield_loc):
+        if file in ['aminoacids.rtp', 'merged.rtp']:
+            return forcefield_loc+'/'+file
+
+def fetch_bond_info(residue, rtp, mod_residues, p_residues):
+    bond_dict=[]
+    heavy_dict, H_dict=[],[]
+    residue_present = False
+    atom_conversion = {}
+    with open(rtp, 'r') as itp_input:
+        for line in itp_input.readlines():
+            if len(line.split()) >= 2 and not line.startswith(';'):
+                line_sep = line.split()
+                if line_sep[1] == residue:
+                    residue_present = True
+                elif line_sep[1] in ['HSE', 'HIE'] and residue == 'HIS': 
+                    residue_present = True
+                elif residue_present or residue not in p_residues:
+                    if line_sep[0] == '[':
+                        atoms, bonds = atom_bond_check(line_sep)
+                    elif atoms:
+                        if residue in p_residues:
+                            atom_conversion[line_sep[0]]=int(line_sep[3])+1
+                            if line_sep[0].startswith('H'):
+                                H_dict.append(line_sep[0])
+                            else:
+                                heavy_dict.append(line_sep[0])
+                        else:
+                            if line_sep[4].startswith('H'):
+                                H_dict.append(int(line_sep[5]))
+                            else:
+                                heavy_dict.append(int(line_sep[5]))
+                    elif bonds:
+                        try:
+                            bond_dict.append([int(line_sep[0]),int(line_sep[1])])
+                        except:
+                            bond_dict.append([line_sep[0],line_sep[1]])
+                    elif not atoms and not bonds and residue in p_residues:
+                        break
+    bond_dict=np.array(bond_dict)
+    hydrogen = {}
+    heavy_bond = {}
+    if residue in p_residues and residue not in mod_residues:
+        at_conv = {}
+        for key_val, key in enumerate(heavy_dict):
+            atom_conversion[key] = key_val+1
+
+    for bond in bond_dict:
+        hydrogen = add_to_hydrogen(bond[0], bond[1], hydrogen, heavy_dict, H_dict, atom_conversion, residue, p_residues)
+        heavy_bond = add_to_bonded(bond[0], bond[1], heavy_bond, heavy_dict, atom_conversion, residue, p_residues)
+
+    return hydrogen, heavy_bond
+
+def add_to_hydrogen(bond_1, bond_2, hydrogen, heavy_dict, H_dict, conversion, residue, p_residues):
+    for bond in [[bond_1, bond_2], [bond_2, bond_1]]:
+        if bond[0] in heavy_dict and bond[1] in H_dict:
+            if residue in p_residues:
+                bond[0], bond[1] = conversion[bond[0]],conversion[bond[1]] 
+            if bond[0] not in hydrogen:
+                hydrogen[bond[0]]=[]
+            hydrogen[bond[0]].append(bond[1])
+    return hydrogen
+
+def add_to_bonded(bond_1, bond_2, heavy_bond, heavy_dict, conversion, residue, p_residues):
+    for bond in [[bond_1, bond_2], [bond_2, bond_1]]:
+        if bond[0] in heavy_dict and bond[1] in heavy_dict:
+            if residue in p_residues:
+                bond[0], bond[1] = conversion[bond[0]],conversion[bond[1]] 
+            if bond[0] not in heavy_bond:
+                heavy_bond[bond[0]]=[]
+            heavy_bond[bond[0]].append(bond[1])
+    return heavy_bond
+
+def get_fragment_topology(residue, location, processing, heavy_bond):
     with open(location, 'r') as pdb_input:
-        processing[residue] = {'C_ter':False, 'N_ter':False, 'posres':[], 'ter':False, 'sul':False}
-        sorted_connect[residue]={}
+        processing[residue] = {'C_ter':'C', 'N_ter':'N', 'posres':[], 'ter':False, 'sul':False}
         group=1
         atom_list=[]
         connect={}
-        
+        grouped_atoms={}
         for line_nr, line in enumerate(pdb_input.readlines()):
             if line.startswith('['):
                 header_line = sep_fragments_header(line, residue)
                 if g_var.mod:
                     header_line['group']=group
                     group+=1
-                if 'con' in header_line:
-                    if header_line['group'] not in connect:
-                        connect[header_line['group']] = {'con':header_line['con'],'g_frag':[header_line['frag']]}
-                    else:
-                        connect[header_line['group']]['con'].update(header_line['con'])
-                        connect[header_line['group']]['g_frag'].append(header_line['frag'])
-                if 'hydrogen' in header_line:
-                    if residue not in hydrogen:
-                        hydrogen[residue] = {}
-                    hydrogen[residue].update(header_line['hydrogen'])
+                if header_line['group'] not in connect:
+                    connect[int(header_line['group'])] = {'g_frag':[header_line['frag']]}
+                    grouped_atoms[int(header_line['group'])]={header_line['frag']:[]}
+                else:
+                    connect[int(header_line['group'])]['g_frag'].append(header_line['frag'])
+                    grouped_atoms[int(header_line['group'])][header_line['frag']]=[]
                 processing = get_posres(residue, processing, header_line)
+            if line.startswith('ATOM'):
+                line_sep = pdbatom(line)
+                grouped_atoms[int(header_line['group'])][header_line['frag']].append(line_sep['atom_number'])
+            ### return backbone info for each aminoacid residue
             try:
                 if header_line['frag'] == 'BB':
                     if line.startswith('ATOM'):
@@ -217,8 +322,8 @@ def get_fragment_topology(residue, location, processing, sorted_connect, hydroge
                     processing[residue]['atoms']=atom_list
             except:
                 sys.exit('The residue: '+residue+' is missing fragment information')
-    sorted_connect[residue]  = sort_connectivity(connect)
-    return processing, sorted_connect, hydrogen 
+    
+    return processing, grouped_atoms, heavy_bond[residue], connect
 
 def get_posres(residue, processing, header_line):
     for top in processing[residue]:
@@ -328,7 +433,7 @@ def sort_forcefield(forcefield_available_prov, f_number):
     print('\nYou have selected: '+forcefield_available_prov[f_number].split('.')[0])
     folder_copy_and_check(g_var.database_dir+'/forcefields/'+forcefield_available_prov[f_number], g_var.working_dir+'FORCEFIELD/'+forcefield_available_prov[f_number])
     folder_copy_and_check(g_var.database_dir+'/forcefields/'+forcefield_available_prov[f_number], g_var.final_dir+forcefield_available_prov[f_number])
-    return g_var.database_dir+'/forcefields/', forcefield_available_prov[f_number].split('.')[0]
+    return g_var.database_dir+'forcefields/', forcefield_available_prov[f_number].split('.')[0]
 
 def add_to_list(root, dirs, list_to_add):
     list_to_add.append([])

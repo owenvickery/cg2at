@@ -11,14 +11,20 @@ import gen, gro, at_mod, at_mod_p, at_mod_np, cg_mod, g_var, f_loc
 time_counter = {}
 time_counter['i_t']=time.time()
 
+#### collects initial structures into INPUT folder
+
 user_at_input = gro.collect_input(g_var.c, g_var.a)
+
+#### saves flags used into INPUT folder
 gen.flags_used()
 
-print('\nThis script is now hopefully doing the following (Good luck):\n')
+print('\nThis script is now hopefully doing the following (Good luck):\n\nReading in your CG representation\n')
 
-#### read in CG file
-print('Reading in your CG representation\n')
+#### reads in CG file and separates into residue types
+
 cg_residues, box_vec_initial = cg_mod.read_initial_pdb()
+
+#### box size update 
 
 if g_var.box != None:
     box_vec, box_shift = gen.new_box_vec(box_vec_initial, g_var.box)
@@ -26,31 +32,40 @@ else:
     box_vec=box_vec_initial
     box_shift=np.array([0,0,0])
 
+#### simple pbc fix and residue truncation if required
+
 cg_residues =cg_mod.fix_pbc(cg_residues, box_vec_initial, box_vec, box_shift)
+
+#### checks if fragment database is correct
+
 at_mod.sanity_check(cg_residues)
 
 time_counter['r_i_t']=time.time()
+
 system={}
-### convert protein to atomistic
+
+### convert protein to atomistic representation
 if 'PROTEIN' in cg_residues:
     p_system, backbone_coords, final_coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec)
     system['PROTEIN']=p_system['PROTEIN']
     time_counter['p_d_n_t']=time.time()
+    #### reads in user supplied atomistic structure 
     if user_at_input and 'PROTEIN' in system:
-    #### reads in atomistic structure   
-        atomistic_protein_input = at_mod_p.read_in_atomistic(g_var.input_directory+'AT_input.pdb', system['PROTEIN'], sequence, True)  
-        atomistic_protein_centered, cg_com = at_mod_p.center_atomistic(atomistic_protein_input, backbone_coords)
-        at_mod_p.rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, backbone_coords, cg_com, box_vec)
+        atomistic_protein_input = at_mod_p.read_in_atomistic(g_var.input_directory+'AT_input.pdb', system['PROTEIN'], sequence, True)  ## reads in user structure
+        atomistic_protein_centered, cg_com = at_mod_p.center_atomistic(atomistic_protein_input, backbone_coords) ## centers each monomer by center of mass
+        at_mod_p.rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, backbone_coords, cg_com, box_vec) ## rigid fits each monomer
+    #### minimise each protein chain
     gro.minimise_protein(system['PROTEIN'], p_system, user_at_input)
-
+    #### read in minimised de novo protein chains and merges chains
     merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/min/PROTEIN_novo', '.pdb')
     at_mod_p.write_merged_pdb(merge_de_novo, '_novo', box_vec)
-
+    #### runs steered MD on user supplied protein chains
     if user_at_input and 'PROTEIN' in system:
         print('\tRunning steered MD on input atomistic structure\n')
     #### runs steered MD on atomistic structure on CA and CB atoms
         for chain in range(system['PROTEIN']):
             gro.steered_md_atomistic_to_cg_coord(chain)
+        #### read in minimised user supplied protein chains and merges chains
         merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/steered_md/PROTEIN_at_rep_user_supplied', '.pdb')
         at_mod_p.write_merged_pdb(merge_at_user, '_at_rep_user_supplied', box_vec)
         merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_at_rep_user_supplied', '_gmx.pdb')
@@ -58,7 +73,7 @@ if 'PROTEIN' in cg_residues:
 
 time_counter['f_p_t']=time.time()
 
-#### converts non protein residues into atomistic and minimises 
+#### converts non protein residues into atomistic (runs on all cores)
 if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]) > 0:
     np_system={}
     pool = mp.Pool(mp.cpu_count())
@@ -66,6 +81,7 @@ if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']])
     pool.close()
     for residue_type in pool_process:
         np_system.update(residue_type)
+    #### minimises each residue separately
     print('\nThis may take some time....(probably time for a coffee)\n')
     for residue_type in [key for value, key in enumerate(cg_residues) if key not in ['PROTEIN', 'ION']]:
         print('Minimising individual residues: '+residue_type)
@@ -82,7 +98,6 @@ time_counter['n_p_t']=time.time()
 print('\nMerging all residue types to single file. (Or possibly tea)\n')
 
 if len(system)>0:
-    gen.mkdir_directory(g_var.working_dir+'MERGED')
 #### make final topology in merged directory
     gro.write_merged_topol(system, '_novo')
 #### make minimisation directory
@@ -92,7 +107,7 @@ if len(system)>0:
         at_mod.merge_system_pdbs(system, '_no_steered', cg_residues, box_vec)
         at_mod.merge_system_pdbs(system, '_at_rep_user_supplied', cg_residues, box_vec)
         gro.minimise_merged_pdbs(system, '_at_rep_user_supplied')
-        if len(system) > 1:
+        if len(system) > 1 and g_var.alchembed:
             gro.alchembed(system['PROTEIN'])
         else:
             gen.file_copy_and_check(g_var.working_dir+'MERGED/min/merged_cg2at_at_rep_user_supplied_minimised.pdb', g_var.final_dir+'final_cg2at_at_rep_user_supplied.pdb')
@@ -121,7 +136,6 @@ if 'PROTEIN' in cg_residues:
     RMSD={}
     de_novo_atoms = at_mod_p.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb', system['PROTEIN'], sequence, False)
     RMSD['de novo '] = at_mod_p.RMSD_measure(de_novo_atoms, system,backbone_coords)
-    print(1)
 
     if user_at_input and 'PROTEIN' in system:
         at_input_atoms = at_mod_p.read_in_atomistic(g_var.final_dir+'final_cg2at_at_rep_user_supplied.pdb', system['PROTEIN'], sequence, False)
