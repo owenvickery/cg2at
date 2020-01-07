@@ -37,7 +37,7 @@ def non_solvent(box_vec, system, atomistic_fragments, residue_type):
         skip = os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')
         if not skip:
             pdb_output = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb', box_vec)         
-            atomistic_fragments[residue_type][resid] = check_hydrogens(atomistic_fragments[residue_type][resid])
+            atomistic_fragments[residue_type][resid] = at_mod.check_hydrogens(atomistic_fragments[residue_type][resid], atomistic_fragments)
         ####### check if any atoms in residue overlap #######
             coord=[]
             for atom in atomistic_fragments[residue_type][resid]:
@@ -155,45 +155,7 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
                         atomistic_fragments[cg_resid][atom] = atom_new
     return atomistic_fragments
 
-def check_hydrogens(residue):
-#### finds the connecting carbons and their associated carbons [carbon atom, hydrogen ref number, connecting ref number]    
-    connect=[]
-    con_coord = []
-    h_atom = []
 
-    for atom_num, atom in enumerate(residue):
-        resname=residue[atom]['res_type']
-        for i in f_loc.hydrogen[resname]:
-            print(i, f_loc.hydrogen[resname][i])
-        # sys.exit()
-        for bead in f_loc.sorted_connect[resname]:
-            if residue[atom]['atom'] in f_loc.sorted_connect[residue[atom]['res_type']][bead]:
-                connect.append(atom)
-                con_coord.append(residue[atom]['coord'])
-        if residue[atom]['atom'] in f_loc.hydrogen[residue[atom]['res_type']]:
-            h_atom.append(atom)    
-    for atom in h_atom:
-        connected_atom = residue[atom]['coord']
-        dist=np.sqrt(((np.array(con_coord)[:,0] - np.array(residue[atom]['coord'])[0])**2)+((np.array(con_coord)[:,1] - np.array(residue[atom]['coord'])[1])**2)+((np.array(con_coord)[:,2] - np.array(residue[atom]['coord'])[2])**2))
-        connecting_atom = residue[connect[np.argmin(dist)]]['coord']
-        hc = []
-        hc_at_index = []
-        for atom_num, res_atom in enumerate(residue):
-            if residue[res_atom]['atom'] in f_loc.hydrogen[resname][residue[atom]['atom']]:
-                hc.append(residue[res_atom]['coord'])
-                hc_at_index.append(res_atom)
-        h_com=np.mean(np.array(hc), axis=0)             
-
-    # #### vector between H COM and bonded carbon 
-        vector=np.array([h_com[0]-connected_atom[0],h_com[1]-connected_atom[1],h_com[2]-connected_atom[2]])
-    # #### flips  
-        h_com_f=h_com+vector*2
-        d1 = np.sqrt((h_com[0]-connecting_atom[0])**2+(h_com[1]-connecting_atom[1])**2+(h_com[2]-connecting_atom[2])**2)
-        d2 = np.sqrt((h_com_f[0]-connecting_atom[0])**2+(h_com_f[1]-connecting_atom[1])**2+(h_com_f[2]-connecting_atom[2])**2)
-        if d2 > d1:
-            for h_at in hc_at_index:
-                residue[h_at]['coord']=residue[h_at]['coord']+vector*2
-    return residue
 
 def merge_minimised(residue_type, np_system, box_vec):
     os.chdir(g_var.working_dir+residue_type+'/min')
