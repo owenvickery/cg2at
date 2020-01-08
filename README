@@ -29,18 +29,18 @@ In martini this is a single protein. (eg a membrane signal helix linked to to a 
 You only have atomistic structures for the helix and the cytoslic protein.
 the script will rigid body fit the helix and cytosolic protein separately and fill in the linker from the de novo construct.
 
-                          CG                        AT from user
-input            helix --------- protein           helix  protein 
-                           |                             |
-                           V                             |
-conversion       helix --------- protein                 |
- (de novo)                 |                             |
-                           V                             V
-       de novo linker  ---------             user   helix, protein
-                                \                  /
-                                         |
-                                         V
-final hybrid system            helix --------- protein
+                              CG                        AT from user
+    input            helix --------- protein           helix  protein 
+                               |                             |
+                               V                             |
+    conversion       helix --------- protein                 |
+     (de novo)                 |                             |
+                               V                             V
+           de novo linker  ---------             user   helix, protein
+                                    \                  /
+                                             |
+                                             V
+    final hybrid system            helix --------- protein
 
 
 
