@@ -96,7 +96,7 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
     try:
         xyz_cur = cg_residues[residue_number]['BB']['coord']
         xyz_prev = cg_residues[residue_number-1]['BB']['coord']
-        dist=np.sqrt(((xyz_prev[0]-xyz_cur[0])**2)+((xyz_prev[1]-xyz_cur[1])**2)+((xyz_prev[2]-xyz_cur[2])**2))
+        dist=gen.calculate_distance(xyz_prev, xyz_cur)
         if dist < 5:
             cg_n = cg_residues[residue_number-1]['BB']['coord']
             at_n = at_residues[N_ter]['coord']
@@ -108,7 +108,7 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
     try:
         xyz_cur = cg_residues[residue_number]['BB']['coord']
         xyz_next = cg_residues[residue_number+1]['BB']['coord']
-        dist=np.sqrt(((xyz_next[0]-xyz_cur[0])**2)+((xyz_next[1]-xyz_cur[1])**2)+((xyz_next[2]-xyz_cur[2])**2))
+        dist=gen.calculate_distance(xyz_next, xyz_cur)
         if dist < 5:
             cg_c = cg_residues[residue_number+1]['BB']['coord']
             at_c = at_residues[C_ter]['coord']
@@ -132,7 +132,7 @@ def find_closest_cysteine(at_connections, cg_connections, cg_residues, group, re
             if cg_residues[res_id]['SC1']['residue_name'] == 'CYS' and res_id not in [residue_number-1, residue_number, residue_number+1]:
                 xyz_cur=[cg_residues[residue_number]['SC1']['coord'][0],cg_residues[residue_number]['SC1']['coord'][1],cg_residues[residue_number]['SC1']['coord'][2]] ### cysteine of interest
                 xyz_check=[cg_residues[res_id]['SC1']['coord'][0],cg_residues[res_id]['SC1']['coord'][1],cg_residues[res_id]['SC1']['coord'][2]] ### cysteine to check distance
-                dist=np.sqrt(((xyz_check[0]-xyz_cur[0])**2)+((xyz_check[1]-xyz_cur[1])**2)+((xyz_check[2]-xyz_cur[2])**2)) ### distance
+                dist = gen.calculate_distance(xyz_check, xyz_cur)
                 if dist < g_var.cys:
                     for atom_number in group['SC1']:
                         if group['SC1'][atom_number]['atom']==f_loc.backbone[cg_residues[residue_number]['SC1']['residue_name']]['sul']: ### if sulphur
@@ -153,7 +153,7 @@ def shift_sulphur(residue_number, disul_at_info, disul_cg_info, at_residues, cg_
         xyz_cur=np.array([at_residues[disul_cg_info][disul_at_info]['coord'][0],at_residues[disul_cg_info][disul_at_info]['coord'][1],at_residues[disul_cg_info][disul_at_info]['coord'][2]])
         cutoff=2
     xyz_check=np.array([at_residues[residue_number][disul_at_info]['coord'][0],at_residues[residue_number][disul_at_info]['coord'][1],at_residues[residue_number][disul_at_info]['coord'][2]])
-    dist=np.sqrt(((xyz_check[0]-xyz_cur[0])**2)+((xyz_check[1]-xyz_cur[1])**2)+((xyz_check[2]-xyz_cur[2])**2))
+    dist=gen.calculate_distance(xyz_check,xyz_cur) 
 #### moves sidechains closer together in increments of 5% of the length of the vector 
     offset=0
     if dist >= cutoff:
@@ -161,7 +161,7 @@ def shift_sulphur(residue_number, disul_at_info, disul_cg_info, at_residues, cg_
         x=0.05
         while True:
             xyz_check_new = xyz_check + ( vector * x )
-            dist=np.sqrt(((xyz_check_new[0]-xyz_cur[0])**2)+((xyz_check_new[1]-xyz_cur[1])**2)+((xyz_check_new[2]-xyz_cur[2])**2))
+            dist=gen.calculate_distance(xyz_check_new,xyz_cur) 
             if dist >= cutoff:
                 x+=0.05
             else:
@@ -269,7 +269,7 @@ def read_in_atomistic(protein, cg_chain_count, sequence, check_alignment):
                                 N_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
                                 N=True
                         #### measures distance between N and C atoms. if the bond is over 3 A it counts as a new protein
-                            dist=np.sqrt(((N_ter[0]-C_ter[0])**2)+((N_ter[1]-C_ter[1])**2)+((N_ter[2]-C_ter[2])**2))
+                            dist=gen.calculate_distance(N_ter, C_ter)
                             if N and C and C_resid != N_resid and dist > 3.5:# and aas[line_sep['residue_name']] != sequence[chain_count][line_sep['residue_id']]:
                                 N_ter, C_ter=False, False
                                 ter_residues.append(line_sep['residue_id'])

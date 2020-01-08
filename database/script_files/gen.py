@@ -10,6 +10,11 @@ import re
 import shlex
 import g_var
 
+
+def calculate_distance(p1, p2):
+    return np.sqrt(((p1[0]-p2[0])**2)+((p1[1]-p2[1])**2)+((p1[2]-p2[2])**2))
+
+
 def file_copy_and_check(file_in,file_out):
     if not os.path.exists(file_out):
         copyfile(file_in, file_out)
@@ -164,15 +169,12 @@ def sort_connectivity(atom_dict, heavy_bond, connect):
             for frag in atom_dict[group]:
                 for atom in atom_dict[group][frag]:
                     if atom in heavy_bond:
-                        # print(atom)
                         for bond in heavy_bond[atom]:
                             for group_2 in atom_dict:
                                 if group_2 != group:
                                     for frag in atom_dict[group_2]:                          
                                         if bond in atom_dict[group_2][frag]:
                                             cut_group[group][atom] = [frag]
-                    # else:
-                    #     print(atom)
     return cut_group
 
 def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, forcefield_location, mod_residues):
@@ -302,6 +304,8 @@ def get_fragment_topology(residue, location, processing, heavy_bond):
                 if g_var.mod:
                     header_line['group']=group
                     group+=1
+                if 'frag' not in header_line or 'group' not in header_line:
+                    sys.exit('\nThere is a issue with the fragment header: '+line+'found in: '+location)
                 if header_line['group'] not in connect:
                     connect[int(header_line['group'])] = {'g_frag':[header_line['frag']]}
                     grouped_atoms[int(header_line['group'])]={header_line['frag']:[]}
@@ -607,8 +611,7 @@ def pdbatom(line):
 ### atom number, atom name, residue name,chain, resid,  x, y, z, backbone (for fragment), connect(for fragment)
     try:
         return dict([('atom_number',int(line[7:11].replace(" ", ""))),('atom_name',str(line[12:16]).replace(" ", "")),('residue_name',str(line[17:21]).replace(" ", "")),\
-            ('chain',line[21]),('residue_id',int(line[22:26])), ('x',float(line[30:38])),('y',float(line[38:46])),('z',float(line[46:54])), ('backbone',int(float(line[55:61]))),\
-            ('connect',int(float(line[62:67])))])
+            ('chain',line[21]),('residue_id',int(line[22:26])), ('x',float(line[30:38])),('y',float(line[38:46])),('z',float(line[46:54]))])
     except:
         sys.exit('\npdb line is wrong:\t'+line) 
 

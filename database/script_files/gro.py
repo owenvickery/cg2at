@@ -11,7 +11,7 @@ import re
 import gen, g_var, f_loc, at_mod
 
 
-
+#### collects input structures and creates initial folders
 def collect_input(cg, at):
     if not os.path.exists(cg):
         sys.exit('\nPrint cannot find CG input file: '+cg)
@@ -33,6 +33,7 @@ def collect_input(cg, at):
         return True
     return False
 
+#### gromacs parser
 def gromacs(cmd, output):
     if os.path.exists(output):
         pass
@@ -105,6 +106,8 @@ def histidine_protonation(chain, input, chain_ter):
     pdb2gmx_selections+='\n'+str(chain_ter[0])+'\n'+str(chain_ter[1])
     return pdb2gmx_selections
 
+
+### interactive terminal residue selection
 def ask_ter_question(default_ter, ter_name, ter_val, chain):
     print('\n please select species for '+ter_name[ter_val]+' residue in chain '+str(chain)+' :\n 0: charged\n 1: neutral')
     while True:
@@ -232,31 +235,30 @@ def convert_topology(topol, protein_number):
 
 def write_topol(residue_type, residue_number, chain):
 #### open topology file
-    # if not os.path.exists('topol_'+residue_type+chain+'.top'):
-        found=False
-        with open('topol_'+residue_type+chain+'.top', 'w') as topol_write:
-        #### add standard headers may need to be changed dependant on forcefield
-            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.working_dir+'FORCEFIELD/'+f_loc.forcefield+'.ff/forcefield.itp\"\n')
-            if 'SOL' == residue_type:
-                topol_write.write('#include \"'+f_loc.water_dir+f_loc.water+'.itp\"\n\n#include \"'+g_var.working_dir+'/FORCEFIELD/'+f_loc.forcefield+'.ff/ions.itp\"\n\n')
-        #### add location of residue topology file absolute file locations
-            if residue_type not in ['ION','SOL']:
-                for directory in range(len(f_loc.np_directories)):
-                    if os.path.exists(f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp'):
-                        topol_write.write('#include \"'+f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp\"\n')
-                        found=True
-                        break
-                if os.path.exists(g_var.working_dir+'/PROTEIN/'+residue_type+chain+'.itp'):
-                    topol_write.write('#include \"'+residue_type+chain+'.itp\"\n')
+    found=False
+    with open('topol_'+residue_type+chain+'.top', 'w') as topol_write:
+    #### add standard headers may need to be changed dependant on forcefield
+        topol_write.write('; Include forcefield parameters\n#include \"'+g_var.working_dir+'FORCEFIELD/'+f_loc.forcefield+'.ff/forcefield.itp\"\n')
+        if 'SOL' == residue_type:
+            topol_write.write('#include \"'+f_loc.water_dir+f_loc.water+'.itp\"\n\n#include \"'+g_var.working_dir+'/FORCEFIELD/'+f_loc.forcefield+'.ff/ions.itp\"\n\n')
+    #### add location of residue topology file absolute file locations
+        if residue_type not in ['ION','SOL']:
+            for directory in range(len(f_loc.np_directories)):
+                if os.path.exists(f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp'):
+                    topol_write.write('#include \"'+f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp\"\n')
                     found=True
-                if not found:
-                    sys.exit('cannot find itp : '+residue_type+'/'+residue_type+chain)
-        #### topology section headers
-            topol_write.write('\n\n[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
-        #### individual number of residues
-            if residue_type.split('_')[0] == 'PROTEIN':
-                 residue_type='PROTEIN_'
-            topol_write.write(residue_type+chain+'    '+str(residue_number))
+                    break
+            if os.path.exists(g_var.working_dir+'/PROTEIN/'+residue_type+chain+'.itp'):
+                topol_write.write('#include \"'+residue_type+chain+'.itp\"\n')
+                found=True
+            if not found:
+                sys.exit('cannot find itp : '+residue_type+'/'+residue_type+chain)
+    #### topology section headers
+        topol_write.write('\n\n[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
+    #### individual number of residues
+        if residue_type.split('_')[0] == 'PROTEIN':
+             residue_type='PROTEIN_'
+        topol_write.write(residue_type+chain+'    '+str(residue_number))
 
 
 #################################################################   Non protein
@@ -368,7 +370,6 @@ def minimise_merged_pdbs(system, protein):
 
 
 def alchembed(system):
-    
     os.chdir(g_var.working_dir+'MERGED')
     gen.mkdir_directory('alchembed')
 #### runs through each chain and run alchembed on each sequentially

@@ -81,7 +81,7 @@ def rotate(at_connections, cg_connections, same):
         #### for each connection the distance is calculated and added to list
             individual_connections=[]
             for connect in range(len(cg_connections)):
-                individual_connections.append(np.sqrt(((check[connect][0]-cg_connections[connect][0])**2)+((check[connect][1]-cg_connections[connect][1])**2)+((check[connect][2]-cg_connections[connect][2])**2)))
+                individual_connections.append(gen.calculate_distance(check[connect], cg_connections[connect]))
         #### for each rotation the connection distances are added to dist list 
             dist.append(individual_connections)
     #### the RMS is calculated for each rotation    
@@ -182,7 +182,9 @@ def get_atomistic(frag_location):
                 fragment_mass[bead]=[]
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line) ## splits up pdb line
-                residue[group][bead][line_sep['atom_number']]={'coord':np.array([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf]),'atom':line_sep['atom_name'],'resid':line_sep['residue_id'], 'res_type':line_sep['residue_name'],'extra':line_sep['backbone'], 'connect':line_sep['connect'], 'frag_mass':1}
+                residue[group][bead][line_sep['atom_number']]={'coord':np.array([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf]),
+                                                                'atom':line_sep['atom_name'],'resid':line_sep['residue_id'], 'res_type':line_sep['residue_name'],
+                                                                'frag_mass':1}
 #### updates fragment mass   
                 if 'H' not in line_sep['atom_name']:
                     for atom in line_sep['atom_name']:
@@ -390,8 +392,8 @@ def check_hydrogens(residue):
             #### vector between H COM and bonded carbon 
                 vector=np.array([h_com[0]-residue[atom]['coord'][0],h_com[1]-residue[atom]['coord'][1],h_com[2]-residue[atom]['coord'][2]])
                 h_com_f=h_com+vector*2
-                d1 = np.sqrt((h_com[0]-con_heavy_atom_co[0])**2+(h_com[1]-con_heavy_atom_co[1])**2+(h_com[2]-con_heavy_atom_co[2])**2)
-                d2 = np.sqrt((h_com_f[0]-con_heavy_atom_co[0])**2+(h_com_f[1]-con_heavy_atom_co[1])**2+(h_com_f[2]-con_heavy_atom_co[2])**2)
+                d1 = gen.calculate_distance(h_com, con_heavy_atom_co)    
+                d2 = gen.calculate_distance(h_com_f, con_heavy_atom_co)   
                 if d2 < d1:
                     for h_at in f_loc.hydrogen[resname][atom]:
                         residue[h_at]['coord']=residue[h_at]['coord']-vector*2

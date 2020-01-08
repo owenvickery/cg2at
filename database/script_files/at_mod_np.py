@@ -50,7 +50,7 @@ def non_solvent(box_vec, system, atomistic_fragments, residue_type):
             #### write residue out to a pdb file
                 short_line=atomistic_fragments[residue_type][resid][at_id+1]
                 pdb_output.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,short_line['coord'][0],
-                                 short_line['coord'][1],short_line['coord'][2],short_line['extra'],short_line['connect']))+'\n')
+                                 short_line['coord'][1],short_line['coord'][2],0.00, 0.00))+'\n')
     system[residue_type]=int(resid)+1
     return system, atomistic_fragments
 
@@ -78,7 +78,7 @@ def solvent_sol(box_vec, system, atomistic_fragments, residue_type):
             if not skip:
                 short_line=atomistic_fragments[residue_type][resid][at_id+1]
                 pdb_sol.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,short_line['coord'][0],
-                          short_line['coord'][1],short_line['coord'][2],short_line['extra'],short_line['connect']))+'\n')
+                          short_line['coord'][1],short_line['coord'][2],0.00, 0.00))+'\n')
 
     return system, atomistic_fragments
 
@@ -94,7 +94,7 @@ def solvent_ion(box_vec, system, atomistic_fragments, residue_type):
             if not skip:
                 short_line=atomistic_fragments[residue_type][resid][at_id+1]
                 pdb_ion.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,short_line['coord'][0],
-                              short_line['coord'][1],short_line['coord'][2],short_line['extra'],short_line['connect']))+'\n')
+                              short_line['coord'][1],short_line['coord'][2],0.00, 0.00))+'\n')
             if atomistic_fragments[residue_type][resid][at_id+1]['res_type'] != 'SOL':
                 if atomistic_fragments[residue_type][resid][at_id+1]['res_type'] not in system:
                     system[atomistic_fragments[residue_type][resid][at_id+1]['res_type']]=1
