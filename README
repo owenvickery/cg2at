@@ -1,9 +1,46 @@
+                                   **CG2AT v2 README**
+
+If you are using this script please acknowledge me (Dr Owen Vickery) and cite the following DOI.
+
+DOI: 10.5281/zenodo.3592318
+
+                                    **SCRIPT OVERVIEW**
+
 the script is a fragment based conversion of CG representation into atomistic.
 
-This script requires:
-numpy
-scipy
-gromacs > v5
+
+                                     **REQUIREMENTS**
+
+- Python v3 or higher
+- Numpy
+- Scipy
+- GROMACS > v5
+
+                                        **FLAGS**
+
+REQUIRED
+-c          coarse grain input (pdb/gro/tpr)
+
+OPTIONAL
+-a          atomistic_input.pdb (pdb/gro/tpr)
+-v          verbose with 3 levels  of verbosity (-vvv) 
+-mod        treats every fragment individually 
+-sf         scale factor for fragments, shrinks fragments before minimisation (default=0.9)
+-clean      removes temp file after cg2at 
+-ter        interactive terminal residue selection
+-nt         charged N terminal residue
+-ct         charged C terminal residue
+-swap       allows the swapping of residues/beads (eg PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip)
+-box        new box vectors in Angstrom, (0 is ignored and uses input eg 100 150 100 )
+-w          choose your solvent, common choices are: tip3p, tip4p, spc and spce. 
+-ff         choose your forcefield. 
+-fg         choose your fragment libraries. 
+-gromacs    provide gromacs executable name if none standard. 
+
+
+
+
+
 
 you can supply 2 input files:
 coarse grain input as a pdb/gro/tpr
@@ -55,26 +92,7 @@ gmx mdrun -v -deffnm rigid_fit
 
 #############################################################################
 
-The following flags are available:
 
-REQUIRED
--c          coarse grain input (pdb/gro/tpr)
-
-OPTIONAL
--a          atomistic_input.pdb (pdb/gro/tpr)
--v          verbose with 3 levels  of verbosity (-vvv) 
--mod        treats every fragment individually 
--sf         scale factor for fragments, shrinks fragments before minimisation (default=0.9)
--clean      removes temp file after cg2at 
--ter        interactive terminal residue selection
--nt         charged N terminal residue
--ct         charged C terminal residue
--swap       allows the swapping of residues/beads (eg PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip)
--box        new box vectors in Angstrom, (0 is ignored and uses input eg 100 150 100 )
--w          choose your solvent, common choices are: tip3p, tip4p, spc and spce. 
--ff         choose your forcefield. 
--fg         choose your fragment libraries. 
--gromacs    provide gromacs executable name if none standard. 
 
 
 example input.
@@ -93,13 +111,15 @@ Non protein
 SOL: 'tip3p', 'tip4p', 'spc', 'spce'
 PC:  'POPC', 'DGPC', 'DLPC', 'DNPC', 'DOPC', 'DPPC', 'DRPC', 'DYPC'
 PE:  'POPE', 'DGPE', 'DLPE', 'DNPE', 'DOPE', 'DPPE', 'DYPE'
-PG:  'POPG'
-PA:  'POPA'
-PI:  'PIP2', 'POPI2C', 'POPI2D'
+PG:  'POPG', 'DLPG', 'DNPA', 'DOPA', 'DPPA', 'DYPA',
+PA:  'POPA', 'DGPA', 'DLPA', 'DNPA', 'DOPA', 'DPPA', 'DYPA' 
+PS:  'POPS', 'DGPS', 'DLPS', 'DMPS', 'DNPS', 'DOPS', 'DPPS', 'DYPS'
+PI:  'PIP2', 'POPI2C', 'POPI2D','DMPI',  
 Sterols: 'CHOL'
 Lipopolysaccharides: 'LIPA'
 Cardiolipin: 'CARD' (PVCL2) 
 misc: 'SPA', 'SPU'
+
 
 Protein
 -------
