@@ -18,25 +18,28 @@ This script roughly follows the following workflow.
 <pre>
         CG beads         Fragments            COM aligned fragments           Aligned fragments                 Atomistic
                                                                               
-         #########                                    ########                      ########      
-       ((         ))                                ((        ))                  ((        ))    
-      ((           ))            O1                ((      O1  ))                ((  O1  O2  ))                    
-     ((             ))          /                 ((       /    ))              ((    \  /    ))                     
-    ((     SC1       ))   (CB)-CG                ((  (CB)-CG     ))            ((      CG      ))                     
-     ((             ))          \                 ((       \    ))              ((     |      ))                   O1  O2
-      ((           ))            O2                ((      O2  ))                ((   (CB)   ))                     \  /
-       ((         ))                                ((        ))                  ((        ))                       CG
-         #########                       COM          ########       rotation       ########      Minimisation       |
-         ---------                   ---------->      --------      ---------->     --------      ----------->       CB  
-         #########                    Alignment       ########       Alignment      ########                         | 
-       ((         ))                                ((        ))                  ((        ))                   X1  CA   X2
-      ((           ))         (C)-O                ((   (C)-O  ))                ((    CA    ))                   \ /  \ /
-     ((             ))        /                   ((    /       ))              ((    /  \    ))                   N    C
-    ((      BB       ))     (CA)                 ((   (CA)       ))            ((   (N)  (C)   ))                       |
-     ((             ))        \                   ((    \       ))              ((        |   ))                        O
-      ((           ))         (N)                  ((   (N)    ))                ((       O  ))   
-       ((         ))                                ((        ))                  ((        ))    
-         #########                                    ########                      ########       
+           --------                                    --------                      --------      
+          (        )                                  (        )                    (        )     
+         (          )             O1                 (      O1  )                  (  O1  O2  )                     
+        (            )           /                  (       /    )                (    \  /    )                      
+       (     SC1      )    (CB)-CG                 (  (CB)-CG     )              (      CG      )                     
+        (            )           \                  (       \    )                (     |      )                    O1  O2
+         (          )             O2                 (      O2  )                  (   (CB)   )                      \  /
+          (        )                                  (        )                    (        )                        CG
+           --------                       COM          --------       rotation       --------      Minimisation       |
+               |                      ---------->          |         ---------->         |         ----------->       CB  
+           --------                    Alignment       --------       Alignment      --------                         | 
+          (        )                                  (        )                    (        )                    X1  CA   X2
+         (          )          (C)-O                 (   (C)-O  )                  (    CA    )                    \ /  \ /
+        (            )         /                    (    /       )                (    /  \    )                    N    C
+    X1-(      BB      )-X2   (CA)               X1-(   (CA)       )-X2        X1-(   (N)  (C)   )-X2                     |
+        (            )         \                    (    \       )                (        |   )                         O
+         (          )          (N)                   (   (N)    )                  (       O  )    
+          (        )                                  (        )                    (        )     
+           --------                                    --------                      --------       
+
+The connecting atoms are highlighted by square brackets
+
 </pre> 
 
 This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
@@ -123,7 +126,7 @@ gmx grompp -f md.mdp -c final_cg2at_at_rep_user_supplied.pdb -r final_cg2at_no_s
 gmx mdrun -v -deffnm rigid_fit
 
 
-#############################################################################
+------------------------------------------------------------------------#####
 
 
 
@@ -132,7 +135,7 @@ example input.
 
 python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -v -clean -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update -swap GLU,SC2:ASP,skip PIP2,D3B:PIP2,C3B -box 0 100 100 -nt -ct
 
-############################################################################
+------------------------------------------------------------------------####
 
 Available fragments
 
@@ -190,7 +193,7 @@ charmm36-jul2017-updated.ff
 oplsaam.ff
 
 
-#############################################################################
+------------------------------------------------------------------------#####
 
 Script requirements
 
@@ -221,7 +224,7 @@ subprocess
 time
 
 
-#############################################################################
+------------------------------------------------------------------------#####
 
 Script overview
 
