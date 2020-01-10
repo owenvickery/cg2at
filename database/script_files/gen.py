@@ -193,6 +193,7 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
                 hydrogen[residue], heavy_bond[residue] = fetch_bond_info(residue, amino_acid_itp, mod_residues, p_residues)
                 processing, grouped_atoms, heavy_bond[residue], connect = get_fragment_topology(residue, location, processing, heavy_bond)
                 sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue], connect)
+                
     for directory in range(len(np_directories)):
         for residue in np_directories[directory][1:]:    
             if residue not in processing:
@@ -306,7 +307,7 @@ def get_fragment_topology(residue, location, processing, heavy_bond):
                     group+=1
                 if 'frag' not in header_line or 'group' not in header_line:
                     sys.exit('\nThere is a issue with the fragment header: '+line+'found in: '+location)
-                if header_line['group'] not in connect:
+                if int(header_line['group']) not in connect:
                     connect[int(header_line['group'])] = {'g_frag':[header_line['frag']]}
                     grouped_atoms[int(header_line['group'])]={header_line['frag']:[]}
                 else:
@@ -492,14 +493,12 @@ def sort_directories(p_directories, mod_directories, np_directories):
         np_residues+=np_directories[directory][1:]
 #### if verbose prints all fragments found
     if g_var.v >= 2:
-        print('\n{:-<75}'.format('>  Verbose level 1 start'))
         for directory in range(len(np_directories)):
             print('\nnon protein residues fragment directories found: \n\nroot file system\n')
             print(np_directories[directory][0],'\n\nresidues\n\n',np_directories[directory][1:], '\n')
         for directory in range(len(p_directories)):
             print('\nprotein residues fragment directories found: \n\nroot file system\n')
             print(p_directories[directory][0],'\n\nresidues\n\n',p_directories[directory][1:], '\n')
-        print('\n{:-<75}'.format('>  Verbose level 1 end\n'))
     return np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories
 
 def print_water_selection(water_input, water, directory):

@@ -10,13 +10,13 @@ the script is a fragment based conversion of the CG representation into atomisti
 
 This script roughly follows the following workflow.
 
-- Centers fragments based on the center of mass of heavy atoms
-- Rotates fragments to find minimum distance between the atoms connecting to other beads and said bead.
+- Center fragments based on the center of mass (COM) of heavy atoms.
+- Rotate fragments to find minimum distance between the atoms connecting to other beads.
 - Minimise residue
 - Merge all residues and minimise
 
 <pre>
-        CG beads         Fragments            COM aligned fragments           Aligned fragments                 Atomistic
+           CG beads         Fragments           COM aligned fragments           Aligned fragments                 Atomistic
                                                                               
            --------                                    --------                      --------      
           (        )                                  (        )                    (        )     
@@ -47,224 +47,277 @@ This workflow allows each fragment to be treated individually, with no knowledge
 
                                      **REQUIREMENTS**
 
+Software:
+
 - Python v3 or higher
+- GROMACS > v5
+
+Non standard python modules:
+
 - Numpy
 - Scipy
-- GROMACS > v5
+
+Standard modules included in base python install (ubuntu 18):
+
+- argparse
+- copy
+- datetime
+- difflib
+- distutils
+- glob
+- math
+- multiprocessing
+- os
+- pathlib
+- re
+- shutil
+- string
+- sys
+- subprocess
+- time
 
                                         **FLAGS**
 
 REQUIRED
--c          (pdb/gro/tpr)
+- -c          (pdb/gro/tpr)
 
 OPTIONAL
--a          (pdb/gro/tpr)
--v          (-vvv) 
--mod        (True/False)
--sf         (float)(default=0.9)
--clean      (True/False) 
--ter        (True/False)
--nt         (True/False)
--ct         (True/False)
--swap       (str)(eg PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip)
--box        (int) (Angstrom)(0 is ignored and uses input eg 100 150 100 ) 
--w          [tip3p, tip4p, spc and spce] 
--ff         (str) 
--fg         (str) 
--gromacs    (str)  
+- -a          (pdb/gro/tpr)
+- -v          (-vvv) 
+- -mod        (True/False)
+- -sf         (float)(default=0.9)
+- -cys        (float)
+- -clean      (True/False) 
+- -ter        (True/False)
+- -nt         (True/False)
+- -ct         (True/False)
+- -al         (True/False)
+- -vs         (True/False)
+- -swap       (str)(eg PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip)
+- -box        (int) (Angstrom)(0 is ignored and uses input eg 100 150 100 ) 
+- -w          [tip3p, tip4p, spc and spce] 
+- -ff         (str) 
+- -fg         (str) 
+- -gromacs    (str) 
+- -loc        (str)  
+- -swap       (str)
+
+                                        **INPUT**
 
 
+The script contains two methods to rebuild the system:
 
+- de novo method, following the protocol described in the script overview section.
+- flexible fitting of a user supplied atomistic structure (prefereably the one used to make the CG representation).
 
+To convert your system, all you need to do is supply the coarsegrain system.
 
+However, the quality of the conversion is improved if you can provide the starting atomistic structure used to create the CG model.
 
-you can supply 2 input files:
-coarse grain input as a pdb/gro/tpr
-atomistic representation as a pdb/gro/tpr
+All user supplied structures should be in a single file. The atomistic segments are then aligned to the coarsegrain initially by sequence.
 
-The script has 3 outputs:
+Both input files must be in the following file formats:
 
-The 1st requires no information other than the fragment corresponding to the bead
-The script will convert any protein using a basic de novo method of fragment alignment to the CG beads.
+- pdb
+- gro
+- tpr
 
-The 2nd maps a users supplied atomistic structure onto the the CG representation. 
-The mapped structure is then steered for a very short period to fit the CG coordinates.
+If only partial structures are supplied, then the script will build in the missing residues from the de novo build. 
 
-Note:
-the mapping of the user structure now includes a hybrid approach.
-If any residues are missing from the supplied atomistic structure they are built in using the de novo structure.
+For example if you have a signal peptide linked via a flexible linker to the main protein.
 
-for example if you have a signal peptide linked via a flexible linker to the main protein.
-You can just supply the coordinates for the signal peptide and main protein and the script will build in the linker from the de novo.
+You can just supply the atomistic coordinates for the signal peptide and main protein and the script will build in the linker from the de novo method.
 
-In martini this is a single protein. (eg a membrane signal helix linked to to a cytosolic protein)
+the script will rigid body fit the helix and cytosolic protein separately and fill in the linker from the de novo construct. 
 
-You only have atomistic structures for the helix and the cytoslic protein.
-the script will rigid body fit the helix and cytosolic protein separately and fill in the linker from the de novo construct.
-
+<pre>
                               CG                        AT from user
-    input            helix --------- protein           helix  protein 
+    input            helix --------- protein           helix, protein 
                                |                             |
                                V                             |
     conversion       helix --------- protein                 |
      (de novo)                 |                             |
                                V                             V
-           de novo linker  ---------             user   helix, protein
+          de novo: linker  ---------            user:   helix, protein
                                     \                  /
+                                     \________________/
                                              |
                                              V
     final hybrid system            helix --------- protein
+</pre>
+
+e.g.
+<pre>
+    python cg2at.py -c cg_input.gro -a atomistic_input.gro
+</pre>
+
+                                        **Advanced Usage**
+
+To apply virtual sites to you protein use the flag:
+
+- -vs
+
+To switch off the alchembed step us the flag:
+
+- -al
+
+This will significantly spped up the script haowever you might get some lipids struck in the aromatic rings, therefore use with caution.
+
+In most cases the script catches the extra long disulphide bonds in martini simulations, however in some cases the disulphide can extend up to 10A.
+If you recieve a error that the pdb and topology don't match and the atom number is out by 2. It is most likely a disulpide bond not being treated correctly.
+You may be able to fix it by increasing the disulide bond radius catch using the flag:
+
+- -cys (default = 0.7 A)
+                            
+
+Due to the modular nature of CG representation, you can switch residues during the conversion if you wish to make simple mutations.
+
+If the residue you are swapping to has the same number or fewer CG beads you can use the following flag to change the residue.
+
+- -swap  
+
+Usage
+
+             From        :              To           :    range
+      resname,bead,bead  :     resname,bead,bead     :  0-10,30-40
+
+Examples: 
+
+If the beads are the same:
+
+swap all ASP to ASN:
+- -swap ASP:ASN
+
+swap ASP to ASN in the resid range 0-10 and 30-40:
+- -swap ASP:ASN:0-10,30-40
+
+If the beads are different:
+
+switch residues with different beads:
+- -swap POPC,NC3:POPG,GL0
+
+if you wish to switch within the same residue:
+- -swap POPG,D2B:POPG,C2B
+
+To skip residues or beads:
+
+to skip a bead.
+- -swap GLU,SC2:ASP,skip
+
+to skip a residue.
+- -swap POPG:skip
+
+You are not limited to a single residue
+
+The following switches all POPE to POPG and all POPG to POPE
+- -swap POPE,NH3:POPG,GL0 POPG,GL0:POPE,NH3
+
+The following will skip all NA+ between resid 4000 and 4100.
+- -swap NA+:skip:4000-4100
 
 
 
-The 3rd just does a rigid body fit on the backbone.
-There is no alchembed run on this system as you can use it as a restraint file and pull the steered coordinates into the rigid fit.
+                                        **OUTPUT**
+
+The script will create a output file system as below.
+
+    | --    CG2AT_(timestamp)
+                | --    INPUT
+                                - cg_input.gro, CG_input.pdb, atomistic_input.gro, AT_input.pdb, script_inputs.dat
+                | --    FORCEFIELD
+                                -  forcefield selected (charmm36-jul2017.ff)
+                | --    RESIDUE_TYPE (PROTEIN, POPE)
+                                - converted indivudal residues
+                | --    MERGED
+                                -  merged residue types
+                | --    FINAL
+                                - Forcefield selected, all topology files, final conversions
+
+Directories
+
+- INPUT
+  - supplied cg file (pdb,gro,tpr)
+  - CG converted to pdb (CG_input.pdb)
+  - supplied atomistic file (pdb,gro,tpr)
+  - supplied atomistic file converted to pdb (AT_input.pdb)
+  - script inputs, all flags used in the conversion saved for future reference
+- FORCEFIELD
+  - Selected forcefield 
+- RESIDUE_TYPE (e.g POPE, PROTEIN)
+  - individual residues after initial conversion
+  - topology for residues
+  - mdp for minisation
+  - gromacs outputs saved
+  - MIN folder containing all individual minimised residues
+  - merged pdb containing all minimised residues in a single pdb
+- MERGED
+  - topology for all residues 
+  - mdp for minisation
+  - all residue types merged into single pdb 
+  - gromacs outputs saved
+  - MIN folder containing all merged misiation files
+  - ALCHEMBED folder containing all alchembed steps if protein is present
+- FINAL
+  - FORCEFIELD folder 
+  - topology for all residues
+  - final atomistic structures in pdb format
+
+
+                                        **OUTPUT**
+
+The script provides 3 types of coarsegrain conversions.
+
+- De novo method. (final_cg2at_de_novo.pdb)
+  - fragments are fitted individually to beads and rotated to minimise bond length to connecting beads.
+
+- flexible user supplied atomistic fitting. (final_cg2at_at_rep_user_supplied.pdb)  
+  - Atomistic segments are aligned via sequence to the CG protein.
+  - The supplied atomistic structures undertake 2 fitting steps.
+    - Each segment is rigid body fitted to the CG backbone beads. 
+      - Any missing residues or residue types found in the MOD directory are added from the de novo method.
+    - Short steered MD step on selected atoms align the AT protein to the CG representation, preserving most interactions (e.g. backbone H-bonds).    
+  - A short Alchembed step is run on each monomer to prevent any lipid tails being trapped in aromatic rings.
+
+- Rigid body user supplied atomistic fitting. (final_cg2at_de_novo.pdb)
+  - Atomistic segments are aligned via sequence to the CG protein.
+  - Each segment is rigid body fitted to the CG backbone beads. 
+    - Any missing residues or residue types found in the MOD directory are added from the de novo method.
+
+**WARNING** 
+
+on the rigid body user supplied atomistic fitting. No alchembed step is run on this system.
+
+You can use this file as a restraint file and pull the steered coordinates into the rigid fit.
 
 This can be done by:
-add "define = -DPOSRES" to the MDP file applies restraints to all heavy atoms
+
+<pre>
+
 gmx grompp -f md.mdp -c final_cg2at_at_rep_user_supplied.pdb -r final_cg2at_no_steered.pdb -p topol_final.top -o rigid_fit.tpr
+
 gmx mdrun -v -deffnm rigid_fit
 
+</pre>
 
-------------------------------------------------------------------------#####
+                                        **Automation**
 
+If you know in advance which settings you wish to use, these can be supplied by the following flags. 
 
-
+- w   (str) water model         e.g. tip3p
+- fg  (str) fragment databases  e.g. martini_2-2_charmm36
+- ff  (str) forcefield          e.g. charmm36-jul2017
+- box (int) box size (Angstrom) e.g. 100 100 100
+- nt  (T/F) charged N-terminus
+- ct  (T/F) charged C-terminus
 
 example input.
 
-python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -v -clean -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update -swap GLU,SC2:ASP,skip PIP2,D3B:PIP2,C3B -box 0 100 100 -nt -ct
-
-------------------------------------------------------------------------####
-
-Available fragments
-
-Charmm36
-________
-
-Non protein
------------
-SOL: 'tip3p', 'tip4p', 'spc', 'spce'
-PC:  'POPC', 'DGPC', 'DLPC', 'DNPC', 'DOPC', 'DPPC', 'DRPC', 'DYPC'
-PE:  'POPE', 'DGPE', 'DLPE', 'DNPE', 'DOPE', 'DPPE', 'DYPE'
-PG:  'POPG', 'DLPG', 'DNPA', 'DOPA', 'DPPA', 'DYPA',
-PA:  'POPA', 'DGPA', 'DLPA', 'DNPA', 'DOPA', 'DPPA', 'DYPA' 
-PS:  'POPS', 'DGPS', 'DLPS', 'DMPS', 'DNPS', 'DOPS', 'DPPS', 'DYPS'
-PI:  'PIP2', 'POPI2C', 'POPI2D','DMPI',  
-Sterols: 'CHOL'
-Lipopolysaccharides: 'LIPA'
-Cardiolipin: 'CARD' (PVCL2) 
-misc: 'SPA', 'SPU'
+<pre>
+    python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update  -box 100 100 100 -nt -ct
+</pre>
 
 
-Protein
--------
-all amino acids
-
-diacyl [CYSD) and triacyl [CYST) cysteine
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-Amber99sb
-_________
-
-Protein
--------
-All amino acids
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
-lipid-14
-________
-
-Non protein
------------
-Currently empty
 
 
------------------------------------------------------------------------------
-
-Forcefields
-
-amber14sb.ff
-amber99sb-ildn.ff
-charmm36-mar2019.ff
-charmm36-jul2017-updated.ff
-oplsaam.ff
 
 
-------------------------------------------------------------------------#####
-
-Script requirements
-
-Gromacs >= v5
-
-Non standard modules
-
-numpy
-scipy
-
-standard modules included in base python install
-
-argparse
-copy
-datetime
-difflib
-distutils
-glob
-math
-multiprocessing
-os
-pathlib
-re
-shutil
-string
-sys
-subprocess
-time
-
-
-------------------------------------------------------------------------#####
-
-Script overview
-
- Read in databases 
-        |-> choose forcefield and fragments
-                      |-> fetch available fragements and bonded information
-
- collate input files as pdb into INPUT directory 
-                      |-> Read in CG input
- 
- Build non protein atomistic system
-                |-> align COM of fragments to bead
-                                | If not SOL or ION
-                                |-> rotate fragment to minimise distance between connecting atoms the connected beads 
-                                |                                       |-> energy minimise each residue separately
-                                |                                                         |-> merge all minimised residues 
-                                |                                                                         |-> minimise merged residue type incase of any clashes 
-                                | If ION or SOL
-                                |-> Randomly rotate water around COM of water/ion bead
-                                                         |-> concatonate water molecules in one pdb
-                                                         |              |-> minimise all water molecules
-                                                         |if ion
-                                                         |-> separate ions into separate file (no need to do anything to them) 
-
-Build de novo protein atomistic system
-                |-> align COM of fragments to bead
-                                |-> rotate fragment to minimise distance between connecting atoms the connected beads 
-                                                                           |-> each chain is minimised separately
-                                                                                               |-> merge all minimised chains
-                                                                                                            |-> minimise merged chains incase of any clashes                             
-Build user supplied protein atomistic system
-                |-> align COM of user supplied protein chain to CG chain
-                                         |-> fit backbone COMs of user supplied protein chain to CG backbone beads
-                                                                        |-> each chain is minimised separately
-                                                                                        |-> Run steered MD on selected atoms to fit the user supplied protein chain more accurately to the CG protein_mass
-
- Merge protein and non protein 
-           |if de novo
-           |-> minimise merged system
-                        |-> copy to final directory 
-           |if user supplied protein
-           |-> run alchembed on each chain iteratively to prevent any stuck acyl tails 
-                                            |-> copy to final directory

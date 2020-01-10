@@ -87,18 +87,21 @@ def rotate(at_connections, cg_connections, same):
     #### the RMS is calculated for each rotation    
         dist=np.array(dist)
         inter= np.sqrt(np.mean(dist**2,axis=1))
-        if len(dist[0])==2 and same:
-            ratio=dist/np.min(dist, axis=1)[:,np.newaxis]
-            rotation_index=np.argmin(inter[np.where(np.sum(ratio, axis=1)<np.min(np.sum(ratio, axis=1))*1.02)])
-            for i in range(len(ratio)):
-                if np.all(ratio[i]<1.05):
-                    if 'rotation_RMS' in locals():
-                        if inter[i] < rotation_RMS:
-                            rotation_RMS = inter[i]
+        if len(dist[0])==2:
+            if np.all(cg_connections[0] == cg_connections[1]):
+                ratio=dist/np.min(dist, axis=1)[:,np.newaxis]
+                rotation_index=np.argmin(inter[np.where(np.sum(ratio, axis=1)<np.min(np.sum(ratio, axis=1))*1.02)])
+                for i in range(len(ratio)):
+                    if np.all(ratio[i]<1.05):
+                        if 'rotation_RMS' in locals():
+                            if inter[i] < rotation_RMS:
+                                rotation_RMS = inter[i]
+                                rotation_index=i
+                        else:
+                            rotation_RMS=inter[i]
                             rotation_index=i
-                    else:
-                        rotation_RMS=inter[i]
-                        rotation_index=i
+            else:
+                rotation_index=np.argmin(inter)
         else:
             rotation_index=np.argmin(inter)
 
@@ -250,10 +253,14 @@ def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
                                 cg_connect.append(cg[bead_connect]['coord'])
                         at_connection.append(group[group_bead][bead_atom]['coord'])
                         cg_connection.append(np.mean(np.array(cg_connect), axis=0))    
+    # if resname in ['PHE']:
+    #     print(f_loc.sorted_connect[resname])
+    #     print(at_connection)
     if len(at_frag_centers)  > 1:         
         for bead in at_frag_centers:
             cg_connection.append(cg_frag_centers[bead])
             at_connection.append(at_frag_centers[bead])     
+
     return at_connection, cg_connection    
 
 def find_cross_vector(ca, C, O):

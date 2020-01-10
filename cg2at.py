@@ -128,9 +128,9 @@ if 'PROTEIN' in cg_residues:
 #### creates mdp file if user wants to pull the structure to initial input
     if not os.path.exists(g_var.final_dir+'steered_md.mdp'):
         with open(g_var.final_dir+'steered_md.mdp', 'w') as steered_md:
-            steered_md.write('define = -DPOSRES\nintegrator = md\nnsteps = 3000\ndt = 0.001\ncontinuation   = no\nconstraint_algorithm = lincs')
-            steered_md.write('constraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
-            steered_md.write('pme_order = 4\nfourierspacing = 0.16\ntcoupl = V-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no')
+            steered_md.write('define = -DPOSRES\nintegrator = md\nnsteps = 3000\ndt = 0.001\ncontinuation   = no\nconstraint_algorithm = lincs\n')
+            steered_md.write('constraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME\n')
+            steered_md.write('pme_order = 4\nfourierspacing = 0.16\ntcoupl = V-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\n')
             steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')    
 #### calculates final RMS
     RMSD={}

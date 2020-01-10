@@ -78,7 +78,6 @@ def build_protein_atomistic_system(cg_residues, box_vec):
                 terminal[chain_count].append(f_loc.backbone[cg_residues[residue_number+1]['BB']['residue_name']]['ter'])
                 sequence[chain_count]=[]
     if g_var.v >=1:
-        print('\n{:-<75}'.format('>  Verbose level 1 start'))
         print('\n{0:^15}{1:^12}'.format('chain number', 'length of chain')) #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
         print('\n{0:^15}{1:^12}'.format('------------', '---------------'))
         for chain in sequence:
@@ -351,10 +350,10 @@ def mask_sequence(sequence, st, end):
     return sequence
 
 def center_atomistic(atomistic_protein_input, backbone_coords): 
-    cg_com=[]
+    cg_com={}
 #### for each protein chain center on cg representation 
-    for chain in range(len(atomistic_protein_input)):
-        cg_com.append([])
+    for chain in atomistic_protein_input:
+        cg_com[chain]=[]
         for part_val, part in enumerate(atomistic_protein_input[chain]):
             sls, sle= int(part.split(':')[0]),int(part.split(':')[1])
             protein_mass=[]
@@ -374,40 +373,43 @@ def center_atomistic(atomistic_protein_input, backbone_coords):
 
 def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, backbone_coords, cg_com,  box_vec):
 #### run through each chain in proteins
-    for chain in range(len(atomistic_protein_centered)):
+    for chain in range(len(final_coordinates_atomistic)):
     #### creates atomistic pdb
         xyz_rot_apply=[]
-        for part_val, part in enumerate(atomistic_protein_centered[chain]):
-            sls, sle= int(part.split(':')[0]),int(part.split(':')[1])        
-            at_centers=[]
-        #### runs through every residue and atom  
-            for residue in atomistic_protein_centered[chain][part]:
-            #### gets center of mass of each residue (note only backbone heavy atoms have a mass)
-                at_centers_iter=[]
-                for atom in atomistic_protein_centered[chain][part][residue]:
-                    at_centers_iter.append(np.append(atomistic_protein_centered[chain][part][residue][atom]['coord'],atomistic_protein_centered[chain][part][residue][atom]['frag_mass']))
-                try:
-                    at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
-                except:
+        if chain in atomistic_protein_centered:
+            for part_val, part in enumerate(atomistic_protein_centered[chain]):
+                sls, sle= int(part.split(':')[0]),int(part.split(':')[1])        
+                at_centers=[]
+            #### runs through every residue and atom  
+                for residue in atomistic_protein_centered[chain][part]:
+                #### gets center of mass of each residue (note only backbone heavy atoms have a mass)
+                    at_centers_iter=[]
                     for atom in atomistic_protein_centered[chain][part][residue]:
-                        print(atomistic_protein_centered[chain][part][residue][atom])
-                    sys.exit()
-        #### finds optimal rotation of each monomer  
-            if len(at_centers) == len(np.array(backbone_coords[chain])[sls:sle,:3]):
-                xyz_rot_apply.append(at_mod.rotate(np.array(at_centers)-cg_com[chain][part_val], 
-                                     np.array(backbone_coords[chain])[sls:sle,:3]-cg_com[chain][part_val], False))
-            else:
-                sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
-    number of CG residues '+str(len(backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
+                        at_centers_iter.append(np.append(atomistic_protein_centered[chain][part][residue][atom]['coord'],atomistic_protein_centered[chain][part][residue][atom]['frag_mass']))
+                    try:
+                        at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
+                    except:
+                        for atom in atomistic_protein_centered[chain][part][residue]:
+                            print(atomistic_protein_centered[chain][part][residue][atom])
+                        sys.exit()
+            #### finds optimal rotation of each monomer  
+                if len(at_centers) == len(np.array(backbone_coords[chain])[sls:sle,:3]):
+                    xyz_rot_apply.append(at_mod.rotate(np.array(at_centers)-cg_com[chain][part_val], 
+                                         np.array(backbone_coords[chain])[sls:sle,:3]-cg_com[chain][part_val], False))
+                else:
+                    sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
+        number of CG residues '+str(len(backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
 
-            if g_var.v >= 1:
-                print('\nThe proteins chains are rotated around the COM of all the backbone heavy atoms.')
-                print('The COM of chain', chain,'is :', np.round(cg_com[chain][part_val][0], 2),',', np.round(cg_com[chain][part_val][1], 2),',', 
-                      np.round(cg_com[chain][part_val][2], 2))
-                print('rotating chain ', chain, 'by :',np.round(np.degrees(xyz_rot_apply[part_val][0]),2),',',np.round(np.degrees(xyz_rot_apply[part_val][1]),2),
-                      ',',np.round(np.degrees(xyz_rot_apply[part_val][2]),2))
-                print()
-        hybridise_protein_inputs(final_coordinates_atomistic[chain], atomistic_protein_centered[chain], cg_com[chain], xyz_rot_apply, chain, box_vec)
+                if g_var.v >= 1:
+                    print('\nThe proteins chains are rotated around the COM of all the backbone heavy atoms.')
+                    print('The COM of chain', chain,'is :', np.round(cg_com[chain][part_val][0], 2),',', np.round(cg_com[chain][part_val][1], 2),',', 
+                          np.round(cg_com[chain][part_val][2], 2))
+                    print('rotating chain ', chain, 'by :',np.round(np.degrees(xyz_rot_apply[part_val][0]),2),',',np.round(np.degrees(xyz_rot_apply[part_val][1]),2),
+                          ',',np.round(np.degrees(xyz_rot_apply[part_val][2]),2))
+                    print()
+            hybridise_protein_inputs(final_coordinates_atomistic[chain], atomistic_protein_centered[chain], cg_com[chain], xyz_rot_apply, chain, box_vec)
+        else:
+            hybridise_protein_inputs(final_coordinates_atomistic[chain], [], [], xyz_rot_apply, chain, box_vec)
 
 def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_centered, cg_com, xyz_rot_apply, chain, box_vec):
     pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb', box_vec)
