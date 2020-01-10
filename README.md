@@ -168,7 +168,7 @@ If you recieve a error that the pdb and topology don't match and the atom number
 You may be able to fix it by increasing the disulide bond radius catch using the flag:
 
 - -cys (default = 0.7 A)
-                            
+
 
 Due to the modular nature of CG representation, you can switch residues during the conversion if you wish to make simple mutations.
 
@@ -317,7 +317,51 @@ example input.
 </pre>
 
 
+                                        **Database**
+
+Once upon a time in the database. There were 2 folders, one liked to know how the world worked, therefore collected Molecular Dynamics forcefields, whilst the other was more material minded and hoarded all the atoms and kept them locked away in fragments. Only to see the world when the folder had a martini in hand.
 
 
+    | --    database
+                | --    scripts_files
+                                - run files
+                | --    forcefields
+                                -  forcefield directories for gromacs (eg. charmm36.ff)
+                | --    fragments
+                              | -- forcefield type (eg. charmm36)
+                                            | -- protein
+                                                    | -- Aminoacids (eg. cg residue name ASP)
+                                                                 - fragment pdb called the same as bead names (eg. ASP.pdb)
+                                                                 - chiral file called chiral.dat (optional)
+                                                    | -- MOD
+                                                          | -- modified residues (eg. cg residue name CYSD) 
+                                                                    - fragment pdb called the same as bead names (eg. CYSD.pdb)
+                                                                    - chiral file called chiral.dat (optional)            
+                                            | -- non_protein                                             
+                                                      | --non protein molecules (eg. lipids POPC)
+                                                                    - fragment pdb called the same as residue names (eg. POPC.pdb)
+                                                                    - itp file of residue called the same as residue names (eg. POPC.itp)
+                                                                    - chiral file called chiral.dat (optional)
+
+You can prevent the script from reading any file or folder by prefixing the name with a underscore.
+
+
+
+
+[ frag 'BB'  group '1' posres 'CA' N_ter 'N' C_ter 'C' ]
+ATOM      1  N   PHE     1      42.030  16.760  10.920  2.00  0.00           N
+ATOM      2  CA  PHE     1      42.770  17.920  11.410  3.00  1.00           C
+ATOM     10  C   PHE     1      44.240  17.600  11.550  2.00  0.00           C
+ATOM     11  O   PHE     1      44.640  16.530  12.080  6.00  0.00           O
+[ frag 'SC1'  group '2' ]
+ATOM      3  CB  PHE     1      42.220  18.360  12.800  1.00  1.00           C
+ATOM      4  CG  PHE     1      40.730  18.730  12.860  3.00  2.00           C
+ATOM      5  CD1 PHE     1      39.780  17.730  13.110  1.00  4.00           C
+[ frag 'SC2'  group '3' ]
+ATOM      8  CD2 PHE     1      40.300  20.030  12.600  1.00  2.00           C
+ATOM      9  CE2 PHE     1      38.940  20.340  12.590  1.00  3.00           C
+[ frag 'SC3'  group '3' ]
+ATOM      6  CE1 PHE     1      38.420  18.030  13.090  1.00  4.00           C
+ATOM      7  CZ  PHE     1      38.000  19.330  12.830  1.00  3.00           C
 
 
