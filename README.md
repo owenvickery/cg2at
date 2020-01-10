@@ -37,7 +37,7 @@ This script roughly follows the following workflow.
       ((           ))       (N)                  ((   (N)    ))                ((       O  ))   
        ((         ))                              ((        ))                  ((        ))    
          #########                                  ########                      ########       
-<\pre> 
+</pre> 
 
 This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
 
