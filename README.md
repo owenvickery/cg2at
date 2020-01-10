@@ -15,28 +15,29 @@ This script roughly follows the following workflow.
 - Minimise residue
 - Merge all residues and minimise
 
+<pre>
         CG beads      Fragments            COM aligned fragments           Aligned fragments                 Atomistic
                                                                               
-       #########                                  ########                      ########      
-     ((         ))                              ((        ))                  ((        ))    
-    ((           ))          O1                ((      O1  ))                ((  O1  O2  ))                    
-   ((             ))        /                 ((       /    ))              ((    \  /    ))                     
-  ((     SC1       )) (CB)-CG                ((  (CB)-CG     ))            ((      CG      ))                     
-   ((             ))        \                 ((       \    ))              ((     |      ))                   O1  O2
-    ((           ))          O2                ((      O2  ))                ((   (CB)   ))                     \  /
-     ((         ))                              ((        ))                  ((        ))                       CG
-       #########                     COM          ########       rotation       ########      Minimisation       |
-       ---------                 ---------->      --------      ---------->     --------      ----------->       CB  
-       #########                  Alignment       ########       Alignment      ########                         | 
-     ((         ))                              ((        ))                  ((        ))                   X1  CA   X2
-    ((           ))       (C)-O                ((   (C)-O  ))                ((    CA    ))                   \ /  \ /
-   ((             ))      /                   ((    /       ))              ((    /  \    ))                   N    C
-  ((      BB       ))   (CA)                 ((   (CA)       ))            ((   (N)  (C)   ))                       |
-   ((             ))      \                   ((    \       ))              ((        |   ))                        O
-    ((           ))       (N)                  ((   (N)    ))                ((       O  ))   
-     ((         ))                              ((        ))                  ((        ))    
-       #########                                  ########                      ########       
- 
+         #########                                  ########                      ########      
+       ((         ))                              ((        ))                  ((        ))    
+      ((           ))          O1                ((      O1  ))                ((  O1  O2  ))                    
+     ((             ))        /                 ((       /    ))              ((    \  /    ))                     
+    ((     SC1       )) (CB)-CG                ((  (CB)-CG     ))            ((      CG      ))                     
+     ((             ))        \                 ((       \    ))              ((     |      ))                   O1  O2
+      ((           ))          O2                ((      O2  ))                ((   (CB)   ))                     \  /
+       ((         ))                              ((        ))                  ((        ))                       CG
+         #########                     COM          ########       rotation       ########      Minimisation       |
+         ---------                 ---------->      --------      ---------->     --------      ----------->       CB  
+         #########                  Alignment       ########       Alignment      ########                         | 
+       ((         ))                              ((        ))                  ((        ))                   X1  CA   X2
+      ((           ))       (C)-O                ((   (C)-O  ))                ((    CA    ))                   \ /  \ /
+     ((             ))      /                   ((    /       ))              ((    /  \    ))                   N    C
+    ((      BB       ))   (CA)                 ((   (CA)       ))            ((   (N)  (C)   ))                       |
+     ((             ))      \                   ((    \       ))              ((        |   ))                        O
+      ((           ))       (N)                  ((   (N)    ))                ((       O  ))   
+       ((         ))                              ((        ))                  ((        ))    
+         #########                                  ########                      ########       
+<\pre> 
 
 This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
 
