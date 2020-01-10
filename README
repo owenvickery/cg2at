@@ -2,11 +2,43 @@
 
 If you are using this script please acknowledge me (Dr Owen Vickery) and cite the following DOI.
 
-DOI: 10.5281/zenodo.3592318
+DOI: xxx
 
                                     **SCRIPT OVERVIEW**
 
-the script is a fragment based conversion of CG representation into atomistic.
+the script is a fragment based conversion of the CG representation into atomistic. 
+
+This script roughly follows the following workflow.
+
+- Centers fragments based on the center of mass of heavy atoms
+- Rotates fragments to find minimum distance between the atoms connecting to other beads and said bead.
+- Minimise residue
+- Merge all residues and minimise
+
+       CG beads      Fragments            COM aligned fragments           Aligned fragments                 Atomistic
+                                                                             
+      #########                                  ########                      ########      
+    ##         ##                              ##        ##                  ##        ##    
+   ##           ##          O1                ##      O1  ##                ##  O1  O2  ##                    
+  ##             ##        /                 ##       /    ##              ##    \  /    ##                     
+  ##     SC1     ## (CB)-CG                  ## (CB)-CG    ##              ##     CG     ##                     
+  ##             ##        \                 ##       \    ##              ##     |      ##                   O1  O2
+   ##           ##          O2                ##      O2  ##                ##   (CB)   ##                     \  /
+    ##         ##                              ##        ##                  ##        ##                       CG
+      #########                     COM          ########       rotation       ########      Minimisation       |
+      ---------                 ---------->      --------      ---------->     --------      ----------->       CB  
+      #########                  Alignment       ########       Alignment      ########                         | 
+    ##         ##                              ##        ##                  ##        ##                   X1  CA   X2
+   ##           ##       (C)-O                ##   (C)-O  ##                ##    CA    ##                   \ /  \ /
+  ##             ##      /                   ##    /       ##              ##    /  \    ##                   N    C
+  ##     BB      ##    (CA)                  ##  (CA)      ##              ##  (N)   (C) ##                        |
+  ##             ##      \                   ##    \       ##              ##        |   ##                        O
+   ##           ##       (N)                  ##   (N)    ##                ##       O  ##   
+    ##         ##                              ##        ##                  ##        ##    
+      #########                                  ########                      ########      
+
+
+This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
 
 
                                      **REQUIREMENTS**
@@ -19,23 +51,23 @@ the script is a fragment based conversion of CG representation into atomistic.
                                         **FLAGS**
 
 REQUIRED
--c          coarse grain input (pdb/gro/tpr)
+-c          (pdb/gro/tpr)
 
 OPTIONAL
--a          atomistic_input.pdb (pdb/gro/tpr)
--v          verbose with 3 levels  of verbosity (-vvv) 
--mod        treats every fragment individually 
--sf         scale factor for fragments, shrinks fragments before minimisation (default=0.9)
--clean      removes temp file after cg2at 
--ter        interactive terminal residue selection
--nt         charged N terminal residue
--ct         charged C terminal residue
--swap       allows the swapping of residues/beads (eg PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip)
--box        new box vectors in Angstrom, (0 is ignored and uses input eg 100 150 100 )
--w          choose your solvent, common choices are: tip3p, tip4p, spc and spce. 
--ff         choose your forcefield. 
--fg         choose your fragment libraries. 
--gromacs    provide gromacs executable name if none standard. 
+-a          (pdb/gro/tpr)
+-v          (-vvv) 
+-mod        (True/False)
+-sf         (float)(default=0.9)
+-clean      (True/False) 
+-ter        (True/False)
+-nt         (True/False)
+-ct         (True/False)
+-swap       (str)(eg PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip)
+-box        (int) (Angstrom)(0 is ignored and uses input eg 100 150 100 ) 
+-w          [tip3p, tip4p, spc and spce] 
+-ff         (str) 
+-fg         (str) 
+-gromacs    (str)  
 
 
 
