@@ -22,19 +22,19 @@ This script roughly follows the following workflow.
           (        )                                  (        )                    (        )     
          (          )             O1                 (      O1  )                  (  O1  O2  )                     
         (            )           /                  (       /    )                (    \  /    )                      
-       (     SC1      )    (CB)-CG                 (  (CB)-CG     )              (      CG      )                     
+       (     SC1      )    [CB]-CG                 (  [CB]-CG     )              (      CG      )                     
         (            )           \                  (       \    )                (     |      )                    O1  O2
-         (          )             O2                 (      O2  )                  (   (CB)   )                      \  /
+         (          )             O2                 (      O2  )                  (   [CB]   )                      \  /
           (        )                                  (        )                    (        )                        CG
            --------                       COM          --------       rotation       --------      Minimisation       |
                |                      ---------->          |         ---------->         |         ----------->       CB  
            --------                    Alignment       --------       Alignment      --------                         | 
           (        )                                  (        )                    (        )                    X1  CA   X2
-         (          )          (C)-O                 (   (C)-O  )                  (    CA    )                    \ /  \ /
+         (          )          [C]-O                 (   [C]-O  )                  (    CA    )                    \ /  \ /
         (            )         /                    (    /       )                (    /  \    )                    N    C
-    X1-(      BB      )-X2   (CA)               X1-(   (CA)       )-X2        X1-(   (N)  (C)   )-X2                     |
+    X1-(      BB      )-X2   [CA]               X1-(   [CA]       )-X2        X1-(   (N)  [C]   )-X2                     |
         (            )         \                    (    \       )                (        |   )                         O
-         (          )          (N)                   (   (N)    )                  (       O  )    
+         (          )          [N]                   (   [N]    )                  (       O  )    
           (        )                                  (        )                    (        )     
            --------                                    --------                      --------       
 
@@ -161,7 +161,7 @@ Protein
 -------
 all amino acids
 
-diacyl (CYSD) and triacyl (CYST) cysteine
+diacyl [CYSD) and triacyl [CYST) cysteine
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
