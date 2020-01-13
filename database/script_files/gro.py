@@ -26,12 +26,33 @@ def collect_input(cg, at):
             sys.exit('Print cannot find AT input file: '+at)
         gen.file_copy_and_check(at, g_var.input_directory+at.split('/')[-1])
     os.chdir(g_var.input_directory)
+    if cg.split('/')[-1].endswith('.tpr'):
+        input_sort(cg, 'CG')
+    else:
+        gromacs(g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -o CG_input.pdb -pbc', 'CG_input.pdb')
+
 #### converts input files into pdb files 
-    gromacs(g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -o CG_input.pdb', 'CG_input.pdb')
     if at != None:
-        gromacs(g_var.gmx+' editconf -f '+at.split('/')[-1]+' -resnr 0 -o AT_input.pdb', 'AT_input.pdb')
+        # input_sort(at, 'AT')
+        gromacs(g_var.gmx+' editconf -f '+at.split('/')[-1]+' -resnr 0 -o AT_input.pdb -pbc', 'AT_input.pdb')
         return True
     return False
+
+#### fixes pbc complex pbc issue if supplied with a tpr
+def input_sort(loc, rep):
+    gromacs(g_var.gmx+' make_ndx -f '+loc.split('/')[-1]+' -o '+rep+'_input.ndx << EOF\nq\nEOF\n', rep+'_input.ndx')
+    gromacs(g_var.gmx+' editconf -f '+loc.split('/')[-1]+' -o '+rep+'_input_temp.pdb', rep+'_input_temp.pdb')
+    ndx_f = open(rep+'_input.ndx', "r")
+    ndx = ndx_f.read()
+    if 'Protein' in ndx:
+        gromacs(g_var.gmx+' trjconv -f '+rep+'_input_temp.pdb -s '+loc.split('/')[-1]+' -pbc whole -center -o '+rep+'_input_temp_pbc.pdb -n '+rep+'_input.ndx '+
+                '<< EOF\nProtein\nSystem\nEOF\n', rep+'_input_temp_pbc.pdb')
+    else:
+        gromacs(g_var.gmx+' trjconv -f '+rep+'_input_temp.pdb -s '+loc.split('/')[-1]+' -pbc whole -o '+rep+'_input_temp_pbc.pdb -n '+rep+'_input.ndx '+
+                '<< EOF\nSystem\nEOF\n', rep+'_input_temp_pbc.pdb')        
+    gromacs(g_var.gmx+' trjconv -f '+rep+'_input_temp_pbc.pdb -s '+loc.split('/')[-1]+' -pbc atom -o '+rep+'_input_temp_atom.pdb -n '+rep+'_input.ndx '+
+                '<< EOF\nSystem\nEOF\n', rep+'_input_temp_atom.pdb')
+    gromacs(g_var.gmx+' editconf -f '+rep+'_input_temp_atom.pdb -resnr 0 -o '+rep+'_input.pdb -n '+rep+'_input.ndx << EOF\nSystem\nEOF\n', rep+'_input.pdb')
 
 #### gromacs parser
 def gromacs(cmd, output):
