@@ -14,22 +14,23 @@ import gen, g_var, f_loc, at_mod
 #### collects input structures and creates initial folders
 def collect_input(cg, at):
     if not os.path.exists(cg):
-        sys.exit('\nPrint cannot find CG input file: '+cg)
+        sys.exit('\ncannot find CG input file: '+cg)
     gen.mkdir_directory(g_var.working_dir)
     gen.mkdir_directory(g_var.final_dir)
     gen.mkdir_directory(g_var.input_directory)
-    gen.mkdir_directory(g_var.merged_directory)
+    if not g_var.at2cg:
+        gen.mkdir_directory(g_var.merged_directory)
 #### collates all input files in input directory
     gen.file_copy_and_check(cg, g_var.input_directory+cg.split('/')[-1])
     if at != None:
         if not os.path.exists(at):
-            sys.exit('Print cannot find AT input file: '+at)
+            sys.exit('cannot find AT input file: '+at)
         gen.file_copy_and_check(at, g_var.input_directory+at.split('/')[-1])
     os.chdir(g_var.input_directory)
     if cg.split('/')[-1].endswith('.tpr'):
-        input_sort(cg, 'CG')
+        input_sort(cg, 'conversion')
     else:
-        gromacs(g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -o CG_input.pdb -pbc', 'CG_input.pdb')
+        gromacs(g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -o conversion_input.pdb -pbc', 'conversion_input.pdb')
 
 #### converts input files into pdb files 
     if at != None:

@@ -11,9 +11,13 @@ parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',
 parser.add_argument('-a', help='atomistic coordinates (Optional)',metavar='pdb/gro/tpr',type=str)
 parser.add_argument('-loc', help='output folder name, (default = CG2AT_timestamp)',metavar='CG2AT',type=str)
 parser.add_argument('-v', action="count", default=0, help="increase output verbosity (eg -vv, 3 levels) (Optional)")
+group_C = parser.add_mutually_exclusive_group()
+group_N = parser.add_mutually_exclusive_group()
 parser.add_argument('-ter', help='interactively choose terminal species (Optional)', action='store_true')
-parser.add_argument('-nt', help='choose charged N terminal (Optional)', action='store_true')
-parser.add_argument('-ct', help='choose charged C terminal state (Optional)', action='store_true')
+group_N.add_argument('-nt', help='choose charged N terminal (Optional)', action='store_true')
+group_C.add_argument('-ct', help='choose charged C terminal state (Optional)', action='store_true')
+group_N.add_argument('-capN', help='cap N terminal with ACE (Optional) not currently working', action='store_true')
+group_C.add_argument('-capC', help='cap C terminal with NME (Optional) not currently working', action='store_true')
 parser.add_argument('-clean', help='removes all part files from build (Optional)', action='store_true')
 parser.add_argument('-mod', help='treat fragments individually (Optional)', action='store_true')
 parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional',metavar='tip3p',type=str)
@@ -26,13 +30,14 @@ parser.add_argument('-box', help='box size in Angstrom (0 = use input file) (Opt
 parser.add_argument('-vs', help='use virtual sites (Optional)', action='store_true')
 parser.add_argument('-al', help='switches of alchembed (WARNING may cause issues with lipids and rings)', action='store_false')
 parser.add_argument('-sf', help='scale factor for fragments, shrinks fragments before minimisation',metavar='0.9',type=float, default=0.9)
+parser.add_argument('-at2cg', help='converts atomistic to coarsegrain ', action='store_true')
 
 
 args = parser.parse_args()
 options = vars(args)
 
 
-
+at2cg=args.at2cg
 ### convert argparser into global variables to be read by the other files
 # input files  
 c, a = args.c, args.a
@@ -40,7 +45,8 @@ c, a = args.c, args.a
 w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
 cys, swap = args.cys, args.swap
 
-ter, nt, ct, alchembed = args.ter, args.nt, args.ct, args.al
+ter, nt, ct, capN, capC = args.ter, args.nt, args.ct, args.capN, args.capC
+alchembed =  args.al
 vs=args.vs
 if args.vs:
     vst='0.004'
@@ -72,7 +78,10 @@ timestamp       =  strftime("%Y-%m-%d_%H-%M-%S", gmtime())
 if args.loc != None:
     working_dir_name = args.loc
 else:
-    working_dir_name =  'CG2AT_'+timestamp
+    if args.at2cg:
+        working_dir_name =  'AT2CG_'+timestamp
+    else:
+        working_dir_name =  'CG2AT_'+timestamp
 
 start_dir       = os.getcwd()+'/'  ### initial working directory
 working_dir     = os.getcwd()+'/'+working_dir_name+'/'   ### working directory 

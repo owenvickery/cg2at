@@ -112,18 +112,17 @@ def atomistic_non_protein_non_solvent(cg_residue_type,cg_residues):
         frag_location=at_mod.fragment_location(cg_residue_type) ### get fragment location from database
         residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
         for group in residue_type[cg_residue_type]:
-            # print(residue_type[cg_residue_type][group], '\n')
             center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][group], residue_type_mass[cg_residue_type], cg_residue, cg_residues[cg_residue])
             at_connect, cg_connect = at_mod.connectivity(cg_residues[cg_residue], at_frag_centers, cg_frag_centers, group_fit, group)
-
-            if len(at_connect) == len(cg_connect):
+            if len(at_connect) == len(cg_connect) and len(cg_connect) > 0:
                 try:
                     xyz_rot_apply=at_mod.rotate(np.array(at_connect)-center, np.array(cg_connect)-center, False)
                 except:
                     sys.exit('There is a issue with residue: '+cg_residue_type+' in group: '+str(group))
             else:
-                print('atom connections: '+str(len(at_connections))+' does not equal CG connections: '+str(len(cg_connections)))
-                sys.exit('residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
+                # print(cg_residues[cg_residue],'\n', at_frag_centers,'\n',  cg_frag_centers,'\n',  group_fit,'\n',  group,'\n')
+                print('atom connections: '+str(len(at_connect))+' does match CG connections: '+str(len(cg_connect)))
+                sys.exit('residue number: '+str(cg_resid)+', residue type: '+str(cg_residue_type)+', group: '+group)
             for bead in group_fit:
                 for atom in group_fit[bead]:
                     group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   

@@ -5,25 +5,13 @@ import numpy as np
 from shutil import copyfile
 import time
 import multiprocessing as mp
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/database/script_files')
-import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var, f_loc, at2cg
+import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var, f_loc
 
-time_counter = {}
-time_counter['i_t']=time.time()
+def CG2AT_run(user_at_input):
+    gen.flags_used()
 
-#### collects initial structures into INPUT folder
-
-user_at_input = gro.collect_input(g_var.c, g_var.a)
-
-#### saves flags used into INPUT folder
-gen.flags_used()
-
-if g_var.at2cg:
-    print('\nThis script is now hopefully doing the following (Good luck):\n\nReading in your AT representation \n')
-    at_residues, box_vec =read_in.read_initial_at_pdb()
-    print('converting your atomistic system to coarse grain (Time for a Becherovka)\n')
-    cg_residues = at2cg.convert_AT2CG(at_residues, box_vec)
-else:
+    time_counter = {}
+    time_counter['i_t']=time.time()
 
     print('\nThis script is now hopefully doing the following (Good luck):\n\nReading in your CG representation\n')
 

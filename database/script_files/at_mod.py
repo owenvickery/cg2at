@@ -253,9 +253,6 @@ def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
                                 cg_connect.append(cg[bead_connect]['coord'])
                         at_connection.append(group[group_bead][bead_atom]['coord'])
                         cg_connection.append(np.mean(np.array(cg_connect), axis=0))    
-    # if resname in ['PHE']:
-    #     print(f_loc.sorted_connect[resname])
-    #     print(at_connection)
     if len(at_frag_centers)  > 1:         
         for bead in at_frag_centers:
             cg_connection.append(cg_frag_centers[bead])
@@ -405,3 +402,5 @@ def check_hydrogens(residue):
                     for h_at in f_loc.hydrogen[resname][atom]:
                         residue[h_at]['coord']=residue[h_at]['coord']-vector*2
     return residue
+
+

@@ -175,6 +175,7 @@ def sort_connectivity(atom_dict, heavy_bond, connect):
                                     for frag in atom_dict[group_2]:                          
                                         if bond in atom_dict[group_2][frag]:
                                             cut_group[group][atom] = [frag]
+
     return cut_group
 
 def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, forcefield_location, mod_residues):
@@ -207,7 +208,10 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
                 if residue in ['SOL', 'ION']: 
                     sorted_connect[residue]={}
                 else:
-                    sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue], connect)
+                    if residue == 'POPE':
+                        print('POPE')
+                        sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue], connect)
+    
     return processing, sorted_connect, hydrogen, heavy_bond 
 
 def atom_bond_check(line_sep):
@@ -248,9 +252,9 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues):
                                 heavy_dict.append(line_sep[0])
                         else:
                             if line_sep[4].startswith('H'):
-                                H_dict.append(int(line_sep[5]))
+                                H_dict.append(int(line_sep[0]))
                             else:
-                                heavy_dict.append(int(line_sep[5]))
+                                heavy_dict.append(int(line_sep[0]))
                     elif bonds:
                         try:
                             bond_dict.append([int(line_sep[0]),int(line_sep[1])])
@@ -327,7 +331,6 @@ def get_fragment_topology(residue, location, processing, heavy_bond):
                     processing[residue]['atoms']=atom_list
             except:
                 sys.exit('The residue: '+residue+' is missing fragment information')
-    
     return processing, grouped_atoms, heavy_bond[residue], connect
 
 def get_posres(residue, processing, header_line):

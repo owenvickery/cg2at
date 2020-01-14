@@ -223,7 +223,7 @@ The script will create a output file system as below.
 
     | --    CG2AT_(timestamp)
                 | --    INPUT
-                                - cg_input.gro, CG_input.pdb, atomistic_input.gro, AT_input.pdb, script_inputs.dat
+                                - cg_input.gro, conversion_input.pdb, atomistic_input.gro, AT_input.pdb, script_inputs.dat
                 | --    FORCEFIELD
                                 -  forcefield selected (charmm36-jul2017.ff)
                 | --    RESIDUE_TYPE (PROTEIN, POPE)
