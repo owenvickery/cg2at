@@ -452,4 +452,64 @@ ATOM      1  NA   NA     1      21.863  22.075  76.118  1.00  0.00
 ATOM      1  NA   NA     1      21.863  22.075  76.118  1.00  0.00
 </pre>
 
+                                    **AT2CG**
+                                    
+Within this script I have included a the reverse of CG2AT. Here the fragment library is used to convert a atomistic system into a coarsegrain representation.
 
+The conversion follows a similar syntax to CG2AT.
+
+The following flags are required:
+
+- -c (str)
+- -at2cg (True/False)
+
+The following flags are optional
+- -fg (str)
+- -ff (str)
+- -swap (eg POPI:POP2)
+
+
+example input.
+
+<pre>
+python cg2at.py -c at_input.gro -fg martini_2-2_charmm36 -ff martini_2-2 -at2cg 
+</pre>
+
+Due the truncation of PI lipid types residue names to 4 characters. The swap group is required to specify to correct lipid type.
+
+example input.
+
+resname POPI (which in reality is POPI2_3-5 not POPI1_3) in martini is called POP2.
+
+<pre>
+python cg2at.py -c at_input.gro -fg martini_2-2_charmm36 -ff martini_2-2 -at2cg -swap POPI:POP2
+</pre>
+
+                                        **AT2CG OUTPUT DIRECTORIES**
+
+The script will create a output file system as below.
+
+    | --    AT2CG_(timestamp)
+                | --    INPUT
+                                - at_input.gro, conversion_input.pdb, script_inputs.dat
+                | --    FINAL
+                                - Forcefield selected, final conversion
+
+Directories
+
+- INPUT
+  - supplied AT file (pdb,gro,tpr)
+  - AT converted to pdb (conversion_input.pdb)
+  - script inputs, all flags used in the conversion saved for future reference
+- FINAL
+  - FORCEFIELD folder 
+  - final CG structures in pdb format
+  - topology file
+  
+A topology will be provided, however it will require updating with the correct protein information. places to update are highlighted as "XXX" 
+
+To remake your martini topology of the protein. You will need to rerun martinise.py.
+
+This step was not incorporated as it requires the package DSSP to correctly make the topology.
+
+However the martinise.py script is available with the scripts directory. The initial section of the martinise command to run will be printed at the end of the conversion. 

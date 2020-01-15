@@ -221,6 +221,8 @@ def write_topology(cg_residues):
     if not os.path.exists('topol_final.top'):
         with open('topol_final.top', 'w') as topol_write:       
             topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/'+f_loc.forcefield[:-4]+'.itp\"\n')
+            if 'PROTEIN' in cg_residues:
+                topol_write.write('#include \"XXX.itp')
             topol_write.write('[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
             for residue_type in cg_residues:
                 if residue_type in ['PROTEIN']:
