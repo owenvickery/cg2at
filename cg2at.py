@@ -23,6 +23,11 @@ if g_var.at2cg:
     at_residues, box_vec =read_in.read_initial_at_pdb()
     print('converting your atomistic system to coarse grain (Time for a Becherovka)\n')
     cg_residues = at2cg.convert_AT2CG(at_residues, box_vec)
+    at2cg.write_topology(cg_residues)
+    at2cg.print_system_info(cg_residues)
+    print('To remake the topology of your martini protein, a copy of martinise is in the scripts directory.\n')
+    print(g_var.scripts_dir+'martinise.py -f '+g_var.input_directory+'conversion_input.pdb -o '+g_var.final_dir+'/protein.top')
+    print('you\'ll need to added the flags you require ')
 
 else:
 
@@ -159,7 +164,7 @@ else:
         gen.clean(cg_residues)
 
     time_counter['f_t']=time.time()
-    
+
     #### prints out system information
     print('\n{:-<100}'.format(''))
     print('{0:^100}'.format('Script has completed, time for a beer'))

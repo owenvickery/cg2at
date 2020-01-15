@@ -40,7 +40,6 @@ def convert_AT2CG(at_residues, box_vec):
             else:
                 print('cannot find: '+resname)
     write_to_pdb(cg_residues, box_vec, solvent_dict)  
-    print_system_info(cg_residues)
     return cg_residues
 
 def print_system_info(cg_residues):
@@ -158,7 +157,6 @@ def convert_solvent(solvent,resname, solvent_dict, cg_residues):
         if 'residue_size' not in locals():
             residue_size = 4
         cg_residues[resname]=condense_solvent(cg1_solvent, residue_size)
-        print()
         return cg_residues
     else:
         if resname not in cg_residues:
@@ -180,6 +178,7 @@ def switch_W_to_ION(cg1_solvent, cg_residues):
             radius+=0.01
             ndx = tree.query_ball_point(ion, r=radius)
         del cg_residues['SOL'][ndx[0]]
+        tree = cKDTree(cg_residues['SOL'])
     return cg_residues, cg1_solvent
 
 def com_residue(solvent):
@@ -197,7 +196,7 @@ def condense_solvent(coordinates, res_size):
     coord_cg = []
     total=len(coordinates)
     while len(coordinates) > 0:
-        print('percentage complete: ',np.round(((total-len(coordinates))/total)*100, 2),'%', end='\r')
+        print('Condensing '+str(total)+' water residues: percentage complete: ',np.round(((total-len(coordinates))/total)*100, 2),'%', end='\r')
         coord_temp = []
         radius=2
         ndx = tree.query_ball_point(coordinates[0], r=radius)
@@ -213,4 +212,21 @@ def condense_solvent(coordinates, res_size):
         if len(coordinates) > 0:
             tree = cKDTree(coordinates)
         coord_cg.append(np.mean(coord_temp, axis=0))
+    print('                                                                       ', end='\r')
+    print('Finished condensing water molecules')       
     return coord_cg
+
+def write_topology(cg_residues):
+    os.chdir(g_var.final_dir)
+    if not os.path.exists('topol_final.top'):
+        with open('topol_final.top', 'w') as topol_write:       
+            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/'+f_loc.forcefield[:-4]+'.itp\"\n')
+            topol_write.write('[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
+            for residue_type in cg_residues:
+                if residue_type in ['PROTEIN']:
+                    topol_write.write('{0:20}{1:^10}\n'.format('Protein', 'XXX'))
+                if residue_type not in ['ION', 'PROTEIN']:
+                    topol_write.write('{0:20}{1:^10}\n'.format(residue_type, len(cg_residues[residue_type])))
+                elif residue_type == 'ION':
+                    for ion_type in cg_residues[residue_type]:
+                        topol_write.write('{0:20}{1:^10}\n'.format(ion_type, len(cg_residues[residue_type][ion_type])))
