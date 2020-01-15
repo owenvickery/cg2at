@@ -88,8 +88,6 @@ def write_to_pdb(cg_residues, box_vec, solvent_dict):
                                         coord[0],coord[1],coord[2],1,0))+'\n')
                         at_count+=1
 
-
-
 def convert_protein(at_residues, resname, cg_residues):
     protein_frag = {}
     for residue in f_loc.p_residues:
@@ -115,7 +113,6 @@ def convert_protein(at_residues, resname, cg_residues):
             frag_com = com_residue(cg_residues_temp[fragment])
             cg_residues[resname][residue][res_type][fragment]=frag_com
     return cg_residues      
-
 
 def fetch_fragments(residue_type):
     fragment_name={}
@@ -161,6 +158,7 @@ def convert_solvent(solvent,resname, solvent_dict, cg_residues):
         if 'residue_size' not in locals():
             residue_size = 4
         cg_residues[resname]=condense_solvent(cg1_solvent, residue_size)
+        print()
         return cg_residues
     else:
         if resname not in cg_residues:

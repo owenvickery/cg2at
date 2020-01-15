@@ -120,8 +120,7 @@ def atomistic_non_protein_non_solvent(cg_residue_type,cg_residues):
                 except:
                     sys.exit('There is a issue with residue: '+cg_residue_type+' in group: '+str(group))
             else:
-                # print(cg_residues[cg_residue],'\n', at_frag_centers,'\n',  cg_frag_centers,'\n',  group_fit,'\n',  group,'\n')
-                print('atom connections: '+str(len(at_connect))+' does match CG connections: '+str(len(cg_connect)))
+                print('atom connections: '+str(len(at_connect))+' does not match CG connections: '+str(len(cg_connect)))
                 sys.exit('residue number: '+str(cg_resid)+', residue type: '+str(cg_residue_type)+', group: '+group)
             for bead in group_fit:
                 for atom in group_fit[bead]:

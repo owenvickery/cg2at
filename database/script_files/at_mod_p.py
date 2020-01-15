@@ -247,12 +247,19 @@ def read_in_atomistic(protein, cg_chain_count, sequence, check_alignment):
             run=False ## turns to true is line is a bead/atom
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)
-                run=True
+                # print(line_sep['atom_name'])
+                if line_sep['residue_name'] in f_loc.mod_residues:
+                    run=True
+                elif str.isdigit(line_sep['atom_name'][0]) and line_sep['atom_name'][1] != 'H':
+                    run=True
+                elif not str.isdigit(line_sep['atom_name'][0]) and not line_sep['atom_name'].startswith('H'):
+                    run=True
+               
             #### if line is correct
             if run:
                 if line_sep['residue_name'] in f_loc.p_residues or line_sep['residue_name'] in f_loc.mod_residues:
                     
-                    if 'H' not in line_sep['atom_name'][0] or line_sep['residue_name'] in f_loc.mod_residues:  
+                    if not line_sep['atom_name'].startswith('H') or line_sep['residue_name'] in f_loc.mod_residues:  
                     #### sorts out wrong atoms in terminal residues
                         if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
                             line_sep['atom_name']='O'

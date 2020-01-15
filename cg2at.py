@@ -23,6 +23,7 @@ if g_var.at2cg:
     at_residues, box_vec =read_in.read_initial_at_pdb()
     print('converting your atomistic system to coarse grain (Time for a Becherovka)\n')
     cg_residues = at2cg.convert_AT2CG(at_residues, box_vec)
+
 else:
 
     print('\nThis script is now hopefully doing the following (Good luck):\n\nReading in your CG representation\n')
@@ -91,10 +92,10 @@ else:
         #### minimises each residue separately
         print('\nThis may take some time....(probably time for a coffee)\n')
         for residue_type in [key for value, key in enumerate(cg_residues) if key not in ['PROTEIN', 'ION']]:
-            print('Minimising individual residues: '+residue_type)
+            print('Processing individual residues: '+residue_type)
             gro.non_protein_minimise(np_system[residue_type], residue_type)
             at_mod_np.merge_minimised(residue_type, np_system, box_vec)
-            print('Minimising merged: '+residue_type)
+            print('Minimising merged: '+residue_type+'\n')
             gro.minimise_merged(residue_type, np_system)
         system.update(np_system)
         time_counter['b_n_p_t']=time.time()
@@ -157,11 +158,9 @@ else:
     if g_var.clean:
         gen.clean(cg_residues)
 
-
     time_counter['f_t']=time.time()
-
+    
     #### prints out system information
-
     print('\n{:-<100}'.format(''))
     print('{0:^100}'.format('Script has completed, time for a beer'))
     print('\n{0:^20}{1:^10}'.format('molecules','number'))
@@ -170,7 +169,6 @@ else:
         print('{0:^20}{1:^10}'.format(section, system[section]))
 
     #### prints out script timings for each section
-
     if g_var.v >= 1:
         gen.print_script_timings(time_counter, system, user_at_input)
 

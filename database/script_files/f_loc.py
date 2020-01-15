@@ -5,14 +5,16 @@ import gen, g_var
 forcefield_available_prov, fragments_available_prov = gen.read_database_directories()
 
 ##### select forcefield
-if not g_var.at2cg:
-    try: 
-        forcefield_number = forcefield_available_prov.index(g_var.ff.split('.')[0]+'.ff')
-    except:
-        if g_var.ff != None: 
-            print('Cannot find forcefield: '+g_var.ff.split('.')[0]+'.ff  please select one from below\n')
-        forcefield_number = gen.database_selection(forcefield_available_prov, 'forcefields')
-    forcefield_location, forcefield=gen.sort_forcefield(forcefield_available_prov, forcefield_number)
+
+try: 
+    forcefield_number = forcefield_available_prov.index(g_var.ff.split('.')[0]+'.ff')
+except:
+    if g_var.ff != None: 
+        print('Cannot find forcefield: '+g_var.ff.split('.')[0]+'.ff  please select one from below\n')
+    forcefield_number = gen.database_selection(forcefield_available_prov, 'forcefields')
+print('\nYou have selected: '+forcefield_available_prov[forcefield_number].split('.')[0])
+gen.folder_copy_and_check(g_var.database_dir+'/forcefields/'+forcefield_available_prov[forcefield_number], g_var.final_dir+forcefield_available_prov[forcefield_number])
+forcefield_location, forcefield=g_var.database_dir+'forcefields/', forcefield_available_prov[forcefield_number]
 
 ### reads in and sorts fragment information
 
@@ -38,7 +40,7 @@ if not g_var.at2cg:
 
     ### return backbone information
     backbone, sorted_connect, hydrogen, heavy_bond = gen.fetch_fragment(p_residues, p_directories, mod_directories,  
-                                                                    np_directories, forcefield_location+forcefield+'.ff', mod_residues)
+                                                                    np_directories, forcefield_location+forcefield, mod_residues)
 
 
 swap_dict=gen.sort_swap_group()

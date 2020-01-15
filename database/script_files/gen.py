@@ -208,9 +208,7 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
                 if residue in ['SOL', 'ION']: 
                     sorted_connect[residue]={}
                 else:
-                    if residue == 'POPE':
-                        print('POPE')
-                        sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue], connect)
+                    sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue], connect)
     
     return processing, sorted_connect, hydrogen, heavy_bond 
 
@@ -433,15 +431,6 @@ def ask_database(provided, selection_type):
             sys.exit('\nInterrupted')
         except:
             print("Oops!  That was a invalid choice")
-
-
-def sort_forcefield(forcefield_available_prov, f_number):
-#### returns forcefield location and forcefield name
-#### if forcefield selection is in provided copy forcefield to FORCEFIELD and FINAL directories
-    print('\nYou have selected: '+forcefield_available_prov[f_number].split('.')[0])
-    folder_copy_and_check(g_var.database_dir+'/forcefields/'+forcefield_available_prov[f_number], g_var.working_dir+'FORCEFIELD/'+forcefield_available_prov[f_number])
-    folder_copy_and_check(g_var.database_dir+'/forcefields/'+forcefield_available_prov[f_number], g_var.final_dir+forcefield_available_prov[f_number])
-    return g_var.database_dir+'forcefields/', forcefield_available_prov[f_number].split('.')[0]
 
 def add_to_list(root, dirs, list_to_add):
     list_to_add.append([])
