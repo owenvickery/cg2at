@@ -7,7 +7,9 @@ import argparse
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', epilog='Enjoy the program and best of luck!\n', allow_abbrev=True)
-parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str, required=True)
+group_req = parser.add_mutually_exclusive_group()
+group_req.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)
+group_req.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
 parser.add_argument('-a', help='atomistic coordinates (Optional)',metavar='pdb/gro/tpr',type=str)
 parser.add_argument('-loc', help='output folder name, (default = CG2AT_timestamp)',metavar='CG2AT',type=str)
 parser.add_argument('-v', action="count", default=0, help="increase output verbosity (eg -vv, 3 levels) (Optional)")
@@ -37,6 +39,11 @@ args = parser.parse_args()
 options = vars(args)
 
 
+if not args.info and args.c == None:
+    print(parser.print_help(sys.stderr), '\n')
+    sys.exit('Error: the following arguments are required: -c\n')
+
+
 at2cg=args.at2cg
 ### convert argparser into global variables to be read by the other files
 # input files  
@@ -44,7 +51,7 @@ c, a = args.c, args.a
 # forcfield and fragment inputs
 w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
 cys, swap = args.cys, args.swap
-
+info = args.info
 ter, nt, ct, capN, capC = args.ter, args.nt, args.ct, args.capN, args.capC
 alchembed =  args.al
 vs=args.vs
