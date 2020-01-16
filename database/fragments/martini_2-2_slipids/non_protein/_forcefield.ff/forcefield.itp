@@ -1,0 +1,8 @@
+; Please see forcefield.doc for the references to cite if you use these parameters
+
+[ defaults ]
+; nbfunc	comb-rule	gen-pairs	fudgeLJ	fudgeQQ
+1		2		yes		0.5000	0.8333
+
+#include "ffnonbonded.itp"
+#include "ffbonded.itp"

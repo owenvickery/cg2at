@@ -215,8 +215,6 @@ The following switches all POPE to POPG and all POPG to POPE
 The following will skip all NA+ between resid 4000 and 4100.
 - -swap NA+:skip:4000-4100
 
-
-
                                         **OUTPUT**
 
 The script will create a output file system as below.

@@ -1,0 +1,12 @@
+[ frag 'NA+'  group '1' ]   
+ATOM      1  NA   NA     1      21.863  22.075  76.118  1.00  0.00  
+[ frag 'NA'  group '2' ]  
+ATOM      1  NA   NA     1      21.863  22.075  76.118  1.00  0.00  
+[ frag 'CL-'  group '3' ]  
+ATOM      1  CL   CL     1      21.863  22.075  76.118  1.00  0.00  
+[ frag 'CL'  group '4' ]  
+ATOM      1  CL   CL     1      21.863  22.075  76.118  1.00  0.00  
+[ frag 'K+'  group '5' ]
+ATOM      1   K    K     1      21.863  22.075  76.118  1.00  0.00
+[ frag 'K'  group '6' ]
+ATOM      1   K    K     1      21.863  22.075  76.118  1.00  0.00

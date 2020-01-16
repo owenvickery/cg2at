@@ -386,19 +386,15 @@ def read_database_directories():
     for directory_type in ['forcefields', 'fragments']:
         if os.path.exists(g_var.database_dir+directory_type):
             for root, dirs, files in os.walk(g_var.database_dir+directory_type):
-                available_provided=dirs
+                available_provided=sorted(dirs)
                 break
         else:
+            sys.exit('no '+directory_type+' found')
             available_provided=[]
         available_provided_database.append(available_provided)
 
-    if len(available_provided_database[0]) != 0:
-        if len(available_provided_database[1]) != 0:
-            return  available_provided_database[0], available_provided_database[1]
-        else:
-            sys.exit('no fragments found')
-    else:
-        sys.exit('no forcefields found')
+    return  available_provided_database[0], available_provided_database[1]
+
 
 def database_selection(provided, selection_type):
 #### print out selection of forcefields
@@ -496,11 +492,11 @@ def sort_directories(p_directories, mod_directories, np_directories):
 def print_water_selection(water_input, water, directory):
     if water_input != None:
         print('\nThe water type '+water_input+' doesn\'t exist')
+    if len(water) == 0:
+        sys.exit('\nCannot find any water models in: \n\n'+directory[0]+'SOL/'+'\n')
     print('\nPlease select a water molecule from below:\n')
     print('{0:^20}{1:^30}'.format('Selection','water_molecule'))
     print('{0:^20}{1:^30}'.format('---------','----------'))
-    offset=0
-    print('the following water models are found in: \n\n'+directory[0]+'SOL/'+'\n')
     for selection, water_model in enumerate(water):
         print('{0:^20}{1:^30}'.format(selection,water_model))
 
