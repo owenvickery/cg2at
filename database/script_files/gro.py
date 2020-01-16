@@ -98,7 +98,7 @@ def make_min(residue):#, fragments):
 #### makes em.mdp file for each residue
     if not os.path.exists('em_'+residue+'.mdp'):
         with open('em_'+residue+'.mdp','w') as em:
-            em.write('define = \n integrator = steep\nnsteps = 10000\nemtol = 500\nemstep = 0.001\ncutoff-scheme = Verlet\n')
+            em.write('define = \n integrator = steep\nnsteps = 10000\nemtol = 750\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 
 def minimise_protein(protein, p_system, user_at_input):
 #### makes em.mdp for each chain
@@ -420,7 +420,7 @@ def alchembed(system):
         if not os.path.exists('alchembed_'+str(chain)+'.mdp'):
             with open('alchembed_'+str(chain)+'.mdp', 'w') as alchembed:
                 alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 500\ndt = 0.001\ncontinuation = no\nconstraint_algorithm = lincs')
-                alchembed.write('\nconstraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
+                alchembed.write('\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
                 alchembed.write('\npme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\ncutoff-scheme = Verlet')
                 alchembed.write('\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00')
                 alchembed.write('\ndelta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6\ncouple-moltype = protein_'+str(chain))
