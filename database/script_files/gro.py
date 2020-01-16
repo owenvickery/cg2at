@@ -79,7 +79,7 @@ def gromacs(gro):
                 sys.exit('\n'+out)
             elif 'did not converge to Fmax ' in out:
                 sys.exit('\n'+out)
-            elif 'Segmentation fault (core dumped):' in out:
+            elif 'Segmentation fault' in out:
                 sys.exit('\n'+out)
             elif 'Fatal error:' in out:
                 sys.exit('\n'+out)
@@ -98,7 +98,7 @@ def make_min(residue):#, fragments):
 #### makes em.mdp file for each residue
     if not os.path.exists('em_'+residue+'.mdp'):
         with open('em_'+residue+'.mdp','w') as em:
-            em.write('define = \n integrator = steep\nnsteps = 10000\nemtol = 1000\nemstep = 0.001\ncutoff-scheme = Verlet\n')
+            em.write('define = \n integrator = steep\nnsteps = 10000\nemtol = 500\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 
 def minimise_protein(protein, p_system, user_at_input):
 #### makes em.mdp for each chain
