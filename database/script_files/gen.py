@@ -376,7 +376,8 @@ def read_database_directories():
     for directory_type in ['forcefields', 'fragments']:
         if os.path.exists(g_var.database_dir+directory_type):
             for root, dirs, files in os.walk(g_var.database_dir+directory_type):
-                available_provided=sorted(dirs)
+                # available_provided=sorted(dirs)
+                available_provided = [x for x in sorted(dirs) if not x.startswith('_')]
                 break
         else:
             sys.exit('no '+directory_type+' found')
