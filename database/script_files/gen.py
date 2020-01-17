@@ -113,7 +113,7 @@ def fetch_chiral(np_directories,p_directories):
             for residue in directory_type[directory][1:]:   
                 if os.path.exists(directory_type[directory][0]+residue+'/chiral.dat') and residue not in processing:
                     processing[residue]={'atoms':[]}
-                    with open(directory_type[directory][0]+residue+'/chiral.dat', 'r') as chir_input:            #     for file_name in os.listdir(p_directories[directory][0]+residue):
+                    with open(directory_type[directory][0]+residue+'/chiral.dat', 'r') as chir_input:            
                         for line_nr, line in enumerate(chir_input.readlines()):
                             if line[0] != '#':
                                 line_sep =line.split()
@@ -269,30 +269,20 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues):
             atom_conversion[key] = key_val+1
 
     for bond in bond_dict:
-        hydrogen = add_to_hydrogen(bond[0], bond[1], hydrogen, heavy_dict, H_dict, atom_conversion, residue, p_residues)
-        heavy_bond = add_to_bonded(bond[0], bond[1], heavy_bond, heavy_dict, atom_conversion, residue, p_residues)
+        hydrogen = add_to_topology_list(bond[0], bond[1], hydrogen, heavy_dict, H_dict, atom_conversion, residue, p_residues)
+        heavy_bond = add_to_topology_list(bond[0], bond[1], heavy_bond, heavy_dict, heavy_dict, atom_conversion, residue, p_residues)
 
     return hydrogen, heavy_bond
 
-def add_to_hydrogen(bond_1, bond_2, hydrogen, heavy_dict, H_dict, conversion, residue, p_residues):
+def add_to_topology_list(bond_1, bond_2, top_list, dict1, dict2, conversion, residue, p_residues):
     for bond in [[bond_1, bond_2], [bond_2, bond_1]]:
-        if bond[0] in heavy_dict and bond[1] in H_dict:
+        if bond[0] in dict1 and bond[1] in dict2:
             if residue in p_residues:
                 bond[0], bond[1] = conversion[bond[0]],conversion[bond[1]] 
-            if bond[0] not in hydrogen:
-                hydrogen[bond[0]]=[]
-            hydrogen[bond[0]].append(bond[1])
-    return hydrogen
-
-def add_to_bonded(bond_1, bond_2, heavy_bond, heavy_dict, conversion, residue, p_residues):
-    for bond in [[bond_1, bond_2], [bond_2, bond_1]]:
-        if bond[0] in heavy_dict and bond[1] in heavy_dict:
-            if residue in p_residues:
-                bond[0], bond[1] = conversion[bond[0]],conversion[bond[1]] 
-            if bond[0] not in heavy_bond:
-                heavy_bond[bond[0]]=[]
-            heavy_bond[bond[0]].append(bond[1])
-    return heavy_bond
+            if bond[0] not in top_list:
+                top_list[bond[0]]=[]
+            top_list[bond[0]].append(bond[1])
+    return top_list
 
 def get_fragment_topology(residue, location, processing, heavy_bond):
     with open(location, 'r') as pdb_input:
@@ -435,6 +425,19 @@ def add_to_list(root, dirs, list_to_add):
     list_to_add[-1] = [x for x in list_to_add[-1] if not x.startswith('_')]    
     return list_to_add
 
+def fetch_frag_number(fragments_available):
+    try: 
+        fragment_number = []
+        for frag in g_var.fg:
+            fragment_number.append(fragments_available.index(frag))
+    except:
+        if g_var.fg != None or g_var.info: 
+            if g_var.info:
+                sys.exit('Cannot find find database: '+frag)
+            print('Cannot find fragment library: '+frag+' please select library from below\n')
+        fragment_number = database_selection(fragments_available, 'fragments')
+    return fragment_number
+
 def fetch_residues(fragments_available_prov, fragment_number):
 #### list of directories and water types  [[root, folders...],[root, folders...]]
     np_directories, p_directories,mod_directories=[], [],[]
@@ -443,7 +446,8 @@ def fetch_residues(fragments_available_prov, fragment_number):
         fragment_number=[0]
 #### run through selected fragments
     for database in fragment_number:
-        print('\nYou have selected: '+fragments_available_prov[database])
+        if not g_var.info:
+            print('\nYou have selected: '+fragments_available_prov[database])
     #### separate selection between provided and user
         location = g_var.database_dir+'fragments/'+ fragments_available_prov[database]
     #### runs through protein and non protein
@@ -658,3 +662,49 @@ def print_script_timings(tc, system, user_at_input):
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Merge protein and non protein system: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t8[0],'hours',t8[1],'min',t8[2],'sec'))
+
+def database_information(forcefield_available, fragments_available):
+    print('{0:30}'.format('\nThis script is a fragment based conversion of the coarsegrain representation to atomistic.\n'))
+    print('{0:^90}'.format('Written by Owen Vickery'))
+    print('{0:^90}'.format('Project leader Phillip Stansfeld'))
+    print('\n{0:^90}\n{1:^90}'.format('Contact email address:','owen.vickery@warwick.ox.ac.uk'))
+    print('\n{0:^90}\n{1:^90}\n{2:^90}\n{3:-<90}'.format('Address:','School of Life Sciences, University of Warwick,','Gibbet Hill Road, Coventry, CV4 7AL, UK', ''))
+    print('\n{0:^90}\n{1:-<90}\n'.format('The available forcefields within your database are (flag -ff):', ''))
+
+    for forcefields in forcefield_available:
+        print('{0:^90}'.format(forcefields))
+    print('\n\n{0:^90}\n{1:-<90}\n'.format('The available fragment libraries within your database are (flag -fg):', ''))
+    for fragments in fragments_available:
+        print('{0:^90}'.format(fragments))    
+    if g_var.fg != None:
+        
+        fragment_number = fetch_frag_number(fragments_available)
+        p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted = fetch_residues(fragments_available, fragment_number)
+        for database_val, database in enumerate(sorted(g_var.fg)):
+            print('\n\n{0:^90}\n{1:-<90}\n'.format('The following residues are available in the database: '+database, ''))
+            res_type_name = ['protein residues', 'modified protein residues', 'non protein residues']
+            for res_val, residue in enumerate([p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted]):
+                try:
+                    res_type = sorted(residue[database_val][1:])
+                    print('\n{0:^90}\n{1:^90}'.format(res_type_name[res_val], '-'*len(res_type_name[res_val])))
+                    if len(', '.join(map(str, res_type))) <= 80:
+                        print('{0:^90}'.format(', '.join(map(str, res_type))))
+                    else:
+                        start, end = 0, 1                       
+                        while end < len(res_type):
+                            line = ', '.join(map(str, res_type[start:end]))
+                            while len(line) <= 80:
+                                if end < len(res_type):
+                                    end+=1
+                                    line = ', '.join(map(str, res_type[start:end]))
+                                    if len(line) > 80:
+                                        end-=1
+                                        line = ', '.join(map(str, res_type[start:end]))
+                                        break
+                                else:
+                                    break
+                            print('{0:^90}'.format(line))
+                            start = end
+                except:
+                    pass
+    sys.exit('\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')

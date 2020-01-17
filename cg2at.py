@@ -68,6 +68,7 @@ else:
             atomistic_protein_centered, cg_com = at_mod_p.center_atomistic(atomistic_protein_input, backbone_coords) ## centers each monomer by center of mass
             at_mod_p.rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, backbone_coords, cg_com, box_vec) ## rigid fits each monomer
         #### minimise each protein chain
+        print('minimising protein')
         gro.minimise_protein(system['PROTEIN'], p_system, user_at_input)
         #### read in minimised de novo protein chains and merges chains
         merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/min/PROTEIN_novo', '.pdb')

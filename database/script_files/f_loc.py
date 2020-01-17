@@ -5,21 +5,11 @@ import gen, g_var
 
 forcefield_available, fragments_available = gen.read_database_directories()
 
-if g_var.info:
-    print('{0:30}'.format('\nThis script is a fragment based conversion of the coarsegrain representation to atomistic.\n'))
-    print('{0:^90}'.format('Current version number: 0.00'))
-    print('{0:^90}'.format('Written by Owen Vickery'))
-    print('{0:^90}'.format('Project leader Phillip Stansfeld'))
-    print('\n{0:^90}\n{1:^90}'.format('Contact email address:','owen.vickery@warwick.ox.ac.uk'))
-    print('\n{0:^90}\n{1:^90}\n{2:^90}\n{3:-<90}'.format('Address:','School of Life Sciences, University of Warwick,','Gibbet Hill Road, Coventry, CV4 7AL, UK', ''))
-    print('\n{0:^90}\n{1:-<90}\n'.format('The available forcefields within your database are (flag -ff):', ''))
-    for forcefields in forcefield_available:
-        print('{0:^90}'.format(forcefields))
-    print('\n\n{0:^90}\n{1:-<90}\n'.format('The available fragment libraries within your database are (flag -fg):', ''))
-    for fragments in fragments_available:
-        print('{0:^90}'.format(fragments))    
-    sys.exit('\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
 
+
+
+if g_var.info:
+    gen.database_information(forcefield_available, fragments_available)
 
 ##### select forcefield
 try: 
@@ -34,16 +24,7 @@ forcefield_location, forcefield=g_var.database_dir+'forcefields/', forcefield_av
 
 ### reads in and sorts fragment information
 
-try: 
-    fragment_number = []
-    for frag in g_var.fg:
-        fragment_number.append(fragments_available.index(frag))
-except:
-    if g_var.fg != None: 
-        print('Cannot find fragment library: '+frag+' please select library from below\n')
-    fragment_number = gen.database_selection(fragments_available, 'fragments')
-
-
+fragment_number = gen.fetch_frag_number(fragments_available)
 p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted = gen.fetch_residues(fragments_available, fragment_number)
 
 np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories = gen.sort_directories(p_directories_unsorted, 

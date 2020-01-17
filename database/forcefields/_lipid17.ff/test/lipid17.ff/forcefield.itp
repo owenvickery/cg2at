@@ -1,0 +1,25 @@
+; This is an gromacs port of the amber LIPID17 force field made by Zhiyi Wu
+; in the the Structural Bioinformatics and Computational Biochemistry Unit at
+; University of Oxford. The amber to gromacs format conversion is first done
+; with ParmEd 3.2 (https://github.com/ParmEd/ParmEd). I have written a script to
+; condense all the bonded interaction into a force field format, provide the
+; corresponding gro file for every lipids, and validate the energy to make sure
+; the gromacs port yield the same energy as the original amber format.
+;
+; The user can construct the lipid bilayer using charmm-GUI and convert the
+; coordinate file use the script charmmlipid2amber.py.
+; Custom head group or acryl chain can also be used with the LIPID17 to
+; make custom lipids using pdb2gmx.
+;
+; The whole project and more detailed explanation is accessible from
+; https://github.com/xiki-tempula/gmx_lipid17.ff
+;
+; To cite this port, please refer to DOI: 10.5281/zenodo.3610470
+;
+; When use in conjunction with amber protein force field, the following
+; section needed to be commented out.
+[ defaults ]
+;  nbfunc        comb-rule       gen-pairs       fudgeLJ fudgeQQ
+1               2               yes             0.5          0.83333333
+#include "ffnonbonded.itp"
+#include "ffbonded.itp"
