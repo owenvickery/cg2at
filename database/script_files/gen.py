@@ -325,11 +325,19 @@ def get_posres(residue, processing, header_line):
     for top in processing[residue]:
         if top in header_line and not processing[residue][top]:
             if top == 'posres':
-                processing[residue][top].append(header_line[top])
+                if type(header_line[top]) == list:
+                    for atom in header_line[top]:
+                        processing[residue][top].append(atom)
+                else:
+                    processing[residue][top].append(header_line[top])
             else:
                 processing[residue][top] = header_line[top]
         elif top == 'posres' and 'posres' in header_line:
-            processing[residue][top].append(header_line[top])
+            if type(header_line[top]) == list:
+                for atom in header_line[top]:
+                    processing[residue][top].append(atom)
+            else:
+                processing[residue][top].append(header_line[top])
     return processing
 
 def fragment_location(residue, p_residues,  p_directories, mod_directories, np_directories):  

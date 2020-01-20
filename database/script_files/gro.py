@@ -81,12 +81,14 @@ def gromacs(gro):
                 sys.exit('\n'+out)
             elif 'Segmentation fault' in out:
                 sys.exit('\n'+out)
-            elif 'Fatal error:' in out:
-                sys.exit('\n'+out)
             elif 'but did not reach the requested Fmax' in out:
                 sys.exit('\n'+out)
             elif 'number of atoms in the topology (' in out:
-                sys.exit('\n'+out+'\n\nIf it is only 2 atoms out check cysteine distances, and increase -cys cutoff')
+                print('\n'+out+'\n\n')
+                print('{0:^90}\n\n{1:^90}\n'.format('***NOTE***','If it is only out by multiples of two, check cysteine distances and increase -cys cutoff'))
+                sys.exit('{0:^90}\n\n'.format('A lot of Martini v2-2 disulphide bonds can be up to 9 A (current search cutoff is '+str(g_var.cys)+' A)')) 
+            elif 'Fatal error:' in out:
+                sys.exit('\n'+out)
     if len(gro) == 4: 
         gro[3].put(gro[2])
         return gro[2]

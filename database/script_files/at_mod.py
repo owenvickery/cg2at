@@ -320,7 +320,7 @@ def read_in_merged_pdbs(merge, merge_coords, location):
                     merge_coords.append([line_sep['x'],line_sep['y'],line_sep['z']])
         return merge, merge_coords
     else:
-        sys.exit('cannot find minimised residue: \n'+ g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb') 
+        sys.exit('cannot find minimised residue: \n'+ location) 
 
 
 def fetch_chiral_coord(merge_temp):

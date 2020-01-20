@@ -5,10 +5,11 @@ import numpy as np
 import copy
 from string import ascii_uppercase
 import difflib
+from scipy.spatial import cKDTree
 import gen, g_var, f_loc, at_mod
 import math
 
-def build_protein_atomistic_system(cg_residues, box_vec):
+def build_protein_atomistic_system(cg_residues, box_vec, user_cys_bond):
 #### initisation of counters
     chain_count=0
     system={}
@@ -49,7 +50,7 @@ def build_protein_atomistic_system(cg_residues, box_vec):
                 backbone_coords[chain_count].append(np.append(cg_residues[residue_number]['BB']['coord'], 1))
 
             if resname == 'CYS' and 'BB' not in group_fit:
-                at_connect, cg_connect, disulphide, disul_at_info, disul_cg_info= find_closest_cysteine(at_connect, cg_connect, cg_residues, group_fit, residue_number)
+                at_connect, cg_connect, disulphide, disul_at_info, disul_cg_info= find_closest_cysteine(at_connect, cg_connect, cg_residues, group_fit, residue_number, user_cys_bond)
 
             if len(at_connect) == len(cg_connect):
                 xyz_rot_apply=at_mod.rotate(np.array(at_connect)-center, np.array(cg_connect)-center, False)
@@ -123,25 +124,36 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
 #### 
 
-def find_closest_cysteine(at_connections, cg_connections, cg_residues, group, residue_number):
+def find_closest_cysteine(at_connections, cg_connections, cg_residues, group, residue_number,user_cys_bond):
     disulphide, atom_number=False, 0
     for res_id in cg_residues: 
         try:
             #### checks distance between cysteines if closer than 7A then adds another connection between the S and the sidechain of the other cysteine CG bead
-            if cg_residues[res_id]['SC1']['residue_name'] == 'CYS' and res_id not in [residue_number-1, residue_number, residue_number+1]:
+            if cg_residues[res_id]['SC1']['residue_name'] == 'CYS' and res_id not in np.arange(residue_number-2, residue_number+2):
                 xyz_cur=[cg_residues[residue_number]['SC1']['coord'][0],cg_residues[residue_number]['SC1']['coord'][1],cg_residues[residue_number]['SC1']['coord'][2]] ### cysteine of interest
                 xyz_check=[cg_residues[res_id]['SC1']['coord'][0],cg_residues[res_id]['SC1']['coord'][1],cg_residues[res_id]['SC1']['coord'][2]] ### cysteine to check distance
                 dist = gen.calculate_distance(xyz_check, xyz_cur)
                 if dist < g_var.cys:
-                    for atom_number in group['SC1']:
-                        if group['SC1'][atom_number]['atom']==f_loc.backbone[cg_residues[residue_number]['SC1']['residue_name']]['sul']: ### if sulphur
-                            at_connections.append(group['SC1'][atom_number]['coord']) ### add at centered coordinates
-                    cg_connections.append(cg_residues[res_id]['SC1']['coord']) ### add cg centered coordinates
-                    disulphide=True
+                    at_connections, cg_connections, atom_number, disulphide=disulphide_connect_coords(cg_residues, at_connections, cg_connections, group, residue_number, res_id)
                     break
-        except:
+                elif res_id-residue_number in user_cys_bond or residue_number-res_id in user_cys_bond:
+                    if dist <= 10: 
+                        at_connections, cg_connections, atom_number, disulphide=disulphide_connect_coords(cg_residues, at_connections, cg_connections, group, residue_number, res_id)
+                        break
+        except: 
             pass
     return at_connections, cg_connections, disulphide, atom_number, res_id
+
+def disulphide_connect_coords(cg_residues, at_connections, cg_connections, group,residue_number, res_id):
+    for atom_number in group['SC1']:
+        if group['SC1'][atom_number]['atom']==f_loc.backbone[cg_residues[residue_number]['SC1']['residue_name']]['sul']: ### if sulphur
+            at_connections.append(group['SC1'][atom_number]['coord']) ### add at centered coordinates
+            break
+    cg_connections.append(cg_residues[res_id]['SC1']['coord']) ### add cg centered coordinates
+
+    return at_connections, cg_connections, atom_number, True
+
+
 
 def shift_sulphur(residue_number, disul_at_info, disul_cg_info, at_residues, cg_residues ):
 #### to shift sidechains roughly equally the 1st sidechain is shifted to within 3.2A and the second to 2A (pdb2gmx cutoff)
@@ -230,7 +242,7 @@ def fix_carbonyl(residue_id, cg, at):
 
 ##################################################################  User supplied protein ##############
 
-def read_in_atomistic(protein, cg_chain_count, sequence, check_alignment):
+def read_in_atomistic(protein):
 #### reset location and check if pdb exists  
     os.chdir(g_var.start_dir)
     if not os.path.exists(protein):
@@ -257,8 +269,7 @@ def read_in_atomistic(protein, cg_chain_count, sequence, check_alignment):
                
             #### if line is correct
             if run:
-                if line_sep['residue_name'] in f_loc.p_residues or line_sep['residue_name'] in f_loc.mod_residues:
-                    
+                if line_sep['residue_name'] in f_loc.p_residues:
                     if not line_sep['atom_name'].startswith('H') or line_sep['residue_name'] in f_loc.mod_residues:  
                     #### sorts out wrong atoms in terminal residues
                         if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
@@ -292,16 +303,33 @@ def read_in_atomistic(protein, cg_chain_count, sequence, check_alignment):
                             for atom in line_sep['atom_name']:
                                 if atom in g_var.mass:
                                     atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=g_var.mass[atom]
-                else:
-                    if check_alignment:
-                        sys.exit('The residue '+line_sep['residue_name']+' does not exist in the fragment database')
-    if check_alignment:
-        seq_user = check_sequence(atomistic_protein_input, chain_count+1)
-        atomistic_protein_input = align_chains(atomistic_protein_input, seq_user, sequence)
-#### check if number of monomers is the same
-    elif chain_count+1 != cg_chain_count:
-        sys.exit('number of chains in atomistic protein input ('+str(chain_count+1)+') does not match CG representation ('+str(cg_chain_count)+')')
-    return atomistic_protein_input
+                
+                    
+
+    return atomistic_protein_input, chain_count+1
+
+def find_disulphide_bonds_user_sup(atomistic_protein_input):
+    seq_diff=[]
+    for chain in atomistic_protein_input:
+        cysteines = []
+        cys_resid = []
+        for resid in atomistic_protein_input[chain]:
+            atom = next(iter(atomistic_protein_input[chain][resid]))
+            if atomistic_protein_input[chain][resid][atom]['res_type'] == 'CYS':
+                for atom in atomistic_protein_input[chain][resid]:
+                    if atomistic_protein_input[chain][resid][atom]['atom'] == f_loc.backbone['CYS']['sul']:
+                        cys_resid.append(resid)
+                        cysteines.append(atomistic_protein_input[chain][resid][atom]['coord'])
+        if len(cysteines)>=2:
+            tree = cKDTree(cysteines)
+            done_query=[]
+            for cys_index, cys in enumerate(cysteines):
+                query = tree.query_ball_point(cys, r=2.1)
+                if len(query) == 2 and query not in done_query:
+                    if cys_resid[query[1]]-cys_resid[query[0]] not in seq_diff:
+                        seq_diff.append(cys_resid[query[1]]-cys_resid[query[0]])
+                    done_query.append(query)
+    return seq_diff
 
 def check_sequence(atomistic_protein_input, chain_count):
     at={}

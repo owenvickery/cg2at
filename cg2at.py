@@ -59,12 +59,18 @@ else:
 
     ### convert protein to atomistic representation
     if 'PROTEIN' in cg_residues:
-        p_system, backbone_coords, final_coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec)
+        if user_at_input:
+            atomistic_protein_input_raw, chain_count = at_mod_p.read_in_atomistic(g_var.input_directory+'AT_input.pdb')  ## reads in user structure
+            user_cys_bond = at_mod_p.find_disulphide_bonds_user_sup(atomistic_protein_input_raw)
+            seq_user = at_mod_p.check_sequence(atomistic_protein_input_raw, chain_count)
+        else:
+            user_cys_bond = []
+        p_system, backbone_coords, final_coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec, user_cys_bond)
         system['PROTEIN']=p_system['PROTEIN']
         time_counter['p_d_n_t']=time.time()
         #### reads in user supplied atomistic structure 
-        if user_at_input and 'PROTEIN' in system:
-            atomistic_protein_input = at_mod_p.read_in_atomistic(g_var.input_directory+'AT_input.pdb', system['PROTEIN'], sequence, True)  ## reads in user structure
+        if user_at_input:
+            atomistic_protein_input = at_mod_p.align_chains(atomistic_protein_input_raw, seq_user, sequence)
             atomistic_protein_centered, cg_com = at_mod_p.center_atomistic(atomistic_protein_input, backbone_coords) ## centers each monomer by center of mass
             at_mod_p.rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, backbone_coords, cg_com, box_vec) ## rigid fits each monomer
         #### minimise each protein chain
@@ -74,8 +80,8 @@ else:
         merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/min/PROTEIN_novo', '.pdb')
         at_mod_p.write_merged_pdb(merge_de_novo, '_novo', box_vec)
         #### runs steered MD on user supplied protein chains
-        if user_at_input and 'PROTEIN' in system:
-            print('\tRunning steered MD on input atomistic structure\n')
+        if user_at_input:
+            print('Running steered MD on input atomistic structure\n')
         #### runs steered MD on atomistic structure on CA and CB atoms
             for chain in range(system['PROTEIN']):
                 gro.steered_md_atomistic_to_cg_coord(chain)
@@ -148,11 +154,13 @@ else:
                 steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1')    
     #### calculates final RMS
         RMSD={}
-        de_novo_atoms = at_mod_p.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb', system['PROTEIN'], sequence, False)
+        de_novo_atoms, chain_count = at_mod_p.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb')
+        if chain_count != system['PROTEIN']:
+            sys.exit('number of chains in atomistic protein input ('+str(chain_count)+') does not match CG representation ('+str(system['PROTEIN'])+')')
         RMSD['de novo '] = at_mod_p.RMSD_measure(de_novo_atoms, system,backbone_coords)
 
         if user_at_input and 'PROTEIN' in system:
-            at_input_atoms = at_mod_p.read_in_atomistic(g_var.final_dir+'final_cg2at_at_rep_user_supplied.pdb', system['PROTEIN'], sequence, False)
+            at_input_atoms, chain_count = at_mod_p.read_in_atomistic(g_var.final_dir+'final_cg2at_at_rep_user_supplied.pdb')
             RMSD['at input'] = at_mod_p.RMSD_measure(at_input_atoms, system,backbone_coords)         
         print('\n{0:^10}{1:^25}{2:^10}'.format('output ','chain','RMSD ('+chr(197)+')'))
         print('{0:^10}{1:^25}{2:^10}'.format('-------','-----','---------'))
