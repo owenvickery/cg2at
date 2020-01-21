@@ -110,8 +110,8 @@ def minimise_protein(protein, p_system, user_at_input):
     make_min('PROTEIN')
     for chain in range(protein):
         pdb2gmx_selections=ask_terminal(chain, p_system)
-        minimise_protein_chain(chain, 'novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[0])+'\n'+str(pdb2gmx_selections[1]))
-        pdb2gmx_selections = histidine_protonation(chain, 'novo_', pdb2gmx_selections)
+        minimise_protein_chain(chain, 'de_novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[0])+'\n'+str(pdb2gmx_selections[1]))
+        pdb2gmx_selections = histidine_protonation(chain, 'de_novo_', pdb2gmx_selections)
         if user_at_input:
             minimise_protein_chain(chain, 'at_rep_user_supplied_', pdb2gmx_selections)
     os.chdir('..')
@@ -211,7 +211,7 @@ def write_posres(chain):
     #     posres_output.write('[ position_restraints ]\n; atom  type      fx      fy      fz\n')
 
     #### read in each chain from after pdb2gmx 
-    with open(g_var.working_dir+'PROTEIN/PROTEIN_novo_'+str(chain)+'_gmx.pdb', 'r') as pdb_input:
+    with open(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(chain)+'_gmx.pdb', 'r') as pdb_input:
         at_counter=0
         for line in pdb_input.readlines():
             if line.startswith('ATOM'):
@@ -234,7 +234,7 @@ def steered_md_atomistic_to_cg_coord(chain):
                 '-f steered_md.mdp '+
                 '-p topol_PROTEIN_at_rep_user_supplied_'+str(chain)+'.top '+
                 '-c min/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb '+
-                '-r min/PROTEIN_novo_'+str(chain)+'.pdb '+
+                '-r min/PROTEIN_de_novo_'+str(chain)+'.pdb '+
                 '-o steered_md/PROTEIN_at_rep_user_supplied_'+str(chain)+' -maxwarn 1 ', 'steered_md/PROTEIN_at_rep_user_supplied_'+str(chain)+'.tpr'])
 #### run mdrun on steered MD
     os.chdir('steered_md')
@@ -447,8 +447,8 @@ def alchembed(system, protein_type):
                     '-po md_out-merged_cg2at_alchembed_'+str(chain)+' '+
                     '-f alchembed_'+str(chain)+'.mdp '+
                     '-p topol_final.top '+
-                    '-r min/merged_cg2at_'+protein_type+'_supplied_minimised.pdb '+
-                    '-c min/merged_cg2at_'+protein_type+'_supplied_minimised.pdb '+
+                    '-r min/merged_cg2at_'+protein_type+'_minimised.pdb '+
+                    '-c min/merged_cg2at_'+protein_type+'_minimised.pdb '+
                     '-o alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+' '+
                     '-maxwarn 1', 'alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.tpr'])
     #### if not 1st chain use the previous output of alchembed tfor the input of the next chain 
@@ -457,7 +457,7 @@ def alchembed(system, protein_type):
                 '-po md_out-merged_cg2at_alchembed_'+str(chain)+' '+
                 '-f alchembed_'+str(chain)+'.mdp '+
                 '-p topol_final.top '+
-                '-r min/merged_cg2at_'+protein_type+'_supplied_minimised.pdb '+
+                '-r min/merged_cg2at_'+protein_type+'_minimised.pdb '+
                 '-c alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain-1)+'.pdb '+
                 '-o alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+' '+
                 '-maxwarn 1', 'alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.tpr'])          
@@ -467,8 +467,8 @@ def alchembed(system, protein_type):
                 ' -c merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', 'merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb'])
         os.chdir('..')
 #### copy final output to the FINAL folder
-    gen.file_copy_and_check('alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.merged_directory+'final_merged_cg2at_'+protein_type+'.pdb')
-    gen.file_copy_and_check('alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.final_dir+'final_merged_cg2at_'+protein_type+'.pdb')
+    gen.file_copy_and_check('alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.merged_directory+'final_cg2at_'+protein_type+'.pdb')
+    gen.file_copy_and_check('alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.final_dir+'final_cg2at_'+protein_type+'.pdb')
     # gen.file_copy_and_check('merged_cg2at_no_steered.pdb', g_var.final_dir+'final_cg2at_no_steered.pdb')
 
 def write_steered_mdp(loc, posres, time):

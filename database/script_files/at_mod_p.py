@@ -191,9 +191,9 @@ def finalise_novo_atomistic(atomistic, cg_residues, box_vec):
         final_at_residues[chain]={}  
         final_at[chain]={}
         coords=[]
-        skip = os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_novo_'+str(chain)+'.pdb')
+        skip = os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(chain)+'.pdb')
         if not skip:
-            pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_novo_'+str(chain)+'.pdb', box_vec)
+            pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(chain)+'.pdb', box_vec)
         for res_index, residue_id in enumerate(atomistic[chain]):
             if atomistic[chain][residue_id][1]['res_type'] in f_loc.mod_residues:
                 atomistic[chain][residue_id] = at_mod.check_hydrogens(atomistic[chain][residue_id])

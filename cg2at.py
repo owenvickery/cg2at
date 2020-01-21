@@ -71,8 +71,8 @@ else:
         print('minimising protein')
         gro.minimise_protein(system['PROTEIN'], p_system, user_at_input)
         #### read in minimised de novo protein chains and merges chains
-        merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/min/PROTEIN_novo', '.pdb')
-        at_mod_p.write_merged_pdb(merge_de_novo, '_novo', box_vec)
+        merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/min/PROTEIN_de_novo', '.pdb')
+        at_mod_p.write_merged_pdb(merge_de_novo, '_de_novo', box_vec)
         #### runs steered MD on user supplied protein chains
         if user_at_input:
             if g_var.o in ['all', 'steer']:
@@ -114,7 +114,7 @@ else:
 
     if len(system)>0:
     #### make final topology in merged directory
-        gro.write_merged_topol(system, '_novo')
+        gro.write_merged_topol(system, '_de_novo')
     #### copies all itp files and topologies from whereever they are stored
         for file_name in os.listdir(g_var.merged_directory):
             if file_name.endswith('.itp') or file_name.endswith('final.top'):
@@ -122,14 +122,14 @@ else:
     #### make minimisation directory
         gro.make_min('merged_cg2at')
     #### merges provided atomistic protein and residues types into a single pdb file into merged directory
-        at_mod.merge_system_pdbs(system, '_novo', cg_residues, box_vec)
-        gro.minimise_merged_pdbs(system, '_novo')
-        ringed_lipids = at_mod.read_minimised_system('_novo', box_vec)
+        at_mod.merge_system_pdbs(system, '_de_novo', cg_residues, box_vec)
+        gro.minimise_merged_pdbs(system, '_de_novo')
+        ringed_lipids = at_mod.read_minimised_system('_de_novo', box_vec)
         if len(system) > 1 and g_var.alchembed and len(ringed_lipids) > 0:
-            gro.alchembed(system['PROTEIN'], 'novo')  
-            gen.file_copy_and_check(g_var.merged_directory+'min/merged_cg2at_novo_minimised.pdb', g_var.final_dir+'final_merged_cg2at_novo.pdb')
+            gro.alchembed(system['PROTEIN'], 'de_novo')  
+            gen.file_copy_and_check(g_var.merged_directory+'min/merged_cg2at_de_novo_minimised.pdb', g_var.final_dir+'final_merged_cg2at_de_novo.pdb')
         else:
-            gro.equilibrate(g_var.merged_directory+'min/merged_cg2at_novo_minimised.pdb')
+            gro.equilibrate(g_var.merged_directory+'min/merged_cg2at_de_novo_minimised.pdb')
 
         if user_at_input and 'PROTEIN' in system:
             if g_var.o in ['all', 'steer']:
