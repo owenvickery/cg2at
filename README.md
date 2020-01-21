@@ -4,9 +4,9 @@ If you are using this script please acknowledge me (Dr Owen Vickery) and cite th
 
 DOI: xxx
 
-                                    **SCRIPT OVERVIEW**
+                                    **CG2AT SCRIPT OVERVIEW**
 
-the script is a fragment based conversion of the CG representation into atomistic. 
+The script is a fragment based conversion of the CG representation into atomistic. 
 
 This script roughly follows the following workflow.
 
@@ -83,6 +83,9 @@ REQUIRED
 
 OPTIONAL
 - -a          (pdb/gro/tpr)
+- -o          ['all', 'steer', 'align', 'none']
+- -info       (True/False)
+- -version    (True/False)
 - -v          (-vvv) 
 - -mod        (True/False)
 - -sf         (float)(default=0.9)
@@ -222,8 +225,6 @@ The script will create a output file system as below.
     | --    CG2AT_(timestamp)
                 | --    INPUT
                                 - cg_input.gro, conversion_input.pdb, atomistic_input.gro, AT_input.pdb, script_inputs.dat
-                | --    FORCEFIELD
-                                -  forcefield selected (charmm36-jul2017.ff)
                 | --    RESIDUE_TYPE (PROTEIN, POPE)
                                 - converted indivudal residues
                 | --    MERGED
@@ -239,8 +240,6 @@ Directories
   - supplied atomistic file (pdb,gro,tpr)
   - supplied atomistic file converted to pdb (AT_input.pdb)
   - script inputs, all flags used in the conversion saved for future reference
-- FORCEFIELD
-  - Selected forcefield 
 - RESIDUE_TYPE (e.g POPE, PROTEIN)
   - individual residues after initial conversion
   - topology for residues
@@ -263,39 +262,36 @@ Directories
 
                                         **OUTPUT**
 
-The script provides 3 types of coarsegrain conversions.
+The script provides 3 types of coarsegrain conversions. 
+
+You can select which of these is supplied using the flag:
+- -o ['all', 'steer', 'align', 'none']
+
+Standard output:
 
 - De novo method. (final_cg2at_de_novo.pdb)
   - fragments are fitted individually to beads and rotated to minimise bond length to connecting beads.
+  - if any lipid tails are detected to be trapped within aromatic rings, a short alchembed step is run on each monomer.
+  - if no alchembed step is run, a short NVT run is done instead.
 
-- flexible user supplied atomistic fitting. (final_cg2at_at_rep_user_supplied.pdb)  
+Steered output:
+
+- flexible user supplied atomistic fitting. (final_cg2at_steered.pdb)  
   - Atomistic segments are aligned via sequence to the CG protein.
   - The supplied atomistic structures undertake 2 fitting steps.
     - Each segment is rigid body fitted to the CG backbone beads. 
       - Any missing residues or residue types found in the MOD directory are added from the de novo method.
-    - Short steered MD step on selected atoms align the AT protein to the CG representation, preserving most interactions (e.g. backbone H-bonds).    
-  - A short Alchembed step is run on each monomer to prevent any lipid tails being trapped in aromatic rings.
+    - Short steered MD step on selected atoms align the AT protein to the CG representation, preserving most interactions (e.g. backbone H-bonds).   
+  - The de novo system is then steered to the coordinates from the AT steered protein.  
 
-- Rigid body user supplied atomistic fitting. (final_cg2at_de_novo.pdb)
+Aligned output:
+
+- Rigid body user supplied atomistic fitting. (final_cg2at_aligned.pdb)
   - Atomistic segments are aligned via sequence to the CG protein.
   - Each segment is rigid body fitted to the CG backbone beads. 
     - Any missing residues or residue types found in the MOD directory are added from the de novo method.
+  - The de novo system is then steered to the coordinates from the rigidly fit protein.  
 
-**WARNING** 
-
-on the rigid body user supplied atomistic fitting. No alchembed step is run on this system.
-
-You can use this file as a restraint file and pull the steered coordinates into the rigid fit.
-
-This can be done by:
-
-<pre>
-
-gmx grompp -f md.mdp -c final_cg2at_at_rep_user_supplied.pdb -r final_cg2at_no_steered.pdb -p topol_final.top -o rigid_fit.tpr
-
-gmx mdrun -v -deffnm rigid_fit
-
-</pre>
 
                                         **Automation**
 
@@ -314,9 +310,43 @@ example input.
     python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update  -box 100 100 100 -nt -ct
 </pre>
 
-                                    **AT2CG**
-                                    
+                                    **AT2CG SCRIPT OVERVIEW**
+
 Within this script I have included a the reverse of CG2AT. Here the fragment library is used to convert a atomistic system into a coarsegrain representation.
+
+This script roughly follows the following workflow.
+
+- Finds the center of mass of each fragment's heavy atoms as described by the database.
+- Writes out a pdb file containing the beads placed at the COM of each fragment.
+
+<pre>
+   Atomistic                     CG fragments                            CG beads
+                                   --------                              --------    
+                                  (        )                            (        )    
+                                 (  O1  O2  )                          (          )      
+                                (    \  /    )                        (            )   
+                               (      CG      )                      (     SC1      )        
+    O1  O2                      (     |      )                        (            )    
+     \  /                        (    CB    )                          (          )    
+      CG                          (        )                            (        )       
+      |        Fragments           --------            Coarse            --------  
+      CB      ----------->            |             ----------->             |        
+      |                            --------             grain            --------   
+  X1  CA   X2                     (        )                            (        )  
+   \ /  \ /                      (    CA    )                          (          )
+    N    C                      (    /  \    )                        (            ) 
+         |                  X1-(    N    C    )-X2                X1-(      BB      )-X2
+         O                      (        |   )                        (            )     
+                                 (       O  )                          (          )
+                                  (        )                            (        ) 
+                                   --------                              -------- 
+</pre> 
+
+This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
+
+
+                                           **FLAGS**
+
 
 The conversion follows a similar syntax to CG2AT.
 

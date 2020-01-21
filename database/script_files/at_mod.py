@@ -189,7 +189,7 @@ def get_atomistic(frag_location):
                                                                 'atom':line_sep['atom_name'],'resid':line_sep['residue_id'], 'res_type':line_sep['residue_name'],
                                                                 'frag_mass':1}
 #### updates fragment mass   
-                if 'H' not in line_sep['atom_name']:
+                if not gen.is_hydrogen(line_sep['atom_name']):
                     for atom in line_sep['atom_name']:
                         if atom in g_var.mass:
                             residue[group][bead][line_sep['atom_number']]['frag_mass']=g_var.mass[atom]  ### updates atom masses with crude approximations
@@ -287,9 +287,9 @@ def align_to_vector(v1, v2):
 ################################################################### Merged system
 
 def merge_system_pdbs(system, protein, cg_residues, box_vec):
-    os.chdir(g_var.working_dir+'MERGED')
+    os.chdir(g_var.merged_directory)
 #### create merged pdb 
-    pdb_output=gen.create_pdb(g_var.working_dir+'MERGED/merged_cg2at'+protein+'.pdb', box_vec) 
+    pdb_output=gen.create_pdb(g_var.merged_directory+'merged_cg2at'+protein+'.pdb', box_vec) 
     merge=[]
     merge_coords=[]
 #### run through every residue type in cg_residues
@@ -300,7 +300,7 @@ def merge_system_pdbs(system, protein, cg_residues, box_vec):
         else:
             input_type=protein
         merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
-    if protein in ['_at_rep_user_supplied','_novo']:
+    if protein in ['_novo']:
         print('checking for atom overlap in : '+protein[1:])
         merge_coords = check_atom_overlap(merge_coords)
     for line_val, line in enumerate(merge):
@@ -403,4 +403,35 @@ def check_hydrogens(residue):
                         residue[h_at]['coord']=residue[h_at]['coord']-vector*2
     return residue
 
+def read_minimised_system(protein, box_vec):
+    box_vec = box_vec.split()[1:4]
+    print('\n\n')
+    os.chdir(g_var.merged_directory)
+    merge, merge_coords = read_in_merged_pdbs([], [], g_var.merged_directory+'min/merged_cg2at'+protein+'_minimised.pdb')
+    resid_prev=0
+    ringed=[]
+    for at_val, atom in enumerate(merge):
+        if atom['residue_id'] != resid_prev:
+            offset=at_val
+        if atom['residue_name'] in f_loc.np_residues:
+            resid_prev=atom['residue_id']
+            if atom['atom_number']-offset in f_loc.heavy_bond[atom['residue_name']]:
+                at_coord = [atom['x'], atom['y'], atom['z']]
+                for at_bond in f_loc.heavy_bond[atom['residue_name']][atom['atom_number']-offset]:
+                    at_bond_coord = [merge[at_bond+offset-1]['x'], merge[at_bond+offset-1]['y'], merge[at_bond+offset-1]['z']]
+                    for xyz in range(3):
+                    #### for x, y, z if the distance between bead is more than half the box length
+                        if gen.calculate_distance(at_coord, at_bond_coord) > float(box_vec[xyz])/2:
+                        #### if the bead if in the opposite 1/3 of the box the position the box length is add/subtracted
+                            if at_bond_coord[xyz] <= float(box_vec[xyz])/2:
+                                temp = at_bond_coord[xyz]+float(box_vec[xyz])
+                            elif at_bond_coord[xyz] > float(box_vec[xyz])/2:
+                                temp = at_bond_coord[xyz]-float(box_vec[xyz])
+                        #### if distance between corrected coordinate is still > 1/2 the box length then counts as a new chain
+                            if np.sqrt((temp-at_coord[xyz])**2) < 2:
+                                at_bond_coord[xyz] = temp
+                    dist = gen.calculate_distance(at_coord, at_bond_coord)
+                    if dist > 2:
+                        ringed.append([at_val, at_bond+offset-1])
+    return ringed
 

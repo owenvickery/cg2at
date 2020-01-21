@@ -184,7 +184,7 @@ def switch_W_to_ION(cg1_solvent, cg_residues):
 def com_residue(solvent):
     coord=[]
     for atom in solvent:
-        if 'H' not in atom:
+        if not gen.is_hydrogen(atom):
             for atom_ch in atom:
                 if atom_ch in g_var.mass:
                     coord.append([solvent[atom]['coord'][0],solvent[atom]['coord'][1],solvent[atom]['coord'][2],g_var.mass[atom_ch]])

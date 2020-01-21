@@ -262,15 +262,12 @@ def read_in_atomistic(protein):
                 # print(line_sep['atom_name'])
                 if line_sep['residue_name'] in f_loc.mod_residues:
                     run=True
-                elif str.isdigit(line_sep['atom_name'][0]) and line_sep['atom_name'][1] != 'H':
+                if not gen.is_hydrogen(line_sep['atom_name']):
                     run=True
-                elif not str.isdigit(line_sep['atom_name'][0]) and not line_sep['atom_name'].startswith('H'):
-                    run=True
-               
             #### if line is correct
             if run:
                 if line_sep['residue_name'] in f_loc.p_residues:
-                    if not line_sep['atom_name'].startswith('H') or line_sep['residue_name'] in f_loc.mod_residues:  
+                    if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in f_loc.mod_residues:  
                     #### sorts out wrong atoms in terminal residues
                         if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
                             line_sep['atom_name']='O'

@@ -14,7 +14,6 @@ import g_var
 def calculate_distance(p1, p2):
     return np.sqrt(((p1[0]-p2[0])**2)+((p1[1]-p2[1])**2)+((p1[2]-p2[2])**2))
 
-
 def file_copy_and_check(file_in,file_out):
     if not os.path.exists(file_out):
         copyfile(file_in, file_out)
@@ -30,6 +29,13 @@ def flags_used():
             line='{0:15}{1:15}\n'.format(var,str(g_var.variables_to_save[var]))
             scr_input.write(line)
 
+def is_hydrogen(atom):
+    if str.isdigit(atom[0]) and atom[1] != 'H':
+        return False
+    elif not str.isdigit(atom[0]) and not atom.startswith('H'):
+        return False
+    else:
+        return True
 def split_swap(swap):
     try:
         res_range = re.split(':', swap)[2].split(',')
@@ -244,12 +250,12 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues):
                     elif atoms:
                         if residue in p_residues:
                             atom_conversion[line_sep[0]]=int(line_sep[3])+1
-                            if line_sep[0].startswith('H'):
+                            if is_hydrogen(line_sep[0]):
                                 H_dict.append(line_sep[0])
                             else:
                                 heavy_dict.append(line_sep[0])
                         else:
-                            if line_sep[4].startswith('H'):
+                            if is_hydrogen(line_sep[4]):
                                 H_dict.append(int(line_sep[0]))
                             else:
                                 heavy_dict.append(int(line_sep[0]))
@@ -314,7 +320,7 @@ def get_fragment_topology(residue, location, processing, heavy_bond):
                 if header_line['frag'] == 'BB':
                     if line.startswith('ATOM'):
                         line_sep = pdbatom(line)
-                        if 'H' not in line_sep['atom_name']:
+                        if not is_hydrogen(line_sep['atom_name']):
                             atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
                     processing[residue]['atoms']=atom_list
             except:
@@ -651,6 +657,7 @@ def fix_time(t1, t2):
     return int(np.round(hours)), int(np.round(minutes)), int(np.round(seconds,0))
 
 def print_script_timings(tc, system, user_at_input):
+    print('\n{:-<100}'.format(''))
     print('\n{0:^47}{1:^22}'.format('Job','Time'))
     print('{0:^47}{1:^22}'.format('---','----'))
     t1 = fix_time(tc['r_i_t'], tc['i_t'])
@@ -659,12 +666,13 @@ def print_script_timings(tc, system, user_at_input):
         t2=fix_time(tc['p_d_n_t'],tc['r_i_t'])
         t3=fix_time(tc['f_p_t'],tc['p_d_n_t'])
         t4=fix_time(tc['f_p_t'],tc['r_i_t'])
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein system: ',t2[0],'hours',t2[1],'min',t2[2],'sec'))        
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein system from provided structure: ',t3[0],'hours',t3[1],'min',t3[2],'sec'))
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein system build: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
+        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein: ',t2[0],'hours',t2[1],'min',t2[2],'sec'))        
+        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein from provided structure: ',t3[0],'hours',t3[1],'min',t3[2],'sec'))
+        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein build: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
     else:
         t5=fix_time(tc['f_p_t'],tc['r_i_t'])
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein system: ',t5[0],'hours',t5[1],'min',t5[2],'sec'))
+        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein build: ',t5[0],'hours',t5[1],'min',t5[2],'sec'))
+    print('{:-<69}'.format(''))
     t6=fix_time(tc['n_p_t'],tc['f_p_t'])
     t7=fix_time(tc['m_t'],tc['n_p_t'])
     t8=fix_time(tc['f_t'],tc['i_t'])
