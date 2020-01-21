@@ -405,7 +405,6 @@ def check_hydrogens(residue):
 
 def read_minimised_system(protein, box_vec):
     box_vec = box_vec.split()[1:4]
-    print('\n\n')
     os.chdir(g_var.merged_directory)
     merge, merge_coords = read_in_merged_pdbs([], [], g_var.merged_directory+'min/merged_cg2at'+protein+'_minimised.pdb')
     resid_prev=0

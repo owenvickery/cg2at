@@ -417,7 +417,8 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
                 #### gets center of mass of each residue (note only backbone heavy atoms have a mass)
                     at_centers_iter=[]
                     for atom in atomistic_protein_centered[chain][part][residue]:
-                        at_centers_iter.append(np.append(atomistic_protein_centered[chain][part][residue][atom]['coord'],atomistic_protein_centered[chain][part][residue][atom]['frag_mass']))
+                        if atomistic_protein_centered[chain][part][residue][atom]['atom'] in f_loc.backbone[atomistic_protein_centered[chain][part][residue][atom]['res_type']]['atoms']:
+                            at_centers_iter.append(np.append(atomistic_protein_centered[chain][part][residue][atom]['coord'],atomistic_protein_centered[chain][part][residue][atom]['frag_mass']))
                     try:
                         at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
                     except:
@@ -444,7 +445,7 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
             hybridise_protein_inputs(final_coordinates_atomistic[chain], [], [], xyz_rot_apply, chain, box_vec)
 
 def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_centered, cg_com, xyz_rot_apply, chain, box_vec):
-    pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb', box_vec)
+    pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_aligned_'+str(chain)+'.pdb', box_vec)
     final_atom={}
     coord=[]
     at_id=0

@@ -113,7 +113,7 @@ def minimise_protein(protein, p_system, user_at_input):
         minimise_protein_chain(chain, 'de_novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[0])+'\n'+str(pdb2gmx_selections[1]))
         pdb2gmx_selections = histidine_protonation(chain, 'de_novo_', pdb2gmx_selections)
         if user_at_input:
-            minimise_protein_chain(chain, 'at_rep_user_supplied_', pdb2gmx_selections)
+            minimise_protein_chain(chain, 'aligned_', pdb2gmx_selections)
     os.chdir('..')
 
 def histidine_protonation(chain, input, chain_ter):
@@ -204,12 +204,6 @@ def write_posres(chain):
     steered_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_steered_posre.itp')
     low_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_low_posre.itp')
     high_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_high_posre.itp')
-
-
-    # if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_steered_posre.itp'):
-    #     posres_output = open(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_steered_posre.itp', 'w')
-    #     posres_output.write('[ position_restraints ]\n; atom  type      fx      fy      fz\n')
-
     #### read in each chain from after pdb2gmx 
     with open(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(chain)+'_gmx.pdb', 'r') as pdb_input:
         at_counter=0
@@ -232,16 +226,16 @@ def steered_md_atomistic_to_cg_coord(chain):
 #### run grompp on chain 
     gromacs([g_var.gmx+' grompp '+
                 '-f steered_md.mdp '+
-                '-p topol_PROTEIN_at_rep_user_supplied_'+str(chain)+'.top '+
-                '-c min/PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb '+
+                '-p topol_PROTEIN_aligned_'+str(chain)+'.top '+
+                '-c min/PROTEIN_aligned_'+str(chain)+'.pdb '+
                 '-r min/PROTEIN_de_novo_'+str(chain)+'.pdb '+
-                '-o steered_md/PROTEIN_at_rep_user_supplied_'+str(chain)+' -maxwarn 1 ', 'steered_md/PROTEIN_at_rep_user_supplied_'+str(chain)+'.tpr'])
+                '-o steered_md/PROTEIN_steered_'+str(chain)+' -maxwarn 1 ', 'steered_md/PROTEIN_steered_'+str(chain)+'.tpr'])
 #### run mdrun on steered MD
     os.chdir('steered_md')
-    gromacs([g_var.gmx+' mdrun -v -pin on -deffnm PROTEIN_at_rep_user_supplied_'+str(chain)+' -c PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb', 
-                'PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb'])
+    gromacs([g_var.gmx+' mdrun -v -pin on -deffnm PROTEIN_steered_'+str(chain)+' -c PROTEIN_steered_'+str(chain)+'.pdb', 
+                'PROTEIN_steered_'+str(chain)+'.pdb'])
 #### if no pdb file is created stop script with error message
-    if os.path.exists('PROTEIN_at_rep_user_supplied_'+str(chain)+'.pdb'):
+    if os.path.exists('PROTEIN_steered_'+str(chain)+'.pdb'):
         pass
     else:
         sys.exit('Steered MD failed!')
