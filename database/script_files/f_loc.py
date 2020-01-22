@@ -38,11 +38,12 @@ if not g_var.at2cg:
     ### return backbone information
     backbone, sorted_connect, hydrogen, heavy_bond = gen.fetch_fragment(p_residues, p_directories, mod_directories,  
                                                                     np_directories, forcefield_location+forcefield, mod_residues)
-
-
 swap_dict=gen.sort_swap_group()
 
-
+if g_var.group != None:
+    group_chains = gen.fetch_chain_groups()
+else:
+    group_chains = None
 
 
 ### finds initial rotation matrices

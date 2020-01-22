@@ -18,6 +18,7 @@ group_N.add_argument('-nt', help='choose charged N terminal', action='store_true
 group_C.add_argument('-ct', help='choose charged C terminal state', action='store_true')
 group_N.add_argument('-capN', help='cap N terminal with ACE (Optional) not currently working', action='store_true')
 group_C.add_argument('-capC', help='cap C terminal with NME (Optional) not currently working', action='store_true')
+parser.add_argument('-group', help='treat user supplied atomistic chains, as single chains.  (Optional)',metavar='PIP2,D3A:PVCL2,C3A',type=str, nargs='*')
 parser.add_argument('-clean', help='removes all part files from build', action='store_true')
 parser.add_argument('-mod', help='treat fragments individually', action='store_true')
 parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional',metavar='tip3p',type=str)
@@ -38,7 +39,6 @@ group_req.add_argument('-info', help=' provides version, available forcefields a
 parser.add_argument('-o', help='Final output supplied (default = all)', default='all', type=str, choices= ['all', 'align', 'steer', 'none'])
 args = parser.parse_args()
 options = vars(args)
-
 #### if missing structure file print help and quit
 if not args.info and args.c == None:
     help_output = parser.print_help(sys.stderr)
@@ -55,7 +55,7 @@ at2cg=args.at2cg
 c, a, o = args.c, args.a, args.o
 # forcfield and fragment inputs
 w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
-cys, swap = args.cys, args.swap
+cys, swap, group = args.cys, args.swap, args.group
 ter, nt, ct, capN, capC = args.ter, args.nt, args.ct, args.capN, args.capC
 alchembed =  args.al
 #### virtual site information

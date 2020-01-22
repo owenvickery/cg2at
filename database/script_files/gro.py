@@ -504,7 +504,7 @@ def reverse_steer(protein_type):
             ' -c merged_cg2at_'+protein_type+'_reverse_steer_high.pdb', 'merged_cg2at_'+protein_type+'_reverse_steer_high.pdb'])
 
 def equilibrate(loc):
-    print('Running NVT on the de novo system')
+    print('Running NVT on de novo system')
     os.chdir(g_var.merged_directory)    
     write_steered_mdp(g_var.merged_directory+'nvt.mdp', 'POSRES', 2000)
     gen.mkdir_directory(g_var.merged_directory+'NVT')

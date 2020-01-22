@@ -36,6 +36,18 @@ def is_hydrogen(atom):
         return False
     else:
         return True
+
+def fetch_chain_groups():
+    group_chains = {}
+    if g_var.group[0] != 'all':
+        for group_val, group in enumerate(g_var.group):
+            for chain in group.split(','):
+                group_chains[int(chain)]=group_val 
+        return group_chains
+    else:
+        return 'all'
+    
+
 def split_swap(swap):
     try:
         res_range = re.split(':', swap)[2].split(',')
@@ -662,6 +674,8 @@ def print_script_timings(tc, system, user_at_input):
     print('{0:^47}{1:^22}'.format('---','----'))
     t1 = fix_time(tc['r_i_t'], tc['i_t'])
     print('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
+    print('{:-<69}'.format(''))
+
     if user_at_input and 'PROTEIN' in system:
         t2=fix_time(tc['p_d_n_t'],tc['r_i_t'])
         t3=fix_time(tc['f_p_t'],tc['p_d_n_t'])
@@ -677,7 +691,8 @@ def print_script_timings(tc, system, user_at_input):
     t7=fix_time(tc['m_t'],tc['n_p_t'])
     t8=fix_time(tc['f_t'],tc['i_t'])
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
-    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Merge protein and non protein system: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
+    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Merging residue types and further processing: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
+    print('{:-<69}'.format(''))
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t8[0],'hours',t8[1],'min',t8[2],'sec'))
 
 def database_information(forcefield_available, fragments_available):
