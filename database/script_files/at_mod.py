@@ -129,9 +129,6 @@ def check_atom_overlap(coordinates):
 #### creates tree of atom coordinates
     tree = cKDTree(coordinates)
     overlapped = overlapping_atoms(tree)
-    done=[]
-    moved_coord=[]
-    dist=0.35
 #### runs through overlapping atoms and moves atom in a random diection until it is no longer overlapping
     while len(overlapped) > 0:
         for ndx in overlapped:
@@ -321,6 +318,15 @@ def read_in_merged_pdbs(merge, merge_coords, location):
         return merge, merge_coords
     else:
         sys.exit('cannot find minimised residue: \n'+ location) 
+
+def check_overlap_chain(chain, input, box_vec):
+    lines, coords = read_in_merged_pdbs([], [], 'PROTEIN_'+input+str(chain)+'_gmx.pdb')
+    updated_coords = check_atom_overlap(coords)
+    pdb_output=gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_'+input+str(chain)+'_gmx_checked.pdb', box_vec) 
+
+    for line_val, line in enumerate(lines):
+        pdb_output.write(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
+                        updated_coords[line_val][0],updated_coords[line_val][1],updated_coords[line_val][2],1,0))+'\n')
 
 
 def fetch_chiral_coord(merge_temp):

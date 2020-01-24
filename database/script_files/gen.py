@@ -39,13 +39,13 @@ def is_hydrogen(atom):
 
 def fetch_chain_groups():
     group_chains = {}
-    if g_var.group[0] != 'all':
+    if g_var.group[0] not in ['all','chain']:
         for group_val, group in enumerate(g_var.group):
             for chain in group.split(','):
                 group_chains[int(chain)]=group_val 
         return group_chains
     else:
-        return 'all'
+        return g_var.group[0]
     
 
 def split_swap(swap):

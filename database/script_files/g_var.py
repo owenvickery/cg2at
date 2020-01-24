@@ -18,7 +18,7 @@ group_N.add_argument('-nt', help='choose charged N terminal', action='store_true
 group_C.add_argument('-ct', help='choose charged C terminal state', action='store_true')
 group_N.add_argument('-capN', help='cap N terminal with ACE (Optional) not currently working', action='store_true')
 group_C.add_argument('-capC', help='cap C terminal with NME (Optional) not currently working', action='store_true')
-parser.add_argument('-group', help='treat user supplied atomistic chains, as single chains.  (Optional)',metavar='PIP2,D3A:PVCL2,C3A',type=str, nargs='*')
+parser.add_argument('-group', help='treat user supplied atomistic chains, as rigid bodies. (0,1 2,3 or all or chain)',type=str, nargs='*')
 parser.add_argument('-clean', help='removes all part files from build', action='store_true')
 parser.add_argument('-mod', help='treat fragments individually', action='store_true')
 parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional',metavar='tip3p',type=str)
@@ -26,6 +26,7 @@ parser.add_argument('-ff', help='choose your forcefield. (Optional)',metavar='ch
 parser.add_argument('-fg', help='choose your fragment library. (Optional)',metavar='martini-2-2',type=str, nargs='*')
 parser.add_argument('-gromacs', help='gromacs executable name (Optional)',metavar='gmx_avx',type=str)
 parser.add_argument('-cys', help='cutoff for disulphide bonds, sometimes CYS are too far apart (Optional)',metavar='7',type=float, default=7)
+parser.add_argument('-silent', help='silent cysteines question', action='store_true')
 parser.add_argument('-swap', help='creates a swap dictionary supply residues as PIP2,D3A:PVCL2,C3A (Optional)',metavar='PIP2,D3A:PVCL2,C3A',type=str, nargs='*')
 parser.add_argument('-box', help='box size in Angstrom (0 = use input file) (Optional)',metavar='100',type=float, nargs=3)
 parser.add_argument('-vs', help='use virtual sites', action='store_true')
@@ -37,6 +38,7 @@ group_req = parser.add_mutually_exclusive_group()
 group_req.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)
 group_req.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
 parser.add_argument('-o', help='Final output supplied (default = all)', default='all', type=str, choices= ['all', 'align', 'steer', 'none'])
+
 args = parser.parse_args()
 options = vars(args)
 #### if missing structure file print help and quit
@@ -55,17 +57,14 @@ at2cg=args.at2cg
 c, a, o = args.c, args.a, args.o
 # forcfield and fragment inputs
 w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
-cys, swap, group = args.cys, args.swap, args.group
+cys, silent, swap, group = args.cys, args.silent, args.swap, args.group
 ter, nt, ct, capN, capC = args.ter, args.nt, args.ct, args.capN, args.capC
 alchembed =  args.al
 #### virtual site information
-vs=args.vs
 if args.vs:
-    vst='0.004'
     vs = '-vsite h'
     sf = args.sf-0.1
 else:
-    vst='0.002'
     vs = ''
     sf=args.sf
 box = args.box

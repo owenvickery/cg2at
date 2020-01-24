@@ -56,21 +56,31 @@ else:
     if 'PROTEIN' in cg_residues:
         if user_at_input:
             atomistic_protein_input_raw, chain_count = at_mod_p.read_in_atomistic(g_var.input_directory+'AT_input.pdb')  ## reads in user structure
-            user_cys_bond = at_mod_p.find_disulphide_bonds_user_sup(atomistic_protein_input_raw)
-            seq_user = at_mod_p.check_sequence(atomistic_protein_input_raw, chain_count)
-        else:
-            user_cys_bond = []
-        p_system, backbone_coords, final_coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec, user_cys_bond)
+
+
+        p_system, backbone_coords, coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec, user_at_input)
+        # coordinates_atomistic = at_mod_p.reset_resids(coordinates_atomistic)
         system['PROTEIN']=p_system['PROTEIN']
         time_counter['p_d_n_t']=time.time()
         #### reads in user supplied atomistic structure 
         if user_at_input:
-            atomistic_protein_input = at_mod_p.align_chains(atomistic_protein_input_raw, seq_user, sequence)
-            atomistic_protein_centered, cg_com = at_mod_p.center_atomistic(atomistic_protein_input, backbone_coords) ## centers each monomer by center of mass
-            at_mod_p.rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, backbone_coords, cg_com, box_vec) ## rigid fits each monomer
+            seq_user = at_mod_p.check_sequence(atomistic_protein_input_raw, chain_count)
+            atomistic_protein_input, group_chain = at_mod_p.align_chains(atomistic_protein_input_raw, seq_user, sequence)
+            user_cys_bond = at_mod_p.find_disulphide_bonds_user_sup(atomistic_protein_input)
+            atomistic_protein_centered, cg_com = at_mod_p.center_atomistic(atomistic_protein_input, backbone_coords, group_chain) ## centers each monomer by center of mass
+        else:
+            user_cys_bond = {}
+        user_cys_bond = at_mod_p.find_disulphide_bonds_de_novo(coordinates_atomistic, user_cys_bond)
+        coordinates_atomistic = at_mod_p.correct_disulphide_bonds(coordinates_atomistic, user_cys_bond)
+        final_coordinates_atomistic = at_mod_p.finalise_novo_atomistic(coordinates_atomistic, cg_residues['PROTEIN'], box_vec)
+        if user_at_input:
+            at_com_group, cg_com_group = at_mod_p.rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, backbone_coords, cg_com, box_vec, group_chain) ## rigid fits each monomer
+            final_user_supplied_coord = at_mod_p.apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, at_com_group,cg_com_group,cg_com, box_vec, group_chain)
+            final_user_supplied_coord = at_mod_p.correct_disulphide_bonds(final_user_supplied_coord, user_cys_bond)
+            at_mod_p.write_user_chains_to_pdb(final_user_supplied_coord, box_vec)
         #### minimise each protein chain
-        print('minimising protein')
-        gro.minimise_protein(system['PROTEIN'], p_system, user_at_input)
+        print('Minimising '+str(p_system['PROTEIN'])+' protein chains')
+        gro.minimise_protein(system['PROTEIN'], p_system, user_at_input, box_vec)
         #### read in minimised de novo protein chains and merges chains
         merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/min/PROTEIN_de_novo', '.pdb')
         at_mod_p.write_merged_pdb(merge_de_novo, '_de_novo', box_vec)
@@ -92,6 +102,7 @@ else:
 
     #### converts non protein residues into atomistic (runs on all cores)
     if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]) > 0:
+        print('\nConverting the following residues concurrently: ')
         np_system={}
         pool = mp.Pool(mp.cpu_count())
         pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(cg_residues, residue_type, box_vec) for residue_type in [key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]]).get()          ## minimisation grompp parallised  
@@ -128,9 +139,11 @@ else:
         gro.minimise_merged_pdbs(system, '_de_novo')
         ringed_lipids = at_mod.read_minimised_system('_de_novo', box_vec)
         if len(system) > 1 and g_var.alchembed and len(ringed_lipids) > 0:
+            gro.run_nvt(g_var.merged_directory+'min/merged_cg2at_de_novo_minimised.pdb')
             gro.alchembed(system['PROTEIN'], 'de_novo')  
         else:
-            gro.equilibrate(g_var.merged_directory+'min/merged_cg2at_de_novo_minimised.pdb')
+            gro.run_nvt(g_var.merged_directory+'min/merged_cg2at_de_novo_minimised.pdb')
+            gro.run_npt(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt.pdb')
         if user_at_input and 'PROTEIN' in system:
             print()
             if g_var.o in ['all', 'steer']:
