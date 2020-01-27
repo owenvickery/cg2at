@@ -7,7 +7,6 @@ from string import ascii_uppercase
 import difflib
 from scipy.spatial import cKDTree
 import gen, g_var, f_loc, at_mod
-from f_loc import group_chains as test_chains
 import math
 
 def build_protein_atomistic_system(cg_residues, box_vec, user_supplied):
@@ -465,7 +464,7 @@ def center_at_protein_chain_groups(atomistic_protein_input, cg_com, protein_mass
     return atomistic_protein_input, cg_com
 
 
-def center_at_protein_all_chains(atomistic_protein_input, cg_com,  protein_mass, cg_backbone_masses):
+def center_at_protein_all_chains(atomistic_protein_input, cg_com,  protein_mass, cg_backbone_masses, group_chain):
     atomistic_protein_mass = at_mod.COM(protein_mass, 'All AT protein chains')
     for chain in atomistic_protein_input:
         for part_val, part in enumerate(atomistic_protein_input[chain]):
@@ -637,47 +636,7 @@ def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_cent
         if not exists:
             complete_user_at[residue]=final_coordinates_atomistic[residue]
     return complete_user_at
-        # check_cysteines(complete_user_at, )
 
-
-
-
-
-
-
-        # for initial_index in final_coordinates_atomistic[residue]:
-        #     if final_coordinates_atomistic[residue][initial_index]['res_type'] in f_loc.mod_residues:
-        #         complete_user_at[residue]=final_coordinates_atomistic[residue]
-        #         # for atom in final_coordinates_atomistic[residue]:
-        #         #     short_line=final_coordinates_atomistic[residue][atom]
-        #         #     final_atom[at_id]={'atom':short_line['atom'], 'res_type':short_line['res_type'], 'chain':ascii_uppercase[chain], 'residue':residue,\
-        #         #                  'x':short_line['coord'][0],'y':short_line['coord'][1],'z':short_line['coord'][2]}
-        #         #     at_id+=1
-        #         #     coord.append(short_line['coord'])
-        #     elif final_coordinates_atomistic[residue][initial_index]['res_type'] not in f_loc.mod_residues:
-        #         for part_val, part in enumerate(atomistic_protein_centered):
-        #             if residue in atomistic_protein_centered[part]:
-        #                 exists=True
-        #                 for atom in atomistic_protein_centered[part][residue]:   
-        #                     if atomistic_protein_centered[part][residue][atom]['res_type'] != final_coordinates_atomistic[residue][initial_index]['res_type']:
-        #                         print('de_novo' , final_coordinates_atomistic[residue][initial_index]['res_type'],'at_user', atomistic_protein_centered[part][residue][atom]['res_type'])
-        #                         sys.exit('de novo and at user supplied don\'t match')
-        #                     atomistic_protein_centered[part][residue][atom]['coord'] = at_mod.rotate_atom(atomistic_protein_centered[part][residue][atom]['coord'], cg_com[part_val], xyz_rot_apply[part_val])
-                        
-        #                 complete_user_at[residue]=atomistic_protein_centered[part][residue]
-        #                     short_line = atomistic_protein_centered[part][residue][atom]
-        #                     final_atom[at_id]={'atom':short_line['atom'], 'res_type':short_line['res_type'], 'chain':ascii_uppercase[chain], 'residue':residue,\
-        #                                 'x':short_line['coord'][0],'y':short_line['coord'][1],'z':short_line['coord'][2]}
-        #                     at_id+=1
-        #                     coord.append(short_line['coord'])
-        #     if not exists:
-        #         for atom in final_coordinates_atomistic[residue]:
-        #             short_line=final_coordinates_atomistic[residue][atom]  
-        #             final_atom[at_id]={'atom':short_line['atom'], 'res_type':short_line['res_type'], 'chain':ascii_uppercase[chain], 'residue':residue,\
-        #                         'x':short_line['coord'][0],'y':short_line['coord'][1],'z':short_line['coord'][2]}
-        #             at_id+=1
-        #             coord.append(short_line['coord'])
-        #     break
 def write_user_chains_to_pdb(atomistic_user_supplied, box_vec):
     for chain in atomistic_user_supplied:
         pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_aligned_'+str(chain)+'.pdb', box_vec)

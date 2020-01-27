@@ -443,7 +443,7 @@ def alchembed(system, protein_type):
         if not os.path.exists('alchembed_'+str(chain)+'.mdp'):
             with open('alchembed_'+str(chain)+'.mdp', 'w') as alchembed:
                 alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 500\ndt = 0.001\ncontinuation = no\nconstraint_algorithm = lincs')
-                alchembed.write('\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
+                alchembed.write('\nconstraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
                 alchembed.write('\npme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\ncutoff-scheme = Verlet')
                 alchembed.write('\npcoupl = Berendsen\npcoupltype = semiisotropic\n tau_p = 2.0\nref_p = 1.0 1.0\ncompressibility = 4.5e-5 4.5e-5\n')
                 alchembed.write('\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00')
@@ -483,7 +483,7 @@ def write_steered_mdp(loc, posres, time, timestep):
     if not os.path.exists(loc):
         with open(loc, 'w') as steered_md:
             steered_md.write('define = '+posres+'\nintegrator = md\nnsteps = '+str(time)+'\ndt = '+str(timestep)+'\ncontinuation   = no\nconstraint_algorithm = lincs\n')
-            steered_md.write('constraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
+            steered_md.write('constraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
             steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\n')
             steered_md.write('pcoupl = Berendsen\npcoupltype = semiisotropic\ntau_p = 2.0\nref_p = 1.0 1.0\ncompressibility = 4.5e-5 4.5e-5\n')
             steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nrefcoord_scaling = com\ncutoff-scheme = Verlet')   
@@ -492,7 +492,7 @@ def write_nvt_mdp(loc, posres, time, timestep):
     if not os.path.exists(loc):
         with open(loc, 'w') as steered_md:
             steered_md.write('define = -D'+posres+'\nintegrator = md\nnsteps = '+str(time)+'\ndt = '+str(timestep)+'\ncontinuation   = no\nconstraint_algorithm = lincs\n')
-            steered_md.write('constraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
+            steered_md.write('constraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
             steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\n')
             steered_md.write('pcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nrefcoord_scaling = com\ncutoff-scheme = Verlet')   
 
@@ -514,6 +514,7 @@ def reverse_steer(protein_type):
     os.chdir('reverse_steer')
     gromacs([g_var.gmx+' mdrun -v -pin on -deffnm merged_cg2at_'+protein_type+'_reverse_steer_low'+
             ' -c merged_cg2at_'+protein_type+'_reverse_steer_low.pdb', 'merged_cg2at_'+protein_type+'_reverse_steer_low.pdb'])
+    os.chdir('..')
     gromacs([g_var.gmx+' grompp '+
             '-po ../md_out-merged_cg2at_reverse_steer_high '+
             '-f ../high_posres.mdp '+
@@ -522,6 +523,7 @@ def reverse_steer(protein_type):
             '-c merged_cg2at_'+protein_type+'_reverse_steer_low.pdb '+
             '-o merged_cg2at_'+protein_type+'_reverse_steer_high '+
             '-maxwarn 1', 'merged_cg2at_'+protein_type+'_reverse_steer_high.tpr'])  
+    os.chdir('reverse_steer')
     gromacs([g_var.gmx+' mdrun -v -pin on -deffnm merged_cg2at_'+protein_type+'_reverse_steer_high'+
             ' -c merged_cg2at_'+protein_type+'_reverse_steer_high.pdb', 'merged_cg2at_'+protein_type+'_reverse_steer_high.pdb'])
 
