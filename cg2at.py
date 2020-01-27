@@ -92,9 +92,11 @@ else:
                 for chain in range(system['PROTEIN']):
                     gro.steered_md_atomistic_to_cg_coord(chain)
                 #### read in minimised user supplied protein chains and merges chains
+                # print('Reading in steered protein')
                 merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/steered_md/PROTEIN_steered', '.pdb')
                 at_mod_p.write_merged_pdb(merge_at_user, '_steered', box_vec)
             if g_var.o in ['all', 'align']:
+                # print('Reading in aligned protein')
                 merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_aligned', '_gmx.pdb')
                 at_mod_p.write_merged_pdb(merge_at_user_no_steer, '_aligned', box_vec)
 
@@ -148,11 +150,13 @@ else:
             print()
             if g_var.o in ['all', 'steer']:
                 at_mod.merge_system_pdbs(system, '_steered', cg_residues, box_vec)
-                gro.reverse_steer('steered')
+                gro.reverse_steer_low('steered')
+                gro.reverse_steer_high('steered')
                 gen.file_copy_and_check(g_var.merged_directory+'reverse_steer/merged_cg2at_steered_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_steered.pdb')
             if g_var.o in ['all', 'align']:    
                 at_mod.merge_system_pdbs(system, '_aligned', cg_residues, box_vec)
-                gro.reverse_steer('aligned')
+                gro.reverse_steer_low('aligned')
+                gro.reverse_steer_high('aligned')
                 gen.file_copy_and_check(g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb')
     time_counter['m_t']=time.time()
 

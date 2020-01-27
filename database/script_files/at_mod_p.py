@@ -88,7 +88,7 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         xyz_cur = cg_residues[residue_number]['BB']['coord']
         xyz_prev = cg_residues[residue_number-1]['BB']['coord']
         dist=gen.calculate_distance(xyz_prev, xyz_cur)
-        if dist < 5:
+        if dist < 6:
             cg_n = cg_residues[residue_number-1]['BB']['coord']
             at_n = at_residues[N_ter]['coord']
             cg_connections.append(cg_n)
@@ -100,7 +100,7 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         xyz_cur = cg_residues[residue_number]['BB']['coord']
         xyz_next = cg_residues[residue_number+1]['BB']['coord']
         dist=gen.calculate_distance(xyz_next, xyz_cur)
-        if dist < 5:
+        if dist < 6:
             cg_c = cg_residues[residue_number+1]['BB']['coord']
             at_c = at_residues[C_ter]['coord']
             cg_connections.append(cg_c)
@@ -552,7 +552,7 @@ def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_cen
 
             final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], atomistic_protein_centered[chain], cg_com[chain], rotations, chain, box_vec)
         else:
-            final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], [], [], [], chain, box_vec, user_cys_bond)
+            final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], [], [], [], chain, box_vec)
     return final_user_supplied_coord
 
 def return_all_rotations_final(at_com_group,cg_com_group,cg_com):
