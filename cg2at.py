@@ -149,14 +149,18 @@ else:
         if user_at_input and 'PROTEIN' in system:
             print()
             if g_var.o in ['all', 'steer']:
+                print('Creating steered system')
                 at_mod.merge_system_pdbs(system, '_steered', cg_residues, box_vec)
-                gro.reverse_steer_low('steered')
-                gro.reverse_steer_high('steered')
+                gro.reverse_steer('steered', 'low', g_var.merged_directory+'final_cg2at_de_novo.pdb')
+                gro.reverse_steer('steered', 'mid', g_var.merged_directory+'reverse_steer/merged_cg2at_steered_reverse_steer_low.pdb')
+                gro.reverse_steer('steered', 'high', g_var.merged_directory+'reverse_steer/merged_cg2at_steered_reverse_steer_mid.pdb')
                 gen.file_copy_and_check(g_var.merged_directory+'reverse_steer/merged_cg2at_steered_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_steered.pdb')
-            if g_var.o in ['all', 'align']:    
+            if g_var.o in ['all', 'align']:   
+                print('Creating aligned system') 
                 at_mod.merge_system_pdbs(system, '_aligned', cg_residues, box_vec)
-                gro.reverse_steer_low('aligned')
-                gro.reverse_steer_high('aligned')
+                gro.reverse_steer('aligned', 'low', g_var.merged_directory+'final_cg2at_de_novo.pdb')
+                gro.reverse_steer('aligned', 'mid', g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_low.pdb')
+                gro.reverse_steer('aligned', 'high', g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_mid.pdb')
                 gen.file_copy_and_check(g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb')
     time_counter['m_t']=time.time()
 

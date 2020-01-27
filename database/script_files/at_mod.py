@@ -297,7 +297,7 @@ def merge_system_pdbs(system, protein, cg_residues, box_vec):
         else:
             input_type=protein
         merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
-    if protein in ['_novo']:
+    if 'novo' in protein:
         print('checking for atom overlap in : '+protein[1:])
         merge_coords = check_atom_overlap(merge_coords)
     for line_val, line in enumerate(merge):
