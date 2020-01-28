@@ -14,6 +14,9 @@ This script roughly follows the following workflow.
 - Rotate fragments to find minimum distance between the atoms connecting to other beads.
 - Minimise residue
 - Merge all residues and minimise
+- check for abnormal bonds (marker for lipid through rings)
+- Run NVT and NPT
+- Morph protein to either rigid body alignment or steered alignment
 
 <pre>
            CG beads         Fragments           COM aligned fragments           Aligned fragments                 Atomistic
@@ -84,26 +87,27 @@ REQUIRED
 OPTIONAL
 - -a          (pdb/gro/tpr)
 - -o          ['all', 'steer', 'align', 'none']
-- -info       (True/False)
-- -version    (True/False)
-- -v          (-vvv) 
+- -group      (str)(e.g. 0,1 2,3 or all or chain)
 - -mod        (True/False)
 - -sf         (float)(default=0.9)
+- -swap       (str)
 - -cys        (float)
-- -clean      (True/False) 
 - -ter        (True/False)
 - -nt         (True/False)
 - -ct         (True/False)
 - -al         (True/False)
 - -vs         (True/False)
-- -swap       (str)(eg PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip)
+- -swap       (str)(e.g. PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip)
 - -box        (int) (Angstrom)(0 is ignored and uses input eg 100 150 100 ) 
 - -w          [tip3p, tip4p, spc and spce] 
 - -ff         (str) 
 - -fg         (str) 
 - -gromacs    (str) 
 - -loc        (str)  
-- -swap       (str)
+- -clean      (True/False) 
+- -info       (True/False)
+- -version    (True/False)
+- -v          (-vvv) 
 
                                         **INPUT**
 
@@ -156,22 +160,86 @@ e.g.
 
                                         **Advanced Usage**
 
+                                        Extra information
+
+To print out all available forcefields and fragments use the flag:
+
+- -info
+
+if a fragment library is also specified then the available fragments will also been shown (-fg)
+
+                                        Version
+
+To print out the version of the script use the flag:
+
+- -version
+
+                                        Verbosity
+
+There are 3 levels of verbosity within this script:
+
+no verbosity:
+
+- Basic information of current process.
+- RMSD of final backbone to original CG representation (Angstrom)
+- Number of residues converted
+
+1st level (-v)
+
+- Chain number and length
+- Sequence for chains
+- COM of each chain
+- Rotation of each chain to find optimum fitting
+- Timings for each section of the script
+
+2nd level (-vv)
+
+- location of each fragment library 
+- all residues available in the fragment library  
+
+3rd level (-vvv)
+
+- prints out all gromacs commands called by the script
+
+
+                                        Virtual sites
 To apply virtual sites to you protein use the flag:
 
 - -vs
 
-To switch off the alchembed step us the flag:
+                                        Disulphide Bonds
 
-- -al
+The script currently finds disulphide bonds in the user supplied atomistic structure (S-S < 2.1 A).
+As well as searching the CG representation for disulphide bonds (SC1-SC1 < 7 A and more than 4 residues apart).
+If the disulphide only exists in the CG, then the script will ask if it is a disuphide. 
+To silence the question and automatically select disulphides use the flag: 
 
-This will significantly spped up the script haowever you might get some lipids struck in the aromatic rings, therefore use with caution.
+- -silent
 
 In most cases the script catches the extra long disulphide bonds in martini simulations, however in some cases the disulphide can extend up to 10A.
 If you recieve a error that the pdb and topology don't match and the atom number is out by 2. It is most likely a disulpide bond not being treated correctly.
-You may be able to fix it by increasing the disulide bond radius catch using the flag:
+You may be able to fix it by increasing the disulphide bond search radius catch using the flag:
 
 - -cys (default = 0.7 A)
 
+                                        Rigid fitting
+
+If you are converting a multimeric protein, such as a potassium channel. You can fit the atomistic structure in several ways:
+
+fit by coarse grain chain.
+
+- -group chain
+
+fit entire atomistic structure rigidly
+
+- -group all
+
+fit chains in specific groups (treat chains 0, 2 and 1, 3 as individual groups).
+each group is separated by a space.
+
+- -group 0,2 1,3   
+
+                                        Swap residues and beads
 
 Due to the modular nature of CG representation, you can switch residues during the conversion if you wish to make simple mutations.
 

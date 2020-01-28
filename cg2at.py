@@ -56,13 +56,13 @@ else:
     if 'PROTEIN' in cg_residues:
         if user_at_input:
             atomistic_protein_input_raw, chain_count = at_mod_p.read_in_atomistic(g_var.input_directory+'AT_input.pdb')  ## reads in user structure
-
-
         p_system, backbone_coords, coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec, user_at_input)
-        # coordinates_atomistic = at_mod_p.reset_resids(coordinates_atomistic)
+        if not user_at_input and g_var.v >= 1:
+            print('coarse grain protein sequence:\n')
+            for index in sequence:
+                print('chain:', index,sequence[index], '\n') 
         system['PROTEIN']=p_system['PROTEIN']
         time_counter['p_d_n_t']=time.time()
-        #### reads in user supplied atomistic structure 
         if user_at_input:
             seq_user = at_mod_p.check_sequence(atomistic_protein_input_raw, chain_count)
             atomistic_protein_input, group_chain = at_mod_p.align_chains(atomistic_protein_input_raw, seq_user, sequence)
@@ -92,11 +92,9 @@ else:
                 for chain in range(system['PROTEIN']):
                     gro.steered_md_atomistic_to_cg_coord(chain)
                 #### read in minimised user supplied protein chains and merges chains
-                # print('Reading in steered protein')
                 merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/steered_md/PROTEIN_steered', '.pdb')
                 at_mod_p.write_merged_pdb(merge_at_user, '_steered', box_vec)
             if g_var.o in ['all', 'align']:
-                # print('Reading in aligned protein')
                 merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_aligned', '_gmx.pdb')
                 at_mod_p.write_merged_pdb(merge_at_user_no_steer, '_aligned', box_vec)
 
