@@ -1,10 +1,13 @@
-                                   **CG2AT v2 README**
-
+<p align="center">
+                                   <b>**CG2AT v2 README**</b>
+</p>
 If you are using this script please acknowledge me (Dr Owen Vickery) and cite the following DOI.
 
 DOI: xxx
 
-                                    **CG2AT SCRIPT OVERVIEW**
+<p align="center">
+                                   <b>**CG2AT SCRIPT OVERVIEW**</b>
+</p>
 
 The script is a fragment based conversion of the CG representation into atomistic. 
 
@@ -47,9 +50,10 @@ The connecting atoms are highlighted by square brackets
 
 This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
 
-
-                                     **REQUIREMENTS**
-
+<p align="center">
+                                   <b>**REQUIREMENTS**</b>
+</p>
+                                     
 Software:
 
 - Python v3 or higher
@@ -79,7 +83,10 @@ Standard modules included in base python install (ubuntu 18):
 - subprocess
 - time
 
-                                        **FLAGS**
+<p align="center">
+                                   <b>**FLAGS**</b>
+</p>
+                                        
 
 REQUIRED
 - -c          (pdb/gro/tpr)
@@ -108,9 +115,9 @@ OPTIONAL
 - -info       (True/False)
 - -version    (True/False)
 - -v          (-vvv) 
-
-                                        **INPUT**
-
+<p align="center">
+                                   <b>**INPUT**</b>
+</p>
 
 The script contains two methods to rebuild the system:
 
@@ -158,23 +165,31 @@ e.g.
     python cg2at.py -c cg_input.gro -a atomistic_input.gro
 </pre>
 
-                                        **Advanced Usage**
-
-                                        Extra information
+<p align="center">
+                                   <b>**Advanced Usage**</b>
+</p>
+                                        
+<p align="center">
+                                   <b>Extra information</b>
+</p>
+                                        
 
 To print out all available forcefields and fragments use the flag:
 
 - -info
 
 if a fragment library is also specified then the available fragments will also been shown (-fg)
-
-                                        Version
-
+<p align="center">
+                                   <b>Version</b>
+</p>
+                                        
 To print out the version of the script use the flag:
 
 - -version
 
-                                        Verbosity
+<p align="center">
+                                   <b>Verbosity</b>
+</p>                                      
 
 There are 3 levels of verbosity within this script:
 
@@ -201,13 +216,17 @@ no verbosity:
 
 - prints out all gromacs commands called by the script
 
+<p align="center">
+                                   <b>Virtual sites</b>
+</p>
 
-                                        Virtual sites
 To apply virtual sites to you protein use the flag:
 
 - -vs
-
-                                        Disulphide Bonds
+<p align="center">
+                                   <b>Disulphide Bonds</b>
+</p>
+                                        
 
 The script currently finds disulphide bonds in the user supplied atomistic structure (S-S < 2.1 A).
 As well as searching the CG representation for disulphide bonds (SC1-SC1 < 7 A and more than 4 residues apart).
@@ -222,7 +241,10 @@ You may be able to fix it by increasing the disulphide bond search radius catch 
 
 - -cys (default = 0.7 A)
 
-                                        Rigid fitting
+<p align="center">
+                                   <b>Rigid fitting</b>
+</p>
+                                        
 
 If you are converting a multimeric protein, such as a potassium channel. You can fit the atomistic structure in several ways:
 
@@ -239,7 +261,10 @@ each group is separated by a space.
 
 - -group 0,2 1,3   
 
-                                        Swap residues and beads
+<p align="center">
+                                   <b>Swap residues and beads</b>
+</p>
+                                        
 
 Due to the modular nature of CG representation, you can switch residues during the conversion if you wish to make simple mutations.
 
@@ -286,7 +311,10 @@ The following switches all POPE to POPG and all POPG to POPE
 The following will skip all NA+ between resid 4000 and 4100.
 - -swap NA+:skip:4000-4100
 
-                                        **OUTPUT**
+<p align="center">
+                                   <b>**OUTPUT**</b>
+</p>
+                                        
 
 The script will create a output file system as below.
 
@@ -327,8 +355,10 @@ Directories
   - topology for all residues
   - final atomistic structures in pdb format
 
-
-                                        **OUTPUT**
+<p align="center">
+                                   <b>Output conversions</b>
+</p>
+                                        
 
 The script provides 3 types of coarsegrain conversions. 
 
@@ -360,9 +390,10 @@ Aligned output:
     - Any missing residues or residue types found in the MOD directory are added from the de novo method.
   - The de novo system is then steered to the coordinates from the rigidly fit protein.  
 
-
-                                        **Automation**
-
+<p align="center">
+                                   <b>**Automation**</b>
+</p>
+                                        
 If you know in advance which settings you wish to use, these can be supplied by the following flags. 
 
 - w   (str) water model         e.g. tip3p
@@ -378,8 +409,10 @@ example input.
     python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update  -box 100 100 100 -nt -ct
 </pre>
 
-                                    **AT2CG SCRIPT OVERVIEW**
-
+<p align="center">
+                                   <b>**AT2CG SCRIPT OVERVIEW**</b>
+</p>
+                                    
 Within this script I have included a the reverse of CG2AT. Here the fragment library is used to convert a atomistic system into a coarsegrain representation.
 
 This script roughly follows the following workflow.
@@ -412,10 +445,10 @@ This script roughly follows the following workflow.
 
 This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
 
-
-                                           **FLAGS**
-
-
+<p align="center">
+                                   <b>**FLAGS**</b>
+</p>
+           
 The conversion follows a similar syntax to CG2AT.
 
 The following flags are required:
@@ -445,8 +478,10 @@ resname POPI (which in reality is POPI2_3-5 not POPI1_3) in martini is called PO
 python cg2at.py -c at_input.gro -fg martini_2-2_charmm36 -ff martini_2-2 -at2cg -swap POPI:POP2
 </pre>
 
-                                        **AT2CG OUTPUT DIRECTORIES**
-
+<p align="center">
+                                   <b>**AT2CG OUTPUT DIRECTORIES**</b>
+</p>
+                                        
 The script will create a output file system as below.
 
     | --    AT2CG_(timestamp)
@@ -466,7 +501,7 @@ Directories
   - final CG structures in pdb format
   - topology file
   
-A topology will be provided, however it will require updating with the correct protein information. places to update are highlighted as "XXX" 
+A topology will be provided, however it will require updating with the correct protein information. Places to update are highlighted as "XXX" 
 
 To remake your martini topology of the protein. You will need to rerun martinise.py.
 
