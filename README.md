@@ -95,6 +95,7 @@ OPTIONAL
 - -a          (pdb/gro/tpr)
 - -o          ['all', 'steer', 'align', 'none']
 - -group      (str)(e.g. 0,1 2,3 or all or chain)
+- -npcus      (int)
 - -mod        (True/False)
 - -sf         (float)(default=0.9)
 - -swap       (str)
@@ -168,7 +169,16 @@ e.g.
 <p align="center">
                                    <b>**Advanced Usage**</b>
 </p>
-                                        
+
+<p align="center">
+                                   <b>Number of CPUs</b>
+</p>
+
+This script will use all the available cores within the architecture it is run, which will slow down other programs.
+To override this and limit the number of cores you can use the flag:
+
+- -ncpus (int)
+
 <p align="center">
                                    <b>Extra information</b>
 </p>
