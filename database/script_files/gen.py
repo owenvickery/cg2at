@@ -682,18 +682,25 @@ def print_script_timings(tc, system, user_at_input):
         t4=fix_time(tc['f_p_t'],tc['r_i_t'])
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein: ',t2[0],'hours',t2[1],'min',t2[2],'sec'))        
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein from provided structure: ',t3[0],'hours',t3[1],'min',t3[2],'sec'))
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein build: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
-    else:
-        t5=fix_time(tc['f_p_t'],tc['r_i_t'])
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein build: ',t5[0],'hours',t5[1],'min',t5[2],'sec'))
-    print('{:-<69}'.format(''))
+        # print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein build: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
+    # else:
+    #     t5=fix_time(tc['f_p_t'],tc['r_i_t'])
+        # print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein build: ',t5[0],'hours',t5[1],'min',t5[2],'sec'))
+    # print('{:-<69}'.format(''))
     t6=fix_time(tc['n_p_t'],tc['f_p_t'])
     t7=fix_time(tc['m_t'],tc['n_p_t'])
-    t8=fix_time(tc['f_t'],tc['i_t'])
+    
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
-    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Merging residue types and further processing: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
+    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Equilibrate de novo: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
+    if g_var.o in ['all', 'steer']:
+        t8=fix_time(tc['s_e'],tc['s_s'])
+        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating steered system: ', t8[0],'hours',t8[1],'min',t8[2],'sec'))
+    if g_var.o in ['all', 'align']:
+        t9=fix_time(tc['a_e'],tc['a_s'])
+        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating aligned system: ', t9[0],'hours',t9[1],'min',t9[2],'sec'))
     print('{:-<69}'.format(''))
-    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t8[0],'hours',t8[1],'min',t8[2],'sec'))
+    t10=fix_time(tc['f_t'],tc['i_t'])
+    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t10[0],'hours',t10[1],'min',t10[2],'sec'))
 
 def database_information(forcefield_available, fragments_available):
     print('{0:30}'.format('\nThis script is a fragment based conversion of the coarsegrain representation to atomistic.\n'))

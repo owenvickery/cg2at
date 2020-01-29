@@ -57,6 +57,7 @@ else:
         if user_at_input:
             atomistic_protein_input_raw, chain_count = at_mod_p.read_in_atomistic(g_var.input_directory+'AT_input.pdb')  ## reads in user structure
         p_system, backbone_coords, coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec, user_at_input)
+
         if not user_at_input and g_var.v >= 1:
             print('coarse grain protein sequence:\n')
             for index in sequence:
@@ -148,18 +149,22 @@ else:
             print()
             if g_var.o in ['all', 'steer']:
                 print('Creating steered system')
+                time_counter['s_s']=time.time()
                 at_mod.merge_system_pdbs(system, '_steered', cg_residues, box_vec)
                 gro.reverse_steer('steered', 'low', g_var.merged_directory+'final_cg2at_de_novo.pdb')
                 gro.reverse_steer('steered', 'mid', g_var.merged_directory+'reverse_steer/merged_cg2at_steered_reverse_steer_low.pdb')
                 gro.reverse_steer('steered', 'high', g_var.merged_directory+'reverse_steer/merged_cg2at_steered_reverse_steer_mid.pdb')
                 gen.file_copy_and_check(g_var.merged_directory+'reverse_steer/merged_cg2at_steered_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_steered.pdb')
+                time_counter['s_e']=time.time()
             if g_var.o in ['all', 'align']:   
                 print('Creating aligned system') 
+                time_counter['a_s']=time.time()
                 at_mod.merge_system_pdbs(system, '_aligned', cg_residues, box_vec)
                 gro.reverse_steer('aligned', 'low', g_var.merged_directory+'final_cg2at_de_novo.pdb')
                 gro.reverse_steer('aligned', 'mid', g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_low.pdb')
                 gro.reverse_steer('aligned', 'high', g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_mid.pdb')
                 gen.file_copy_and_check(g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb')
+                time_counter['a_e']=time.time()
     time_counter['m_t']=time.time()
 
     if 'PROTEIN' in cg_residues:

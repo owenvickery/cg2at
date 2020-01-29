@@ -61,8 +61,23 @@ c, a, o = args.c, args.a, args.o
 w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
 cys, silent, swap, group = args.cys, args.silent, args.swap, args.group
 ter, nt, ct, capN, capC = args.ter, args.nt, args.ct, args.capN, args.capC
-alchembed, ncpus =  args.al, args.ncpus
+alchembed = args.al
 #### virtual site information
+
+if args.ncpus != None:
+    if args.ncpus > mp.cpu_count():
+        print('you have selected to use more CPU cores than are available: '+str(args.ncpus))
+        print('defaulting to the maximum number of cores: '+str(mp.cpu_count()))
+        ncpus = mp.cpu_count()
+    else:
+        ncpus = args.ncpus
+else:
+    if mp.cpu_count() >= 8:
+        ncpus = 8
+    else:
+        ncpus = mp.cpu_count()
+
+
 if args.vs:
     vs = '-vsite h'
     sf = args.sf-0.1
