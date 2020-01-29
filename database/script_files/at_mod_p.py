@@ -88,7 +88,7 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         xyz_cur = cg_residues[residue_number]['BB']['coord']
         xyz_prev = cg_residues[residue_number-1]['BB']['coord']
         dist=gen.calculate_distance(xyz_prev, xyz_cur)
-        if dist < 6:
+        if dist < 7:
             cg_n = cg_residues[residue_number-1]['BB']['coord']
             at_n = at_residues[N_ter]['coord']
             cg_connections.append(cg_n)
@@ -100,7 +100,7 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         xyz_cur = cg_residues[residue_number]['BB']['coord']
         xyz_next = cg_residues[residue_number+1]['BB']['coord']
         dist=gen.calculate_distance(xyz_next, xyz_cur)
-        if dist < 6:
+        if dist < 7:
             cg_c = cg_residues[residue_number+1]['BB']['coord']
             at_c = at_residues[C_ter]['coord']
             cg_connections.append(cg_c)

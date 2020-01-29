@@ -4,6 +4,7 @@ import os, sys
 from time import gmtime, strftime
 import distutils.spawn
 import argparse
+import multiprocessing as mp
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', prog='CG2AT', epilog='Enjoy the program and best of luck!\n', allow_abbrev=True)
@@ -38,6 +39,7 @@ group_req = parser.add_mutually_exclusive_group()
 group_req.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)
 group_req.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
 parser.add_argument('-o', help='Final output supplied (default = all)', default='all', type=str, choices= ['all', 'align', 'steer', 'none'])
+parser.add_argument('-ncpus', help='maximum number of cores to use (default = all)',default=mp.cpu_count(), type=int)
 
 args = parser.parse_args()
 options = vars(args)
@@ -59,7 +61,7 @@ c, a, o = args.c, args.a, args.o
 w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
 cys, silent, swap, group = args.cys, args.silent, args.swap, args.group
 ter, nt, ct, capN, capC = args.ter, args.nt, args.ct, args.capN, args.capC
-alchembed =  args.al
+alchembed, ncpus =  args.al, args.ncpus
 #### virtual site information
 if args.vs:
     vs = '-vsite h'
@@ -77,7 +79,7 @@ info = args.info
 
 variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, 
                    '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, 
-                   '-vs':args.vs, '-box':box,'-loc':args.loc, '-at2cg':args.at2cg, '-al':args.al}
+                   '-vs':args.vs, '-box':box,'-loc':args.loc, '-at2cg':args.at2cg, '-group':args.group, '-o':args.o, '-al':args.al}
 topology = ['frag', 'group', 'C_ter', 'N_ter', 'posres', 'sul']
 box_line="CRYST1 %8.3f %8.3f %8.3f  90.00  90.00  90.00 P 1           1\n"
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
@@ -102,7 +104,7 @@ start_dir       = os.getcwd()+'/'  ### initial working directory
 working_dir     = os.getcwd()+'/'+working_dir_name+'/'   ### working directory 
 final_dir       = os.getcwd()+'/'+working_dir_name+'/FINAL/'  ### final directory for run files
 input_directory = os.getcwd()+'/'+working_dir_name+'/INPUT/'  ### contains input run files
-merged_directory = os.getcwd()+'/'+working_dir_name+'/MERGED/'  ### contains input run files
+merged_directory = os.getcwd()+'/'+working_dir_name+'/MERGED/'  ### contains run files
 scripts_dir     = os.path.dirname(os.path.realpath(__file__))+'/' ### contains script files
 database_dir    = str(Path(*Path(scripts_dir).parts[:-1]))+'/' ### contains database files
 

@@ -224,7 +224,7 @@ def minimise_protein_chain(chain, input):
                 '-maxwarn 1 ', 'min/PROTEIN_'+input+str(chain)+'.tpr'])
 #### minimises chain
     os.chdir('min')
-    gromacs([g_var.gmx+' mdrun -v -deffnm PROTEIN_'+input+str(chain)+' -c PROTEIN_'+input+str(chain)+'.pdb', 'PROTEIN_'+input+str(chain)+'.pdb'])
+    gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -deffnm PROTEIN_'+input+str(chain)+' -c PROTEIN_'+input+str(chain)+'.pdb', 'PROTEIN_'+input+str(chain)+'.pdb'])
     os.chdir('..')  
 
 
@@ -268,7 +268,7 @@ def steered_md_atomistic_to_cg_coord(chain):
                 '-o steered_md/PROTEIN_steered_'+str(chain)+' -maxwarn 1 ', 'steered_md/PROTEIN_steered_'+str(chain)+'.tpr'])
 #### run mdrun on steered MD
     os.chdir('steered_md')
-    gromacs([g_var.gmx+' mdrun -v -pin on -deffnm PROTEIN_steered_'+str(chain)+' -c PROTEIN_steered_'+str(chain)+'.pdb', 
+    gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm PROTEIN_steered_'+str(chain)+' -c PROTEIN_steered_'+str(chain)+'.pdb', 
                 'PROTEIN_steered_'+str(chain)+'.pdb'])
 
 def convert_topology(topol, protein_number):
@@ -344,7 +344,7 @@ def non_protein_minimise(resid, residue_type):
     write_topol(residue_type, individual, '')
     make_min(residue_type)#, fragment_names)
 #### spin up multiprocessing for grompp 
-    pool = mp.Pool(mp.cpu_count())
+    pool = mp.Pool(g_var.ncpus)
     m = mp.Manager()
     q = m.Queue()
     pool_process = pool.map_async(gromacs, [(g_var.gmx+' grompp '+
@@ -364,7 +364,7 @@ def non_protein_minimise(resid, residue_type):
     os.chdir('min')
     m = mp.Manager()
     q = m.Queue()
-    pool = mp.Pool(mp.cpu_count())
+    pool = mp.Pool(g_var.ncpus)
     pool_process = pool.map_async(gromacs, [(g_var.gmx+' mdrun -v -nt 1 -pin on -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb', 
                                   residue_type+'_'+str(rid)+'.pdb',rid, q) for rid in range(0, resid)])          ## minimisation grompp parallised  
     while not pool_process.ready():
@@ -392,7 +392,7 @@ def minimise_merged(residue_type, np_system):
             '-o '+g_var.working_dir+residue_type+'/min/'+residue_type+'_merged_min -maxwarn 1', g_var.working_dir+residue_type+'/min/'+residue_type+'_merged_min.tpr'])
 #### change to min directory and minimise
     os.chdir('min') 
-    gromacs([g_var.gmx+' mdrun -v -pin on -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb', '../'+residue_type+'_merged.pdb'])
+    gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb', '../'+residue_type+'_merged.pdb'])
     os.chdir(g_var.working_dir)
 
 
@@ -453,7 +453,7 @@ def minimise_merged_pdbs(system, protein):
             '-maxwarn 1', 'min/merged_cg2at'+protein+'_minimised.tpr'])
     os.chdir('min')
 #### runs minimises final systems
-    gromacs([g_var.gmx+' mdrun -v -pin on -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb', 'merged_cg2at'+protein+'_minimised.pdb'])
+    gromacs([g_var.gmx+' mdrun -nt '+str(g_var.ncpus)+' -v -pin on -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb', 'merged_cg2at'+protein+'_minimised.pdb'])
 
 
 def alchembed(system, protein_type):
@@ -494,7 +494,7 @@ def alchembed(system, protein_type):
                 '-maxwarn 1', 'alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.tpr'])          
         os.chdir('alchembed')
     #### run alchembed on the chain of interest
-        gromacs([g_var.gmx+' mdrun -v -pin on -deffnm merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+
+        gromacs([g_var.gmx+' mdrun -nt '+str(g_var.ncpus)+' -v -pin on -deffnm merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+
                 ' -c merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', 'merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb'])
         os.chdir('..')
 #### copy final output to the FINAL folder
@@ -534,7 +534,7 @@ def reverse_steer(protein_type, fc, input_file ):
                 ' -o reverse_steer/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+' '+
                 ' -maxwarn '+str(equil_type_val+1), 'reverse_steer/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+'.tpr'])  
         os.chdir('reverse_steer')
-        equil = gromacs_equilibration([g_var.gmx+' mdrun -v -pin on -deffnm merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+
+        equil = gromacs_equilibration([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+
                                      ' -c merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb', 'merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb'])
         if equil:
             break
@@ -553,7 +553,7 @@ def run_nvt(loc):
             ' -o NVT/merged_cg2at_de_novo_nvt'+
             ' -maxwarn 1', 'NVT/merged_cg2at_de_novo_nvt.tpr'])   
     os.chdir(g_var.merged_directory+'NVT')
-    gromacs([g_var.gmx+' mdrun -v -pin on -deffnm merged_cg2at_de_novo_nvt'+
+    gromacs([g_var.gmx+' mdrun -v -pin on -nt '+str(g_var.ncpus)+' -deffnm merged_cg2at_de_novo_nvt'+
         ' -c merged_cg2at_de_novo_nvt.pdb', 'merged_cg2at_de_novo_nvt.pdb'])      
 
 def run_npt(loc):
@@ -573,7 +573,7 @@ def run_npt(loc):
                 ' -o NPT/merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+
                 ' -maxwarn '+str(equil_type_val+1), 'NPT/merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+'.tpr'])   
         os.chdir(g_var.merged_directory+'NPT')
-        equil = gromacs_equilibration([g_var.gmx+' mdrun -v -pin on -deffnm merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+
+        equil = gromacs_equilibration([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+
                 ' -c merged_cg2at_de_novo_npt.pdb', 'merged_cg2at_de_novo_npt.pdb'])  
         if equil:
             break
