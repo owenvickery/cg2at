@@ -304,7 +304,7 @@ def add_to_topology_list(bond_1, bond_2, top_list, dict1, dict2, conversion, res
 
 def get_fragment_topology(residue, location, processing, heavy_bond):
     with open(location, 'r') as pdb_input:
-        processing[residue] = {'C_ter':'C', 'N_ter':'N', 'posres':[], 'ter':False, 'sul':False}
+        processing[residue] = {'BB':'BB', 'C_ter':'C', 'N_ter':'N', 'posres':[], 'ter':False, 'sul':False}
         group=1
         atom_list=[]
         connect={}
@@ -327,9 +327,11 @@ def get_fragment_topology(residue, location, processing, heavy_bond):
             if line.startswith('ATOM'):
                 line_sep = pdbatom(line)
                 grouped_atoms[int(header_line['group'])][header_line['frag']].append(line_sep['atom_number'])
+                if line_sep['atom_name'] in [processing[residue]['C_ter'], processing[residue]['N_ter']]:
+                    processing[residue]['BB']=header_line['frag']
             ### return backbone info for each aminoacid residue
             try:
-                if header_line['frag'] == 'BB':
+                if header_line['frag'] == processing[residue]['BB']:
                     if line.startswith('ATOM'):
                         line_sep = pdbatom(line)
                         if not is_hydrogen(line_sep['atom_name']):
@@ -596,31 +598,32 @@ def angle_clockwise(A, B):
 
 ############################################################################################## fragment rotation done #################################################################################
 
-def connectivity(bead_number, cg_bead, connect, at_residues, cg_residues, resid):
-    at_connections,cg_connections=[],[]
-#### finds all beads that the cg_bead is connected to
-    try:
-        run=np.where(connect[:,0]==cg_bead)
-    except:
-        if cg_bead == 'BB':
-            return [],[], cg_residues[resid][cg_bead]['coord']
-        sys.exit('cannot find connectivity for :'+str(cg_bead))
-#### center of mass of cg_bead
-    center=cg_residues[resid][cg_bead]['coord']
-#### loop through bead connections from bead of interest
-    for con_test in connect[run]:
-        cg_temp=[]
-    #### fetch connections which have more than one bead 1 to 2 beads and not self      
-        cg=connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]!=cg_bead))]
-    #### for each connecting bead 
-        for con_bead in cg[:,0]:
-            cg_temp.append(cg_residues[resid][con_bead]['coord']-center)
-    #### average position of connecting bead
-        cg_connections.append(np.mean(cg_temp, axis=0))
-    #### all atoms with bead connections and self. should only ever be one. 
-        at = int(connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]==cg_bead))][:,1])
-        at_connections.append(at_residues[cg_bead][at]['coord']-center)
-    return at_connections, cg_connections, center
+# def connectivity(bead_number, cg_bead, connect, at_residues, cg_residues, resid):
+#     at_connections,cg_connections=[],[]
+# #### finds all beads that the cg_bead is connected to
+#     try:
+#         run=np.where(connect[:,0]==cg_bead)
+#     except:
+#         if cg_bead == 'BB':
+#             print(cg_residues[resid][cg_bead])
+#             return [],[], cg_residues[resid][cg_bead]['coord']
+#         sys.exit('cannot find connectivity for :'+str(cg_bead))
+# #### center of mass of cg_bead
+#     center=cg_residues[resid][cg_bead]['coord']
+# #### loop through bead connections from bead of interest
+#     for con_test in connect[run]:
+#         cg_temp=[]
+#     #### fetch connections which have more than one bead 1 to 2 beads and not self      
+#         cg=connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]!=cg_bead))]
+#     #### for each connecting bead 
+#         for con_bead in cg[:,0]:
+#             cg_temp.append(cg_residues[resid][con_bead]['coord']-center)
+#     #### average position of connecting bead
+#         cg_connections.append(np.mean(cg_temp, axis=0))
+#     #### all atoms with bead connections and self. should only ever be one. 
+#         at = int(connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]==cg_bead))][:,1])
+#         at_connections.append(at_residues[cg_bead][at]['coord']-center)
+#     return at_connections, cg_connections, center
 
 
 
@@ -674,28 +677,20 @@ def print_script_timings(tc, system, user_at_input):
     print('{0:^47}{1:^22}'.format('---','----'))
     t1 = fix_time(tc['r_i_t'], tc['i_t'])
     print('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
-    print('{:-<69}'.format(''))
-
-    if user_at_input and 'PROTEIN' in system:
+    if 'PROTEIN' in system:
         t2=fix_time(tc['p_d_n_t'],tc['r_i_t'])
         t3=fix_time(tc['f_p_t'],tc['p_d_n_t'])
         t4=fix_time(tc['f_p_t'],tc['r_i_t'])
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein: ',t2[0],'hours',t2[1],'min',t2[2],'sec'))        
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein from provided structure: ',t3[0],'hours',t3[1],'min',t3[2],'sec'))
-        # print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein build: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
-    # else:
-    #     t5=fix_time(tc['f_p_t'],tc['r_i_t'])
-        # print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total protein build: ',t5[0],'hours',t5[1],'min',t5[2],'sec'))
-    # print('{:-<69}'.format(''))
     t6=fix_time(tc['n_p_t'],tc['f_p_t'])
     t7=fix_time(tc['m_t'],tc['n_p_t'])
-    
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
     print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Equilibrate de novo: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
-    if g_var.o in ['all', 'steer']:
+    if g_var.o in ['all', 'steer'] and g_var.a != None and user_at_input:
         t8=fix_time(tc['s_e'],tc['s_s'])
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating steered system: ', t8[0],'hours',t8[1],'min',t8[2],'sec'))
-    if g_var.o in ['all', 'align']:
+    if g_var.o in ['all', 'align'] and g_var.a != None and user_at_input:
         t9=fix_time(tc['a_e'],tc['a_s'])
         print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating aligned system: ', t9[0],'hours',t9[1],'min',t9[2],'sec'))
     print('{:-<69}'.format(''))

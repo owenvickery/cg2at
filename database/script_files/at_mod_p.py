@@ -29,6 +29,7 @@ def build_protein_atomistic_system(cg_residues, box_vec, user_supplied):
     residue_type_mass={}
     for cg_residue_id, residue_number in enumerate(cg_residues):
         resname = cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name']
+        BB_bead = f_loc.backbone[resname]['BB']
         if cg_residue_id == 0:
             terminal[chain_count].append(f_loc.backbone[resname]['ter'])
         coordinates_atomistic[chain_count][residue_number]={}
@@ -38,16 +39,16 @@ def build_protein_atomistic_system(cg_residues, box_vec, user_supplied):
             center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[resname][group], residue_type_mass[resname], residue_number, cg_residues[residue_number])
 
             at_connect, cg_connect = at_mod.connectivity(cg_residues[residue_number], at_frag_centers, cg_frag_centers, group_fit, group)
-            if 'BB' in group_fit:
+            if BB_bead in group_fit:
                 BB_connect = []
-                for atom in group_fit['BB']:
-                    if group_fit['BB'][atom]['atom'] == f_loc.backbone[resname]['N_ter']:
+                for atom in group_fit[BB_bead]:
+                    if group_fit[BB_bead][atom]['atom'] == f_loc.backbone[resname]['N_ter']:
                         N_ter=atom
-                    if group_fit['BB'][atom]['atom'] == f_loc.backbone[resname]['C_ter']:
+                    if group_fit[BB_bead][atom]['atom'] == f_loc.backbone[resname]['C_ter']:
                         C_ter=atom
-                at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit['BB'], residue_number, N_ter, C_ter)
+                at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit[BB_bead], residue_number, N_ter, C_ter, BB_bead)
                 sequence = at_mod.add_to_sequence(sequence, resname, chain_count)
-                backbone_coords[chain_count].append(np.append(cg_residues[residue_number]['BB']['coord'], 1))
+                backbone_coords[chain_count].append(np.append(cg_residues[residue_number][BB_bead]['coord'], 1))
 
             if len(at_connect) == len(cg_connect):
                 xyz_rot_apply=at_mod.rotate(np.array(at_connect)-center, np.array(cg_connect)-center, False)
@@ -67,7 +68,8 @@ def build_protein_atomistic_system(cg_residues, box_vec, user_supplied):
                 backbone_coords[chain_count]=[]
                 coordinates_atomistic[chain_count]={}
                 terminal[chain_count]=[]
-                terminal[chain_count].append(f_loc.backbone[cg_residues[residue_number+1]['BB']['residue_name']]['ter'])
+                BB_bead = f_loc.backbone[resname]['BB']
+                terminal[chain_count].append(f_loc.backbone[cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name']]['ter'])
                 sequence[chain_count]=[]
     if g_var.v >=1:
         print('\n{0:^15}{1:^12}'.format('chain number', 'length of chain')) #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
@@ -81,15 +83,17 @@ def build_protein_atomistic_system(cg_residues, box_vec, user_supplied):
     return system, backbone_coords, coordinates_atomistic, sequence    
 
 
-def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, N_ter, C_ter):
+def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, N_ter, C_ter, BB_bead):
 #### connect to preceeding backbone bead in chain
+    BB_cur = f_loc.backbone[cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name']]['BB']
     new_chain=False
     try:
-        xyz_cur = cg_residues[residue_number]['BB']['coord']
-        xyz_prev = cg_residues[residue_number-1]['BB']['coord']
+        BB_prev = f_loc.backbone[cg_residues[residue_number-1][next(iter(cg_residues[residue_number-1]))]['residue_name']]['BB']
+        xyz_cur = cg_residues[residue_number][BB_cur]['coord']
+        xyz_prev = cg_residues[residue_number-1][BB_prev]['coord']
         dist=gen.calculate_distance(xyz_prev, xyz_cur)
         if dist < 7:
-            cg_n = cg_residues[residue_number-1]['BB']['coord']
+            cg_n = cg_residues[residue_number-1][BB_prev]['coord']
             at_n = at_residues[N_ter]['coord']
             cg_connections.append(cg_n)
             at_connections.append(at_n)
@@ -97,11 +101,12 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         pass
 #### connect to next backbone bead in chain
     try:
-        xyz_cur = cg_residues[residue_number]['BB']['coord']
-        xyz_next = cg_residues[residue_number+1]['BB']['coord']
+        BB_next = f_loc.backbone[cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name']]['BB']
+        xyz_cur = cg_residues[residue_number][BB_cur]['coord']
+        xyz_next = cg_residues[residue_number+1][BB_next]['coord']
         dist=gen.calculate_distance(xyz_next, xyz_cur)
         if dist < 7:
-            cg_c = cg_residues[residue_number+1]['BB']['coord']
+            cg_c = cg_residues[residue_number+1][BB_next]['coord']
             at_c = at_residues[C_ter]['coord']
             cg_connections.append(cg_c)
             at_connections.append(at_c)
@@ -269,7 +274,8 @@ def finalise_novo_atomistic(atomistic, cg_residues, box_vec):
 def fix_carbonyl(residue_id, cg, at):
     ca=[]
     for index in range(3):
-        ca.append(cg[residue_id+index]['BB']['coord'])
+        BB_bead = f_loc.backbone[cg[residue_id+index][next(iter(cg[residue_id+index]))]['residue_name']]['BB']
+        ca.append(cg[residue_id+index][BB_bead]['coord'])
 
     for atom in at:
         if at[atom]['atom'] == 'C': 
@@ -378,8 +384,8 @@ def align_chains(atomistic_protein_input, seq_user, sequence):
         seq_info = s.get_matching_blocks()
         while seq_info[0][2] != len(seq_user[chain_at]):
             if chain_cg >= len(sequence)-1:
-                print('\nCannot find a match for user supplied chain: '+str(chain_at)+'\n'+str(seq_user[chain_at]),'\nIn\n'+str(sequence))
-                print('Using de novo instead')
+                print('\nCannot find a match for user supplied chain: '+str(chain_at)+'\n\nAtomistic chain:\n'+str(seq_user[chain_at]),'\n\nIn CG:\n'+str(sequence))
+                print('\nDefaulting to de novo instead\n')
                 skip_sequence = True
                 break
             if not skip_sequence:
@@ -396,11 +402,14 @@ def align_chains(atomistic_protein_input, seq_user, sequence):
                 at[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
             sequence[chain_cg] = mask_sequence(sequence[chain_cg], seq_info[0][1], seq_info[0][1]+seq_info[0][2])
             test_chain[chain_at]=chain_cg
-
+    if len(at) > 0:
+        user_at_input = True
+    else: 
+        user_at_input = False
     if f_loc.group_chains == 'chain':
-        return at, test_chain
+        return at, test_chain, user_at_input
     else:
-        return at, f_loc.group_chains
+        return at, f_loc.group_chains, user_at_input 
 
 def mask_sequence(sequence, st, end):
     for index, residue in enumerate(sequence):
@@ -710,7 +719,7 @@ def RMSD_measure(structure_atoms, system, backbone_coords):
                 sys.exit()
     #### checks that the number of residues in the chain are the same between CG and AT
         if len(at_centers) != len(backbone_coords[chain]):
-            sys.exit('In chain '+str(chain)+' the atommistic input does not match the CG. \n\
+            sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
     number of CG residues '+str(len(backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
         #### finds distance between backbone COM and cg backbone beads
         dist=np.sqrt((np.array(at_centers) - np.array(backbone_coords[chain])[:,:3])**2)

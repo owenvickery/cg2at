@@ -66,7 +66,7 @@ else:
         time_counter['p_d_n_t']=time.time()
         if user_at_input:
             seq_user = at_mod_p.check_sequence(atomistic_protein_input_raw, chain_count)
-            atomistic_protein_input, group_chain = at_mod_p.align_chains(atomistic_protein_input_raw, seq_user, sequence)
+            atomistic_protein_input, group_chain, user_at_input = at_mod_p.align_chains(atomistic_protein_input_raw, seq_user, sequence)
             user_cys_bond = at_mod_p.find_disulphide_bonds_user_sup(atomistic_protein_input)
             atomistic_protein_centered, cg_com = at_mod_p.center_atomistic(atomistic_protein_input, backbone_coords, group_chain) ## centers each monomer by center of mass
         else:
@@ -145,6 +145,7 @@ else:
         else:
             gro.run_nvt(g_var.merged_directory+'min/merged_cg2at_de_novo_minimised.pdb')
             gro.run_npt(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt.pdb')
+        time_counter['m_t']=time.time()
         if user_at_input and 'PROTEIN' in system:
             print()
             if g_var.o in ['all', 'steer']:
@@ -165,7 +166,6 @@ else:
                 gro.reverse_steer('aligned', 'high', g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_mid.pdb')
                 gen.file_copy_and_check(g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb')
                 time_counter['a_e']=time.time()
-    time_counter['m_t']=time.time()
 
     if 'PROTEIN' in cg_residues:
     #### calculates final RMS
