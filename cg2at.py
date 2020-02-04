@@ -189,7 +189,7 @@ else:
                 print('{0:^10}{1:^25}{2:^10}'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
 
     #### removes temp file from script, anything with temp in really
-    if g_var.clean:
+    if not g_var.clean:
         gen.clean(cg_residues)
 
     time_counter['f_t']=time.time()

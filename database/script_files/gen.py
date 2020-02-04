@@ -598,35 +598,6 @@ def angle_clockwise(A, B):
 
 ############################################################################################## fragment rotation done #################################################################################
 
-# def connectivity(bead_number, cg_bead, connect, at_residues, cg_residues, resid):
-#     at_connections,cg_connections=[],[]
-# #### finds all beads that the cg_bead is connected to
-#     try:
-#         run=np.where(connect[:,0]==cg_bead)
-#     except:
-#         if cg_bead == 'BB':
-#             print(cg_residues[resid][cg_bead])
-#             return [],[], cg_residues[resid][cg_bead]['coord']
-#         sys.exit('cannot find connectivity for :'+str(cg_bead))
-# #### center of mass of cg_bead
-#     center=cg_residues[resid][cg_bead]['coord']
-# #### loop through bead connections from bead of interest
-#     for con_test in connect[run]:
-#         cg_temp=[]
-#     #### fetch connections which have more than one bead 1 to 2 beads and not self      
-#         cg=connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]!=cg_bead))]
-#     #### for each connecting bead 
-#         for con_bead in cg[:,0]:
-#             cg_temp.append(cg_residues[resid][con_bead]['coord']-center)
-#     #### average position of connecting bead
-#         cg_connections.append(np.mean(cg_temp, axis=0))
-#     #### all atoms with bead connections and self. should only ever be one. 
-#         at = int(connect[np.where(np.logical_and(connect[:,2]==con_test[2],connect[:,0]==cg_bead))][:,1])
-#         at_connections.append(at_residues[cg_bead][at]['coord']-center)
-#     return at_connections, cg_connections, center
-
-
-
 def pdbatom(line):
 ### get information from pdb file
 ### atom number, atom name, residue name,chain, resid,  x, y, z, backbone (for fragment), connect(for fragment)

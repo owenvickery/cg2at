@@ -174,7 +174,8 @@ e.g.
                                    <b>Number of CPUs</b>
 </p>
 
-This script will use all the available cores within the architecture it is run, which will slow down other programs.
+This script will try to use 8 cores preferentially, if your computer has less than 8 it will use all the cores. 
+
 To override this and limit the number of cores you can use the flag:
 
 - -ncpus (int)
@@ -182,7 +183,6 @@ To override this and limit the number of cores you can use the flag:
 <p align="center">
                                    <b>Extra information</b>
 </p>
-                                        
 
 To print out all available forcefields and fragments use the flag:
 
@@ -201,7 +201,7 @@ To print out the version of the script use the flag:
                                    <b>Verbosity</b>
 </p>                                      
 
-There are 3 levels of verbosity within this script:
+There are 3 levels of verbosity within this script, each includes the previous levels :
 
 no verbosity:
 
@@ -249,7 +249,7 @@ In most cases the script catches the extra long disulphide bonds in martini simu
 If you recieve a error that the pdb and topology don't match and the atom number is out by 2. It is most likely a disulpide bond not being treated correctly.
 You may be able to fix it by increasing the disulphide bond search radius catch using the flag:
 
-- -cys (default = 0.7 A)
+- -cys (default = 7 A)
 
 <p align="center">
                                    <b>Rigid fitting</b>
@@ -410,8 +410,8 @@ If you know in advance which settings you wish to use, these can be supplied by 
 - fg  (str) fragment databases  e.g. martini_2-2_charmm36
 - ff  (str) forcefield          e.g. charmm36-jul2017
 - box (int) box size (Angstrom) e.g. 100 100 100
-- nt  (T/F) charged N-terminus
-- ct  (T/F) charged C-terminus
+- nt  (T/F) neutral N-terminus
+- ct  (T/F) neutral C-terminus
 
 example input.
 

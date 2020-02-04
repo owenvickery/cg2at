@@ -31,7 +31,7 @@ def collect_input(cg, at):
     if cg.split('/')[-1].endswith('.tpr'):
         input_sort(cg, 'conversion')
     else:
-        gromacs([g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -o CG_input_temp.pdb', 'CG_input_temp.pdb'])
+        gromacs([g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -c -o CG_input_temp.pdb', 'CG_input_temp.pdb'])
         gromacs([g_var.gmx+' trjconv -f CG_input_temp.pdb -s '+cg.split('/')[-1]+' -pbc atom -o conversion_input.pdb '+
                         '<< EOF\nSystem\nEOF\n', 'conversion_input.pdb'])
 
@@ -184,14 +184,14 @@ def ask_ter_question(default_ter, ter_name, ter_val, chain):
 
 def ask_terminal(chain, p_system):
 #### default termini is neutral, however if ter flag is supplied you interactively choose termini 
-    default_ter=[1,1]
+    default_ter=[0,0]
     ter_name=['N terminal','C terminal']
     for ter_val,  ter_residue in enumerate(p_system['terminal_residue'][chain]):
         if not ter_residue:
             if g_var.nt and ter_val==0:
-                default_ter[ter_val]=0
+                default_ter[ter_val]=1
             elif g_var.ct and ter_val==1:
-                default_ter[ter_val]=0
+                default_ter[ter_val]=1
             elif g_var.ter:
                 default_ter = ask_ter_question(default_ter, ter_name, ter_val, chain)          
         else:
@@ -365,7 +365,7 @@ def non_protein_minimise(resid, residue_type):
     m = mp.Manager()
     q = m.Queue()
     pool = mp.Pool(g_var.ncpus)
-    pool_process = pool.map_async(gromacs, [(g_var.gmx+' mdrun -v -nt 1 -pin on -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb', 
+    pool_process = pool.map_async(gromacs, [(g_var.gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb', 
                                   residue_type+'_'+str(rid)+'.pdb',rid, q) for rid in range(0, resid)])          ## minimisation grompp parallised  
     while not pool_process.ready():
         report_complete('Minimisation', q.qsize(), resid)

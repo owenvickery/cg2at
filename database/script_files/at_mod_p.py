@@ -40,6 +40,7 @@ def build_protein_atomistic_system(cg_residues, box_vec, user_supplied):
 
             at_connect, cg_connect = at_mod.connectivity(cg_residues[residue_number], at_frag_centers, cg_frag_centers, group_fit, group)
             if BB_bead in group_fit:
+                # print(residue_number,group_fit[BB_bead], f_loc.backbone[resname])
                 BB_connect = []
                 for atom in group_fit[BB_bead]:
                     if group_fit[BB_bead][atom]['atom'] == f_loc.backbone[resname]['N_ter']:
@@ -48,10 +49,12 @@ def build_protein_atomistic_system(cg_residues, box_vec, user_supplied):
                         C_ter=atom
                 at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit[BB_bead], residue_number, N_ter, C_ter, BB_bead)
                 sequence = at_mod.add_to_sequence(sequence, resname, chain_count)
-                backbone_coords[chain_count].append(np.append(cg_residues[residue_number][BB_bead]['coord'], 1))
-
-            if len(at_connect) == len(cg_connect):
+                backbone_coords[chain_count].append(np.append(cg_residues[residue_number][BB_bead]['coord'], 1))     
+            if len(at_connect) == len(cg_connect) and len(at_connect) != 0:
                 xyz_rot_apply=at_mod.rotate(np.array(at_connect)-center, np.array(cg_connect)-center, False)
+            elif len(at_connect) == 0:
+                xyz_rot_apply = [0,0,0]
+                print('Cannot find any connectivity for residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
             else:
                 print('atom connections: '+str(len(at_connect))+' does not equal CG connections: '+str(len(cg_connect)))
                 sys.exit('residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
@@ -92,6 +95,7 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         xyz_cur = cg_residues[residue_number][BB_cur]['coord']
         xyz_prev = cg_residues[residue_number-1][BB_prev]['coord']
         dist=gen.calculate_distance(xyz_prev, xyz_cur)
+        # print('prev', residue_number, dist)
         if dist < 7:
             cg_n = cg_residues[residue_number-1][BB_prev]['coord']
             at_n = at_residues[N_ter]['coord']
@@ -105,6 +109,7 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         xyz_cur = cg_residues[residue_number][BB_cur]['coord']
         xyz_next = cg_residues[residue_number+1][BB_next]['coord']
         dist=gen.calculate_distance(xyz_next, xyz_cur)
+        # print('next', residue_number, dist)
         if dist < 7:
             cg_c = cg_residues[residue_number+1][BB_next]['coord']
             at_c = at_residues[C_ter]['coord']

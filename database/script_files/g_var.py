@@ -15,12 +15,12 @@ parser.add_argument('-v', action="count", default=0, help="increase output verbo
 group_C = parser.add_mutually_exclusive_group()
 group_N = parser.add_mutually_exclusive_group()
 parser.add_argument('-ter', help='interactively choose terminal species (Optional)', action='store_true')
-group_N.add_argument('-nt', help='choose charged N terminal', action='store_true')
-group_C.add_argument('-ct', help='choose charged C terminal state', action='store_true')
+group_N.add_argument('-nt', help='choose neutral N terminal', action='store_true')
+group_C.add_argument('-ct', help='choose neutral C terminal state', action='store_true')
 group_N.add_argument('-capN', help='cap N terminal with ACE (Optional) not currently working', action='store_true')
 group_C.add_argument('-capC', help='cap C terminal with NME (Optional) not currently working', action='store_true')
 parser.add_argument('-group', help='treat user supplied atomistic chains, as rigid bodies. (0,1 2,3 or all or chain)',type=str, nargs='*')
-parser.add_argument('-clean', help='removes all part files from build', action='store_true')
+parser.add_argument('-clean', help='do not remove part files CG2AT', action='store_true')
 parser.add_argument('-mod', help='treat fragments individually', action='store_true')
 parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional',metavar='tip3p',type=str)
 parser.add_argument('-ff', help='choose your forcefield. (Optional)',metavar='charmm36',type=str)
@@ -94,7 +94,7 @@ info = args.info
 
 variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, 
                    '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, 
-                   '-vs':args.vs, '-box':box,'-loc':args.loc, '-at2cg':args.at2cg, '-group':args.group, '-o':args.o, '-al':args.al}
+                   '-vs':args.vs, '-box':box,'-loc':args.loc, '-at2cg':args.at2cg, '-group':args.group, '-o':args.o, '-al':args.al, 'ncpus':ncpus}
 topology = ['frag', 'group', 'C_ter', 'N_ter', 'posres', 'sul']
 box_line="CRYST1 %8.3f %8.3f %8.3f  90.00  90.00  90.00 P 1           1\n"
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
