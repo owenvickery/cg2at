@@ -1,2 +1,5 @@
 *.txt linguist-detectable=false
+*.pdb linguist-detectable=false
+*.dat linguist-detectable=false 
 *py linguist-detectable=true
+
