@@ -1,9 +1,0 @@
-*.txt linguist-detectable=false
-*.pdb linguist-detectable=false
-*.dat linguist-detectable=false 
-*.itp linguist-detectable=false
-*.rtp linguist-detectable=false
-*.vsd linguist-detectable=false
-*.atp linguist-detectable=false
-*.py linguist-detectable=true
-
