@@ -86,7 +86,7 @@ def gromacs(gro):
             elif 'number of atoms in the topology (' in out:
                 print('\n'+out+'\n\n')
                 print('{0:^90}\n\n{1:^90}\n'.format('***NOTE***','If it is only out by multiples of two, check cysteine distances and increase -cys cutoff'))
-                sys.exit('{0:^90}\n\n'.format('A lot of Martini v2-2 disulphide bonds can be up to 9 A (current search cutoff is '+str(g_var.cys)+' A)')) 
+                sys.exit('{0:^90}\n\n'.format('A lot of Martini v2-2 disulphide bonds can be up to 10 A (current search cutoff is '+str(g_var.cys)+' A)')) 
             elif 'Fatal error:' in out:
                 sys.exit('\n'+out)
     if len(gro) == 4: 
@@ -96,7 +96,7 @@ def gromacs(gro):
 def gromacs_equilibration(gro):
     cmd,output = gro[0], gro[1]
     if os.path.exists(output):
-        pass
+        return True
     else:
     #### if the flag gromacs is used every gromacs command will be printed to the terminal 
         if g_var.v >= 3:
@@ -263,7 +263,7 @@ def steered_md_atomistic_to_cg_coord(chain):
                 '-p topol_PROTEIN_aligned_'+str(chain)+'.top '+
                 '-c min/PROTEIN_aligned_'+str(chain)+'.pdb '+
                 '-r min/PROTEIN_de_novo_'+str(chain)+'.pdb '+
-                '-o steered_md/PROTEIN_steered_'+str(chain)+' -maxwarn 1 ', 'steered_md/PROTEIN_steered_'+str(chain)+'.tpr'])
+                '-o steered_md/PROTEIN_steered_'+str(chain)+' -maxwarn 2 ', 'steered_md/PROTEIN_steered_'+str(chain)+'.tpr'])
 #### run mdrun on steered MD
     os.chdir('steered_md')
     gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm PROTEIN_steered_'+str(chain)+' -c PROTEIN_steered_'+str(chain)+'.pdb', 
@@ -469,7 +469,7 @@ def alchembed(system, protein_type):
                 alchembed.write('\npcoupl = Berendsen\npcoupltype = semiisotropic\n tau_p = 2.0\nref_p = 1.0 1.0\ncompressibility = 4.5e-5 4.5e-5\n')
                 alchembed.write('\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00')
                 alchembed.write('\ndelta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6\ncouple-moltype = protein_'+str(chain))
-                alchembed.write('\ncouple-lambda0 = none\ncouple-lambda1 = vdw\nrefcoord_scaling = com')
+                alchembed.write('\ncouple-lambda0 = none\ncouple-lambda1 = vdw\nrefcoord_scaling = all')
     #### if 1st chain use minimised structure for coordinate input
         if chain == 0:
             gromacs([g_var.gmx+' grompp '+
@@ -504,25 +504,25 @@ def write_steered_mdp(loc, posres,pc_type, time, timestep):
     if not os.path.exists(loc):
         with open(loc, 'w') as steered_md:
             steered_md.write('define = '+posres+'\nintegrator = md\nnsteps = '+str(time)+'\ndt = '+str(timestep)+'\ncontinuation   = no\nconstraint_algorithm = lincs\n')
-            steered_md.write('constraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
+            steered_md.write('nstxtcout = 10\nnstenergy = 10\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
             steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\n')
             steered_md.write('pcoupl = '+pc_type+'\npcoupltype = semiisotropic\ntau_p = 2.0\nref_p = 1.0 1.0\ncompressibility = 4.5e-5 4.5e-5\n')
-            steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nrefcoord_scaling = com\ncutoff-scheme = Verlet')   
+            steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nrefcoord_scaling = all\ncutoff-scheme = Verlet')   
 
 def write_nvt_mdp(loc, posres, time, timestep):
     if not os.path.exists(loc):
         with open(loc, 'w') as steered_md:
-            steered_md.write('define = -D'+posres+'\nintegrator = md\nnsteps = '+str(time)+'\ndt = '+str(timestep)+'\ncontinuation   = no\nconstraint_algorithm = lincs\n')
+            steered_md.write('define = '+posres+'\nintegrator = md\nnsteps = '+str(time)+'\ndt = '+str(timestep)+'\ncontinuation   = no\nconstraint_algorithm = lincs\n')
             steered_md.write('constraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
             steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\n')
-            steered_md.write('pcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nrefcoord_scaling = com\ncutoff-scheme = Verlet')   
+            steered_md.write('pcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nrefcoord_scaling = all\ncutoff-scheme = Verlet')   
 
 def reverse_steer(protein_type, fc, input_file ):
     gen.mkdir_directory(g_var.merged_directory+'reverse_steer')
     equil_type = ['Parrinello-Rahman', 'Berendsen']
     for equil_type_val, npt_type in enumerate([fc+'_posres-pr.mdp', fc+'_posres-b.mdp']):
         os.chdir(g_var.merged_directory)
-        write_steered_mdp(g_var.merged_directory+npt_type, '-D'+fc.upper()+'POSRES', equil_type[equil_type_val] ,1500, 0.001)  
+        write_steered_mdp(g_var.merged_directory+npt_type, '-D'+fc.upper()+'POSRES', equil_type[equil_type_val] ,2000, 0.001)  
         gromacs([g_var.gmx+' grompp '+
                 ' -po md_out-merged_cg2at_reverse_steer_'+fc+
                 ' -f '+npt_type+' '+
@@ -530,12 +530,14 @@ def reverse_steer(protein_type, fc, input_file ):
                 ' -r merged_cg2at_'+protein_type+'.pdb '+
                 ' -c '+input_file+
                 ' -o reverse_steer/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+' '+
-                ' -maxwarn '+str(equil_type_val+1), 'reverse_steer/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+'.tpr'])  
+                ' -maxwarn '+str(equil_type_val+2), 'reverse_steer/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+'.tpr'])  
         os.chdir('reverse_steer')
         equil = gromacs_equilibration([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+
                                      ' -c merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb', 'merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb'])
         if equil:
             break
+    if not equil:
+        sys.exit('reverse steer failed')
 
 def run_nvt(loc):
     print('Running NVT on de novo system')
@@ -549,7 +551,7 @@ def run_nvt(loc):
             ' -r '+loc+
             ' -c '+loc+
             ' -o NVT/merged_cg2at_de_novo_nvt'+
-            ' -maxwarn 1', 'NVT/merged_cg2at_de_novo_nvt.tpr'])   
+            ' -maxwarn 2', 'NVT/merged_cg2at_de_novo_nvt.tpr'])   
     os.chdir(g_var.merged_directory+'NVT')
     gromacs([g_var.gmx+' mdrun -v -pin on -nt '+str(g_var.ncpus)+' -deffnm merged_cg2at_de_novo_nvt'+
         ' -c merged_cg2at_de_novo_nvt.pdb', 'merged_cg2at_de_novo_nvt.pdb'])      
@@ -561,7 +563,7 @@ def run_npt(loc):
     equil_type = ['Parrinello-Rahman', 'Berendsen']
     for equil_type_val, npt_type in enumerate(['npt-pr.mdp', 'npt-b.mdp']):
         os.chdir(g_var.merged_directory)   
-        write_steered_mdp(g_var.merged_directory+npt_type, '-DPOSRES', equil_type[equil_type_val] ,1000, 0.001)
+        write_steered_mdp(g_var.merged_directory+npt_type, '-DPOSRES', equil_type[equil_type_val] ,5000, 0.001)
         gromacs([g_var.gmx+' grompp'+
                 ' -po md_out-merged_cg2at_npt'+
                 ' -f '+npt_type+
@@ -569,12 +571,13 @@ def run_npt(loc):
                 ' -r '+loc+
                 ' -c '+loc+
                 ' -o NPT/merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+
-                ' -maxwarn '+str(equil_type_val+1), 'NPT/merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+'.tpr'])   
+                ' -maxwarn '+str(equil_type_val+2), 'NPT/merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+'.tpr'])   
         os.chdir(g_var.merged_directory+'NPT')
         equil = gromacs_equilibration([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+
                 ' -c merged_cg2at_de_novo_npt.pdb', 'merged_cg2at_de_novo_npt.pdb'])  
         if equil:
             break
-
+    if not equil:
+        sys.exit('NPT run failed')
     gen.file_copy_and_check('merged_cg2at_de_novo_npt.pdb', g_var.merged_directory+'final_cg2at_de_novo.pdb')
     gen.file_copy_and_check('merged_cg2at_de_novo_npt.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb') 

@@ -515,7 +515,9 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
                 for residue in atomistic_protein_centered[chain][part]:
                 #### gets center of mass of each residue (note only backbone heavy atoms have a mass)
                     at_centers_iter=[]
+
                     for atom in atomistic_protein_centered[chain][part][residue]:
+
                         if atomistic_protein_centered[chain][part][residue][atom]['atom'] in f_loc.backbone[atomistic_protein_centered[chain][part][residue][atom]['res_type']]['atoms']:
                             at_centers_iter.append(np.append(atomistic_protein_centered[chain][part][residue][atom]['coord'],atomistic_protein_centered[chain][part][residue][atom]['frag_mass']))
                     try:
@@ -625,8 +627,9 @@ def print_rotations(cg_com, chain, part_val, xyz_rot_apply,group_chain, seg):
         
     print('The COM of chain', chain,'is :', np.round(cg_com[chain][part_val][0], 2),',', np.round(cg_com[chain][part_val][1], 2),',', 
           np.round(cg_com[chain][part_val][2], 2))
-    print('rotating chain ', chain, 'by :',np.round(np.degrees(xyz_rot_apply[part_val][0]),2),',',np.round(np.degrees(xyz_rot_apply[part_val][1]),2),
-          ',',np.round(np.degrees(xyz_rot_apply[part_val][2]),2))
+    print('rotating chain ', chain, 'by : X coarse',np.round(np.degrees(xyz_rot_apply[part_val][0]),2),', Y coarse',np.round(np.degrees(xyz_rot_apply[part_val][1]),2),
+          ', Z coarse',np.round(np.degrees(xyz_rot_apply[part_val][2]),2),', X fine',np.round(np.degrees(xyz_rot_apply[part_val][3]),2),', Y fine',np.round(np.degrees(xyz_rot_apply[part_val][4]),2),
+          ', Z fine',np.round(np.degrees(xyz_rot_apply[part_val][5]),2))
     print()    
 
 def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_centered, cg_com, xyz_rot_apply, chain, box_vec):

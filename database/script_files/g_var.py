@@ -39,7 +39,7 @@ group_req = parser.add_mutually_exclusive_group()
 group_req.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)
 group_req.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
 parser.add_argument('-o', help='Final output supplied (default = all)', default='all', type=str, choices= ['all', 'align', 'steer', 'none'])
-parser.add_argument('-ncpus', help='maximum number of cores to use (default = all)',default=mp.cpu_count(), type=int)
+parser.add_argument('-ncpus', help='maximum number of cores to use (default = all)', type=int)
 
 args = parser.parse_args()
 options = vars(args)
@@ -63,7 +63,6 @@ cys, silent, swap, group = args.cys, args.silent, args.swap, args.group
 ter, nt, ct, capN, capC = args.ter, args.nt, args.ct, args.capN, args.capC
 alchembed = args.al
 #### virtual site information
-
 if args.ncpus != None:
     if args.ncpus > mp.cpu_count():
         print('you have selected to use more CPU cores than are available: '+str(args.ncpus))
@@ -76,7 +75,6 @@ else:
         ncpus = 8
     else:
         ncpus = mp.cpu_count()
-
 
 if args.vs:
     vs = '-vsite h'

@@ -145,7 +145,7 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
             if fragment in residue_type[cg_residue_type][res_type]:
                 center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][res_type], residue_type_mass[cg_residue_type]
                                                                                        , cg_residue, cg_residues[cg_residue])
-                xyz_rot_apply=[np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2)]
+                xyz_rot_apply=[np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2)]
                 for bead in group_fit:
                     for atom in group_fit[bead]:
                         group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   

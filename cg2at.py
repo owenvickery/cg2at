@@ -181,12 +181,16 @@ else:
                 RMSD['at steered'] = at_mod_p.RMSD_measure(at_input_atoms, system,backbone_coords)   
             if g_var.o in ['all', 'align']: 
                 at_input_atoms, chain_count = at_mod_p.read_in_atomistic(g_var.final_dir+'final_cg2at_aligned.pdb')
-                RMSD['at aligned'] = at_mod_p.RMSD_measure(at_input_atoms, system,backbone_coords)         
-        print('\n{0:^10}{1:^25}{2:^10}'.format('output ','chain','RMSD ('+chr(197)+')'))
-        print('{0:^10}{1:^25}{2:^10}'.format('-------','-----','---------'))
-        for rmsd in RMSD:
-            for chain in RMSD[rmsd]:
-                print('{0:^10}{1:^25}{2:^10}'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
+                RMSD['at aligned'] = at_mod_p.RMSD_measure(at_input_atoms, system,backbone_coords)   
+        with open(g_var.final_dir+'structure_quality.dat', 'w') as qual_out:   
+            qual_out.write('\n{0:^10}{1:^25}{2:^10}\n'.format('output ','chain','RMSD ('+chr(197)+')'))
+            qual_out.write('{0:^10}{1:^25}{2:^10}\n'.format('-------','-----','---------'))
+            print('\n{0:^10}{1:^25}{2:^10}'.format('output ','chain','RMSD ('+chr(197)+')'))
+            print('{0:^10}{1:^25}{2:^10}'.format('-------','-----','---------'))
+            for rmsd in RMSD:
+                for chain in RMSD[rmsd]:
+                    qual_out.write('{0:^10}{1:^25}{2:^10}\n'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
+                    print('{0:^10}{1:^25}{2:^10}'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
 
     #### removes temp file from script, anything with temp in really
     if not g_var.clean:
