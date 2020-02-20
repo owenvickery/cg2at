@@ -565,7 +565,7 @@ def run_npt(input_file):
     equil_type = ['Parrinello-Rahman', 'Berendsen']
     for equil_type_val, npt_type in enumerate(['npt-pr.mdp', 'npt-b.mdp']):
         os.chdir(g_var.merged_directory)   
-        write_steered_mdp(g_var.merged_directory+npt_type, '-DPOSRES', equil_type[equil_type_val] ,5000, 0.001)
+        write_steered_mdp(g_var.merged_directory+npt_type, '-DPOSRES', equil_type[equil_type_val] ,10000, 0.001)
         gromacs([g_var.gmx+' grompp'+
                 ' -po md_out-merged_cg2at_npt'+
                 ' -f '+npt_type+

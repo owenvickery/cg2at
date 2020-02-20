@@ -1,5 +1,3 @@
-Once upon a time in the database. There were 2 folders, one liked to know how the world worked, therefore collected Molecular Dynamics forcefields, whilst the other was more material minded and hoarded all the atoms and kept them locked away in fragments. Only to see the world when the folder had a martini in hand.
-
                                         **Database**
 
 Once upon a time in the database. There were 2 folders, one liked to know how the world worked, therefore collected Molecular Dynamics forcefields, whilst the other was more material minded and hoarded all the atoms and kept them locked away in fragments. Only to see the world when the folder had a martini in hand.
@@ -57,6 +55,16 @@ The normal amino acids fragments do not contain any hydrogens, these are incorpo
 
 Whilst the modified protein and non protein fragments retain their hydrogens. This is due to problematic adding of every residue to the hydrogen database. 
 
+For ring like structures, I have implemented a grouping system.
+
+In this particular case, the fragments SC2 and SC3 are treated as a rigid body in the fitting and rotation steps.
+
+This default grouping can be switched off using the flag:
+
+- -mod
+
+The grouping is especially useful for converting sugar groups in which the hydrogen geometry should be retained as much as possible.
+
 An example of a normal amino acid fragment files:
 
 <pre>
@@ -78,16 +86,6 @@ ATOM      9  CE2 PHE     1      38.940  20.340  12.590  1.00  3.00           C
 ATOM      6  CE1 PHE     1      38.420  18.030  13.090  1.00  4.00           C
 ATOM      7  CZ  PHE     1      38.000  19.330  12.830  1.00  3.00           C
 </pre>
-
-For ring like structures, I have implemented a grouping system.
-
-In this particular case, the fragments SC2 and SC3 are treated as a rigid body in the fitting and rotation steps.
-
-This default grouping can be switched off using the flag:
-
-- -mod
-
-The grouping is especially useful for converting sugar groups in which the hydrogen geometry should be retained as much as possible.
 
 In the case of solvent. All ions and water molecules are in single repective pdb files with separate groups.
 
