@@ -423,6 +423,10 @@ example input.
                                    <b>**Database**</b>
 </p>                                        
 
+The database has the following file structure and is checked everytime the script is run.
+
+New forcefields and fragments can be added very easily by creating a new folder within the directory structure below. 
+
 <pre>
     | --    database
                 | --    scripts_files
