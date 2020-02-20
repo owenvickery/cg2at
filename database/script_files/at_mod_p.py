@@ -51,9 +51,9 @@ def build_protein_atomistic_system(cg_residues, box_vec, user_supplied):
                 sequence = at_mod.add_to_sequence(sequence, resname, chain_count)
                 backbone_coords[chain_count].append(np.append(cg_residues[residue_number][BB_bead]['coord'], 1))     
             if len(at_connect) == len(cg_connect) and len(at_connect) != 0:
-                xyz_rot_apply=at_mod.rotate(np.array(at_connect)-center, np.array(cg_connect)-center, False)
+                xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
             elif len(at_connect) == 0:
-                xyz_rot_apply = [0,0,0]
+                xyz_rot_apply = False
                 print('Cannot find any connectivity for residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
             else:
                 print('atom connections: '+str(len(at_connect))+' does not equal CG connections: '+str(len(cg_connect)))
@@ -80,7 +80,6 @@ def build_protein_atomistic_system(cg_residues, box_vec, user_supplied):
         for chain in sequence:
             print('{0:^15}{1:^12}'.format(chain, len(sequence[chain])))
         print()
-    
     system['terminal_residue']=terminal
     system['PROTEIN']=chain_count
     return system, backbone_coords, coordinates_atomistic, sequence    
@@ -218,9 +217,6 @@ def correct_disulphide_bonds(coordinates_atomistic, user_cys_bond):
             coordinates_atomistic[chain][bonds_corrected[0]][at_num[0]]['coord']=new_c1
             coordinates_atomistic[chain][bonds_corrected[1]][at_num[1]]['coord']=new_c2
     return coordinates_atomistic
-
-
-
 
 def shrink_coordinates(c1,c2):
     dist = gen.calculate_distance(c1,c2)
@@ -548,7 +544,7 @@ def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_cen
         if chain in atomistic_protein_centered:
             if group_chain not in ['all',None]: 
                 if chain in group_chain:
-                    rotate_chain=at_mod.rotate(at_com_group[group_chain[chain]]-cg_com[group_chain[chain]][0], cg_com_group[group_chain[chain]]-cg_com[group_chain[chain]][0], False)
+                    rotate_chain=at_mod.kabsch_rotate(at_com_group[group_chain[chain]]-cg_com[group_chain[chain]][0], cg_com_group[group_chain[chain]]-cg_com[group_chain[chain]][0])
             for part_val, part in enumerate(atomistic_protein_centered[chain]):
                 if 'rotate_all' in locals():
                     rotations.append(rotate_all)
@@ -559,12 +555,6 @@ def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_cen
                         rotations.append(rotate_chain)
                     else:
                         rotations = at_com_group[chain]
-                if g_var.v >= 1:
-                    if 'seg' not in locals():
-                        seg=0
-                    else:
-                        seg+=1
-                    print_rotations(cg_com, chain, part_val, rotations,group_chain, seg)
 
             final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], atomistic_protein_centered[chain], cg_com[chain], rotations, chain, box_vec)
         else:
@@ -573,7 +563,7 @@ def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_cen
 
 def return_all_rotations_final(at_com_group,cg_com_group,cg_com):
     if len(at_com_group['all']) == len(cg_com_group['all']):
-        return at_mod.rotate(at_com_group['all']-cg_com[0][0], cg_com_group['all']-cg_com[0][0], False)
+        return at_mod.kabsch_rotate(at_com_group['all']-cg_com[0][0], cg_com_group['all']-cg_com[0][0])
     else:
         sys.exit('The atomistic input does not match the CG. \n\
                 number of CG residues '+str(len(cg_com_group['all']))+'\nnumber of AT residues '+str(len(at_com_group['all'])))
@@ -583,8 +573,8 @@ def return_indivdual_rotations(chain, part_val, at_centers, backbone_coords, cg_
         at_com_group[chain]=[]
 ## finds optimal rotation of each monomer  
     if len(at_centers) == len(np.array(backbone_coords[chain])[sls:sle,:3]):
-        at_com_group[chain].append(at_mod.rotate(np.array(at_centers)-cg_com[chain][part_val], 
-                             np.array(backbone_coords[chain])[sls:sle,:3]-cg_com[chain][part_val], False))
+        at_com_group[chain].append(at_mod.kabsch_rotate(np.array(at_centers)-cg_com[chain][part_val], 
+                             np.array(backbone_coords[chain])[sls:sle,:3]-cg_com[chain][part_val]))
     else:
         sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
                     number of CG residues '+str(len(backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))    
@@ -611,26 +601,6 @@ def return_all_rotations(chain, at_centers, backbone_coords, at_com_group, cg_co
         at_com_group['all']=np.append(at_com_group['all'], np.array(at_centers), axis=0)
         cg_com_group['all']=np.append(cg_com_group['all'], np.array(backbone_coords[chain])[sls:sle,:3], axis=0) 
     return at_com_group, cg_com_group   
-
-def print_rotations(cg_com, chain, part_val, xyz_rot_apply,group_chain, seg):
-    if seg == 0:
-        print('\nThe proteins chains are rotated around the COM of backbone heavy atoms.\n')
-    if group_chain != None:
-        if group_chain == 'all':
-            group = [g for g in cg_com]
-            print('User supplied AT chain '+str(chain)+' is grouped together with chains: '+', '.join(map(str, group)))
-        elif seg in group_chain:
-            group = [g for g in group_chain if group_chain[g] == group_chain[seg]]
-            print('User supplied AT chain '+str(seg)+' is grouped together with chains: '+', '.join(map(str, group))+'\n')
-        else:
-            print('User supplied AT chain '+str(seg)+' is treated separately')
-        
-    print('The COM of chain', chain,'is :', np.round(cg_com[chain][part_val][0], 2),',', np.round(cg_com[chain][part_val][1], 2),',', 
-          np.round(cg_com[chain][part_val][2], 2))
-    print('rotating chain ', chain, 'by : X coarse',np.round(np.degrees(xyz_rot_apply[part_val][0]),2),', Y coarse',np.round(np.degrees(xyz_rot_apply[part_val][1]),2),
-          ', Z coarse',np.round(np.degrees(xyz_rot_apply[part_val][2]),2),', X fine',np.round(np.degrees(xyz_rot_apply[part_val][3]),2),', Y fine',np.round(np.degrees(xyz_rot_apply[part_val][4]),2),
-          ', Z fine',np.round(np.degrees(xyz_rot_apply[part_val][5]),2))
-    print()    
 
 def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_centered, cg_com, xyz_rot_apply, chain, box_vec):
 

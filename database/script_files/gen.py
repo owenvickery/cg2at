@@ -561,7 +561,7 @@ def check_water_molecules(water_input, np_directories):
 
 ############################################################################################## fragment rotation #################################################################################
 
-def eulerAnglesToRotationMatrix(theta) :
+def AnglesToRotMat(theta) :
 #### rotation matrices for the rotation of fragments. theta is [x,y,z] in radians     
     R_x = np.array([[1,         0,                  0                   ],
                     [0,         math.cos(theta[0]), -math.sin(theta[0]) ],
@@ -579,29 +579,7 @@ def eulerAnglesToRotationMatrix(theta) :
                     ])
                                         
     R = np.dot(R_z, np.dot( R_y, R_x ))
-    return R
-
-def X(theta) :
-#### rotation matrices for the rotation of fragments. theta is [x,y,z] in radians     
-    R_x = np.array([[1,         0,                  0                   ],
-                    [0,         math.cos(theta), -math.sin(theta) ],
-                    [0,         math.sin(theta), math.cos(theta)  ]
-                    ])
-    return R_x  
-def Y(theta) :         
-    R_y = np.array([[math.cos(theta),    0,      math.sin(theta)  ],
-                    [0,                     1,      0                   ],
-                    [-math.sin(theta),   0,      math.cos(theta)  ]
-                    ])
-    return R_y  
-def Z(theta) :                 
-    R_z = np.array([[math.cos(theta),    -math.sin(theta),    0],
-                    [math.sin(theta),    math.cos(theta),     0],
-                    [0,                     0,                      1]
-                    ])
-    return R_z                                  
-
-
+    return R                          
 
 def angle_clockwise(A, B):
 #### find angle between vectors

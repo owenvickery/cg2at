@@ -44,23 +44,3 @@ if g_var.group != None:
     group_chains = gen.fetch_chain_groups()
 else:
     group_chains = None
-
-
-### finds initial rotation matrices
-rotation=[[],[],[], [],[],[]]
-for angle in np.arange(0,360,5):
-    angle=np.radians(angle)
-    rotation[0].append(gen.eulerAnglesToRotationMatrix([angle,0,0]))
-    rotation[1].append(gen.eulerAnglesToRotationMatrix([0,angle,0]))
-    rotation[2].append(gen.eulerAnglesToRotationMatrix([0,0,angle]))
-
-fine_rotation=[[],[],[]]
-for angle in np.arange(0,360,0.25):
-    angle=np.radians(angle)
-    rotation[3].append(gen.eulerAnglesToRotationMatrix([angle,0,0]))
-    rotation[4].append(gen.eulerAnglesToRotationMatrix([0,angle,0]))
-    rotation[5].append(gen.eulerAnglesToRotationMatrix([0,0,angle]))
-
-# fine_rotation.append(fine_rotation[0])
-# fine_rotation.append(fine_rotation[1])
-# fine_rotation.append(fine_rotation[2])

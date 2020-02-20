@@ -5,6 +5,7 @@ import numpy as np
 import math
 import itertools
 from scipy.spatial import cKDTree
+import matplotlib.pyplot as plt
 import gen, g_var, f_loc
 
 def sanity_check_fragments(res, cg, sin_bead):
@@ -65,69 +66,22 @@ def sanity_check(cg_residues):
 def rotate_atom(coord, center,xyz_rot_apply):
 #### rotates atom around center
     coord =  coord-center  #### centers COM coordinates to 0,0,0
-    coord =  coord.dot(gen.eulerAnglesToRotationMatrix([xyz_rot_apply[0],0,0]))  #### rotates coord around x1
-    coord =  coord.dot(gen.eulerAnglesToRotationMatrix([0,xyz_rot_apply[1],0]))  #### rotates coord around y1
-    coord =  coord.dot(gen.eulerAnglesToRotationMatrix([0,0,xyz_rot_apply[2]]))  #### rotates coord around z1
-    if len(xyz_rot_apply) > 3:
-        coord =  coord.dot(gen.eulerAnglesToRotationMatrix([xyz_rot_apply[3],0,0]))#### rotates coord around x2
-        coord =  coord.dot(gen.eulerAnglesToRotationMatrix([xyz_rot_apply[4],0,0]))#### rotates coord around y2
-        coord =  coord.dot(gen.eulerAnglesToRotationMatrix([xyz_rot_apply[5],0,0]))#### rotates coord around z2
+    if np.any(xyz_rot_apply): 
+        coord=np.array(coord).dot(xyz_rot_apply)
     coord =  coord+center #### translates coord back by original offset
     return coord
 
-def rmsd(at_connections, cg_connections, xyz_rot):
-    dist=[]
-#### iterates through rotation matrices 
-    for rot_val, rotation in enumerate(xyz_rot):
-    #### applies matrix to coordinates saved as check
-        check = at_connections.dot(rotation)
-    #### for each connection the distance is calculated and added to list
-        individual_connections=[]
-        for connect in range(len(cg_connections)):
-            individual_connections.append(gen.calculate_distance(check[connect], cg_connections[connect]))
-    #### for each rotation the connection distances are added to dist list 
-        dist.append(individual_connections)
-    dist=np.array(dist)
-    #### the RMS is calculated for each rotation 
-    return dist, np.sqrt(np.mean(dist**2,axis=1))
-
-def lowest_rmsd(dist, cg_connections, inter):
-    if len(dist[0])==2:
-        if np.all(cg_connections[0] == cg_connections[1]):
-            ratio=dist/np.min(dist, axis=1)[:,np.newaxis]
-            rotation_index=np.argmin(inter[np.where(np.sum(ratio, axis=1)<np.min(np.sum(ratio, axis=1))*1.02)])
-            for i in range(len(ratio)):
-                if np.all(ratio[i]<1.05):
-                    if 'rotation_RMS' in locals():
-                        if inter[i] < rotation_RMS:
-                            rotation_RMS = inter[i]
-                            rotation_index=i
-                    else:
-                        rotation_RMS=inter[i]
-                        rotation_index=i
-            return rotation_index
-        else:
-            return np.argmin(inter)
-    else:
-        return np.argmin(inter)
-
-def rotate(at_connections, cg_connections, same):
-    xyz_rot_apply=[]
-#### iterates through rotation matrices
-    coarse_rot = []
-    fine_rot = []
-    for xyz_val, xyz_rot in enumerate(f_loc.rotation):
-        dist, inter = rmsd(at_connections, cg_connections, xyz_rot)
-        rotation_index = lowest_rmsd(dist, cg_connections, inter)
-    #### the rotation with the lowest RMS applied to the at_connections
-        at_connections = at_connections.dot(xyz_rot[rotation_index])
-    #### the optimal rotation is added to xyz_rot_apply list as radians
-        if xyz_val <= 2:
-            xyz_rot_apply.append(np.radians(rotation_index*5))
-        else:
-            xyz_rot_apply.append(np.radians(rotation_index/4))
-
-    return xyz_rot_apply
+def kabsch_rotate(at_connections,cg_connections):
+    ## A solution for the best rotation to relate two sets of vectors. By WOLFGANG KABSCH
+    ## http://en.wikipedia.org/wiki/Kabsch_algorithm
+    Cov_mat = np.dot(np.transpose(at_connections), cg_connections)
+    V, S, W = np.linalg.svd(Cov_mat)
+    reflection = np.linalg.det(V) * np.linalg.det(W)
+    if reflection < 0:
+        S[-1] = -S[-1]
+        V[:, -1] = -V[:, -1]
+    rot_mat = np.dot(V, W)
+    return rot_mat
 
 def add_to_sequence(sequence, residue, chain_count):
     if residue  not in f_loc.mod_residues:

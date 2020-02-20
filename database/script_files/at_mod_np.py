@@ -116,7 +116,7 @@ def atomistic_non_protein_non_solvent(cg_residue_type,cg_residues):
             at_connect, cg_connect = at_mod.connectivity(cg_residues[cg_residue], at_frag_centers, cg_frag_centers, group_fit, group)
             if len(at_connect) == len(cg_connect) and len(cg_connect) > 0:
                 try:
-                    xyz_rot_apply=at_mod.rotate(np.array(at_connect)-center, np.array(cg_connect)-center, False)
+                    xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
                 except:
                     sys.exit('There is a issue with residue: '+cg_residue_type+' in group: '+str(group))
             else:
@@ -145,7 +145,7 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
             if fragment in residue_type[cg_residue_type][res_type]:
                 center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][res_type], residue_type_mass[cg_residue_type]
                                                                                        , cg_residue, cg_residues[cg_residue])
-                xyz_rot_apply=[np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2)]
+                xyz_rot_apply=gen.AnglesToRotMat([np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2)])
                 for bead in group_fit:
                     for atom in group_fit[bead]:
                         group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   
