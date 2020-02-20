@@ -507,7 +507,7 @@ def write_steered_mdp(loc, posres,pc_type, time, timestep):
             steered_md.write('nstxtcout = 10\nnstenergy = 10\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
             steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\n')
             steered_md.write('pcoupl = '+pc_type+'\npcoupltype = semiisotropic\ntau_p = 2.0\nref_p = 1.0 1.0\ncompressibility = 4.5e-5 4.5e-5\n')
-            steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nrefcoord_scaling = all\ncutoff-scheme = Verlet')   
+            steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = no\nrefcoord_scaling = all\ncutoff-scheme = Verlet')   
 
 def write_nvt_mdp(loc, posres, time, timestep):
     if not os.path.exists(loc):
@@ -525,15 +525,17 @@ def reverse_steer(protein_type, fc, input_file ):
         write_steered_mdp(g_var.merged_directory+npt_type, '-D'+fc.upper()+'POSRES', equil_type[equil_type_val] ,2000, 0.001)  
         gromacs([g_var.gmx+' grompp '+
                 ' -po md_out-merged_cg2at_reverse_steer_'+fc+
+                ' -t '+input_file+'.cpt '+
                 ' -f '+npt_type+' '+
                 ' -p topol_final.top '+
                 ' -r merged_cg2at_'+protein_type+'.pdb '+
-                ' -c '+input_file+
+                ' -c '+input_file+'.pdb '+
                 ' -o reverse_steer/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+' '+
                 ' -maxwarn '+str(equil_type_val+2), 'reverse_steer/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+'.tpr'])  
         os.chdir('reverse_steer')
         equil = gromacs_equilibration([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+
-                                     ' -c merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb', 'merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb'])
+                                     ' -c merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb -cpo merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.cpt'
+                                     ,'merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb'])
         if equil:
             break
     if not equil:
@@ -556,7 +558,7 @@ def run_nvt(loc):
     gromacs([g_var.gmx+' mdrun -v -pin on -nt '+str(g_var.ncpus)+' -deffnm merged_cg2at_de_novo_nvt'+
         ' -c merged_cg2at_de_novo_nvt.pdb', 'merged_cg2at_de_novo_nvt.pdb'])      
 
-def run_npt(loc):
+def run_npt(input_file):
     print('Running NPT on de novo system')
     os.chdir(g_var.merged_directory)        
     gen.mkdir_directory(g_var.merged_directory+'NPT')
@@ -568,16 +570,17 @@ def run_npt(loc):
                 ' -po md_out-merged_cg2at_npt'+
                 ' -f '+npt_type+
                 ' -p topol_final.top'+
-                ' -r '+loc+
-                ' -c '+loc+
+                ' -t '+input_file+'.cpt '+
+                ' -r '+input_file+'.pdb '+
+                ' -c '+input_file+'.pdb '+
                 ' -o NPT/merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+
                 ' -maxwarn '+str(equil_type_val+2), 'NPT/merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+'.tpr'])   
         os.chdir(g_var.merged_directory+'NPT')
         equil = gromacs_equilibration([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+
-                ' -c merged_cg2at_de_novo_npt.pdb', 'merged_cg2at_de_novo_npt.pdb'])  
+                ' -c merged_cg2at_de_novo_npt.pdb -cpo merged_cg2at_de_novo_npt.cpt'
+                , 'merged_cg2at_de_novo_npt.pdb'])  
         if equil:
             break
     if not equil:
         sys.exit('NPT run failed')
-    gen.file_copy_and_check('merged_cg2at_de_novo_npt.pdb', g_var.merged_directory+'final_cg2at_de_novo.pdb')
     gen.file_copy_and_check('merged_cg2at_de_novo_npt.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb') 
