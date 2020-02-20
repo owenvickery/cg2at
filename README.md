@@ -423,8 +423,6 @@ example input.
                                    <b>**Database**</b>
 </p>                                        
 
-Once upon a time in the database. There were 2 folders, one liked to know how the world worked, therefore collected Molecular Dynamics forcefields, whilst the other was more material minded and hoarded all the atoms and kept them locked away in fragments. Only to see the world when the folder had a martini in hand.
-
 <pre>
     | --    database
                 | --    scripts_files
