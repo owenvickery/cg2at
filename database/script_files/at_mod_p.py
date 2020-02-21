@@ -385,7 +385,7 @@ def align_chains(atomistic_protein_input, seq_user, sequence):
         seq_info = s.get_matching_blocks()
         while seq_info[0][2] != len(seq_user[chain_at]):
             if chain_cg >= len(sequence)-1:
-                print('\nCannot find a match for user supplied chain: '+str(chain_at)+'\n\nAtomistic chain:\n'+str(seq_user[chain_at]),'\n\nIn CG:\n'+str(sequence))
+                print('\nCannot find a match for user supplied chain: '+str(chain_at))#+'\n\nAtomistic chain:\n'+str(seq_user[chain_at]),'\n\nIn CG:\n'+str(sequence))
                 print('\nDefaulting to de novo instead\n')
                 skip_sequence = True
                 break
@@ -582,7 +582,7 @@ def return_indivdual_rotations(chain, part_val, at_centers, backbone_coords, cg_
 
 def return_grouped_rotations(chain, part_val, at_centers, backbone_coords, cg_com, at_com_group, cg_com_group, sls, sle, group_chain):
     if chain in group_chain:
-        if chain not in at_com_group:
+        if group_chain[chain] not in at_com_group:
             at_com_group[group_chain[chain]]=[]   
             at_com_group[group_chain[chain]]=np.array(at_centers)
             cg_com_group[group_chain[chain]]=np.array(backbone_coords[chain])[sls:sle,:3]  

@@ -37,7 +37,6 @@ def collect_input(cg, at):
 
 #### converts input files into pdb files 
     if at != None:
-        # input_sort(at, 'AT')
         gromacs([g_var.gmx+' editconf -f '+at.split('/')[-1]+' -resnr 0 -o AT_input.pdb', 'AT_input.pdb'])
         return True
     return False
@@ -110,7 +109,7 @@ def gromacs_equilibration(gro):
             checks.write(out)
     #### standard catch for failed gromacs commands
             if  'Warning: pressure scaling more than 1%' in out:
-                print('pressure coupling failed trying Parrinello-Rahman instead')
+                print('pressure coupling failed trying Berendsen instead')
                 return False
             elif 'Segmentation fault' in out:
                 return False
