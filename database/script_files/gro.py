@@ -356,7 +356,6 @@ def non_protein_minimise(resid, residue_type):
     print('                                                                       ', end='\r')
     print('GROMPP completed on residue type: '+residue_type)       
     pool.close()
-    pool.join()
 #### close grompp multiprocessing and change to min directory and spin up mdrun multiprocessing
     os.chdir('min')
     m = mp.Manager()
@@ -396,35 +395,86 @@ def minimise_merged(residue_type, np_system):
 
 ################################################################ Gromacs for merged system
 
+def check_atom_type(line, a_line, atomtypes_itp_lines):
+    line_sep=line.split() 
+    name = int(np.where(line_sep[0]==a_line[:,0])[0])  
+    bond = int(np.where(line_sep[1]==a_line[:,1])[0]) 
+    if name == bond: 
+        if float(line_sep[5]) != float(a_line[name][5]) or float(line_sep[6]) != float(a_line[name][6]): 
+            sys.exit('\nThere are duplicate atomtypes in your molecules: \n'+line) 
+
+def strip_atomtypes(itp_file): 
+    with open(itp_file, 'r') as itp_input: 
+        itp_lines = itp_input.read().splitlines() 
+    atom_types=[] 
+    if '[ atomtypes ]' in itp_lines: 
+        a_lines_sep = []
+        if not os.path.exists('extra_atomtypes.itp'): 
+            atomtypes_output = open('extra_atomtypes.itp', 'w') 
+            atomtypes_output.write('[ atomtypes ]\n') 
+        else: 
+            atomtypes_output = open('extra_atomtypes.itp', 'a') 
+            with open('extra_atomtypes.itp', 'r') as atomtypes_itp_r: 
+                atomtypes_itp_lines = atomtypes_itp_r.read().splitlines() 
+            for a_line in atomtypes_itp_lines[1:]: 
+                if not a_line.startswith(';'):  
+                    a_lines_sep.append(a_line.split()) 
+            a_lines_sep = np.array(a_lines_sep) 
+        atom = itp_lines.index('[ atomtypes ]')+1 
+        mol = itp_lines.index('[ moleculetype ]') 
+        for line in itp_lines[atom:mol]: 
+            if not line.startswith(';'): 
+                line_sep = line.split() 
+                if len(line_sep) > 4: 
+                    if len(a_lines_sep) > 2:
+                        if line_sep[0] not in a_lines_sep[:,0] and line_sep[1] not in a_lines_sep[:,1]: 
+                            atomtypes_output.write(line+'\n') 
+                        else: 
+                            check_atom_type(line, a_lines_sep, atomtypes_itp_lines) 
+                    else:
+                        atomtypes_output.write(line+'\n')
+        with open(itp_file, 'w') as itp_output: 
+            for line in itp_lines[mol:]: 
+                itp_output.write(line+'\n')
+
 def write_merged_topol(system, protein):
     os.chdir(g_var.working_dir+'MERGED')
     if not os.path.exists('topol_final.top'):
         with open('topol_final.top', 'w') as topol_write:
+            topologies_to_include=[]
         #### writes topology headers (will probably need updating with other forcefields)
-            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
             if 'SOL' in system:
                 gen.file_copy_and_check(f_loc.water_dir+f_loc.water+'.itp', f_loc.water+'.itp')
-                topol_write.write('#include \"'+f_loc.water+'.itp\"')
-                topol_write.write('\n#include \"'+g_var.final_dir+f_loc.forcefield+'/ions.itp\"\n\n')
+                topologies_to_include.append('#include \"'+f_loc.water+'.itp\"')
+                topologies_to_include.append('\n#include \"'+g_var.final_dir+f_loc.forcefield+'/ions.itp\"\n\n')
         #### runs through residue types and copies to MERGED directory and simplifies the names
             for residue_type in system:
                 if residue_type not in ['ION','SOL']:
                 #### copies 1st itp file it comes across 
                     for directory in f_loc.np_directories:
-                        if os.path.exists(directory[0]+residue_type+'/'+residue_type+'.itp'):       
-                            topol_write.write('#include \"'+residue_type+'.itp\"\n')
+                        if os.path.exists(directory[0]+residue_type+'/'+residue_type+'.itp'):  
+                            topologies_to_include.append('#include \"'+residue_type+'.itp\"\n')
                             gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'.itp', residue_type+'.itp')
+                            strip_atomtypes(residue_type+'.itp')
                             break
                 #### copies across protein itp files and simplifies the names 
                     if residue_type == 'PROTEIN':
                         for protein_unit in range(system[residue_type]): 
-                            topol_write.write('#include \"PROTEIN_'+str(protein_unit)+'.itp\"\n')
+                            topologies_to_include.append('#include \"PROTEIN_'+str(protein_unit)+'.itp\"\n')
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'.itp', 'PROTEIN_'+str(protein_unit)+'.itp')
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_steered_posre.itp', 'PROTEIN_'+str(protein_unit)+'_steered_posre.itp')
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_low_posre.itp', 'PROTEIN_'+str(protein_unit)+'_low_posre.itp')
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_mid_posre.itp', 'PROTEIN_'+str(protein_unit)+'_mid_posre.itp')
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_high_posre.itp', 'PROTEIN_'+str(protein_unit)+'_high_posre.itp')
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'_posre.itp', 'PROTEIN_'+str(protein_unit)+'_posre.itp')
+
+            if os.path.exists('extra_atomtypes.itp'):
+                topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
+                topol_write.write('#include \"extra_atomtypes.itp\"\n')
+            else:
+                topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
+            for line in topologies_to_include:
+                topol_write.write(line)
 
             topol_write.write('[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
         #### adds number of residues to the topology
