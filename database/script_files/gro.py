@@ -32,8 +32,8 @@ def collect_input(cg, at):
         input_sort(cg, 'conversion')
     else:
         gromacs([g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -c -o CG_input_temp.pdb', 'CG_input_temp.pdb'])
-        gromacs([g_var.gmx+' trjconv -f CG_input_temp.pdb -s '+cg.split('/')[-1]+' -pbc atom -o conversion_input.pdb '+
-                        '<< EOF\nSystem\nEOF\n', 'conversion_input.pdb'])
+        gromacs([g_var.gmx+' trjconv -f CG_input_temp.pdb -s '+cg.split('/')[-1]+' -pbc atom -center -o conversion_input.pdb '+
+                        '<< EOF\nProtein\nSystem\nEOF\n', 'conversion_input.pdb'])
 
 #### converts input files into pdb files 
     if at != None:
@@ -249,7 +249,7 @@ def write_posres(chain):
                 if not gen.is_hydrogen(line_sep['atom_name']):
                     low_posres.write(str(at_counter)+'     1  250  250  250\n')
                     mid_posres.write(str(at_counter)+'     1  1000  1000  1000\n')
-                    high_posres.write(str(at_counter)+'     1  6000  6000  6000\n')
+                    high_posres.write(str(at_counter)+'     1  10000  10000  10000\n')
 
 def steered_md_atomistic_to_cg_coord(chain):
     os.chdir(g_var.working_dir+'PROTEIN')

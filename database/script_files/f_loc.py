@@ -25,6 +25,7 @@ forcefield_location, forcefield=g_var.database_dir+'forcefields/', forcefield_av
 ### reads in and sorts fragment information
 
 fragment_number = gen.fetch_frag_number(fragments_available)
+
 p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted = gen.fetch_residues(fragments_available, fragment_number)
 
 np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories = gen.sort_directories(p_directories_unsorted, 

@@ -56,7 +56,7 @@ else:
     if 'PROTEIN' in cg_residues:
         if user_at_input:
             atomistic_protein_input_raw, chain_count = at_mod_p.read_in_atomistic(g_var.input_directory+'AT_input.pdb')  ## reads in user structure
-        p_system, backbone_coords, coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN'], box_vec, user_at_input)
+        p_system, backbone_coords, coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN'])
 
         if not user_at_input and g_var.v >= 1:
             print('coarse grain protein sequence:\n')
@@ -68,13 +68,13 @@ else:
             seq_user = at_mod_p.check_sequence(atomistic_protein_input_raw, chain_count)
             atomistic_protein_input, group_chain, user_at_input = at_mod_p.align_chains(atomistic_protein_input_raw, seq_user, sequence)
             user_cys_bond = at_mod_p.find_disulphide_bonds_user_sup(atomistic_protein_input)
-            atomistic_protein_centered, cg_com = at_mod_p.center_atomistic(atomistic_protein_input, backbone_coords, group_chain) ## centers each monomer by center of mass
         else:
             user_cys_bond = {}
         user_cys_bond = at_mod_p.find_disulphide_bonds_de_novo(coordinates_atomistic, user_cys_bond)
         coordinates_atomistic = at_mod_p.correct_disulphide_bonds(coordinates_atomistic, user_cys_bond)
         final_coordinates_atomistic = at_mod_p.finalise_novo_atomistic(coordinates_atomistic, cg_residues['PROTEIN'], box_vec)
         if user_at_input:
+            atomistic_protein_centered, cg_com = at_mod_p.center_atomistic(atomistic_protein_input, backbone_coords, group_chain) ## centers each monomer by center of mass
             at_com_group, cg_com_group = at_mod_p.rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, backbone_coords, cg_com, box_vec, group_chain) ## rigid fits each monomer
             final_user_supplied_coord = at_mod_p.apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, at_com_group,cg_com_group,cg_com, box_vec, group_chain)
             final_user_supplied_coord = at_mod_p.correct_disulphide_bonds(final_user_supplied_coord, user_cys_bond)
@@ -138,12 +138,11 @@ else:
     #### merges provided atomistic protein and residues types into a single pdb file into merged directory
         at_mod.merge_system_pdbs(system, '_de_novo', cg_residues, box_vec)
         gro.minimise_merged_pdbs(system, '_de_novo')
-        ringed_lipids = at_mod.read_minimised_system('_de_novo', box_vec)
+        gro.run_nvt(g_var.merged_directory+'min/merged_cg2at_de_novo_minimised.pdb')
+        ringed_lipids = at_mod.read_nvt_system(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt.pdb', box_vec)
         if len(system) > 1 and g_var.alchembed and len(ringed_lipids) > 0:
-            gro.run_nvt(g_var.merged_directory+'min/merged_cg2at_de_novo_minimised.pdb')
             gro.alchembed(system['PROTEIN'], 'de_novo')  
         else:
-            gro.run_nvt(g_var.merged_directory+'min/merged_cg2at_de_novo_minimised.pdb')
             gro.run_npt(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt')
         time_counter['m_t']=time.time()
         if user_at_input and 'PROTEIN' in system:

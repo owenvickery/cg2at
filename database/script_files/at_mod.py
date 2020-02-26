@@ -381,10 +381,10 @@ def check_hydrogens(residue):
                         residue[h_at]['coord']=residue[h_at]['coord']-vector*2
     return residue
 
-def read_minimised_system(protein, box_vec):
+def read_nvt_system(protein, box_vec):
     box_vec = box_vec.split()[1:4]
     os.chdir(g_var.merged_directory)
-    merge, merge_coords = read_in_merged_pdbs([], [], g_var.merged_directory+'min/merged_cg2at'+protein+'_minimised.pdb')
+    merge, merge_coords = read_in_merged_pdbs([], [], protein)
     resid_prev=0
     ringed=[]
     for at_val, atom in enumerate(merge):

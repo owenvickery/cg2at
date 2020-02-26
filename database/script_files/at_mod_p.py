@@ -9,7 +9,7 @@ from scipy.spatial import cKDTree
 import gen, g_var, f_loc, at_mod
 import math
 
-def build_protein_atomistic_system(cg_residues, box_vec, user_supplied):
+def build_protein_atomistic_system(cg_residues):
 #### initisation of counters
     chain_count=0
     system={}
