@@ -21,11 +21,11 @@ This script roughly follows the following workflow.
 - Run NVT and NPT
 - Morph protein to either rigid body alignment or steered alignment
 
-<p>
-For a detailed description of the script workflow please read the file in 
 
+For a detailed description of the script workflow please read the file in 
+<b>
 database/script_files/workflow.pdf
-</p>
+</b>
 
 <pre>
            CG beads         Fragments           COM aligned fragments           Aligned fragments                 Atomistic
