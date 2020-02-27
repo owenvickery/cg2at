@@ -89,6 +89,16 @@ def sort_swap_group():
         print_swap_residues(s_res_d, res_range)
     return s_res_d
 
+def create_ion_list(ion_pdb, ions):
+    with open(ion_pdb, 'r') as pdb_input:
+        for line_nr, line in enumerate(pdb_input.readlines()):
+            if line.startswith('['):
+                header = sep_fragments_header(line, ion_pdb.split('/')[-1])
+                if header['frag'] not in ions:
+                    ions.append(header['frag'])
+    return ions
+
+
 def print_swap_residues(s_res_d, res_range):
     print('\nYou have chosen to swap the following residues\n')
     print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format('residue', 'bead', '     ', 'residue', 'bead', 'range'))
@@ -204,6 +214,7 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
     hydrogen = {}
     heavy_bond = {}
     atoms_dict={}
+    ions = []
     for directory in range(len(p_directories)):
         for residue in p_directories[directory][1:]:    
             if residue not in processing:
@@ -219,6 +230,8 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
                 atoms_dict={}
                 location = fragment_location(residue,p_residues, p_directories, mod_directories, np_directories)
                 if residue in ['SOL','ION']: 
+                    if residue == 'ION':
+                        ions = create_ion_list(location[:-4]+'.pdb', ions)
                     hydrogen[residue], heavy_bond[residue], atoms_dict = {},{},{}
                 else:
                     hydrogen[residue], heavy_bond[residue] = fetch_bond_info(residue, location[:-4]+'.itp', mod_residues, p_residues)
@@ -227,8 +240,7 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
                     sorted_connect[residue]={}
                 else:
                     sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue], connect)
-    
-    return processing, sorted_connect, hydrogen, heavy_bond 
+    return processing, sorted_connect, hydrogen, heavy_bond, ions 
 
 def atom_bond_check(line_sep):
     if line_sep[1] == 'atoms':
@@ -611,12 +623,10 @@ def create_pdb(file_name, box_vec):
 '+box_vec+'MODEL        1\n')
     return pdb_output
 
-
 def mkdir_directory(directory):
 #### checks if folder exists, if not makes folder
     if not os.path.exists(directory):
         os.mkdir(directory)
-
 
 def clean(cg_residues):
 #### cleans temp files from residue_types

@@ -14,8 +14,6 @@ import gen, g_var, f_loc, at_mod
 
 #### collects input structures and creates initial folders
 def collect_input(cg, at):
-    if not os.path.exists(cg):
-        sys.exit('\ncannot find CG input file: '+cg)
     gen.mkdir_directory(g_var.working_dir)
     gen.mkdir_directory(g_var.final_dir)
     gen.mkdir_directory(g_var.input_directory)
@@ -32,9 +30,11 @@ def collect_input(cg, at):
         input_sort(cg, 'conversion')
     else:
         gromacs([g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -c -o CG_input_temp.pdb', 'CG_input_temp.pdb'])
-        gromacs([g_var.gmx+' trjconv -f CG_input_temp.pdb -s '+cg.split('/')[-1]+' -pbc atom -center -o conversion_input.pdb '+
+        convert = gromacs_equilibration([g_var.gmx+' trjconv -f CG_input_temp.pdb -s '+cg.split('/')[-1]+' -pbc atom -center -o conversion_input.pdb '+
                         '<< EOF\nProtein\nSystem\nEOF\n', 'conversion_input.pdb'])
-
+        if not convert:
+            gromacs([g_var.gmx+' trjconv -f CG_input_temp.pdb -s '+cg.split('/')[-1]+' -pbc atom -o conversion_input.pdb '+
+                        '<< EOF\nSystem\nEOF\n', 'conversion_input.pdb'])
 #### converts input files into pdb files 
     if at != None:
         gromacs([g_var.gmx+' editconf -f '+at.split('/')[-1]+' -resnr 0 -o AT_input.pdb', 'AT_input.pdb'])
@@ -112,6 +112,8 @@ def gromacs_equilibration(gro):
                 print('pressure coupling failed trying Berendsen instead')
                 return False
             elif 'Segmentation fault' in out:
+                return False
+            elif 'Cannot read from input' in out:
                 return False
             else:
                 return True

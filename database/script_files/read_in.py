@@ -157,6 +157,8 @@ def swap(atom, residue, resid):
             if atom in f_loc.swap_dict[residue][key]:
                 atom = f_loc.swap_dict[residue][key][atom]
             residue = key.split(':')[1]
+    if atom in f_loc.ions and residue != 'ION':
+        residue = 'ION'
     return atom, residue
 
 def read_initial_at_pdb():
