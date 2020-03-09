@@ -84,7 +84,7 @@ def solvent_sol(box_vec, system, atomistic_fragments, residue_type):
 
 def solvent_ion(box_vec, system, atomistic_fragments, residue_type):
     #### creates ion pdb with header
-    gen.mkdir_directory(g_var.working_dir+'ION/min')
+    gen.mkdir_directory(g_var.working_dir+'ION/MIN')
     skip = os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
     if not skip:
         pdb_ion = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb', box_vec)
@@ -156,11 +156,11 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
 
 
 def merge_minimised(residue_type, np_system, box_vec):
-    os.chdir(g_var.working_dir+residue_type+'/min')
+    os.chdir(g_var.working_dir+residue_type+'/MIN')
     print('Merging individual residues : '+residue_type)
 #### create merged pdb in min folder
-    if not os.path.exists(g_var.working_dir+residue_type+'/min/'+residue_type+'_merged.pdb'):
-        pdb_output=gen.create_pdb(g_var.working_dir+residue_type+'/min/'+residue_type+'_merged.pdb', box_vec)  
+    if not os.path.exists(g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb'):
+        pdb_output=gen.create_pdb(g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb', box_vec)  
         if residue_type =='SOL':
             resid_range=1
         else:
@@ -168,7 +168,7 @@ def merge_minimised(residue_type, np_system, box_vec):
         merge,merge_coords=[],[]
     #### run through every resid 
         for resid in range(resid_range):
-            merge_temp ,dump = at_mod.read_in_merged_pdbs([], [], g_var.working_dir+residue_type+'/min/'+residue_type+'_'+str(resid)+'.pdb')
+            merge_temp ,dump = at_mod.read_in_merged_pdbs([], [], g_var.working_dir+residue_type+'/MIN/'+residue_type+'_'+str(resid)+'.pdb')
             merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merge_coords)    
         if residue_type !='SOL':
             merge_coords = at_mod.check_atom_overlap(merge_coords)

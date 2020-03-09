@@ -83,7 +83,7 @@ else:
         print('Minimising '+str(p_system['PROTEIN'])+' protein chains')
         gro.minimise_protein(system['PROTEIN'], p_system, user_at_input, box_vec)
         #### read in minimised de novo protein chains and merges chains
-        merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/min/PROTEIN_de_novo', '.pdb')
+        merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb')
         at_mod_p.write_merged_pdb(merge_de_novo, '_de_novo', box_vec)
         #### runs steered MD on user supplied protein chains
         if user_at_input:
@@ -93,7 +93,7 @@ else:
                 for chain in range(system['PROTEIN']):
                     gro.steered_md_atomistic_to_cg_coord(chain)
                 #### read in minimised user supplied protein chains and merges chains
-                merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/steered_md/PROTEIN_steered', '.pdb')
+                merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/STEERED_MD/PROTEIN_steered', '.pdb')
                 at_mod_p.write_merged_pdb(merge_at_user, '_steered', box_vec)
             if g_var.o in ['all', 'align']:
                 merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_aligned', '_gmx.pdb')
@@ -138,7 +138,7 @@ else:
     #### merges provided atomistic protein and residues types into a single pdb file into merged directory
         at_mod.merge_system_pdbs(system, '_de_novo', cg_residues, box_vec)
         gro.minimise_merged_pdbs(system, '_de_novo')
-        gro.run_nvt(g_var.merged_directory+'min/merged_cg2at_de_novo_minimised.pdb')
+        gro.run_nvt(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb')
         ringed_lipids = at_mod.read_nvt_system(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt.pdb', box_vec)
         if len(system) > 1 and g_var.alchembed and len(ringed_lipids) > 0:
             gro.alchembed(system['PROTEIN'], 'de_novo')  
@@ -152,18 +152,18 @@ else:
                 time_counter['s_s']=time.time()
                 at_mod.merge_system_pdbs(system, '_steered', cg_residues, box_vec)
                 gro.reverse_steer('steered', 'low', g_var.merged_directory+'/NPT/merged_cg2at_de_novo_npt')
-                gro.reverse_steer('steered', 'mid', g_var.merged_directory+'reverse_steer/merged_cg2at_steered_reverse_steer_low')
-                gro.reverse_steer('steered', 'high', g_var.merged_directory+'reverse_steer/merged_cg2at_steered_reverse_steer_mid')
-                gen.file_copy_and_check(g_var.merged_directory+'reverse_steer/merged_cg2at_steered_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_steered.pdb')
+                gro.reverse_steer('steered', 'mid', g_var.merged_directory+'REVERSE_STEER/merged_cg2at_steered_reverse_steer_low')
+                gro.reverse_steer('steered', 'high', g_var.merged_directory+'REVERSE_STEER/merged_cg2at_steered_reverse_steer_mid')
+                gen.file_copy_and_check(g_var.merged_directory+'REVERSE_STEER/merged_cg2at_steered_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_steered.pdb')
                 time_counter['s_e']=time.time()
             if g_var.o in ['all', 'align']:   
                 print('Creating aligned system') 
                 time_counter['a_s']=time.time()
                 at_mod.merge_system_pdbs(system, '_aligned', cg_residues, box_vec)
                 gro.reverse_steer('aligned', 'low', g_var.merged_directory+'/NPT/merged_cg2at_de_novo_npt')
-                gro.reverse_steer('aligned', 'mid', g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_low')
-                gro.reverse_steer('aligned', 'high', g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_mid')
-                gen.file_copy_and_check(g_var.merged_directory+'reverse_steer/merged_cg2at_aligned_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb')
+                gro.reverse_steer('aligned', 'mid', g_var.merged_directory+'REVERSE_STEER/merged_cg2at_aligned_reverse_steer_low')
+                gro.reverse_steer('aligned', 'high', g_var.merged_directory+'REVERSE_STEER/merged_cg2at_aligned_reverse_steer_mid')
+                gen.file_copy_and_check(g_var.merged_directory+'REVERSE_STEER/merged_cg2at_aligned_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb')
                 time_counter['a_e']=time.time()
 
     if 'PROTEIN' in cg_residues:

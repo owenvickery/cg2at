@@ -121,7 +121,7 @@ def gromacs_equilibration(gro):
 
 def make_min(residue):#, fragments):
 #### makes minimisation folder
-    gen.mkdir_directory('min')
+    gen.mkdir_directory('MIN')
 #### makes em.mdp file for each residue
     if not os.path.exists('em_'+residue+'.mdp'):
         with open('em_'+residue+'.mdp','w') as em:
@@ -219,10 +219,10 @@ def minimise_protein_chain(chain, input):
                 '-f em_PROTEIN.mdp '+
                 '-p topol_PROTEIN_'+input+str(chain)+'.top '+
                 '-c PROTEIN_'+input+str(chain)+'_gmx_checked.pdb '+
-                '-o min/PROTEIN_'+input+str(chain)+' '+
-                '-maxwarn 1 ', 'min/PROTEIN_'+input+str(chain)+'.tpr'])
+                '-o MIN/PROTEIN_'+input+str(chain)+' '+
+                '-maxwarn 1 ', 'MIN/PROTEIN_'+input+str(chain)+'.tpr'])
 #### minimises chain
-    os.chdir('min')
+    os.chdir('MIN')
     gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -deffnm PROTEIN_'+input+str(chain)+' -c PROTEIN_'+input+str(chain)+'.pdb', 'PROTEIN_'+input+str(chain)+'.pdb'])
     os.chdir('..')  
 
@@ -255,18 +255,18 @@ def write_posres(chain):
 
 def steered_md_atomistic_to_cg_coord(chain):
     os.chdir(g_var.working_dir+'PROTEIN')
-    gen.mkdir_directory('steered_md')
+    gen.mkdir_directory('STEERED_MD')
 #### create bog standard mdp file, simulation is only 3 ps in a vaccum so settings should not have any appreciable effect 
     write_steered_mdp(g_var.working_dir+'PROTEIN/steered_md.mdp', '-DPOSRES_STEERED','Berendsen', 2000, 0.001)
 #### run grompp on chain 
     gromacs([g_var.gmx+' grompp '+
                 '-f steered_md.mdp '+
                 '-p topol_PROTEIN_aligned_'+str(chain)+'.top '+
-                '-c min/PROTEIN_aligned_'+str(chain)+'.pdb '+
-                '-r min/PROTEIN_de_novo_'+str(chain)+'.pdb '+
-                '-o steered_md/PROTEIN_steered_'+str(chain)+' -maxwarn 2 ', 'steered_md/PROTEIN_steered_'+str(chain)+'.tpr'])
+                '-c MIN/PROTEIN_aligned_'+str(chain)+'.pdb '+
+                '-r MIN/PROTEIN_de_novo_'+str(chain)+'.pdb '+
+                '-o STEERED_MD/PROTEIN_steered_'+str(chain)+' -maxwarn 2 ', 'STEERED_MD/PROTEIN_steered_'+str(chain)+'.tpr'])
 #### run mdrun on steered MD
-    os.chdir('steered_md')
+    os.chdir('STEERED_MD')
     gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm PROTEIN_steered_'+str(chain)+' -c PROTEIN_steered_'+str(chain)+'.pdb', 
                 'PROTEIN_steered_'+str(chain)+'.pdb'])
 
@@ -351,15 +351,15 @@ def non_protein_minimise(resid, residue_type):
                                   '-f em_'+residue_type+'.mdp '+
                                   '-p topol_'+residue_type+'.top '+
                                   '-c '+residue_type+'_'+str(rid)+'.pdb '+
-                                  '-o min/'+residue_type+'_temp_'+str(rid)+' -maxwarn 1', 
-                                  'min/'+residue_type+'_temp_'+str(rid)+'.tpr',rid, q) for rid in range(0, resid)])
+                                  '-o MIN/'+residue_type+'_temp_'+str(rid)+' -maxwarn 1', 
+                                  'MIN/'+residue_type+'_temp_'+str(rid)+'.tpr',rid, q) for rid in range(0, resid)])
     while not pool_process.ready():
         report_complete('GROMPP', q.qsize(), resid)
     print('                                                                       ', end='\r')
     print('GROMPP completed on residue type: '+residue_type)       
     pool.close()
 #### close grompp multiprocessing and change to min directory and spin up mdrun multiprocessing
-    os.chdir('min')
+    os.chdir('MIN')
     m = mp.Manager()
     q = m.Queue()
     pool = mp.Pool(g_var.ncpus)
@@ -386,10 +386,10 @@ def minimise_merged(residue_type, np_system):
             '-po md_out-'+residue_type+' '+
             '-f em_'+residue_type+'.mdp '+
             '-p topol_'+residue_type+'.top '+
-            '-c '+g_var.working_dir+residue_type+'/min/'+residue_type+'_merged.pdb '+
-            '-o '+g_var.working_dir+residue_type+'/min/'+residue_type+'_merged_min -maxwarn 1', g_var.working_dir+residue_type+'/min/'+residue_type+'_merged_min.tpr'])
+            '-c '+g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb '+
+            '-o '+g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged_min -maxwarn 1', g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged_min.tpr'])
 #### change to min directory and minimise
-    os.chdir('min') 
+    os.chdir('MIN') 
     gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb', '../'+residue_type+'_merged.pdb'])
     os.chdir(g_var.working_dir)
 
@@ -498,9 +498,9 @@ def minimise_merged_pdbs(system, protein):
             '-p topol_final.top '+
             '-r merged_cg2at'+protein+'.pdb '+
             '-c merged_cg2at'+protein+'.pdb '+
-            '-o min/merged_cg2at'+protein+'_minimised '+
-            '-maxwarn 1', 'min/merged_cg2at'+protein+'_minimised.tpr'])
-    os.chdir('min')
+            '-o MIN/merged_cg2at'+protein+'_minimised '+
+            '-maxwarn 1', 'MIN/merged_cg2at'+protein+'_minimised.tpr'])
+    os.chdir('MIN')
 #### runs minimises final systems
     gromacs([g_var.gmx+' mdrun -nt '+str(g_var.ncpus)+' -v -pin on -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb', 'merged_cg2at'+protein+'_minimised.pdb'])
 
@@ -527,8 +527,8 @@ def alchembed(system, protein_type):
                     '-po md_out-merged_cg2at_alchembed_'+str(chain)+' '+
                     '-f alchembed_'+str(chain)+'.mdp '+
                     '-p topol_final.top '+
-                    '-r min/merged_cg2at_'+protein_type+'_minimised.pdb '+
-                    '-c min/merged_cg2at_'+protein_type+'_minimised.pdb '+
+                    '-r MIN/merged_cg2at_'+protein_type+'_minimised.pdb '+
+                    '-c MIN/merged_cg2at_'+protein_type+'_minimised.pdb '+
                     '-o alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+' '+
                     '-maxwarn 1', 'alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.tpr'])
     #### if not 1st chain use the previous output of alchembed tfor the input of the next chain 
@@ -537,7 +537,7 @@ def alchembed(system, protein_type):
                 '-po md_out-merged_cg2at_alchembed_'+str(chain)+' '+
                 '-f alchembed_'+str(chain)+'.mdp '+
                 '-p topol_final.top '+
-                '-r min/merged_cg2at_'+protein_type+'_minimised.pdb '+
+                '-r MIN/merged_cg2at_'+protein_type+'_minimised.pdb '+
                 '-c alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain-1)+'.pdb '+
                 '-o alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+' '+
                 '-maxwarn 1', 'alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.tpr'])          
@@ -569,8 +569,8 @@ def write_nvt_mdp(loc, posres, time, timestep):
             steered_md.write('pcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nrefcoord_scaling = all\ncutoff-scheme = Verlet')   
 
 def reverse_steer(protein_type, fc, input_file ):
-    gen.mkdir_directory(g_var.merged_directory+'reverse_steer')
-    equil_type = ['Parrinello-Rahman', 'Berendsen']
+    gen.mkdir_directory(g_var.merged_directory+'REVERSE_STEER')
+    equil_type = ['Berendsen', 'Parrinello-Rahman']
     for equil_type_val, npt_type in enumerate([fc+'_posres-pr.mdp', fc+'_posres-b.mdp']):
         os.chdir(g_var.merged_directory)
         write_steered_mdp(g_var.merged_directory+npt_type, '-D'+fc.upper()+'POSRES', equil_type[equil_type_val] ,2000, 0.001)  
@@ -581,9 +581,9 @@ def reverse_steer(protein_type, fc, input_file ):
                 ' -p topol_final.top '+
                 ' -r merged_cg2at_'+protein_type+'.pdb '+
                 ' -c '+input_file+'.pdb '+
-                ' -o reverse_steer/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+' '+
-                ' -maxwarn '+str(equil_type_val+2), 'reverse_steer/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+'.tpr'])  
-        os.chdir('reverse_steer')
+                ' -o REVERSE_STEER/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+' '+
+                ' -maxwarn '+str(equil_type_val+2), 'REVERSE_STEER/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+'.tpr'])  
+        os.chdir('REVERSE_STEER')
         equil = gromacs_equilibration([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+
                                      ' -c merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb -cpo merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.cpt'
                                      ,'merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb'])
@@ -613,7 +613,7 @@ def run_npt(input_file):
     print('Running NPT on de novo system')
     os.chdir(g_var.merged_directory)        
     gen.mkdir_directory(g_var.merged_directory+'NPT')
-    equil_type = ['Parrinello-Rahman', 'Berendsen']
+    equil_type = ['Berendsen', 'Parrinello-Rahman']
     for equil_type_val, npt_type in enumerate(['npt-pr.mdp', 'npt-b.mdp']):
         os.chdir(g_var.merged_directory)   
         write_steered_mdp(g_var.merged_directory+npt_type, '-DPOSRES', equil_type[equil_type_val] ,10000, 0.001)

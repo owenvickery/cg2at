@@ -381,7 +381,7 @@ def align_chains(atomistic_protein_input, seq_user, sequence):
     for chain_at in range(len(atomistic_protein_input)):
         skip_sequence=False
         chain_cg=0
-        s = difflib.SequenceMatcher(None, seq_user[chain_at], sequence[chain_cg])
+        s = difflib.SequenceMatcher(None, seq_user[chain_at], sequence[chain_cg], autojunk=False)
         seq_info = s.get_matching_blocks()
         while seq_info[0][2] != len(seq_user[chain_at]):
             if chain_cg >= len(sequence)-1:
@@ -391,7 +391,7 @@ def align_chains(atomistic_protein_input, seq_user, sequence):
                 break
             if not skip_sequence:
                 chain_cg+=1
-                s = difflib.SequenceMatcher(None, seq_user[chain_at], sequence[chain_cg])
+                s = difflib.SequenceMatcher(None, seq_user[chain_at], sequence[chain_cg], autojunk=False)
                 seq_info = s.get_matching_blocks()
         if not skip_sequence:
             temp={}
@@ -403,6 +403,7 @@ def align_chains(atomistic_protein_input, seq_user, sequence):
                 at[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
             sequence[chain_cg] = mask_sequence(sequence[chain_cg], seq_info[0][1], seq_info[0][1]+seq_info[0][2])
             test_chain[chain_at]=chain_cg
+
     if len(at) > 0:
         user_at_input = True
     else: 
