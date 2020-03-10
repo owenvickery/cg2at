@@ -637,7 +637,7 @@ def clean(cg_residues):
             file_list = glob.glob('*temp*', recursive=True)
             for file in file_list:
                 os.remove(file)
-            os.chdir(g_var.working_dir+residue_type+'/min')
+            os.chdir(g_var.working_dir+residue_type+'/MIN')
             file_list = glob.glob('*temp*', recursive=True)
             for file in file_list:
                 os.remove(file) 
