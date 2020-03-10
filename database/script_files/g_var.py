@@ -8,37 +8,36 @@ import multiprocessing as mp
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', prog='CG2AT', epilog='Enjoy the program and best of luck!\n', allow_abbrev=True)
-
+group_req = parser.add_mutually_exclusive_group()
+group_req.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
+group_req.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)
 parser.add_argument('-a', help='atomistic coordinates (Optional)',metavar='pdb/gro/tpr',type=str)
+parser.add_argument('-group', help='treat user supplied atomistic chains, as rigid bodies. (0,1 2,3 or all or chain)',type=str, nargs='*')
 parser.add_argument('-loc', help='output folder name, (default = CG2AT_timestamp)',metavar='CG2AT',type=str)
+parser.add_argument('-o', help='Final output supplied (default = all)', default='all', type=str, choices= ['all', 'align', 'steer', 'none'])
+parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional',metavar='tip3p',type=str)
+parser.add_argument('-ff', help='choose your forcefield. (Optional)',metavar='charmm36',type=str)
+parser.add_argument('-fg', help='choose your fragment library. (Optional)',metavar='martini-2-2',type=str, nargs='*')
+parser.add_argument('-mod', help='treat fragments individually', action='store_true')
+parser.add_argument('-swap', help='creates a swap dictionary supply residues as PIP2,D3A:PVCL2,C3A (Optional)',metavar='PIP2,D3A:PVCL2,C3A',type=str, nargs='*')
 parser.add_argument('-v', action="count", default=0, help="increase output verbosity (eg -vv, 3 levels) (Optional)")
 group_C = parser.add_mutually_exclusive_group()
 group_N = parser.add_mutually_exclusive_group()
 parser.add_argument('-ter', help='interactively choose terminal species (Optional)', action='store_true')
-group_N.add_argument('-nt', help='choose neutral N terminal', action='store_true')
+group_N.add_argument('-nt', help='choose neutral N terminal state', action='store_true')
 group_C.add_argument('-ct', help='choose neutral C terminal state', action='store_true')
 group_N.add_argument('-capN', help='cap N terminal with ACE (Optional) not currently working', action='store_true')
 group_C.add_argument('-capC', help='cap C terminal with NME (Optional) not currently working', action='store_true')
-parser.add_argument('-group', help='treat user supplied atomistic chains, as rigid bodies. (0,1 2,3 or all or chain)',type=str, nargs='*')
-parser.add_argument('-clean', help='do not remove part files CG2AT', action='store_true')
-parser.add_argument('-mod', help='treat fragments individually', action='store_true')
-parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional',metavar='tip3p',type=str)
-parser.add_argument('-ff', help='choose your forcefield. (Optional)',metavar='charmm36',type=str)
-parser.add_argument('-fg', help='choose your fragment library. (Optional)',metavar='martini-2-2',type=str, nargs='*')
+parser.add_argument('-messy', help='do not remove part files CG2AT', action='store_true')
 parser.add_argument('-gromacs', help='gromacs executable name (Optional)',metavar='gmx_avx',type=str)
 parser.add_argument('-cys', help='cutoff for disulphide bonds, sometimes CYS are too far apart (Optional)',metavar='7',type=float, default=7)
 parser.add_argument('-silent', help='silent cysteines question', action='store_true')
-parser.add_argument('-swap', help='creates a swap dictionary supply residues as PIP2,D3A:PVCL2,C3A (Optional)',metavar='PIP2,D3A:PVCL2,C3A',type=str, nargs='*')
 parser.add_argument('-box', help='box size in Angstrom (0 = use input file) (Optional)',metavar='100',type=float, nargs=3)
 parser.add_argument('-vs', help='use virtual sites', action='store_true')
 parser.add_argument('-al', help='switches off alchembed (WARNING may cause issues with lipids and rings)', action='store_false')
 parser.add_argument('-sf', help='scale factor for fragments, shrinks fragments before fitting to CG',metavar='0.9',type=float, default=0.9)
 parser.add_argument('-at2cg', help='converts atomistic to coarsegrain ', action='store_true')
 parser.add_argument('-version', action='version', version='%(prog)s 2.0')
-group_req = parser.add_mutually_exclusive_group()
-group_req.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)
-group_req.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
-parser.add_argument('-o', help='Final output supplied (default = all)', default='all', type=str, choices= ['all', 'align', 'steer', 'none'])
 parser.add_argument('-ncpus', help='maximum number of cores to use (default = all)', type=int)
 
 args = parser.parse_args()
@@ -83,7 +82,7 @@ else:
     vs = ''
     sf=args.sf
 box = args.box
-v, clean  = args.v, args.clean
+v, messy  = args.v, args.messy
 
 #### print information and quit
 info = args.info
