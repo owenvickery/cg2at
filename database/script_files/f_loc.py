@@ -5,13 +5,10 @@ import gen, g_var
 
 forcefield_available, fragments_available = gen.read_database_directories()
 
-
-
-
 if g_var.info:
     gen.database_information(forcefield_available, fragments_available)
 elif not os.path.exists(g_var.c):
-    sys.exit('Cannot find  CG input: '+g_var.c)
+    sys.exit('Cannot find CG input file: '+g_var.c)
 
 ##### select forcefield
 try: 
@@ -20,6 +17,7 @@ except:
     if g_var.ff != None: 
         print('Cannot find forcefield: '+g_var.ff.split('.')[0]+'.ff  please select one from below\n')
     forcefield_number = gen.database_selection(forcefield_available, 'forcefields')
+    
 print('\nYou have selected: '+forcefield_available[forcefield_number].split('.')[0])
 gen.folder_copy_and_check(g_var.database_dir+'/forcefields/'+forcefield_available[forcefield_number], g_var.final_dir+forcefield_available[forcefield_number])
 forcefield_location, forcefield=g_var.database_dir+'forcefields/', forcefield_available[forcefield_number]

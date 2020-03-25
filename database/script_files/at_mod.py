@@ -34,9 +34,12 @@ def sanity_check_atoms(atom_list, res):
 
 def sanity_check_beads(bead_list, cg, res):
 #### checks if bead is in fragment library
+    bead_list=[]
     for bead in cg:
+        bead_list.append(bead)
         if bead not in bead_list:
             sys.exit('The bead '+bead+' is missing from the fragment library: '+res+'\n')   
+    return bead_list
 
 def sanity_check(cg_residues):
 #### runs through every bead and checks whether it exists
@@ -47,8 +50,10 @@ def sanity_check(cg_residues):
                     resname = cg_residues['PROTEIN'][p_res][bead]['residue_name']
                     break
                 bead_list, atom_list = sanity_check_fragments(resname, cg_residues['PROTEIN'][p_res], False)
-                sanity_check_beads(bead_list, cg_residues['PROTEIN'][p_res], resname)  
+                bead_list_cg = sanity_check_beads(bead_list, cg_residues['PROTEIN'][p_res], resname)  
                 sanity_check_atoms(atom_list, resname)
+                if sorted(bead_list) != sorted(bead_list_cg):
+                    sys.exit('There is a issue with residue: '+resname+' '+str(p_res+1))
         elif res_type in ['SOL', 'ION']:
             for p_res in cg_residues[res_type]:
                 for bead in cg_residues[res_type][p_res]:
@@ -61,7 +66,12 @@ def sanity_check(cg_residues):
             bead_list, atom_list = sanity_check_fragments(res_type, cg_residues[res_type], False)
             sanity_check_atoms(atom_list, res_type)
             for residue in cg_residues[res_type]:
-                sanity_check_beads(bead_list, cg_residues[res_type][residue], res_type) 
+                bead_list_cg = sanity_check_beads(bead_list, cg_residues[res_type][residue], res_type)
+                if sorted(bead_list) != sorted(bead_list_cg):
+                    sys.exit('There is a issue with residue: '+res_type+' '+str(residue+1))
+
+
+
                 
 def rotate_atom(coord, center,xyz_rot_apply):
 #### rotates atom around center
@@ -226,7 +236,6 @@ def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
         for bead in at_frag_centers:
             cg_connection.append(cg_frag_centers[bead])
             at_connection.append(at_frag_centers[bead])     
-
     return at_connection, cg_connection    
 
 def find_cross_vector(ca, C, O):

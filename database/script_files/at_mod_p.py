@@ -37,7 +37,6 @@ def build_protein_atomistic_system(cg_residues):
         residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(frag_location)
         for group in residue_type[resname]:
             center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[resname][group], residue_type_mass[resname], residue_number, cg_residues[residue_number])
-
             at_connect, cg_connect = at_mod.connectivity(cg_residues[residue_number], at_frag_centers, cg_frag_centers, group_fit, group)
             if BB_bead in group_fit:
                 # print(residue_number,group_fit[BB_bead], f_loc.backbone[resname])
