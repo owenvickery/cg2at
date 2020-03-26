@@ -7,7 +7,7 @@ import argparse
 import multiprocessing as mp
 from pathlib import Path
 
-parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', prog='CG2AT', epilog='Enjoy the program and best of luck!\n', allow_abbrev=True)
+parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', prog='CG2AT', epilog='Enjoy the program and best of luck!\n')
 group_req = parser.add_mutually_exclusive_group()
 group_req.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
 group_req.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)

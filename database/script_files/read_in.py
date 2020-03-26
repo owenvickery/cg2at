@@ -39,9 +39,6 @@ def read_initial_cg_pdb():
                                 sol_res_list[f_loc.water]['residue_name']='SOL'
                                 cg_residues['SOL'][count]=sol_res_list
                         else:
-                            # for bead in residue_list:
-                            #     if bead.startswith('B'):
-                            #         residue_list['BB']= residue_list.pop(bead)
                             cg_residues['PROTEIN'][count]={} ### then create sub dictionary cg_residues['PROTEIN'][count]
                             cg_residues['PROTEIN'][count]=residue_list ### adds residue list to dictionary key cg_residues['PROTEIN'][count]
     #### updates dictionaries and counters
@@ -79,7 +76,6 @@ def add_residue_to_dictionary(cg_residues, line_sep):
         if 'PROTEIN' not in cg_residues:  ## if protein does not exist add to dict
             cg_residues['PROTEIN']={}
     elif line_sep['residue_name'].startswith('W') and line_sep['atom_name'].startswith('W'):
-        # if line_sep['residue_name'] in water: ## renames waters to SOL saves headache later on
         line_sep['residue_name']='SOL'
         if line_sep['residue_name'] not in cg_residues: ## if residue type does not exist add to dict
             cg_residues[line_sep['residue_name']]={}
