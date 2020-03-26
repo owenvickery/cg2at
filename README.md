@@ -118,7 +118,7 @@ OPTIONAL
 - -fg         (str) 
 - -gromacs    (str) 
 - -loc        (str)  
-- -clean      (True/False) 
+- -messy      (True/False) 
 - -info       (True/False)
 - -version    (True/False)
 - -v          (-vvv) 
@@ -232,6 +232,14 @@ no verbosity:
 3rd level (-vvv)
 
 - prints out all gromacs commands called by the script
+
+<p align="center">
+                                   <b>Cleaning up folders</b>
+</p>
+                                        
+To keep all the part files created by the script use the flag:
+
+- -messy
 
 <p align="center">
                                    <b>Virtual sites</b>
