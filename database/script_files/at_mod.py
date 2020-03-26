@@ -45,22 +45,25 @@ def sanity_check(cg_residues):
 #### runs through every bead and checks whether it exists
     for res_type in cg_residues:
         if res_type == 'PROTEIN':
-            for p_res in cg_residues['PROTEIN']:
-                for bead in cg_residues['PROTEIN'][p_res]:
-                    resname = cg_residues['PROTEIN'][p_res][bead]['residue_name']
+            for residue in cg_residues['PROTEIN']:
+                for bead in cg_residues['PROTEIN'][residue]:
+                    resname = cg_residues['PROTEIN'][residue][bead]['residue_name']
                     break
-                bead_list, atom_list = sanity_check_fragments(resname, cg_residues['PROTEIN'][p_res], False)
-                bead_list_cg = sanity_check_beads(bead_list, cg_residues['PROTEIN'][p_res], resname)  
+                bead_list, atom_list = sanity_check_fragments(resname, cg_residues['PROTEIN'][residue], False)
+                bead_list_cg = sanity_check_beads(bead_list, cg_residues['PROTEIN'][residue], resname)  
                 sanity_check_atoms(atom_list, resname)
                 if sorted(bead_list) != sorted(bead_list_cg):
-                    sys.exit('There is a issue with residue: '+resname+' '+str(p_res+1))
+                    if len(bead_list) == len(bead_list_cg):
+                        cg_residues = fix_atom_wrap(bead_list, bead_list_cg, cg_residues, 'PROTEIN', residue)
+                    else:
+                        sys.exit('There is a issue with residue: '+resname+' '+str(residue+1))
         elif res_type in ['SOL', 'ION']:
-            for p_res in cg_residues[res_type]:
-                for bead in cg_residues[res_type][p_res]:
+            for residue in cg_residues[res_type]:
+                for bead in cg_residues[res_type][residue]:
                     sin_bead=bead
                     break
-                bead_list, atom_list = sanity_check_fragments(res_type, cg_residues[res_type][p_res], sin_bead)
-                sanity_check_beads(bead_list, cg_residues[res_type][p_res], res_type) 
+                bead_list, atom_list = sanity_check_fragments(res_type, cg_residues[res_type][residue], sin_bead)
+                sanity_check_beads(bead_list, cg_residues[res_type][residue], res_type) 
                 sanity_check_atoms(atom_list, res_type)
         else:
             bead_list, atom_list = sanity_check_fragments(res_type, cg_residues[res_type], False)
@@ -68,11 +71,22 @@ def sanity_check(cg_residues):
             for residue in cg_residues[res_type]:
                 bead_list_cg = sanity_check_beads(bead_list, cg_residues[res_type][residue], res_type)
                 if sorted(bead_list) != sorted(bead_list_cg):
-                    sys.exit('There is a issue with residue: '+res_type+' '+str(residue+1))
+                    if len(bead_list) == len(bead_list_cg):
+                        cg_residues = fix_atom_wrap(bead_list, bead_list_cg, cg_residues, res_type, residue)
+                    else:
+                        sys.exit('There is a issue with residue: '+res_type+' '+str(residue+1))
+                        
+def fix_atom_wrap(bead_list_frag, bead_list_cg, cg_residues, section, resid):
+    for bead in bead_list_cg:
+        if bead not in bead_list_frag:
+            new_bead = bead[1:]+bead[0]
+            if new_bead in bead_list_frag and new_bead not in bead_list_cg:
+                cg_residues[section][resid][new_bead] = cg_residues[section][resid][bead]
+                del cg_residues[section][resid][bead]
+            else:
+                sys.exit('There is a issue with residue: '+section+' '+str(resid+1))
+    return cg_residues            
 
-
-
-                
 def rotate_atom(coord, center,xyz_rot_apply):
 #### rotates atom around center
     coord =  coord-center  #### centers COM coordinates to 0,0,0
