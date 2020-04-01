@@ -414,16 +414,15 @@ def read_nvt_system(protein, box_vec):
     merge, merge_coords = read_in_merged_pdbs([], [], protein)
     resid_prev=0
     ringed=[]
+    offset =0
     for at_val, atom in enumerate(merge):
-        if atom['residue_id'] != resid_prev:
+        if atom['residue_id'] != resid_prev and atom['atom_number']-offset > max(f_loc.hydrogen[atom['residue_name']], key=f_loc.hydrogen[atom['residue_name']].get) :
             offset=at_val
         if atom['residue_name'] in f_loc.np_residues:
             resid_prev=atom['residue_id']
             if atom['atom_number']-offset in f_loc.heavy_bond[atom['residue_name']]:
                 at_coord = [atom['x'], atom['y'], atom['z']]
-                print(len(f_loc.heavy_bond[atom['residue_name']]))
                 for at_bond in f_loc.heavy_bond[atom['residue_name']][atom['atom_number']-offset]:
-
                     at_bond_coord = [merge[at_bond+offset-1]['x'], merge[at_bond+offset-1]['y'], merge[at_bond+offset-1]['z']]
                     for xyz in range(3):
                     #### for x, y, z if the distance between bead is more than half the box length
