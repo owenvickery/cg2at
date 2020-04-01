@@ -56,7 +56,8 @@ def sanity_check(cg_residues):
                     if len(bead_list) == len(bead_list_cg):
                         cg_residues = fix_atom_wrap(bead_list, bead_list_cg, cg_residues, 'PROTEIN', residue)
                     else:
-                        sys.exit('There is a issue with residue: '+resname+' '+str(residue+1))
+                        print('There is a issue with residue: '+resname+' '+str(residue+1))
+                        sys.exit('number of atomistic fragments: '+str(len(bead_list))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
         elif res_type in ['SOL', 'ION']:
             for residue in cg_residues[res_type]:
                 for bead in cg_residues[res_type][residue]:
@@ -74,7 +75,8 @@ def sanity_check(cg_residues):
                     if len(bead_list) == len(bead_list_cg):
                         cg_residues = fix_atom_wrap(bead_list, bead_list_cg, cg_residues, res_type, residue)
                     else:
-                        sys.exit('There is a issue with residue: '+res_type+' '+str(residue+1))
+                        print('There is a issue with residue: '+res_type+' '+str(residue+1))
+                        sys.exit('number of atomistic fragments: '+str(len(bead_list))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
                         
 def fix_atom_wrap(bead_list_frag, bead_list_cg, cg_residues, section, resid):
     for bead in bead_list_cg:
@@ -84,7 +86,9 @@ def fix_atom_wrap(bead_list_frag, bead_list_cg, cg_residues, section, resid):
                 cg_residues[section][resid][new_bead] = cg_residues[section][resid][bead]
                 del cg_residues[section][resid][bead]
             else:
-                sys.exit('There is a issue with residue: '+section+' '+str(resid+1))
+                print('There is a issue with residue: '+section+' '+str(resid+1))
+                print('cannot find: '+bead+' or '+new_bead+' in fragment list:')
+                sys.exit(bead_list_frag)
     return cg_residues            
 
 def rotate_atom(coord, center,xyz_rot_apply):

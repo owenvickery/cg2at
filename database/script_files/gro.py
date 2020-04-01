@@ -592,10 +592,13 @@ def reverse_steer(protein_type, fc, input_file ):
     if not equil:
         sys.exit('reverse steer failed')
 
-def run_nvt(loc):
+def run_nvt(loc, protein):
     print('Running NVT on de novo system')
     os.chdir(g_var.merged_directory)    
-    write_nvt_mdp(g_var.merged_directory+'nvt.mdp', '-DPOSRES', 100, 0.001)
+    if protein:
+        write_nvt_mdp(g_var.merged_directory+'nvt.mdp', '-DPOSRES', 100, 0.001)
+    else:
+        write_nvt_mdp(g_var.merged_directory+'nvt.mdp', '', 100, 0.001)
     gen.mkdir_directory(g_var.merged_directory+'NVT')
     gromacs([g_var.gmx+' grompp'+
             ' -po md_out-merged_cg2at_nvt'+
@@ -609,14 +612,17 @@ def run_nvt(loc):
     gromacs([g_var.gmx+' mdrun -v -pin on -nt '+str(g_var.ncpus)+' -deffnm merged_cg2at_de_novo_nvt'+
         ' -c merged_cg2at_de_novo_nvt.pdb', 'merged_cg2at_de_novo_nvt.pdb'])      
 
-def run_npt(input_file):
+def run_npt(input_file, protein):
     print('Running NPT on de novo system')
     os.chdir(g_var.merged_directory)        
     gen.mkdir_directory(g_var.merged_directory+'NPT')
     equil_type = ['Berendsen', 'Parrinello-Rahman']
     for equil_type_val, npt_type in enumerate(['npt-pr.mdp', 'npt-b.mdp']):
         os.chdir(g_var.merged_directory)   
-        write_steered_mdp(g_var.merged_directory+npt_type, '-DPOSRES', equil_type[equil_type_val] ,10000, 0.001)
+        if protein:
+            write_steered_mdp(g_var.merged_directory+npt_type, '-DPOSRES', equil_type[equil_type_val] ,10000, 0.001)
+        else:
+            write_steered_mdp(g_var.merged_directory+npt_type, '', equil_type[equil_type_val] ,10000, 0.001)
         gromacs([g_var.gmx+' grompp'+
                 ' -po md_out-merged_cg2at_npt'+
                 ' -f '+npt_type+
