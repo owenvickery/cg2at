@@ -46,14 +46,17 @@ else:
 
     #### simple pbc fix and residue truncation if required
     cg_residues =read_in.fix_pbc(cg_residues, box_vec_initial, box_vec, box_shift)
-
+    if 'PROTEIN' in cg_residues:
+        protein = True
+    else:
+        protein = False
     #### checks if fragment database is correct
     at_mod.sanity_check(cg_residues)
 
     time_counter['r_i_t']=time.time()
     system={}
     ### convert protein to atomistic representation
-    if 'PROTEIN' in cg_residues:
+    if protein:
         if user_at_input:
             atomistic_protein_input_raw, chain_count = at_mod_p.read_in_atomistic(g_var.input_directory+'AT_input.pdb')  ## reads in user structure
         p_system, backbone_coords, coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN'])
@@ -138,14 +141,17 @@ else:
     #### merges provided atomistic protein and residues types into a single pdb file into merged directory
         at_mod.merge_system_pdbs(system, '_de_novo', cg_residues, box_vec)
         gro.minimise_merged_pdbs(system, '_de_novo')
-        gro.run_nvt(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb')
-        ringed_lipids = at_mod.read_nvt_system(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt.pdb', box_vec)
-        if len(system) > 1 and g_var.alchembed and len(ringed_lipids) > 0:
+        gro.run_nvt(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb', protein)
+        ringed_lipids = at_mod.check_ringed_lipids(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt.pdb', box_vec)
+        if len(system) > 1 and g_var.alchembed and len(ringed_lipids) > 0 and protein:
             gro.alchembed(system['PROTEIN'], 'de_novo')  
+            ringed_lipids = at_mod.check_ringed_lipids(g_var.final_dir+'final_cg2at_de_novo.pdb', box_vec)
+            if len(ringed_lipids) > 0:
+                print('Check final output as alchembed cannot fix ringed lipid: ', ringed_lipids)
         else:
-            gro.run_npt(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt')
+            gro.run_npt(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt', protein)
         time_counter['m_t']=time.time()
-        if user_at_input and 'PROTEIN' in system:
+        if user_at_input and protein:
             print()
             if g_var.o in ['all', 'steer']:
                 print('Creating steered system')
@@ -166,7 +172,7 @@ else:
                 gen.file_copy_and_check(g_var.merged_directory+'REVERSE_STEER/merged_cg2at_aligned_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb')
                 time_counter['a_e']=time.time()
 
-    if 'PROTEIN' in cg_residues:
+    if protein:
     #### calculates final RMS
         RMSD={}
         de_novo_atoms, chain_count = at_mod_p.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb')
@@ -174,7 +180,7 @@ else:
             sys.exit('number of chains in atomistic protein input ('+str(chain_count)+') does not match CG representation ('+str(system['PROTEIN'])+')')
         RMSD['de novo '] = at_mod_p.RMSD_measure(de_novo_atoms, system,backbone_coords)
 
-        if user_at_input and 'PROTEIN' in system:
+        if user_at_input and protein:
             if g_var.o in ['all', 'steer']:
                 at_input_atoms, chain_count = at_mod_p.read_in_atomistic(g_var.final_dir+'final_cg2at_steered.pdb')
                 RMSD['at steered'] = at_mod_p.RMSD_measure(at_input_atoms, system,backbone_coords)   
