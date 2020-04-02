@@ -408,7 +408,7 @@ def check_hydrogens(residue):
                         residue[h_at]['coord']=residue[h_at]['coord']-vector*2
     return residue
 
-def read_nvt_system(protein, box_vec):
+def check_ringed_lipids(protein, box_vec):
     box_vec = box_vec.split()[1:4]
     os.chdir(g_var.merged_directory)
     merge, merge_coords = read_in_merged_pdbs([], [], protein)

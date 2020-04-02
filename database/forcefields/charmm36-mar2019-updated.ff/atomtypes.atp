@@ -12,6 +12,7 @@
  BRGA3     79.90400 ; TBRE, 1,1,1-dibromoethane
  BRGR1     79.90400 ; BROB, bromobenzene
      C     12.01100 ; carbonyl C, peptide backbone
+    C3     12.01100 ; cyclopropane carbo
     CA     12.01100 ; aromatic C
    CAD    112.41100 ; cadmium (II) cation
    CAI     12.01100 ; aromatic C next to CPT in trp
@@ -141,10 +142,10 @@ CG3RC1     12.01100 ; bridgehead in bicyclic systems containing at least one 5-m
    CN4     12.01100 ; Nucleic acid purine C8 and ADE C2
    CN5     12.01100 ; Nucleic acid purine C4 and C5
   CN5G     12.01100 ; Nucleic acid guanine C5
-   CN6     12.01100 ; MASS  -1  CN6      12.011000 C
+   CN6     12.01100 ; carbocylic NA modifications (numbering is correct)
    CN7     12.01100 ; Nucleic acid carbon (equivalent to protein CT1)
   CN7B     12.01100 ; Nucleic acid aliphatic carbon for C1'
-  CN7E     12.01100 ; MASS  -1  CN7E     12.011000 C
+  CN7E     12.01100 ; cabocyclic NA modifications
    CN8     12.01100 ; Nucleic acid carbon (equivalent to protein CT2)
   CN8B     12.01100 ; Nucleic acid carbon (equivalent to protein CT2)
    CN9     12.01100 ; Nucleic acid carbon (equivalent to protein CT3)
@@ -171,6 +172,7 @@ CG3RC1     12.01100 ; bridgehead in bicyclic systems containing at least one 5-m
    CT1     12.01100 ; aliphatic sp3 C for CH
    CT2     12.01100 ; aliphatic sp3 C for CH2
   CT2A     12.01100 ; from CT2 (asp, glu, hsp chi1/chi2 fitting)
+  CT2P     12.01100 ; (sp3)H2 Carbon in PNA backbone (eq. CT2)
    CT3     12.01100 ; aliphatic sp3 C for CH3
   CTD1     12.01100 ; added for D-amino acids
   CTL1     12.01100 ; sp3 carbon with 1 H  (-CH1-)
@@ -367,6 +369,7 @@ OC3C61     15.99940 ; ether in six membered ring
  OG2N1     15.99940 ; NITB, nitrobenzene
  OG2P1     15.99940 ; =O in phosphate or sulfate
 OG2R50     15.99940 ; FURA, furan
+ OG2S1     15.99940 ; mono-thio S-P bond modulated oxygen
  OG301     15.99940 ; ether -O- !SHOULD WE HAVE A SEPARATE ENOL ETHER??? IF YES, SHOULD WE MERGE IT WITH OG3R60???
  OG302     15.99940 ; ester -O-
  OG303     15.99940 ; phosphate/sulfate ester oxygen
@@ -416,6 +419,8 @@ OG3R60     15.99940 ; O in 6-mem cyclic enol ether (PY01, PY02) or ester
     SC     32.06000 ; Sulfate sulfur
  SEGD1     78.96000 ; selenocarbonyl Se
  SG2D1     32.06000 ; thiocarbonyl S
+ SG2P1     32.06000 ; mono-thio S-P bond
+ SG2P2     32.06000 ; di-thio S-P bond
 SG2R50     32.06000 ; THIP, thiophene
  SG301     32.06000 ; sulfur C-S-S-C type
  SG302     32.06000 ; thiolate sulfur (-1)
@@ -435,11 +440,11 @@ SG2R50     32.06000 ; THIP, thiophene
   OWT4	   15.99940 ; TIP4P
   HWT4		1.00800 ; TIP4P
   MWT4		0.00000 ; TIP4P
-  MNH3      0.00000 ; vsite (rigid tetrahedrical NH3 group)
-  MNH2      0.00000 ; vsite
-  MCH3      0.00000 ; vsite (rigid CH3 group)
- MCH3N	    0.00000 ; vsite (rigid CH3 group connected to N, added by Bastien 2014)
- MCH3S      0.00000 ; vsite
-    MW      0.00000 ; vsite
+  MNH3		0.00000 ; vsite (rigid tetrahedrical NH3 group)
+  MNH2		0.00000 ; vsite
+  MCH3		0.00000 ; vsite (rigid CH3 group)
+ MCH3N     0.00000 ; vsite (rigid CH3 group connected to N, added by Bastien 2014)
+ MCH3S		0.00000 ; vsite
+	MW		0.00000 ; vsite
   ON2B	   15.99940 ; for phospho residues
 	SP	   32.06000 ; for S-adenosyl methionine

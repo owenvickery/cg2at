@@ -1,6 +1,6 @@
 
 
-CHARMM36 all-atom force field (March 2017) with spacer
+CHARMM36 all-atom force field (March 2019)
 
 *******************************************************************************
 *					 CHARMM36 port writted by								  *
@@ -10,7 +10,7 @@ CHARMM36 all-atom force field (March 2017) with spacer
 *					 www.mackerell.umaryland.edu/CHARMM_ff_params.html		  *
 *******************************************************************************
 
-Parameters taken from CHARMM36 and CGenFF 4.0 
+Parameters taken from CHARMM36 and CGenFF 4.1 
   Included are topologies and parameters from
 	top_all36_prot.rtf			par_all36m_prot.prm
 	toppar_all36_prot_heme.str
@@ -142,6 +142,23 @@ Chemistry, 1997, 18: 221-239.
 Mayaan, E., Moser, A., MacKerell, Jr., A.D., and York, D.M. CHARMM force field
 parameters for simulation of reactive intermediates in native and
 thio-substituted ribozymes. Journal of Computational Chemistry, 2007, 28:495-507.
+
+! LNA and PNA
+Wang, P., Nicklaus, M.C., Marquez, V.E., Brank, A.S.,
+Christman, J., Banavali, N.K. and MacKerell, Jr., A.D., Use of
+Oligodeoxyribonucleotides with Conformationally Constrained
+Abasic Sugar Targets to Probe the Mechanism of Base Flipping by
+HhaI DNA (Cytosine C5)-Methyltransferase. Journal of the
+American Chemical Society, 2000, 122:12422-12434
+
+Hartono, YD, Xu, Y, Karshikoff, A, Nilsson, L, Villa, A. Modeling pKa
+Shift in DNA Triplexes Containing Locked Nucleic Acids. J Chem Inf
+Model, 58:773-783, 2018, doi: 10.1021/acs.jcim.7b00741
+
+Jasinski, M., Feig, M., Trylska, J. Improved Force
+Fields for Peptide Nucleic Acids with Optimized Backbone Torsion
+Parameters. J. Chem. Theory Comput., 14: 3603-3620, 2018,
+doi: 10.1021/acs/jctc.8b00291
 
 ** Carbohydrates
 

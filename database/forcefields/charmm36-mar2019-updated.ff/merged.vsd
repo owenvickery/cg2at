@@ -28,20 +28,13 @@
   CTL3	  CTL3	  MCH3
   CTL3	  OHL	  MCH3
   CTL3	  CEL1	  MCH3
-  CTL5    NTL     MCH3N ; changed by Bastien 2014
-  CTL3    CRL1    MCH3  ; karina 2017
-  CG331   CG311   MCH3
-  CG331   CG321   MCH3
-  CG331   NG2S0   MCH3
-  CG331   OG301   MCH3
-  CG331   CG2D1   MCH3
-  
+  CTL5	  NTL	  MCH3
+
 [ NH3 ]
   NH3	  CT1	  MNH3
   NH3	  CT2	  MNH3
   NH3	  CT3	  MNH3
   NH3L	  CTL2	  MNH3
-  NH3L 	  CTL1    MNH3 ; added by Karina 2016
 
 [ NH2 ]
    NH2	planar

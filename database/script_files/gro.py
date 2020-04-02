@@ -507,7 +507,7 @@ def minimise_merged_pdbs(system, protein):
 
 def alchembed(system, protein_type):
     os.chdir(g_var.working_dir+'MERGED')
-    gen.mkdir_directory('alchembed')
+    gen.mkdir_directory('ALCHEMBED')
 #### runs through each chain and run alchembed on each sequentially
     for chain in range(system):
         print('Running alchembed on chain: '+str(chain))
@@ -529,8 +529,8 @@ def alchembed(system, protein_type):
                     '-p topol_final.top '+
                     '-r MIN/merged_cg2at_'+protein_type+'_minimised.pdb '+
                     '-c MIN/merged_cg2at_'+protein_type+'_minimised.pdb '+
-                    '-o alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+' '+
-                    '-maxwarn 1', 'alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.tpr'])
+                    '-o ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+' '+
+                    '-maxwarn 1', 'ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.tpr'])
     #### if not 1st chain use the previous output of alchembed tfor the input of the next chain 
         else:
             gromacs([g_var.gmx+' grompp '+
@@ -538,17 +538,17 @@ def alchembed(system, protein_type):
                 '-f alchembed_'+str(chain)+'.mdp '+
                 '-p topol_final.top '+
                 '-r MIN/merged_cg2at_'+protein_type+'_minimised.pdb '+
-                '-c alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain-1)+'.pdb '+
-                '-o alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+' '+
-                '-maxwarn 1', 'alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.tpr'])          
-        os.chdir('alchembed')
+                '-c ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain-1)+'.pdb '+
+                '-o ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+' '+
+                '-maxwarn 1', 'ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.tpr'])          
+        os.chdir('ALCHEMBED')
     #### run alchembed on the chain of interest
         gromacs([g_var.gmx+' mdrun -nt '+str(g_var.ncpus)+' -v -pin on -deffnm merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+
                 ' -c merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', 'merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb'])
         os.chdir('..')
 #### copy final output to the FINAL folder
-    gen.file_copy_and_check('alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.merged_directory+'final_cg2at_'+protein_type+'.pdb')
-    gen.file_copy_and_check('alchembed/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.final_dir+'final_cg2at_'+protein_type+'.pdb')
+    gen.file_copy_and_check('ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.merged_directory+'final_cg2at_'+protein_type+'.pdb')
+    gen.file_copy_and_check('ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.final_dir+'final_cg2at_'+protein_type+'.pdb')
     # gen.file_copy_and_check('merged_cg2at_no_steered.pdb', g_var.final_dir+'final_cg2at_no_steered.pdb')
 
 def write_steered_mdp(loc, posres,pc_type, time, timestep):
