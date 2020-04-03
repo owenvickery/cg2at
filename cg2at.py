@@ -172,6 +172,18 @@ else:
                 gen.file_copy_and_check(g_var.merged_directory+'REVERSE_STEER/merged_cg2at_aligned_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb')
                 time_counter['a_e']=time.time()
 
+    #### removes temp file from script, anything with temp in really
+    if not g_var.messy:
+        gen.clean(cg_residues)
+
+    #### prints out system information
+    print('\n{:-<100}'.format(''))
+    print('{0:^100}'.format('Script has completed, time for a beer'))
+    print('\n{0:^10}{1:^25}'.format('molecules','number'))
+    print('{0:^10}{1:^25}'.format('---------','------'))
+    for section in system:
+        print('{0:^10}{1:^25}'.format(section, system[section]))
+
     if protein:
     #### calculates final RMS
         RMSD={}
@@ -196,20 +208,11 @@ else:
                 for chain in RMSD[rmsd]:
                     qual_out.write('{0:^10}{1:^25}{2:^10}\n'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
                     print('{0:^10}{1:^25}{2:^10}'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
+            print()
 
-    #### removes temp file from script, anything with temp in really
-    if not g_var.messy:
-        gen.clean(cg_residues)
+
 
     time_counter['f_t']=time.time()
-
-    #### prints out system information
-    print('\n{:-<100}'.format(''))
-    print('{0:^100}'.format('Script has completed, time for a beer'))
-    print('\n{0:^20}{1:^10}'.format('molecules','number'))
-    print('{0:^20}{1:^10}'.format('---------','------'))
-    for section in system:
-        print('{0:^20}{1:^10}'.format(section, system[section]))
 
     #### prints out script timings for each section
     if g_var.v >= 1:

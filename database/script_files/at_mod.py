@@ -183,8 +183,8 @@ def get_atomistic(frag_location):
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line) ## splits up pdb line
                 residue[group][bead][line_sep['atom_number']]={'coord':np.array([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf]),
-                                                                'atom':line_sep['atom_name'],'resid':line_sep['residue_id'], 'res_type':line_sep['residue_name'],
-                                                                'frag_mass':1}
+                                                                'atom':line_sep['atom_name'],'resid':1, 'res_type':line_sep['residue_name'],
+                                                                'frag_mass':1}    
 #### updates fragment mass   
                 if not gen.is_hydrogen(line_sep['atom_name']):
                     for atom in line_sep['atom_name']:
@@ -416,7 +416,7 @@ def check_ringed_lipids(protein, box_vec):
     ringed=[]
     offset =0
     for at_val, atom in enumerate(merge):
-        if atom['residue_id'] != resid_prev and atom['atom_number']-offset > max(f_loc.hydrogen[atom['residue_name']], key=f_loc.hydrogen[atom['residue_name']].get) :
+        if atom['residue_id'] != resid_prev:# and atom['atom_number']-offset > max(f_loc.hydrogen[atom['residue_name']], key=f_loc.hydrogen[atom['residue_name']].get):# and atom['residue_name'] n:
             offset=at_val
         if atom['residue_name'] in f_loc.np_residues:
             resid_prev=atom['residue_id']
