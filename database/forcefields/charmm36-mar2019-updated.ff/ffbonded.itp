@@ -1345,7 +1345,6 @@ MCH3   CG321   2    0.185772 ;
 MCH3   CG331   2    0.185945 ;
 MCH3   CG2D1   2    0.186636 ; owen
 ; constraints for PO-tails (Karina 2017)
-MCH3   MCH3    2    0.093320
 MCH3   CTL2    2    0.167719
 ;constraints for PC-headgroup (Karina 2017)
 MCH3N   MCH3N   2   0.090498 ; new

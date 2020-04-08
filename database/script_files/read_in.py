@@ -146,15 +146,18 @@ def fix_pbc(cg_residues, box_vec, new_box, box_shift):
     return cg_residues
 
 def swap(atom, residue, resid):
+    # print(atom)
     if residue in f_loc.swap_dict:
         for key, value in f_loc.swap_dict[residue].items():
             break
         if 'ALL' in f_loc.swap_dict[residue][key]['resid'] or resid in f_loc.swap_dict[residue][key]['resid']:
+            # print(f_loc.swap_dict[residue][key])
             if atom in f_loc.swap_dict[residue][key]:
                 atom = f_loc.swap_dict[residue][key][atom]
             residue = key.split(':')[1]
     if atom in f_loc.ions and residue != 'ION':
         residue = 'ION'
+    # print(atom)
     return atom, residue
 
 def read_initial_at_pdb():

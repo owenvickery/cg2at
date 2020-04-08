@@ -37,7 +37,7 @@ if not g_var.at2cg:
     water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
 
     ### return backbone information
-    backbone, sorted_connect, hydrogen, heavy_bond, ions = gen.fetch_fragment(p_residues, p_directories, mod_directories,  
+backbone, sorted_connect, hydrogen, heavy_bond, ions = gen.fetch_fragment(p_residues, p_directories, mod_directories,  
                                                                     np_directories, forcefield_location+forcefield, mod_residues)
 swap_dict=gen.sort_swap_group()
 
