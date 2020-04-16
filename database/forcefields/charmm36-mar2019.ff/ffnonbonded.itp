@@ -3,8 +3,7 @@
 ; and multiple charmm topology files
 
 [ atomtypes ]
-;type atnum         mass   charge ptype           sigma  epsilon
-   AG    47   107.868200    0.000  A  0.263260571210 19.07904
+  AG     47   107.868200    0.000  A  0.263260571210 19.07904
    AL    13    26.981540    0.000  A  0.260587875056 16.81968
  ALG1    13    26.981540    0.000  A  0.356359487256  2.71960
  ALSI    13    26.981540    0.000  A  0.391995435982  2.71960
