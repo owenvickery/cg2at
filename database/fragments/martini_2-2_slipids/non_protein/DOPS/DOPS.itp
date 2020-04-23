@@ -1239,3 +1239,8 @@ DOPS       3
    24    23    26    25     2 
    33    32    35    34     2 
 
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DOPS_posre.itp"
+#endif

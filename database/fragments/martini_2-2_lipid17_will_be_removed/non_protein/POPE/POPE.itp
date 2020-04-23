@@ -1176,3 +1176,8 @@ POPE             3
 #ifdef POSRES
 #include "posre.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "POPE_posre.itp"
+#endif

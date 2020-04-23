@@ -1420,3 +1420,8 @@ DGPC	     3
 #ifdef REST_ON
 #include "../restraints/DGPC_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DGPC_posre.itp"
+#endif

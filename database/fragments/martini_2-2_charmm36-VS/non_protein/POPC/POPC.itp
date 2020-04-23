@@ -1384,3 +1384,8 @@ POPC              3
 [ virtual_sites4 ]
 ;  ai    aj    ak    al    am funct            c0            c1            c2
    35    34    36    31    42     2 
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "POPC_posre.itp"
+#endif

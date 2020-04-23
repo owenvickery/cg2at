@@ -1181,3 +1181,8 @@ DMPI	     3
 #ifdef REST_ON
 #include "../restraints/DLPI_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DMPI_posre.itp"
+#endif

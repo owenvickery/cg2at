@@ -563,3 +563,8 @@
     20     21     22     50      1   180.00   4.60240   2 ;    C17-   C18-   C19-   H25
     23     24     25     53      1   180.00   4.60240   2 ;    C20-   C21-   C22-   H28
 
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "FEN_posre.itp"
+#endif

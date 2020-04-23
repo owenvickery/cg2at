@@ -531,6 +531,18 @@ ATOM      6  CE1 PHE     1      38.420  18.030  13.090  1.00  4.00           C
 ATOM      7  CZ  PHE     1      38.000  19.330  12.830  1.00  3.00           C
 </pre>
 
+For non protein residues you can create a position restraint file which is applied during the creation of the aligned and steered systems.
+A script exists within the scripts directory called make_fragments_posre.py this can either create the correct posre files for every residue in the system or for a single residue.
+
+To apply to every folder in directory in non_protein:
+<pre>
+python make_fragments_posre.py -dir
+</pre>
+To apply to a single residue:
+<pre>
+python make_fragments_posre.py -f POPE.itp
+</pre>
+
 In the case of solvent. All ions and water molecules are in single repective pdb files with separate groups.
 
 In martini water, 4 atomistic water molecules are condensed into a single bead, therefore the fragment has 4 water molecules.

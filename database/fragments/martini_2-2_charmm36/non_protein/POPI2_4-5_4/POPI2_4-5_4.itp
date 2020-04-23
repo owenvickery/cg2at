@@ -1374,3 +1374,8 @@ POPI2_4-5_4  	     3
 #ifdef REST_ON
 #include "../restraints/POPI  _rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "POPI2_4-5_4_posre.itp"
+#endif

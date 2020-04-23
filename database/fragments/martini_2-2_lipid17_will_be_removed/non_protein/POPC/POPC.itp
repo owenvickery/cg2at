@@ -1267,3 +1267,8 @@ POPC             3
 #include "posre.itp"
 #endif
 
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "POPC_posre.itp"
+#endif

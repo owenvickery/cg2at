@@ -1244,3 +1244,8 @@ DPPC	     3
 #ifdef REST_ON
 #include "../restraints/DPPC_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DPPC_posre.itp"
+#endif

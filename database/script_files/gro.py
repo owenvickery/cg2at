@@ -457,6 +457,7 @@ def write_merged_topol(system, protein):
                         if os.path.exists(directory[0]+residue_type+'/'+residue_type+'.itp'):  
                             topologies_to_include.append('#include \"'+residue_type+'.itp\"\n')
                             gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'.itp', residue_type+'.itp')
+                            gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'_posre.itp', residue_type+'_posre.itp')
                             strip_atomtypes(residue_type+'.itp')
                             break
                 #### copies across protein itp files and simplifies the names 
@@ -549,7 +550,7 @@ def alchembed(system, protein_type):
 #### copy final output to the FINAL folder
     gen.file_copy_and_check('ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.merged_directory+'final_cg2at_'+protein_type+'.pdb')
     gen.file_copy_and_check('ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.final_dir+'final_cg2at_'+protein_type+'.pdb')
-    # gen.file_copy_and_check('merged_cg2at_no_steered.pdb', g_var.final_dir+'final_cg2at_no_steered.pdb')
+    
 
 def write_steered_mdp(loc, posres,pc_type, time, timestep):
     if not os.path.exists(loc):
@@ -573,7 +574,7 @@ def reverse_steer(protein_type, fc, input_file ):
     equil_type = ['Berendsen', 'Parrinello-Rahman']
     for equil_type_val, npt_type in enumerate([fc+'_posres-pr.mdp', fc+'_posres-b.mdp']):
         os.chdir(g_var.merged_directory)
-        write_steered_mdp(g_var.merged_directory+npt_type, '-D'+fc.upper()+'POSRES', equil_type[equil_type_val] ,2000, 0.001)  
+        write_steered_mdp(g_var.merged_directory+npt_type, '-D'+fc.upper()+'POSRES -DNP', equil_type[equil_type_val] ,2000, 0.001)  
         gromacs([g_var.gmx+' grompp '+
                 ' -po md_out-merged_cg2at_reverse_steer_'+fc+
                 ' -t '+input_file+'.cpt '+

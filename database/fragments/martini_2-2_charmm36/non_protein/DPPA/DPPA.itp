@@ -1076,3 +1076,8 @@ DPPA	     3
 #ifdef REST_ON
 #include "../restraints/DPPA_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DPPA_posre.itp"
+#endif

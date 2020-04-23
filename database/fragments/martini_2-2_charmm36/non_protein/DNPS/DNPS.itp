@@ -1589,3 +1589,8 @@ DNPS	     3
 #ifdef REST_ON
 #include "../restraints/DNPS_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DNPS_posre.itp"
+#endif

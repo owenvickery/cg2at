@@ -1228,3 +1228,8 @@ DOPG	     3
 #ifdef REST_ON
 #include "../restraints/DOPG_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DOPG_posre.itp"
+#endif

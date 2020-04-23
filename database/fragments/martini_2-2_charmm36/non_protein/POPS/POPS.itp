@@ -1202,3 +1202,8 @@ POPS	     3
 #ifdef REST_ON
 #include "../restraints/POPS_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "POPS_posre.itp"
+#endif

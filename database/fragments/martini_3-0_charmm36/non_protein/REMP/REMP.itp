@@ -3401,3 +3401,8 @@ REMP	     3
    57   254    55    58     2
   138   140    31   139     2
   254   256    57   255     2
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "REMP_posre.itp"
+#endif

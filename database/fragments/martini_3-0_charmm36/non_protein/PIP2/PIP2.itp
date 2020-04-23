@@ -1350,3 +1350,8 @@ PIP2               3
 ;  ai    aj    ak    al funct            c0            c1            c2            c3
    40    39    42    41     2 
    49    48    51    50     2 
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "PIP2_posre.itp"
+#endif

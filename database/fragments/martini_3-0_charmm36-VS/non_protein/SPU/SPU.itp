@@ -614,3 +614,8 @@ SPU	       3
    62    60    55    61     4 
    63    60    55    61    -4 
 
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "SPU_posre.itp"
+#endif

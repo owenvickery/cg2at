@@ -1660,3 +1660,8 @@ DNPC	     3
 #ifdef REST_ON
 #include "../restraints/DNPC_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DNPC_posre.itp"
+#endif

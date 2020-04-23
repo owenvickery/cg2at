@@ -9905,3 +9905,8 @@ OANT	     3
   895   897   893   896     2
   981   983   979   982     2
   983   985   981   984     2
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "OANT_posre.itp"
+#endif

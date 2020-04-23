@@ -2248,3 +2248,8 @@ CDL2 	     3
    47    46    49    48     2
    56    55    58    57     2
 
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "CDL2_posre.itp"
+#endif

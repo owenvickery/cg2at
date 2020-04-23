@@ -1135,3 +1135,8 @@ DMPC               3
    40    39    42    41     2 
 
 
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DMPC_posre.itp"
+#endif

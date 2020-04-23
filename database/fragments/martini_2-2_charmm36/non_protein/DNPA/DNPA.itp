@@ -1492,3 +1492,8 @@ DNPA	     3
 #ifdef REST_ON
 #include "../restraints/DNPA_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DNPA_posre.itp"
+#endif

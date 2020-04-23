@@ -5298,3 +5298,8 @@ RAMP	     3
   254   256    57   255     2
   478   480   476   479     2
   480   482   478   481     2
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "RAMP_posre.itp"
+#endif

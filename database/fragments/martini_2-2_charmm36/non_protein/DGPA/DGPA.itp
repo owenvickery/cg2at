@@ -1252,3 +1252,8 @@ DGPA	     3
 #ifdef REST_ON
 #include "../restraints/DGPA_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DGPA_posre.itp"
+#endif

@@ -1288,3 +1288,8 @@ POPG               3
 ;  ai    aj    ak    al    am funct            c0            c1            c2
     7     6     1     8    10     2 
    22    21    23    18    29     2 
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "POPG_posre.itp"
+#endif

@@ -1174,3 +1174,8 @@ DPPS	     3
 #ifdef REST_ON
 #include "../restraints/DPPS_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DPPS_posre.itp"
+#endif

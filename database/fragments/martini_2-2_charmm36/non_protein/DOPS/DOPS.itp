@@ -1230,3 +1230,8 @@ DOPS	     3
 #ifdef REST_ON
 #include "../restraints/DOPS_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DOPS_posre.itp"
+#endif

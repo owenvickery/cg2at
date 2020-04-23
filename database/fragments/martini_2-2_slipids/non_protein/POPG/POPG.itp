@@ -1209,3 +1209,8 @@ POPG       3
    24    23    26    25     2 
    33    32    35    34     2 
 
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "POPG_posre.itp"
+#endif

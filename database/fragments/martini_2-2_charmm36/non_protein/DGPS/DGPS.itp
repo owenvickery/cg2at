@@ -1349,3 +1349,8 @@ DGPS	     3
 #ifdef REST_ON
 #include "../restraints/DGPS_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DGPS_posre.itp"
+#endif

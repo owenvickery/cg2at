@@ -1004,3 +1004,8 @@ DLPC	     3
 #ifdef REST_ON
 #include "../restraints/DLPC_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DLPC_posre.itp"
+#endif

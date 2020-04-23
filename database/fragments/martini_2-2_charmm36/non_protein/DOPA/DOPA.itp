@@ -1132,3 +1132,8 @@ DOPA	     3
 #ifdef REST_ON
 #include "../restraints/DOPA_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DOPA_posre.itp"
+#endif

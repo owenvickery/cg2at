@@ -1196,3 +1196,8 @@ POPE              3
    22    21    24    23     2 
    31    30    33    32     2 
 
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "POPE_posre.itp"
+#endif

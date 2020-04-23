@@ -2291,3 +2291,8 @@ DPG1	     3
 #ifdef REST_ON
 #include "../restraints/DPG1_rest.itp"
 #endif
+
+; Include heavy atom position restraint file
+#ifdef NP
+#include "DPG1_posre.itp"
+#endif
