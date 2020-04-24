@@ -12,10 +12,10 @@ def read_initial_cg_pdb():
     count=0  ### residue counter initialisation
     with open(g_var.input_directory+'conversion_input.pdb', 'r') as pdb_input:
         for line in pdb_input.readlines():
-#### separates lines
+
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)
-                line_sep['atom_name'], line_sep['residue_name'] = swap(line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id'])
+                line_sep['atom_name'], line_sep['residue_name'] = swap(line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id']) ## implements swap group
                 if 'SKIP' not in [line_sep['atom_name'].upper(), line_sep['residue_name'].upper()]:
 #### set up resnames in dictionaries
                     cg_residues = add_residue_to_dictionary(cg_residues, line_sep)

@@ -699,8 +699,13 @@ def RMSD_measure(structure_atoms, system, backbone_coords):
         if len(at_centers) != len(backbone_coords[chain]):
             sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
     number of CG residues '+str(len(backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
+        cg_center = np.mean(np.array(backbone_coords[chain])[:,:3], axis=0)
+        at_align = np.array(at_centers) - (np.mean(np.array(at_centers), axis=0) - cg_center)
+        xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_align)-cg_center, np.array(np.array(backbone_coords[chain])[:,:3])-cg_center)
+        for at_val, atom in enumerate(at_align):
+            at_align[at_val] = at_mod.rotate_atom(atom, cg_center, xyz_rot_apply) 
         #### finds distance between backbone COM and cg backbone beads
-        dist=np.sqrt((np.array(at_centers) - np.array(backbone_coords[chain])[:,:3])**2)
+        dist=np.sqrt((np.array(at_align) - np.array(backbone_coords[chain])[:,:3])**2)
         RMSD_val = np.sqrt(np.mean(dist**2)) #### RMSD calculation
         RMSD_dict[chain]=np.round(RMSD_val, 3)  #### stores RMSD in dictionary
     return RMSD_dict
