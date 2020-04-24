@@ -12,7 +12,6 @@ def read_initial_cg_pdb():
     count=0  ### residue counter initialisation
     with open(g_var.input_directory+'conversion_input.pdb', 'r') as pdb_input:
         for line in pdb_input.readlines():
-
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)
                 line_sep['atom_name'], line_sep['residue_name'] = swap(line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id']) ## implements swap group
@@ -51,6 +50,9 @@ def read_initial_cg_pdb():
             if line.startswith('CRYST'): ### collects box vectors from pdb
                 box_vec=line
 #### adds final residue to cg_residues in the same manner as above
+    if 'SKIP' == line_sep['residue_name']:
+        line_sep['residue_name']=line_sep_prev['residue_name']
+
     if line_sep['residue_name'] in f_loc.p_residues: 
         if count not in cg_residues['PROTEIN']:
             cg_residues['PROTEIN'][count]={}
@@ -68,7 +70,6 @@ def read_initial_cg_pdb():
 #### checks if box vectors exist
     if 'box_vec' not in locals():### stops script if it cannot find box vectors
         sys.exit('missing box vectors')
-
     return cg_residues, box_vec
 
 def add_residue_to_dictionary(cg_residues, line_sep):
@@ -148,6 +149,8 @@ def fix_pbc(cg_residues, box_vec, new_box, box_shift):
     return cg_residues
 
 def swap(atom, residue, resid):
+    if atom in f_loc.ions and residue != 'ION':
+        residue = 'ION'
     if residue in f_loc.swap_dict:
         for key, value in f_loc.swap_dict[residue].items():
             break
@@ -155,8 +158,13 @@ def swap(atom, residue, resid):
             if atom in f_loc.swap_dict[residue][key]:
                 atom = f_loc.swap_dict[residue][key][atom]
             residue = key.split(':')[1].upper()
-    if atom in f_loc.ions and residue != 'ION':
-        residue = 'ION'
+    elif residue == 'ION' and atom in f_loc.swap_dict:
+        for key, value in f_loc.swap_dict[atom].items():
+            break
+        if 'ALL' in f_loc.swap_dict[atom][key]['resid'] or resid in f_loc.swap_dict[atom][key]['resid']:
+            if atom in f_loc.swap_dict[atom][key]:
+                atom = f_loc.swap_dict[atom][key][atom]
+            residue = key.split(':')[1].upper()
     return atom, residue
 
 def read_initial_at_pdb():
