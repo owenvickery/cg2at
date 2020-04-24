@@ -1379,7 +1379,15 @@ CC322       HCP1   2     0.103264 ; B:OC311
 ;added by laura
 CG321       HGP3   2     0.234108
 CG2O2       HGP1   2     0.200439
-
+;added by karina 2017
+CRL1     HOL  2     0.192081 ; cholesterol
+PL       HOL  2     0.217710 ; PA
+CTL1     HOL  2     0.192081 ; PG
+CTL2     HOL  2     0.192081 ; PG
+CTO1   HOL    2     0.192081 ; CER
+CTO2   HOL    2     0.192081 ; CER
+CC3161 HCP1   2     0.194707 ; PI
+HCP1   PC     2     0.219547 ; PI24
 
 
 

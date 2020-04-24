@@ -16,7 +16,7 @@ def read_initial_cg_pdb():
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)
                 line_sep['atom_name'], line_sep['residue_name'] = swap(line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id'])
-                if line_sep['atom_name'].upper() != 'SKIP' or line_sep['residue_name'].upper() != 'SKIP':
+                if 'SKIP' not in [line_sep['atom_name'].upper(), line_sep['residue_name'].upper()]:
 #### set up resnames in dictionaries
                     cg_residues = add_residue_to_dictionary(cg_residues, line_sep)
     #### sets up previous resid id 
@@ -85,6 +85,8 @@ def add_residue_to_dictionary(cg_residues, line_sep):
             cg_residues[line_sep['residue_name']]={}
         if line_sep['residue_name'] == 'ION' and 'SOL' not in cg_residues:
             cg_residues['SOL']={}
+    elif line_sep['residue_name'] == 'SKIP':
+        pass
     else:
         sys.exit('\n'+line_sep['residue_name']+' is not in the fragment database!') 
     return cg_residues
@@ -146,18 +148,15 @@ def fix_pbc(cg_residues, box_vec, new_box, box_shift):
     return cg_residues
 
 def swap(atom, residue, resid):
-    # print(atom)
     if residue in f_loc.swap_dict:
         for key, value in f_loc.swap_dict[residue].items():
             break
         if 'ALL' in f_loc.swap_dict[residue][key]['resid'] or resid in f_loc.swap_dict[residue][key]['resid']:
-            # print(f_loc.swap_dict[residue][key])
             if atom in f_loc.swap_dict[residue][key]:
                 atom = f_loc.swap_dict[residue][key][atom]
-            residue = key.split(':')[1]
+            residue = key.split(':')[1].upper()
     if atom in f_loc.ions and residue != 'ION':
         residue = 'ION'
-    # print(atom)
     return atom, residue
 
 def read_initial_at_pdb():

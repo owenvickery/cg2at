@@ -53,7 +53,7 @@ if args.dir:
             os.chdir('..')
 else:
     if not os.path.exists(args.f):
-        sys.exit('Cannot find '+args.f)
+        sys.exit('Cannot find '+args.f+'\nAre you in the correct directory\n')
     else:
         itp_file = write_posre_file(args.f.split('.')[0])
         append_ifdef(args.f.split('.')[0], itp_file)    
