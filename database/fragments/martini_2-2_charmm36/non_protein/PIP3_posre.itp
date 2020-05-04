@@ -1,0 +1,3 @@
+; position restraints for PIP3
+[ position_restraints ]
+;  i    funct       fcx        fcy        fcz
