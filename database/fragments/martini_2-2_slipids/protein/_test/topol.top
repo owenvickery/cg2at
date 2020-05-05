@@ -1,0 +1,196 @@
+;
+;	File 'topol.top' was generated
+;	By user: owen (1000)
+;	On host: abrin
+;	At date: Mon Jan 13 15:41:33 2020
+;
+;	This is a standalone topology file
+;
+;	Created by:
+;	                    :-) GROMACS - gmx pdb2gmx, 2018.7 (-:
+;	
+;	Executable:   /home/owen/bin/gmx-2018.7_plumed_2.4.7/bin/gmx
+;	Data prefix:  /home/owen/bin/gmx-2018.7_plumed_2.4.7
+;	Working dir:  /home/owen/Documents/scripts/CG2AT/database/fragments/martini_2-2_charmm36/protein/_test
+;	Command line:
+;	  gmx pdb2gmx -f test.pdb -ter
+;	Force field was read from the standard GROMACS share directory.
+;
+
+; Include forcefield parameters
+#include "backup-charmm36-jul2017-updated.ff/forcefield.itp"
+
+[ moleculetype ]
+; Name            nrexcl
+Protein             3
+
+[ atoms ]
+;   nr       type  resnr residue  atom   cgnr     charge       mass  typeB    chargeB      massB
+; residue   1 ACE rtp ACE  q  0.0
+     1        CT3      1    ACE    CH3      1      -0.27     12.011   ; qtot -0.27
+     2        HA3      1    ACE   HH31      1       0.09      1.008   ; qtot -0.18
+     3        HA3      1    ACE   HH32      1       0.09      1.008   ; qtot -0.09
+     4        HA3      1    ACE   HH33      1       0.09      1.008   ; qtot 0
+     5          C      1    ACE      C      2       0.51     12.011   ; qtot 0.51
+     6          O      1    ACE      O      2      -0.51     15.999   ; qtot 0
+; residue   2 ALA rtp ALA  q -1.0
+     7        NH1      2    ALA      N      3      -0.47     14.007   ; qtot -0.47
+     8          H      2    ALA     HN      4       0.31      1.008   ; qtot -0.16
+     9        CT1      2    ALA     CA      5       0.07     12.011   ; qtot -0.09
+    10        HB1      2    ALA     HA      6       0.09      1.008   ; qtot 0
+    11        CT3      2    ALA     CB      7      -0.27     12.011   ; qtot -0.27
+    12        HA3      2    ALA    HB1      8       0.09      1.008   ; qtot -0.18
+    13        HA3      2    ALA    HB2      9       0.09      1.008   ; qtot -0.09
+    14        HA3      2    ALA    HB3     10       0.09      1.008   ; qtot 0
+    15         CC      2    ALA      C     11       0.34     12.011   ; qtot 0.34
+    16         OC      2    ALA    OT1     12      -0.67    15.9994   ; qtot -0.33
+    17         OC      2    ALA    OT2     13      -0.67    15.9994   ; qtot -1
+
+[ bonds ]
+;  ai    aj funct            c0            c1            c2            c3
+    1     2     1 
+    1     3     1 
+    1     4     1 
+    1     5     1 
+    5     6     1 
+    5     7     1 
+    7     8     1 
+    7     9     1 
+    9    10     1 
+    9    11     1 
+    9    15     1 
+   11    12     1 
+   11    13     1 
+   11    14     1 
+   15    16     1 
+   15    17     1 
+
+[ pairs ]
+;  ai    aj funct            c0            c1            c2            c3
+    1     8     1 
+    1     9     1 
+    2     6     1 
+    2     7     1 
+    3     6     1 
+    3     7     1 
+    4     6     1 
+    4     7     1 
+    5    10     1 
+    5    11     1 
+    5    15     1 
+    6     8     1 
+    6     9     1 
+    7    12     1 
+    7    13     1 
+    7    14     1 
+    7    16     1 
+    7    17     1 
+    8    10     1 
+    8    11     1 
+    8    15     1 
+   10    12     1 
+   10    13     1 
+   10    14     1 
+   10    16     1 
+   10    17     1 
+   11    16     1 
+   11    17     1 
+   12    15     1 
+   13    15     1 
+   14    15     1 
+
+[ angles ]
+;  ai    aj    ak funct            c0            c1            c2            c3
+    2     1     3     5 
+    2     1     4     5 
+    2     1     5     5 
+    3     1     4     5 
+    3     1     5     5 
+    4     1     5     5 
+    1     5     6     5 
+    1     5     7     5 
+    6     5     7     5 
+    5     7     8     5 
+    5     7     9     5 
+    8     7     9     5 
+    7     9    10     5 
+    7     9    11     5 
+    7     9    15     5 
+   10     9    11     5 
+   10     9    15     5 
+   11     9    15     5 
+    9    11    12     5 
+    9    11    13     5 
+    9    11    14     5 
+   12    11    13     5 
+   12    11    14     5 
+   13    11    14     5 
+    9    15    16     5 
+    9    15    17     5 
+   16    15    17     5 
+
+[ dihedrals ]
+;  ai    aj    ak    al funct            c0            c1            c2            c3            c4            c5
+    2     1     5     6     9 
+    2     1     5     7     9 
+    3     1     5     6     9 
+    3     1     5     7     9 
+    4     1     5     6     9 
+    4     1     5     7     9 
+    1     5     7     8     9 
+    1     5     7     9     9 
+    6     5     7     8     9 
+    6     5     7     9     9 
+    5     7     9    10     9 
+    5     7     9    11     9 
+    5     7     9    15     9 
+    8     7     9    10     9 
+    8     7     9    11     9 
+    8     7     9    15     9 
+    7     9    11    12     9 
+    7     9    11    13     9 
+    7     9    11    14     9 
+   10     9    11    12     9 
+   10     9    11    13     9 
+   10     9    11    14     9 
+   15     9    11    12     9 
+   15     9    11    13     9 
+   15     9    11    14     9 
+    7     9    15    16     9 
+    7     9    15    17     9 
+   10     9    15    16     9 
+   10     9    15    17     9 
+   11     9    15    16     9 
+   11     9    15    17     9 
+
+[ dihedrals ]
+;  ai    aj    ak    al funct            c0            c1            c2            c3
+    5     1     7     6     2 
+    7     5     9     8     2 
+   15     9    17    16     2 
+
+; Include Position restraint file
+#ifdef POSRES
+#include "posre.itp"
+#endif
+
+; Include water topology
+#include "backup-charmm36-jul2017-updated.ff/tip3p.itp"
+
+#ifdef POSRES_WATER
+; Position restraint for each water oxygen
+[ position_restraints ]
+;  i funct       fcx        fcy        fcz
+   1    1       1000       1000       1000
+#endif
+
+; Include topology for ions
+#include "backup-charmm36-jul2017-updated.ff/ions.itp"
+
+[ system ]
+; Name
+Protein
+
+[ molecules ]
+; Compound        #mols
+Protein             1

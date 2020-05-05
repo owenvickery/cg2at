@@ -1,3 +1,7 @@
+TITLE     Something clever....
+REMARK    THIS IS A SIMULATION BOX
+CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1
+MODEL        1
 ATOM      1  C   ACE     1       1.048   0.238  -0.245  1.00  0.00           C  
 ATOM      2  O   ACE     1       1.659  -0.755  -0.662  1.00  0.00           O  
 ATOM      3  CH3 ACE     1      -0.410   0.146   0.154  1.00  0.00           C  

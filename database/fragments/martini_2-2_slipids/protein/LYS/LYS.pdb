@@ -1,4 +1,4 @@
-[ frag 'BB'  group '1' posres 'CA' N_ter 'N' C_ter 'C' ]
+[ frag 'BB'  group '1' posres 'CA,CG,NZ' N_ter 'N' C_ter 'C' ]
 ATOM      1  N   LYS     1      35.860  14.270   9.250  2.00  0.00           N  
 ATOM      2  CA  LYS     1      36.590  15.390   9.830  3.00  1.00           C  
 ATOM      8  C   LYS     1      38.070  15.100   9.870  2.00  0.00           C  

@@ -1,4 +1,4 @@
-[ frag 'BB'  group '1' posres 'CA' N_ter 'N' C_ter 'C' ]
+[ frag 'BB'  group '1' posres 'CA,CG' N_ter 'N' C_ter 'C' ]
 ATOM      1  N   LEU     1      32.690  13.590   7.880  2.00  0.00           N
 ATOM      2  CA  LEU     1      34.130  13.350   7.830  3.00  1.00           C
 ATOM      7  C   LEU     1      34.890  14.510   8.430  2.00  0.00           C

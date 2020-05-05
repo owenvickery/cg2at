@@ -1,4 +1,4 @@
-[ frag 'BB'  group '1' posres 'CA' N_ter 'N' C_ter 'C' ]
+[ frag 'BB'  group '1' posres 'CA,CG' N_ter 'N' C_ter 'C' ]
 ATOM      1  N   ASP     1      11.170   4.340   2.530  2.00  0.00           N  
 ATOM      2  CA  ASP     1      11.920   5.240   3.410  3.00  1.00           C  
 ATOM      7  C   ASP     1      13.400   5.170   3.130  2.00  0.00           C  

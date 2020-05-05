@@ -1,4 +1,4 @@
-[ frag 'BB'  group '1' posres 'CA' N_ter 'N' C_ter 'C' ]
+[ frag 'BB'  group '1' posres 'CA,CG' N_ter 'N' C_ter 'C' ]
 ATOM      1  N   ASN     1       7.870   3.820   1.450  2.00  0.00           N  
 ATOM      2  CA  ASN     1       9.290   3.820   1.110  3.00  1.00           C  
 ATOM      7  C   ASN     1      10.060   4.750   2.020  2.00  0.00           C  
