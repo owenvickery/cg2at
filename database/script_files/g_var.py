@@ -91,8 +91,8 @@ info = args.info
 
 variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, 
                    '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, 
-                   '-vs':args.vs, '-box':box,'-loc':args.loc, '-at2cg':args.at2cg, '-group':args.group, '-o':args.o, '-al':args.al, 'ncpus':ncpus}
-topology = ['frag', 'group', 'C_ter', 'N_ter', 'posres', 'sul']
+                   '-vs':args.vs, '-box':box,'-loc':args.loc, '-at2cg':args.at2cg, '-group':args.group, '-o':args.o, '-al':args.al, 'ncpus':ncpus, 'shrink':args.sf}
+topology = {'BACKBONE':'BB', 'C_TERMINAL':'C', 'N_TERMINAL':'N', 'STEER':[], 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}}
 box_line="CRYST1 %8.3f %8.3f %8.3f  90.00  90.00  90.00 P 1           1\n"
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
 mass = {'H': 1,'C': 12,'N': 14,'O': 16,'P': 31,'M': 0, 'B': 32 ,'S': 32} 

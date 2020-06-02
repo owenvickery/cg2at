@@ -18,7 +18,7 @@ except:
         print('Cannot find forcefield: '+g_var.ff.split('.')[0]+'.ff  please select one from below\n')
     forcefield_number = gen.database_selection(forcefield_available, 'forcefields')
     
-print('\nYou have selected: '+forcefield_available[forcefield_number].split('.')[0])
+print('\nYou have selected the forcefield: '+forcefield_available[forcefield_number].split('.')[0])
 gen.folder_copy_and_check(g_var.database_dir+'/forcefields/'+forcefield_available[forcefield_number], g_var.final_dir+forcefield_available[forcefield_number])
 forcefield_location, forcefield=g_var.database_dir+'forcefields/', forcefield_available[forcefield_number]
 
@@ -30,14 +30,14 @@ p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted = gen.
 
 np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories = gen.sort_directories(p_directories_unsorted, 
 																						mod_directories_unsorted, np_directories_unsorted)
-chiral = gen.fetch_chiral(np_directories, p_directories)
+# chiral = gen.fetch_chiral(np_directories, p_directories)
 
 if not g_var.at2cg:
     ### reads in water molecules
     water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
 
     ### return backbone information
-backbone, sorted_connect, hydrogen, heavy_bond, ions = gen.fetch_fragment(p_residues, p_directories, mod_directories,  
+res_top, sorted_connect, hydrogen, heavy_bond, ions = gen.fetch_fragment(p_residues, p_directories, mod_directories,  
                                                                     np_directories, forcefield_location+forcefield, mod_residues)
 swap_dict=gen.sort_swap_group()
 

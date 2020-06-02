@@ -20,9 +20,9 @@ def read_initial_cg_pdb():
                     cg_residues = add_residue_to_dictionary(cg_residues, line_sep)
     #### sets up previous resid id 
                     if 'residue_prev' not in locals(): 
-                        residue_prev=line_sep['residue_id'] 
+                        residue_prev=line_sep.copy() 
     #### if resid the same as previous line
-                    if residue_prev == line_sep['residue_id']:   ### if resid is the same as the previous line, it adds resname and coordinates to the atom name key in residue_list 
+                    if residue_prev['residue_id'] == line_sep['residue_id'] and line_sep['residue_name'] == residue_prev['residue_name']:   ### if resid is the same as the previous line, it adds resname and coordinates to the atom name key in residue_list 
                         residue_list[line_sep['atom_name']]={'residue_name':line_sep['residue_name'],'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']])}
                         line_sep_prev=line_sep.copy()
     #### if resids are different then the residue list is added to cg_residues
@@ -44,7 +44,7 @@ def read_initial_cg_pdb():
                         residue_list={}  ### resets residue list
                         count+=1 ### moves counter along to next residue
                         residue_list[line_sep['atom_name']]={'residue_name':line_sep['residue_name'],'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']])} ### it adds resname and coordinates to the atom name key in residue_list
-                        residue_prev=line_sep['residue_id']   ### updates residue_prev with new resid
+                        residue_prev=line_sep.copy()    ### updates residue_prev with new resid
                         line_sep_prev=line_sep.copy()
 #### finds box vectors
             if line.startswith('CRYST'): ### collects box vectors from pdb
@@ -70,13 +70,16 @@ def read_initial_cg_pdb():
 #### checks if box vectors exist
     if 'box_vec' not in locals():### stops script if it cannot find box vectors
         sys.exit('missing box vectors')
+    for key in cg_residues:
+        if len(cg_residues[key]) == 0:
+            sys.exit('there is a issue with the residue type: '+key)
     return cg_residues, box_vec
 
 def add_residue_to_dictionary(cg_residues, line_sep):
     if line_sep['residue_name'] in f_loc.p_residues: ## if in protein database 
         if 'PROTEIN' not in cg_residues:  ## if protein does not exist add to dict
             cg_residues['PROTEIN']={}
-    elif line_sep['residue_name'].startswith('W') and line_sep['atom_name'].startswith('W'):
+    elif line_sep['residue_name'] in ['W', 'SOL', 'WN', 'WF'] and line_sep['atom_name'].startswith('W'):
         line_sep['residue_name']='SOL'
         if line_sep['residue_name'] not in cg_residues: ## if residue type does not exist add to dict
             cg_residues[line_sep['residue_name']]={}
@@ -130,8 +133,8 @@ def fix_pbc(cg_residues, box_vec, new_box, box_shift):
                     if cut:
                         cut_keys.append(residue)
                         break
-                if residue_type in ['PROTEIN'] and bead == f_loc.backbone[cg_residues[residue_type][residue][bead]['residue_name']]['BB']:
-                    BB_bead = f_loc.backbone[cg_residues[residue_type][residue][bead]['residue_name']]['BB']
+                if residue_type in ['PROTEIN'] and bead == f_loc.res_top[cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']:
+                    BB_bead = f_loc.res_top[cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']
                     if res_val != 0 :
                         BB_cur = cg_residues[residue_type][residue][BB_bead]['coord']
                         for xyz in range(3):

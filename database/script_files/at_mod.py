@@ -157,13 +157,9 @@ def fragment_location(residue):
     sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
 
 
-def split_fragment_names(line, residue, group, frag_location):
-    fragment_header = gen.sep_fragments_header(line, frag_location)
-    if not g_var.mod:
-        bead, group = fragment_header['frag'], fragment_header['group']
-    else:
-        bead = fragment_header['frag']
-        group+=1
+def split_fragment_names(line, residue, resname):
+    bead = gen.strip_header(line)
+    group = f_loc.res_top[resname]['GROUPS'][bead]
     if group not in residue:
         residue[group] = {}
     if bead not in residue[group]:
@@ -175,10 +171,11 @@ def get_atomistic(frag_location):
     residue = {} ## a dictionary of bead in each residue eg residue[group][bead][atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
     fragment_mass = {}
     group=0
+    resname = frag_location.split('/')[-1][:-4]
     with open(frag_location, 'r') as pdb_input:
         for line_nr, line in enumerate(pdb_input.readlines()):
             if line.startswith('['):
-                residue, group, bead = split_fragment_names(line, residue, group, frag_location)
+                residue, group, bead = split_fragment_names(line, residue, resname)
                 fragment_mass[bead]=[]
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line) ## splits up pdb line
@@ -256,15 +253,19 @@ def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
             at_connection.append(at_frag_centers[bead])     
     return at_connection, cg_connection    
 
-def find_cross_vector(ca, C, O):
-#### finds cross vector of the atoms CA, CA+1, CA+2 and the vector OC
-    initial_vector= O-C
-    initial_vector = initial_vector/np.linalg.norm(initial_vector)
+def find_cross_vector(ca):
+#### finds cross vector of the atoms CA, CA+1, CA+2 
     AB = ca[0]-ca[1]
     AC = ca[0]-ca[2] 
     cross_vector = np.cross(AB, AC)
     cross_vector = cross_vector/np.linalg.norm(cross_vector)
-    return initial_vector, cross_vector
+    return cross_vector
+
+def noramlised_vector(c1, c2):
+    initial_vector= c1-c2
+    initial_vector = initial_vector/np.linalg.norm(initial_vector)
+    return initial_vector
+
 
 def align_to_vector(v1, v2):
 #### returns the rotation matrix to rotate v1 to v2
@@ -332,10 +333,10 @@ def fetch_chiral_coord(merge_temp):
     chiral_atoms={}
     coord=[]
     for atom in range(len(merge_temp)):
-        if merge_temp[atom]['residue_name'] in f_loc.chiral:
+        if merge_temp[atom]['residue_name'] in f_loc.res_top[merge_temp[atom]['residue_name']]['CHIRAL']:
             if merge_temp[atom]['residue_id'] not in chiral_atoms:
                 chiral_atoms[merge_temp[atom]['residue_id']]={}
-            if merge_temp[atom]['atom_name'] in f_loc.chiral[merge_temp[atom]['residue_name']]['atoms']:
+            if merge_temp[atom]['atom_name'] in f_loc.res_top[merge_temp[atom]['residue_name']]['CHIRAL']['atoms']:
                 chiral_atoms[merge_temp[atom]['residue_id']][merge_temp[atom]['atom_name']]=atom
         coord.append(np.array([merge_temp[atom]['x'],merge_temp[atom]['y'],merge_temp[atom]['z']]))
     return chiral_atoms, coord
@@ -348,13 +349,13 @@ def fix_chirality(merge, merge_temp, merged_coords):
         for atom in chiral_atoms[residue]:
             resname = merge_temp[chiral_atoms[residue][atom]]['residue_name']
             break
-        for chiral_group in f_loc.chiral[resname]:
+        for chiral_group in f_loc.res_top[resname]['CHIRAL']:
             if chiral_group != 'atoms':
                 stat = merge_temp[chiral_atoms[residue][chiral_group]]
-                move = merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['m']]]
-                c1   = merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['c1']]]
-                c2   = merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['c2']]]
-                c3   = merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['c3']]]
+                move = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]]
+                c1   = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['c1']]]
+                c2   = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['c2']]]
+                c3   = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['c3']]]
 
                 stat_coord = np.array([stat['x'], stat['y'], stat['z']])
                 move_coord = np.array([move['x'], move['y'], move['z']])
@@ -371,9 +372,9 @@ def fix_chirality(merge, merge_temp, merged_coords):
                 C1_C3_a = gen.angle_clockwise(c1_coord[0:2], c3_coord[0:2])
                 if C1_C2_a > C1_C3_a:
                     for ax_val, axis in enumerate(['x', 'y', 'z']):
-                        merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['m']]][axis] = merge_temp[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['m']]][axis] - (3*S_M[ax_val])   
+                        merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] - (3*S_M[ax_val])   
                         merge_temp[chiral_atoms[residue][chiral_group]][axis] = merge_temp[chiral_atoms[residue][chiral_group]][axis] - (S_M[ax_val])        
-                    coord[chiral_atoms[residue][f_loc.chiral[resname][chiral_group]['m']]] = move_coord - (3*S_M) 
+                    coord[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]] = move_coord - (3*S_M) 
                     coord[chiral_atoms[residue][chiral_group]] = stat_coord - (1.5*S_M) 
     merge+=merge_temp
     merged_coords+=coord

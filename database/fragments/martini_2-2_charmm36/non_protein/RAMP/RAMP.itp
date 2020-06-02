@@ -1,3 +1,19 @@
+; composition 
+; outer core R3
+;
+;     Glc - Glc
+;      |
+;     Gal - GlcN
+;      |
+;     Glc
+;      |
+; P - Hep - Hep     inner core
+;      |
+; P - Hep   
+;      |
+;     Kdo - Kdo
+;      |
+; P - LIPA - P      type 1
 
 [ moleculetype ]
 ; name	nrexcl

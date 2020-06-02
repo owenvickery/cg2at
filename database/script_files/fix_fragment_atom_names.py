@@ -68,10 +68,10 @@ def parse_pdb(pdb_file, pdb_lines):
     with open(pdb_file, 'w') as pdb_output:
         for line in pdb_lines:
             if line.startswith('ATOM'):
-                line_sep = pdbatom(line)
-                atom_switch = swap_atom_name(line_sep['atom_name'])
-                if atom_switch:
-                    line= re.sub(line_sep['atom_name'], atom_switch,line)
+                # line_sep = pdbatom(line)
+                # atom_switch = swap_atom_name(line_sep['atom_name'])
+                # if atom_switch:
+                #     line= re.sub(line_sep['atom_name'], atom_switch,line)
                 pdb_output.write(line)
             else:
                 switch = {}

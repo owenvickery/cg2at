@@ -1,9 +1,9 @@
-[ frag 'BB'  group '1' posres 'CA,CG' N_ter 'N' C_ter 'C' ]
+[ BB ]
 ATOM      1  N   GLU     1      20.280   8.710   4.650  2.00  0.00           N  
 ATOM      2  CA  GLU     1      21.720   8.580   4.450  3.00  1.00           C  
 ATOM      8  C   GLU     1      22.470   9.640   5.220  2.00  0.00           C  
 ATOM      9  O   GLU     1      22.120  10.820   5.210  6.00  0.00           O  
-[ frag 'SC1'  group '2' ]
+[ SC1 ]
 ATOM      3  CB  GLU     1      22.050   8.660   2.940  1.00  1.00           C  
 ATOM      4  CG  GLU     1      23.560   8.480   2.560  1.00  0.00           C  
 ATOM      5  CD  GLU     1      23.960   8.620   1.100  3.00  0.00           C  

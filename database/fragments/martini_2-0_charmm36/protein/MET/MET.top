@@ -1,0 +1,14 @@
+[ STEER ] 
+CA SD 
+[ N_TERMINAL ]
+N
+[ C_TERMINAL ]
+C
+[ BACKBONE ] 
+BB
+[ GROUPS ]
+[ CHIRAL ]
+# column must be in the order:
+# central atom, atom to move, atom_1, atom_2, atom_3
+# eg: CA HA CB N C
+CA HA CB N C

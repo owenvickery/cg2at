@@ -246,7 +246,7 @@ def write_posres(chain):
                 line_sep = gen.pdbatom(line)
                 at_counter+=1
             #### if atom is in the restraint list for that residue add to position restraint file
-                if line_sep['atom_name'] in f_loc.backbone[line_sep['residue_name']]['posres']:
+                if line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['STEER']:
                     steered_posres.write(str(at_counter)+'     1  2000  2000  2000\n')
                 # elif not gen.is_hydrogen(line_sep['atom_name']):
                 #     steered_posres.write(str(at_counter)+'     1  100  100  100\n')
