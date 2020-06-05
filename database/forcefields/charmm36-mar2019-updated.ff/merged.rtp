@@ -27523,14 +27523,11 @@ CA1   OA1
 CD1   OD1
 CX1   OX1
 [ impropers ]
-N    -C    CA    HN
 CA1   OA1     N   CA2
 N   CA1    CA    HN
-;C    CA    +N     O
+C    CA    +N     O
 CD1   O12   CD2   OD1
 CX1   O11   CX2   OX1
-;[ cmap ]
-;-C     N    CA     C    +N
 
 [ CYTD ]
 [ atoms ]

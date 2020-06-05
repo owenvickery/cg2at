@@ -21,7 +21,7 @@ def sanity_check_fragments(res, cg, sin_bead):
                 for atom in residue[group][bead]:
                     atom_list.append(atom)
             else:
-                if bead ==sin_bead:
+                if bead == sin_bead:
                     for atom in residue[group][bead]:
                         atom_list.append(atom)
     return bead_list, atom_list
@@ -194,6 +194,7 @@ def get_atomistic(frag_location):
 
 def COM(mass, fragment):
 #### returns center of mass of fragment
+    # print(fragment)
     if np.any(np.array(mass)[:,3]):      
         mass = np.average(np.array(mass)[:,:3], axis=0, weights=np.array(mass)[:,3])
     else:
@@ -210,6 +211,7 @@ def rigid_fit(group, frag_mass, resid, cg):
         rigid_mass_cg.append(cg[bead]['coord'])
     rigid_mass_at = COM(rigid_mass_at, group)
     rigid_mass_cg = np.mean(rigid_mass_cg, axis=0)
+    
     group, COM_vector = align_at_frag_to_CG_frag(rigid_mass_at, rigid_mass_cg, group)
     at_frag_centers = {}
     cg_frag_centers = {}
@@ -415,13 +417,21 @@ def check_ringed_lipids(protein, box_vec):
     merge, merge_coords = read_in_merged_pdbs([], [], protein)
     resid_prev=0
     ringed=[]
-    offset =0
-    for at_val, atom in enumerate(merge):
-        if atom['residue_id'] != resid_prev:# and atom['atom_number']-offset > max(f_loc.hydrogen[atom['residue_name']], key=f_loc.hydrogen[atom['residue_name']].get):# and atom['residue_name'] n:
-            offset=at_val
+    # offset =0
+    # and atom['atom_number']-offset > max(f_loc.hydrogen[atom['residue_name']], key=f_loc.hydrogen[atom['residue_name']].get):# and atom['residue_name'] n:
+
+    for at_val, atom in enumerate(merge):         
         if atom['residue_name'] in f_loc.np_residues:
+            if atom['residue_id'] != resid_prev:
+                if 'offset' in locals(): 
+                    if at_val-offset >= max(f_loc.heavy_bond[resname]): 
+                        offset=at_val
+                else:
+                    offset=at_val
+                    resname = atom['residue_name']
             resid_prev=atom['residue_id']
             if atom['atom_number']-offset in f_loc.heavy_bond[atom['residue_name']]:
+                resname = atom['residue_name']
                 at_coord = [atom['x'], atom['y'], atom['z']]
                 for at_bond in f_loc.heavy_bond[atom['residue_name']][atom['atom_number']-offset]:
                     at_bond_coord = [merge[at_bond+offset-1]['x'], merge[at_bond+offset-1]['y'], merge[at_bond+offset-1]['z']]
@@ -438,6 +448,7 @@ def check_ringed_lipids(protein, box_vec):
                                 at_bond_coord[xyz] = temp
                     dist = gen.calculate_distance(at_coord, at_bond_coord)
                     if dist > 2:
-                        ringed.append([at_val, at_bond+offset-1])
+                         ringed.append([at_val, at_bond+offset-1])
+
     return ringed
 

@@ -154,19 +154,19 @@ else:
             print('\nCreating steered system')
             time_counter['s_s']=time.time()
             at_mod.merge_system_pdbs(system, '_steered', cg_residues, box_vec) ## create restraint positions for steered system
-            gro.reverse_steer('steered', 'low', g_var.merged_directory+'/NPT/merged_cg2at_de_novo_npt') ## run steered md with low restraints
-            gro.reverse_steer('steered', 'mid', g_var.merged_directory+'REVERSE_STEER/merged_cg2at_steered_reverse_steer_low') ## run steered md with medium restraints
-            gro.reverse_steer('steered', 'high', g_var.merged_directory+'REVERSE_STEER/merged_cg2at_steered_reverse_steer_mid') ## run steered md with high restraints
-            gen.file_copy_and_check(g_var.merged_directory+'REVERSE_STEER/merged_cg2at_steered_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_steered.pdb') ## copy to final folder
+            gro.steer('steered', 'low', g_var.final_dir+'final_cg2at_de_novo') ## run steered md with low restraints
+            gro.steer('steered', 'mid', g_var.merged_directory+'STEER/merged_cg2at_steered_steer_low') ## run steered md with medium restraints
+            gro.steer('steered', 'high', g_var.merged_directory+'STEER/merged_cg2at_steered_steer_mid') ## run steered md with high restraints
+            gen.file_copy_and_check(g_var.merged_directory+'STEER/merged_cg2at_steered_steer_high.pdb', g_var.final_dir+'final_cg2at_steered.pdb') ## copy to final folder
             time_counter['s_e']=time.time()
         if g_var.o in ['all', 'align']:   
             print('\nCreating aligned system') 
             time_counter['a_s']=time.time()
             at_mod.merge_system_pdbs(system, '_aligned', cg_residues, box_vec) ## create restraint positions for aligned system
-            gro.reverse_steer('aligned', 'low', g_var.merged_directory+'/NPT/merged_cg2at_de_novo_npt') ## run steered md with low restraints
-            gro.reverse_steer('aligned', 'mid', g_var.merged_directory+'REVERSE_STEER/merged_cg2at_aligned_reverse_steer_low') ## run steered md with medium restraints
-            gro.reverse_steer('aligned', 'high', g_var.merged_directory+'REVERSE_STEER/merged_cg2at_aligned_reverse_steer_mid') ## run steered md with high restraints
-            gen.file_copy_and_check(g_var.merged_directory+'REVERSE_STEER/merged_cg2at_aligned_reverse_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
+            gro.steer('aligned', 'low', g_var.final_dir+'final_cg2at_de_novo') ## run steered md with low restraints
+            gro.steer('aligned', 'mid', g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_low') ## run steered md with medium restraints
+            gro.steer('aligned', 'high', g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_mid') ## run steered md with high restraints
+            gen.file_copy_and_check(g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
             time_counter['a_e']=time.time()
 
     #### removes temp file from script, anything with temp in really

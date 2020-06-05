@@ -453,16 +453,16 @@ New forcefields and fragments can be added very easily by creating a new folder 
                                             | -- protein
                                                     | -- Aminoacids (eg. cg residue name ASP)
                                                                  - fragment pdb called the same as bead names (eg. ASP.pdb)
-                                                                 - chiral file called chiral.dat (optional)
+                                                                 - topology file (eg. ASP.top) (optional)
                                                     | -- MOD
                                                           | -- modified residues (eg. cg residue name CYSD) 
                                                                     - fragment pdb called the same as bead names (eg. CYSD.pdb)
-                                                                    - chiral file called chiral.dat (optional)            
+                                                                    - topology file (eg. CYSD.top) (optional)            
                                             | -- non_protein                                             
                                                       | --non protein molecules (eg. lipids POPC)
                                                                     - fragment pdb called the same as residue names (eg. POPC.pdb)
                                                                     - itp file of residue called the same as residue names (eg. POPC.itp)
-                                                                    - chiral file called chiral.dat (optional)
+                                                                    - topology file (eg. POPC.top) (optional)
 </pre>
 
 You can prevent the script from reading any file or folder by prefixing the name with a underscore.
@@ -476,20 +476,14 @@ The fragment database is separated into two parts (protein and non-protein).
 Each fragment file contains the following flags:
 
 <pre>
-REQUIRED ALL
-
-- frag 'fragment name'
-- group 'group number'
-
-REQUIRED PROTEIN ONLY
-
- - posres 'atoms to position restrain (separated by a comma)'
- - N_ter  'atom connecting to preceeding aminoacid'
- - C_ter  'atom connecting to proceeding aminoacid'
-
-REQUIRED MODIFIED TERMINAL AMINOACID
-if the modified residue has a non standard terminus eg CYST
- - ter  true/false 
+[ BB ]
+atom 1
+atom 2
+...
+[ SC1 ]
+atom 8
+atom 9
+...
 
 </pre>
 
@@ -514,22 +508,50 @@ An example of a normal amino acid fragment files:
 <pre>
 Phenylalanine
 
-[ frag 'BB'  group '1' posres 'CA,CZ' N_ter 'N' C_ter 'C' ]
+[ BB ]
 ATOM      1  N   PHE     1      42.030  16.760  10.920  2.00  0.00           N
 ATOM      2  CA  PHE     1      42.770  17.920  11.410  3.00  1.00           C
 ATOM     10  C   PHE     1      44.240  17.600  11.550  2.00  0.00           C
 ATOM     11  O   PHE     1      44.640  16.530  12.080  6.00  0.00           O
-[ frag 'SC1'  group '2' ]
+[ SC1 ]
 ATOM      3  CB  PHE     1      42.220  18.360  12.800  1.00  1.00           C
 ATOM      4  CG  PHE     1      40.730  18.730  12.860  3.00  2.00           C
 ATOM      5  CD1 PHE     1      39.780  17.730  13.110  1.00  4.00           C
-[ frag 'SC2'  group '3' ]
+[ SC2 ]
 ATOM      8  CD2 PHE     1      40.300  20.030  12.600  1.00  2.00           C
 ATOM      9  CE2 PHE     1      38.940  20.340  12.590  1.00  3.00           C
-[ frag 'SC3'  group '3' ]
+[ SC3 ]
 ATOM      6  CE1 PHE     1      38.420  18.030  13.090  1.00  4.00           C
 ATOM      7  CZ  PHE     1      38.000  19.330  12.830  1.00  3.00           C
 </pre>
+
+The optional topology file contains the information about grouping and connectivity
+
+<pre>
+
+[ STEER ]
+# atoms to steer into CG structure
+CA CZ CD1 CD2
+[ N_TERMINAL ]
+# N_terminal connecting atom, if terminal residue write TER
+N
+[ C_TERMINAL ]
+# C_terminal connecting atom, if terminal residue write TER
+C
+[ BACKBONE ]
+# name of backbone bead, will connect to terminal atoms
+BB
+[ GROUPS ]
+# atoms to put into groups, each line is a separate group
+SC2 SC3
+[ CHIRAL ]
+# column must be in the order:
+# central atom, atom to move, atom_1, atom_2, atom_3
+# eg: CA HA CB N C
+CA HA CB N C
+
+</pre>
+
 
 For non protein residues you can create a position restraint file which is applied during the creation of the aligned and steered systems.
 A script exists within the scripts directory called make_fragments_posre.py this can either create the correct posre files for every residue in the system or for a single residue.
@@ -548,7 +570,7 @@ In the case of solvent. All ions and water molecules are in single repective pdb
 In martini water, 4 atomistic water molecules are condensed into a single bead, therefore the fragment has 4 water molecules.
 
 <pre>
-[ frag 'tip3p' group '1' ]
+[ tip3p ]
 ATOM      1  OW  SOL     1      20.910  21.130  75.300  1.00  0.00
 ATOM      2  HW1 SOL     1      20.580  21.660  76.020  1.00  0.00
 ATOM      3  HW2 SOL     1      21.640  21.640  74.940  1.00  0.00
@@ -561,7 +583,7 @@ ATOM      9  HW2 SOL     3      23.510  23.340  74.810  1.00  0.00
 ATOM     10  OW  SOL     4      22.890  21.190  76.980  1.00  0.00
 ATOM     11  HW1 SOL     4      22.130  20.970  76.440  1.00  0.00
 ATOM     12  HW2 SOL     4      23.090  20.380  77.460  1.00  0.00
-[ frag 'tip4p' group '2' ]
+[ tip4p ]
 ATOM      1  OW  SOL     1      38.680  58.360  49.620  1.00  0.00
 ATOM      2  HW1 SOL     1      37.800  58.250  49.280  1.00  0.00
 ATOM      3  HW2 SOL     1      38.580  58.980  50.350  1.00  0.00
@@ -583,9 +605,9 @@ ATOM     16  MW  SOL     4      37.510  57.150  51.520  1.00  0.00
 In the case of ions only the ion is stored as a fragment. During the conversion a water bead is superimposed over the ion, to replace the hydration shell of the ion.
 
 <pre>
-[ frag 'NA+'  group '1' ]
+[ NA+ ]
 ATOM      1  NA   NA     1      21.863  22.075  76.118  1.00  0.00
-[ frag 'NA'  group '2' ]
+[ NA ]
 ATOM      1  NA   NA     1      21.863  22.075  76.118  1.00  0.00
 </pre>
 

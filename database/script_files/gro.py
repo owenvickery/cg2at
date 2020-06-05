@@ -571,29 +571,28 @@ def write_nvt_mdp(loc, posres, time, timestep):
             steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\n')
             steered_md.write('pcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nrefcoord_scaling = all\ncutoff-scheme = Verlet')   
 
-def reverse_steer(protein_type, fc, input_file ):
-    gen.mkdir_directory(g_var.merged_directory+'REVERSE_STEER')
+def steer(protein_type, fc, input_file ):
+    gen.mkdir_directory(g_var.merged_directory+'STEER')
     equil_type = ['Berendsen', 'Parrinello-Rahman']
     for equil_type_val, npt_type in enumerate([fc+'_posres-pr.mdp', fc+'_posres-b.mdp']):
         os.chdir(g_var.merged_directory)
         write_steered_mdp(g_var.merged_directory+npt_type, '-D'+fc.upper()+'POSRES -DNP', equil_type[equil_type_val] ,2000, 0.001)  
         gromacs([g_var.gmx+' grompp '+
-                ' -po md_out-merged_cg2at_reverse_steer_'+fc+
-                ' -t '+input_file+'.cpt '+
+                ' -po md_out-merged_cg2at_steer_'+fc+
                 ' -f '+npt_type+' '+
                 ' -p topol_final.top '+
                 ' -r merged_cg2at_'+protein_type+'.pdb '+
                 ' -c '+input_file+'.pdb '+
-                ' -o REVERSE_STEER/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+' '+
-                ' -maxwarn '+str(equil_type_val+2), 'REVERSE_STEER/merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+'.tpr'])  
-        os.chdir('REVERSE_STEER')
-        equil = gromacs_equilibration([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'_'+equil_type[equil_type_val]+
-                                     ' -c merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb -cpo merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.cpt'
-                                     ,'merged_cg2at_'+protein_type+'_reverse_steer_'+fc+'.pdb'])
+                ' -o STEER/merged_cg2at_'+protein_type+'_steer_'+fc+'_'+equil_type[equil_type_val]+' '+
+                ' -maxwarn '+str(equil_type_val+2), 'STEER/merged_cg2at_'+protein_type+'_steer_'+fc+'_'+equil_type[equil_type_val]+'.tpr'])  
+        os.chdir('STEER')
+        equil = gromacs_equilibration([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_steer_'+fc+'_'+equil_type[equil_type_val]+
+                                     ' -c merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb -cpo merged_cg2at_'+protein_type+'_steer_'+fc+'.cpt'
+                                     ,'merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb'])
         if equil:
             break
     if not equil:
-        sys.exit('reverse steer failed')
+        sys.exit('steer failed')
 
 def run_nvt(loc, protein):
     print('Running NVT on de novo system')
@@ -630,7 +629,6 @@ def run_npt(input_file, protein):
                 ' -po md_out-merged_cg2at_npt'+
                 ' -f '+npt_type+
                 ' -p topol_final.top'+
-                ' -t '+input_file+'.cpt '+
                 ' -r '+input_file+'.pdb '+
                 ' -c '+input_file+'.pdb '+
                 ' -o NPT/merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+

@@ -40,12 +40,7 @@ def build_protein_atomistic_system(cg_residues):
             at_connect, cg_connect = at_mod.connectivity(cg_residues[residue_number], at_frag_centers, cg_frag_centers, group_fit, group)
             if BB_bead in group_fit:
                 BB_connect = []
-                for atom in group_fit[BB_bead]:
-                    if group_fit[BB_bead][atom]['atom'] == f_loc.res_top[resname]['N_TERMINAL']:
-                        N_ter=atom
-                    if group_fit[BB_bead][atom]['atom'] == f_loc.res_top[resname]['C_TERMINAL']:
-                        C_ter=atom
-                at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit[BB_bead], residue_number, N_ter, C_ter, BB_bead)
+                at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit[BB_bead], residue_number, BB_bead)
                 sequence = at_mod.add_to_sequence(sequence, resname, chain_count)
                 backbone_coords[chain_count].append(np.append(cg_residues[residue_number][BB_bead]['coord'], 1))     
             if len(at_connect) == len(cg_connect) and len(at_connect) != 0:
@@ -91,35 +86,41 @@ def terminal_residue(resname):
     return ter
 
 
-def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, N_ter, C_ter, BB_bead):
+def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead):
+    for atom in at_residues:
+        # print(at_residues)
+        if at_residues[atom]['atom'] == f_loc.res_top[at_residues[atom]['res_type']]['N_TERMINAL']:
+            N_ter=atom
+        if at_residues[atom]['atom'] == f_loc.res_top[at_residues[atom]['res_type']]['C_TERMINAL']:
+            C_ter=atom
 #### connect to preceeding backbone bead in chain
     BB_cur = f_loc.res_top[cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name']]['BACKBONE']
     new_chain=False
     try:
-        BB_prev = f_loc.res_top[cg_residues[residue_number-1][next(iter(cg_residues[residue_number-1]))]['residue_name']]['BACKBONE']
-        xyz_cur = cg_residues[residue_number][BB_cur]['coord']
-        xyz_prev = cg_residues[residue_number-1][BB_prev]['coord']
-        dist=gen.calculate_distance(xyz_prev, xyz_cur)
-        # print('prev', residue_number, dist)
-        if dist < 7:
-            cg_n = cg_residues[residue_number-1][BB_prev]['coord']
-            at_n = at_residues[N_ter]['coord']
-            cg_connections.append(cg_n)
-            at_connections.append(at_n)
+        if 'N_ter' in locals():           
+            BB_prev = f_loc.res_top[cg_residues[residue_number-1][next(iter(cg_residues[residue_number-1]))]['residue_name']]['BACKBONE']
+            xyz_cur = cg_residues[residue_number][BB_cur]['coord']
+            xyz_prev = cg_residues[residue_number-1][BB_prev]['coord']
+            dist=gen.calculate_distance(xyz_prev, xyz_cur)
+            if dist < 7:
+                cg_n = cg_residues[residue_number-1][BB_prev]['coord']
+                at_n = at_residues[N_ter]['coord']
+                cg_connections.append(cg_n)
+                at_connections.append(at_n)
     except:
         pass
 #### connect to next backbone bead in chain
     try:
-        BB_next = f_loc.res_top[cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name']]['BACKBONE']
-        xyz_cur = cg_residues[residue_number][BB_cur]['coord']
-        xyz_next = cg_residues[residue_number+1][BB_next]['coord']
-        dist=gen.calculate_distance(xyz_next, xyz_cur)
-        # print('next', residue_number, dist)
-        if dist < 7:
-            cg_c = cg_residues[residue_number+1][BB_next]['coord']
-            at_c = at_residues[C_ter]['coord']
-            cg_connections.append(cg_c)
-            at_connections.append(at_c)
+        if 'C_ter' in locals():
+            BB_next = f_loc.res_top[cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name']]['BACKBONE']
+            xyz_cur = cg_residues[residue_number][BB_cur]['coord']
+            xyz_next = cg_residues[residue_number+1][BB_next]['coord']
+            dist=gen.calculate_distance(xyz_next, xyz_cur)
+            if dist < 7:
+                cg_c = cg_residues[residue_number+1][BB_next]['coord']
+                at_c = at_residues[C_ter]['coord']
+                cg_connections.append(cg_c)
+                at_connections.append(at_c)
         else:
             new_chain=True
     except:
@@ -256,7 +257,7 @@ def finalise_novo_atomistic(atomistic, cg_residues, box_vec):
                 atomistic[chain][residue_id] = at_mod.check_hydrogens(atomistic[chain][residue_id])
             if res_index <= len(atomistic[chain])-3:
                 atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, cg_residues, atomistic[chain][residue_id], False)
-            elif res_index < len(atomistic[chain]):
+            elif res_index < len(atomistic[chain]) and 'cross_vector' in locals():
                 atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, cg_residues, atomistic[chain][residue_id], cross_vector)
             for at_val, atom in enumerate(atomistic[chain][residue_id]):
                 atomistic[chain][residue_id][at_val+1]['resid'] = res_index

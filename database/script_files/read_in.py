@@ -52,7 +52,7 @@ def read_initial_cg_pdb():
 #### adds final residue to cg_residues in the same manner as above
     if 'SKIP' == line_sep['residue_name']:
         line_sep['residue_name']=line_sep_prev['residue_name']
-
+        line_sep['atom_name']=line_sep_prev['atom_name']
     if line_sep['residue_name'] in f_loc.p_residues: 
         if count not in cg_residues['PROTEIN']:
             cg_residues['PROTEIN'][count]={}

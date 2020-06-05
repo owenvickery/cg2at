@@ -18,7 +18,6 @@ def build_atomistic_system(cg_residues,residue_type, box_vec):
     print('Converting residue type: ' +residue_type)
 #### creates folder for residue type
     gen.mkdir_directory(g_var.working_dir+residue_type)
-
     if residue_type in ['ION','SOL']:
         atomistic_fragments[residue_type] = atomistic_non_protein_solvent(residue_type, cg_residues[residue_type])
         if residue_type in ['ION']:
@@ -143,6 +142,7 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
         residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
         for res_type in residue_type[cg_residue_type]:
             if fragment in residue_type[cg_residue_type][res_type]:
+                
                 center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][res_type], residue_type_mass[cg_residue_type]
                                                                                        , cg_residue, cg_residues[cg_residue])
                 xyz_rot_apply=gen.AnglesToRotMat([np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2)])
