@@ -59,7 +59,7 @@ def split_swap(swap):
                 for res in range(int(spt[0]), int(spt[1])+1):
                     res_id.append(res)
             else:
-                res_id.append(resid_section)
+                res_id.append(int(resid_section))
         return res_range, res_id
     except:
         return 'ALL', 'ALL'
@@ -90,7 +90,6 @@ def sort_swap_group():
                 s_res_d[res_s[0]][res_s[0]+':'+res_e[0]]['range']=res_range
             else:
                 sys.exit('The length of your swap groups do not match')
-        # print(s_res_d)
         print_swap_residues(s_res_d)
     return s_res_d
 
