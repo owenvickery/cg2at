@@ -423,7 +423,7 @@ def check_ringed_lipids(protein, box_vec):
     for at_val, atom in enumerate(merge):         
         if atom['residue_name'] in f_loc.np_residues:
             if atom['residue_id'] != resid_prev:
-                if 'offset' in locals(): 
+                if 'offset' in locals() and len(f_loc.heavy_bond[resname])>0: 
                     if at_val-offset >= max(f_loc.heavy_bond[resname]): 
                         offset=at_val
                 else:

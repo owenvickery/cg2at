@@ -12,6 +12,7 @@ group_req = parser.add_mutually_exclusive_group()
 group_req.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
 group_req.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)
 parser.add_argument('-a', help='atomistic coordinates (Optional)',metavar='pdb/gro/tpr',type=str)
+parser.add_argument('-d', help='duplicate atomistic chains. (0:3 1:3 means 3 copies each of chain 0 and 1)',type=str, nargs='*', default=[])
 parser.add_argument('-group', help='treat user supplied atomistic chains, as rigid bodies. (0,1 2,3 or all or chain)',type=str, nargs='*')
 parser.add_argument('-loc', help='output folder name, (default = CG2AT_timestamp)',metavar='CG2AT',type=str)
 parser.add_argument('-o', help='Final output supplied (default = all)', default='all', type=str, choices= ['all', 'align', 'steer', 'none'])
@@ -36,7 +37,6 @@ parser.add_argument('-box', help='box size in Angstrom (0 = use input file) (Opt
 parser.add_argument('-vs', help='use virtual sites', action='store_true')
 parser.add_argument('-al', help='switches off alchembed (WARNING may cause issues with lipids and rings)', action='store_false')
 parser.add_argument('-sf', help='scale factor for fragments, shrinks fragments before fitting to CG',metavar='0.9',type=float, default=0.9)
-parser.add_argument('-at2cg', help='converts atomistic to coarsegrain ', action='store_true')
 parser.add_argument('-version', action='version', version='%(prog)s 2.0')
 parser.add_argument('-ncpus', help='maximum number of cores to use (default = all)', type=int)
 
@@ -51,14 +51,11 @@ if not args.info and args.c == None:
 
 # convert argparser into global variables to be read by the other files
 
-#### run atomistic to coarsegrain
-at2cg=args.at2cg
-
 # input/output files  
 c, a, o = args.c, args.a, args.o
 # forcfield and fragment inputs
 w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
-cys, silent, swap, group = args.cys, args.silent, args.swap, args.group
+cys, silent, swap, group, duplicate = args.cys, args.silent, args.swap, args.group, args.d
 ter, nt, ct, capN, capC = args.ter, args.nt, args.ct, args.capN, args.capC
 alchembed = args.al
 #### virtual site information
@@ -91,8 +88,10 @@ info = args.info
 
 variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, 
                    '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, 
-                   '-vs':args.vs, '-box':box,'-loc':args.loc, '-at2cg':args.at2cg, '-group':args.group, '-o':args.o, '-al':args.al, 'ncpus':ncpus, 'shrink':args.sf}
+                   '-vs':args.vs, '-box':box,'-loc':args.loc, '-group':args.group, '-o':args.o, '-al':args.al, 'ncpus':ncpus, 'shrink':args.sf}
+
 topology = {'BACKBONE':'BB', 'C_TERMINAL':'C', 'N_TERMINAL':'N', 'STEER':[], 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}}
+
 box_line="CRYST1 %8.3f %8.3f %8.3f  90.00  90.00  90.00 P 1           1\n"
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
 mass = {'H': 1,'C': 12,'N': 14,'O': 16,'P': 31,'M': 0, 'B': 32 ,'S': 32} 
@@ -107,10 +106,7 @@ timestamp       =  strftime("%Y-%m-%d_%H-%M-%S", gmtime())
 if args.loc != None:
     working_dir_name = args.loc
 else:
-    if args.at2cg:
-        working_dir_name =  'AT2CG_'+timestamp
-    else:
-        working_dir_name =  'CG2AT_'+timestamp
+    working_dir_name =  'CG2AT_'+timestamp
 
 start_dir       = os.getcwd()+'/'  ### initial working directory
 working_dir     = os.getcwd()+'/'+working_dir_name+'/'   ### working directory 

@@ -17,8 +17,7 @@ def collect_input(cg, at):
     gen.mkdir_directory(g_var.working_dir)
     gen.mkdir_directory(g_var.final_dir)
     gen.mkdir_directory(g_var.input_directory)
-    if not g_var.at2cg:
-        gen.mkdir_directory(g_var.merged_directory)
+    gen.mkdir_directory(g_var.merged_directory)
 #### collates all input files in input directory
     gen.file_copy_and_check(cg, g_var.input_directory+cg.split('/')[-1])
     if at != None:

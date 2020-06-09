@@ -27523,6 +27523,7 @@ CA1   OA1
 CD1   OD1
 CX1   OX1
 [ impropers ]
+N    -C    CA    HN
 CA1   OA1     N   CA2
 N   CA1    CA    HN
 C    CA    +N     O

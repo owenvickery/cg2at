@@ -10,6 +10,8 @@ import gen, g_var, f_loc, at_mod
 import math
 
 def build_protein_atomistic_system(cg_residues):
+
+    
 #### initisation of counters
     chain_count=0
     system={}
@@ -88,6 +90,7 @@ def terminal_residue(resname):
 
 def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead):
     for atom in at_residues:
+        resname = at_residues[atom]['res_type']
         # print(at_residues)
         if at_residues[atom]['atom'] == f_loc.res_top[at_residues[atom]['res_type']]['N_TERMINAL']:
             N_ter=atom
@@ -96,36 +99,29 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
 #### connect to preceeding backbone bead in chain
     BB_cur = f_loc.res_top[cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name']]['BACKBONE']
     new_chain=False
-    try:
-        if 'N_ter' in locals():           
-            BB_prev = f_loc.res_top[cg_residues[residue_number-1][next(iter(cg_residues[residue_number-1]))]['residue_name']]['BACKBONE']
-            xyz_cur = cg_residues[residue_number][BB_cur]['coord']
-            xyz_prev = cg_residues[residue_number-1][BB_prev]['coord']
-            dist=gen.calculate_distance(xyz_prev, xyz_cur)
-            if dist < 7:
-                cg_n = cg_residues[residue_number-1][BB_prev]['coord']
-                at_n = at_residues[N_ter]['coord']
-                cg_connections.append(cg_n)
-                at_connections.append(at_n)
-    except:
-        pass
-#### connect to next backbone bead in chain
-    try:
-        if 'C_ter' in locals():
-            BB_next = f_loc.res_top[cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name']]['BACKBONE']
-            xyz_cur = cg_residues[residue_number][BB_cur]['coord']
-            xyz_next = cg_residues[residue_number+1][BB_next]['coord']
-            dist=gen.calculate_distance(xyz_next, xyz_cur)
-            if dist < 7:
-                cg_c = cg_residues[residue_number+1][BB_next]['coord']
-                at_c = at_residues[C_ter]['coord']
-                cg_connections.append(cg_c)
-                at_connections.append(at_c)
+    if residue_number-1 in cg_residues and 'N_ter' in locals(): 
+        prev_resname = cg_residues[residue_number-1][next(iter(cg_residues[residue_number-1]))]['residue_name']
+        BB_prev = f_loc.res_top[prev_resname]['BACKBONE']
+        xyz_cur = cg_residues[residue_number][BB_cur]['coord']
+        xyz_prev = cg_residues[residue_number-1][BB_prev]['coord']
+        if gen.calculate_distance(xyz_prev, xyz_cur) < 7 and f_loc.res_top[resname]['C_TERMINAL'] != 'TER':
+            cg_connections.append(cg_residues[residue_number-1][BB_prev]['coord'])
+            at_connections.append(at_residues[N_ter]['coord'])
         else:
             new_chain=True
-    except:
+#### connect to next backbone bead in chain
+    if residue_number+1 in cg_residues and 'C_ter' in locals(): 
+        next_resname = cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name']
+        BB_next = f_loc.res_top[next_resname]['BACKBONE']
+        xyz_cur = cg_residues[residue_number][BB_cur]['coord']
+        xyz_next = cg_residues[residue_number+1][BB_next]['coord']
+        if gen.calculate_distance(xyz_next, xyz_cur) < 7 and f_loc.res_top[next_resname]['N_TERMINAL'] != 'TER':
+            cg_connections.append(cg_residues[residue_number+1][BB_next]['coord'])
+            at_connections.append(at_residues[C_ter]['coord'])
+        else:
+            new_chain=True
+    else:
         new_chain=True
-        pass
     return at_connections,cg_connections, new_chain
 
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
@@ -322,70 +318,7 @@ def fix_carbonyl(residue_id, cg, at, cross_vector):
         at[N]['coord'] = (at[N]['coord']-center_N).dot(rotation)+center_N
     return at, cross_vector
 
-##################################################################  User supplied protein ##############
-
-def read_in_atomistic(protein):
-#### reset location and check if pdb exists  
-    os.chdir(g_var.start_dir)
-    if not os.path.exists(protein):
-        sys.exit('cannot find atomistic protein : '+protein)
-#### read in atomistic fragments into dictionary residue_list[0]=x,y,z,atom_name    
-    atomistic_protein_input={}
-    chain_count=0
-#### read in pdb
-    ter_residues=[]
-    with open(protein, 'r') as pdb_input:
-        atomistic_protein_input[chain_count]={}
-        for line_nr, line in enumerate(pdb_input.readlines()):
-            #### separate line 
-            run=False ## turns to true is line is a bead/atom
-            if line.startswith('ATOM'):
-                line_sep = gen.pdbatom(line)
-                # print(line_sep['atom_name'])
-                if line_sep['residue_name'] in f_loc.mod_residues:
-                    run=True
-                if not gen.is_hydrogen(line_sep['atom_name']):
-                    run=True
-            #### if line is correct
-            if run:
-                if line_sep['residue_name'] in f_loc.p_residues:
-                    if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in f_loc.mod_residues:  
-                    #### sorts out wrong atoms in terminal residues
-                        if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
-                            line_sep['atom_name']='O'
-                    #### makes C_terminal connecting atom variable  
-                        if line_sep['atom_name'] == f_loc.res_top[line_sep['residue_name']]['C_TERMINAL']:
-                            C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
-                            C_resid=line_sep['residue_id']
-                            C=True
-                        try:
-                        #### tries to make a N_terminal connecting atom variable
-                            if line_sep['atom_name'] == f_loc.res_top[line_sep['residue_name']]['N_TERMINAL']:
-                                N_resid=line_sep['residue_id']
-                                N_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
-                                N=True
-                        #### measures distance between N and C atoms. if the bond is over 3 A it counts as a new protein
-                            dist=gen.calculate_distance(N_ter, C_ter)
-                            if N and C and C_resid != N_resid and dist > 3.5:# and aas[line_sep['residue_name']] != sequence[chain_count][line_sep['residue_id']]:
-                                N_ter, C_ter=False, False
-                                ter_residues.append(line_sep['residue_id'])
-                                chain_count+=1
-                                atomistic_protein_input[chain_count]={} ### new chain key
-                        except:
-                            pass
-                        if line_sep['residue_id'] not in atomistic_protein_input[chain_count]:  ## if protein does not exist add to dict
-                            atomistic_protein_input[chain_count][line_sep['residue_id']]={}
-                    #### adds atom to dictionary, every atom is given a initial mass of zero 
-                        atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'frag_mass':0, 'resid':line_sep['residue_id']}
-                    #### if atom is in the backbone list then its mass is updated to the correct one
-                        if line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['ATOMS']:
-                            for atom in line_sep['atom_name']:
-                                if atom in g_var.mass:
-                                    atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=g_var.mass[atom]
-                
-                    
-
-    return atomistic_protein_input, chain_count+1      
+  
 
 def check_sequence(atomistic_protein_input, chain_count):
     at={}
