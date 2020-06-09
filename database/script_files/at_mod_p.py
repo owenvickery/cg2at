@@ -107,8 +107,6 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         if gen.calculate_distance(xyz_prev, xyz_cur) < 7 and f_loc.res_top[resname]['C_TERMINAL'] != 'TER':
             cg_connections.append(cg_residues[residue_number-1][BB_prev]['coord'])
             at_connections.append(at_residues[N_ter]['coord'])
-        else:
-            new_chain=True
 #### connect to next backbone bead in chain
     if residue_number+1 in cg_residues and 'C_ter' in locals(): 
         next_resname = cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name']
