@@ -135,7 +135,7 @@ def new_box_vec(box_vec, box):
         else:
             box_shift.append(0)
             box_vec_values.append(float(box_vec_split[xyz_val]))
-    box_vec = g_var.box_line%(box_vec_values[0], box_vec_values[1], box_vec_values[2])
+    box_vec = g_var.box_line%(box_vec_values[0], box_vec_values[1], box_vec_values[2], 90,90,90)
     return box_vec, np.array(box_shift)
 
 def strip_header(line):
@@ -582,6 +582,7 @@ def pdbatom(line):
         return dict([('atom_number',int(line[7:11].replace(" ", ""))),('atom_name',str(line[12:16]).replace(" ", "")),('residue_name',str(line[16:21]).replace(" ", "")),\
             ('chain',line[21]),('residue_id',int(line[22:26])), ('x',float(line[30:38])),('y',float(line[38:46])),('z',float(line[46:54]))])
     except:
+        print(line[30:38],line[38:46],line[46:54])
         sys.exit('\npdb line is wrong:\t'+line) 
 
 def create_pdb(file_name, box_vec):

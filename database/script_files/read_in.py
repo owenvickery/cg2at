@@ -2,6 +2,7 @@
 
 import sys, os
 import numpy as np
+import math
 import copy
 import gen, g_var, f_loc
 
@@ -122,9 +123,65 @@ def connect_pbc(temp_coord, prev_coord, box, protein):
     else:
         return temp_coord
 
+# def fix_pbc(cg_residues, box_vec, new_box, box_shift):
+# #### fixes box PBC
+#     box = box_vec.split()[1:4]
+#     new_box = new_box.split()[1:4]
+#     for residue_type in cg_residues:
+#         cut_keys=[]
+#         for res_val, residue in enumerate(cg_residues[residue_type]):
+#             for bead_val, bead in enumerate(cg_residues[residue_type][residue]):
+#                 if g_var.box != None and residue_type not in ['PROTEIN']:
+#                     cut = check_new_box(cg_residues[residue_type][residue][bead]['coord'],box, new_box)
+#                     if cut:
+#                         cut_keys.append(residue)
+#                         break
+#                 if residue_type in ['PROTEIN'] and bead == f_loc.res_top[cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']:
+#                     BB_bead = f_loc.res_top[cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']
+#                     if res_val != 0 :
+#                         BB_cur = cg_residues[residue_type][residue][BB_bead]['coord']
+#                         for xyz in range(3):
+#                             cg_residues[residue_type][residue][BB_bead]['coord'][xyz] = connect_pbc(BB_cur[xyz], BB_pre[xyz], box[xyz], True)
+#                     BB_pre = cg_residues[residue_type][residue][BB_bead]['coord'].copy()
+#                 if bead_val != 0 and residue_type not in ['ION','SOL']:
+#                     for xyz in range(3):
+#                         cg_residues[residue_type][residue][bead]['coord'][xyz] = connect_pbc(cg_residues[residue_type][residue][bead]['coord'][xyz], 
+#                                                                                             cg_residues[residue_type][residue][bead_prev]['coord'][xyz], box[xyz], False)
+#                 bead_prev=bead
+#                 if g_var.box != None:
+#                     cg_residues[residue_type][residue][bead]['coord'] = cg_residues[residue_type][residue][bead]['coord']-box_shift
+#         for key in cut_keys:
+#             cg_residues[residue_type].pop(key)
+#     return cg_residues
+def real_box_vectors(box_vec):
+    x, y, z, yz, xz, xy = [float(i) for i in box_vec.split()[1:7]]
+    # return real-space vector
+    cyz, cxz, cxy, sxy = math.cos(np.radians(yz)), math.cos(np.radians(xz)), math.cos(np.radians(xy)) , math.sin(np.radians(xy))
+    wx, wy             = z*cxz, z*(cyz-cxz*cxy)/sxy
+    wz                 = math.sqrt(z**2 - wx**2 - wy**2)
+    r_b_vec = np.array([[x, 0, 0], [y*cxy, y*sxy, 0], [wx, wy, wz]]).T
+    r_b_inv = np.linalg.inv(r_b_vec).T
+    return r_b_vec, r_b_inv
+
+def brute_mic(p1, p2, r_b_vec):
+    result = None
+    n = 2
+    if gen.calculate_distance(p1, p2) > 10:
+        for i0 in range(-n, n+1):
+            for i1 in range(-n, n+1):
+                for i2 in range(-n, n+1):
+                    rp = p2+np.dot(r_b_vec, [i0,i1,i2])
+                    d = gen.calculate_distance(p1, rp)
+                    if (result is None) or (result[1] > d):
+                        result = (rp, d)
+        return result[0]
+    else:
+        return p2
+
 def fix_pbc(cg_residues, box_vec, new_box, box_shift):
 #### fixes box PBC
-    box = box_vec.split()[1:4]
+    r_b_vec, r_b_inv = real_box_vectors(box_vec)
+    # box = box_vec.split()[1:4]
     new_box = new_box.split()[1:4]
     for residue_type in cg_residues:
         cut_keys=[]
@@ -139,13 +196,11 @@ def fix_pbc(cg_residues, box_vec, new_box, box_shift):
                     BB_bead = f_loc.res_top[cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']
                     if res_val != 0 :
                         BB_cur = cg_residues[residue_type][residue][BB_bead]['coord']
-                        for xyz in range(3):
-                            cg_residues[residue_type][residue][BB_bead]['coord'][xyz] = connect_pbc(BB_cur[xyz], BB_pre[xyz], box[xyz], True)
+                        cg_residues[residue_type][residue][BB_bead]['coord'] = brute_mic(BB_pre, BB_cur, r_b_vec)
                     BB_pre = cg_residues[residue_type][residue][BB_bead]['coord'].copy()
                 if bead_val != 0 and residue_type not in ['ION','SOL']:
-                    for xyz in range(3):
-                        cg_residues[residue_type][residue][bead]['coord'][xyz] = connect_pbc(cg_residues[residue_type][residue][bead]['coord'][xyz], 
-                                                                                            cg_residues[residue_type][residue][bead_prev]['coord'][xyz], box[xyz], False)
+                    cg_residues[residue_type][residue][bead]['coord'] = brute_mic(cg_residues[residue_type][residue][bead_prev]['coord'],
+                                                                                    cg_residues[residue_type][residue][bead]['coord'], r_b_vec)
                 bead_prev=bead
                 if g_var.box != None:
                     cg_residues[residue_type][residue][bead]['coord'] = cg_residues[residue_type][residue][bead]['coord']-box_shift
@@ -241,7 +296,7 @@ def read_in_atomistic(protein, duplicate_chains):
                 print('Using '+str(duplicate[1])+' copies of the atomistic chain '+str(duplicate[0]))
                 for chain_duplication in range(duplicate[1]-1):
                     chain_count+=1
-                    atomistic_protein_input[chain_count]=atomistic_protein_input[duplicate[0]].copy()
+                    atomistic_protein_input[chain_count]=copy.deepcopy(atomistic_protein_input[duplicate[0]])
             else:
                 sys.exit('your atomistic chain duplication input is incorrrect')       
     return atomistic_protein_input, chain_count+1    

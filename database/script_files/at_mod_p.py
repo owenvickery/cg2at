@@ -49,7 +49,7 @@ def build_protein_atomistic_system(cg_residues):
                 xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
             elif len(at_connect) == 0:
                 xyz_rot_apply = False
-                print('Cannot find any connectivity for residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
+                print('Cannot find any connectivity for residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+str(group))
             else:
                 print('atom connections: '+str(len(at_connect))+' does not equal CG connections: '+str(len(cg_connect)))
                 sys.exit('residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
@@ -330,7 +330,7 @@ def check_sequence(atomistic_protein_input, chain_count):
     return seq_user
 
 def align_chains(atomistic_protein_input, seq_user, sequence):
-    if g_var.v >= 1:
+    if g_var.v >= 2:
         print('coarse grain protein sequence:\n')
         for index in sequence:
             print('chain:', index,sequence[index], '\n')
@@ -348,7 +348,6 @@ def align_chains(atomistic_protein_input, seq_user, sequence):
         while seq_info[0][2] != len(seq_user[chain_at]):
             if chain_cg >= len(sequence)-1:
                 print('\nCannot find a match for user supplied chain: '+str(chain_at))#+'\n\nAtomistic chain:\n'+str(seq_user[chain_at]),'\n\nIn CG:\n'+str(sequence))
-                print('\nDefaulting to de novo instead\n')
                 skip_sequence = True
                 break
             if not skip_sequence:
@@ -587,23 +586,23 @@ def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_cent
             complete_user_at[residue]=final_coordinates_atomistic[residue]
     return complete_user_at
 
-def write_user_chains_to_pdb(atomistic_user_supplied, box_vec):
-    for chain in atomistic_user_supplied:
+def write_user_chains_to_pdb(atomistic_user_supplied, box_vec, chain):
+    if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_'+str(chain)+'.pdb'):
         pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_aligned_'+str(chain)+'.pdb', box_vec)
         final_atom={}
         at_id=0
         coord=[]
-        for resid in atomistic_user_supplied[chain]:
-            for atom in atomistic_user_supplied[chain][resid]:
-                coord.append(atomistic_user_supplied[chain][resid][atom]['coord'])
-                short_line=atomistic_user_supplied[chain][resid][atom]
-                final_atom[at_id]={'atom':short_line['atom'], 'res_type':short_line['res_type'], 'chain':ascii_uppercase[chain], 'residue':resid,\
+        for resid in atomistic_user_supplied:
+            for atom in atomistic_user_supplied[resid]:
+                coord.append(atomistic_user_supplied[resid][atom]['coord'])
+                short_line=atomistic_user_supplied[resid][atom]
+                final_atom[at_id]={'atom':short_line['atom'], 'res_type':short_line['res_type'], 'chain':chain, 'residue':resid,\
                                     'x':short_line['coord'][0],'y':short_line['coord'][1],'z':short_line['coord'][2]}
                 at_id+=1
         merge_coords=at_mod.check_atom_overlap(coord)
 
         for at_id, coord in enumerate(merge_coords):
-            pdb_output.write(g_var.pdbline%((at_id+1,final_atom[at_id]['atom'],final_atom[at_id]['res_type'],final_atom[at_id]['chain'],final_atom[at_id]['residue'],
+            pdb_output.write(g_var.pdbline%((at_id+1,final_atom[at_id]['atom'],final_atom[at_id]['res_type'],'A',final_atom[at_id]['residue'],
                  coord[0],coord[1],coord[2],1,0))+'\n') 
 ################################################################## Merge chains ####################
 

@@ -26,6 +26,7 @@ cg_residues, box_vec_initial = read_in.read_initial_cg_pdb()
 
 #### box size update 
 if g_var.box != None:
+    print('box cutting only works for cubic boxes currently')
     box_vec, box_shift = gen.new_box_vec(box_vec_initial, g_var.box)
 else:
     box_vec=box_vec_initial
@@ -71,19 +72,24 @@ if protein:
         final_user_supplied_coord = at_mod_p.apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, 
                                                                     at_com_group,cg_com_group,cg_com, box_vec, group_chain) ## apply rotation matrix to atoms and build in missing residues
         final_user_supplied_coord = at_mod_p.correct_disulphide_bonds(final_user_supplied_coord, user_cys_bond) ## fixes sulphur distances in user structure
-        at_mod_p.write_user_chains_to_pdb(final_user_supplied_coord, box_vec) ## write structure to pdb
+        pool = mp.Pool(mp.cpu_count())
+        pool_process = pool.starmap_async(at_mod_p.write_user_chains_to_pdb, [(final_user_supplied_coord[chain], box_vec, chain) ## write structure to pdb
+                                        for chain in final_user_supplied_coord]).get()
+        pool.close()
     #### minimise each protein chain
     print('Minimising '+str(p_system['PROTEIN'])+' protein chains')
     gro.minimise_protein(system['PROTEIN'], p_system, user_at_input, box_vec) ## minimise user and de novo structures
     #### read in minimised de novo protein chains and merges chains
     merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb') ## merge protein chains
+
     at_mod_p.write_merged_pdb(merge_de_novo, '_de_novo', box_vec) ## write merged chain to pdb 
     #### runs steered MD on user supplied protein chains
     if user_at_input:
         if g_var.o in ['all', 'steer']:
-            print('Running steered MD on input atomistic structure')
+            # print('Running steered MD on input atomistic structure')
         #### runs steered MD on atomistic structure on CA and CB atoms
             for chain in range(system['PROTEIN']):
+                print('Running steered MD on protein chain: '+str(chain), end='\r')
                 gro.steered_md_atomistic_to_cg_coord(chain) ## steer user to fit CG 
             #### read in minimised user supplied protein chains and merges chains
             merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/STEERED_MD/PROTEIN_steered', '.pdb') ## merge steered chains

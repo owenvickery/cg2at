@@ -5,6 +5,7 @@ from time import gmtime, strftime
 import distutils.spawn
 import argparse
 import multiprocessing as mp
+# from string import ascii_uppercase, ascii_lowercase
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', prog='CG2AT', epilog='Enjoy the program and best of luck!\n')
@@ -48,7 +49,6 @@ if not args.info and args.c == None:
     print(parser.print_help(sys.stderr), '\n')
     sys.exit('Error: the following arguments are required: -c\n')
 
-
 # convert argparser into global variables to be read by the other files
 
 # input/output files  
@@ -85,14 +85,14 @@ v, messy  = args.v, args.messy
 info = args.info
 
 ### hardcoded variables for use elsewhere in the script
-
+variables = sys.argv
 variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, 
                    '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, 
                    '-vs':args.vs, '-box':box,'-loc':args.loc, '-group':args.group, '-o':args.o, '-al':args.al, 'ncpus':ncpus, 'shrink':args.sf}
 
 topology = {'BACKBONE':'BB', 'C_TERMINAL':'C', 'N_TERMINAL':'N', 'STEER':[], 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}}
 
-box_line="CRYST1 %8.3f %8.3f %8.3f  90.00  90.00  90.00 P 1           1\n"
+box_line="CRYST1 %8.3f %8.3f %8.3f %8.2f% 8.2f% 8.2f P 1           1\n"
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
 mass = {'H': 1,'C': 12,'N': 14,'O': 16,'P': 31,'M': 0, 'B': 32 ,'S': 32} 
 aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'E', 

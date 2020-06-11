@@ -79,6 +79,8 @@ def gromacs(gro):
                 sys.exit('\n'+out)
             elif 'did not converge to Fmax ' in out:
                 sys.exit('\n'+out)
+            elif 'but did not reach the requested Fmax ' in out:
+                sys.exit('\n'+out)
             elif 'Segmentation fault' in out:
                 sys.exit('\n'+out)
             elif 'number of atoms in the topology (' in out:
@@ -133,8 +135,7 @@ def minimise_protein(protein, p_system, user_at_input, box_vec):
     gen.file_copy_and_check(f_loc.forcefield_location+'/residuetypes.dat', 'residuetypes.dat')
     make_min('PROTEIN')
     for chain in range(protein):
-        if g_var.v >= 1:
-            print('Minimising protein chain: '+str(chain), end='\r')
+        print('Minimising protein chain: '+str(chain), end='\r')
         pdb2gmx_selections=ask_terminal(chain, p_system)
         pdb2gmx_chain(chain, 'de_novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[0])+'\n'+str(pdb2gmx_selections[1]))
         pdb2gmx_selections = histidine_protonation(chain, 'de_novo_', pdb2gmx_selections)
