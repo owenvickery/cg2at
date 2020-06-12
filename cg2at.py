@@ -86,8 +86,7 @@ if protein:
     #### runs steered MD on user supplied protein chains
     if user_at_input:
         if g_var.o in ['all', 'steer']:
-            # print('Running steered MD on input atomistic structure')
-        #### runs steered MD on atomistic structure on CA and CB atoms
+        #### runs steered MD on atomistic structure
             for chain in range(system['PROTEIN']):
                 print('Running steered MD on protein chain: '+str(chain), end='\r')
                 gro.steered_md_atomistic_to_cg_coord(chain) ## steer user to fit CG 
@@ -207,8 +206,8 @@ if protein:
 time_counter['f_t']=time.time()
 
 #### prints out script timings for each section
-if g_var.v >= 1:
-    gen.print_script_timings(time_counter, system, user_at_input)
+
+gen.print_script_timings(time_counter, system, user_at_input)
 
 
 

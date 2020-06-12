@@ -34,11 +34,17 @@ def collect_input(cg, at):
         if not convert:
             gromacs([g_var.gmx+' trjconv -f CG_input_temp.pdb -s '+cg.split('/')[-1]+' -pbc atom -o conversion_input.pdb '+
                         '<< EOF\nSystem\nEOF\n', 'conversion_input.pdb'])
+    if not os.path.exists(g_var.input_directory+'conversion_input.pdb'):
+        sys.exit('\nFailed to process coarsegrain input file')
 #### converts input files into pdb files 
     if at != None:
         gromacs([g_var.gmx+' editconf -f '+at.split('/')[-1]+' -resnr 0 -o AT_input.pdb', 'AT_input.pdb'])
-        return True
-    return False
+        if not os.path.exists(g_var.input_directory+'AT_input.pdb'):
+            sys.exit('\nFailed to process atomistic input file')
+        else:
+            return True         
+    else:
+        return False
 
 #### fixes pbc complex pbc issue if supplied with a tpr
 def input_sort(loc, rep):
@@ -126,7 +132,7 @@ def make_min(residue):#, fragments):
 #### makes em.mdp file for each residue
     if not os.path.exists('em_'+residue+'.mdp'):
         with open('em_'+residue+'.mdp','w') as em:
-            em.write('define = \n integrator = steep\nnsteps = 10000\nemtol = 750\nemstep = 0.001\ncutoff-scheme = Verlet\n')
+            em.write('define = \n integrator = steep\nnsteps = 20000\nemtol = 750\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 
 def minimise_protein(protein, p_system, user_at_input, box_vec):
 #### makes em.mdp for each chain

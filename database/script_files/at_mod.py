@@ -331,28 +331,36 @@ def check_overlap_chain(chain, input, box_vec):
                         updated_coords[line_val][0],updated_coords[line_val][1],updated_coords[line_val][2],1,0))+'\n')
 
 
-def fetch_chiral_coord(merge_temp):
+def fetch_chiral_coord(merge_temp, residue_type):
     chiral_atoms={}
     coord=[]
     for atom in range(len(merge_temp)):
-        if merge_temp[atom]['residue_name'] in f_loc.res_top[merge_temp[atom]['residue_name']]['CHIRAL']:
-            if merge_temp[atom]['residue_id'] not in chiral_atoms:
-                chiral_atoms[merge_temp[atom]['residue_id']]={}
-            if merge_temp[atom]['atom_name'] in f_loc.res_top[merge_temp[atom]['residue_name']]['CHIRAL']['atoms']:
+        if residue_type == 'PROTEIN':
+            resname = merge_temp[atom]['residue_name']
+        else:
+            resname=residue_type
+        if len(f_loc.res_top[resname]['CHIRAL']['atoms']) > 0:
+            if merge_temp[atom]['atom_name'] in f_loc.res_top[resname]['CHIRAL']['atoms']:
+                if merge_temp[atom]['residue_id'] not in chiral_atoms:
+                    chiral_atoms[merge_temp[atom]['residue_id']]={}
                 chiral_atoms[merge_temp[atom]['residue_id']][merge_temp[atom]['atom_name']]=atom
         coord.append(np.array([merge_temp[atom]['x'],merge_temp[atom]['y'],merge_temp[atom]['z']]))
     return chiral_atoms, coord
 
-def fix_chirality(merge, merge_temp, merged_coords):
+def fix_chirality(merge, merge_temp, merged_coords, residue_type):
 #### fixes chiral groups
-    chiral_atoms, coord= fetch_chiral_coord(merge_temp)
-
+    chiral_atoms, coord= fetch_chiral_coord(merge_temp, residue_type)
     for residue in chiral_atoms:
-        for atom in chiral_atoms[residue]:
-            resname = merge_temp[chiral_atoms[residue][atom]]['residue_name']
-            break
+        if residue_type == 'PROTEIN':
+            for atom in chiral_atoms[residue]:
+                resname = merge_temp[chiral_atoms[residue][atom]]['residue_name']
+                break
+        else:
+            resname=residue_type
         for chiral_group in f_loc.res_top[resname]['CHIRAL']:
             if chiral_group != 'atoms':
+                # print(residue)
+                # print(f_loc.res_top[resname]['CHIRAL'][chiral_group]['m'])
                 stat = merge_temp[chiral_atoms[residue][chiral_group]]
                 move = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]]
                 c1   = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['c1']]]

@@ -27,7 +27,10 @@ def flags_used():
     os.chdir(g_var.input_directory)
     with open('script_inputs.dat', 'w') as scr_input:
         for var in g_var.variables_to_save:
-            line='{0:15}{1:15}\n'.format(var,str(g_var.variables_to_save[var]))
+            if var == 'input':
+                line =  ''.join([ i+' ' for i in g_var.variables_to_save[var]])+'\n'
+            else:
+                line='{0:15}{1:15}\n'.format(var,str(g_var.variables_to_save[var]))
             scr_input.write(line)
 
 def is_hydrogen(atom):
@@ -259,10 +262,10 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
             if residue not in processing:
                 atoms_dict={}
                 location = fragment_location(residue,p_residues, p_directories, mod_directories, np_directories)
-                hydrogen[residue], heavy_bond[residue] = fetch_bond_info(residue, amino_acid_itp, mod_residues, p_residues)
+                hydrogen[residue], heavy_bond[residue], residue_list = fetch_bond_info(residue, amino_acid_itp, mod_residues, p_residues)
                 processing, grouped_atoms, heavy_bond[residue] = get_fragment_topology(residue, location, processing, heavy_bond)
                 sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue])
-                
+                processing[residue]['RESIDUE'] = residue_list
     for directory in range(len(np_directories)):
         for residue in np_directories[directory][1:]:    
             if residue not in processing:
@@ -272,11 +275,12 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
                     if residue == 'ION':
                         ions = create_ion_list(location[:-4]+'.pdb', ions)
                     hydrogen[residue], heavy_bond[residue], atoms_dict = {},{},{}
+                    residue_list = [residue]
                 else:
-                    hydrogen[residue], heavy_bond[residue] = fetch_bond_info(residue, [location[:-4]+'.itp'], mod_residues, p_residues)
+                    hydrogen[residue], heavy_bond[residue], residue_list = fetch_bond_info(residue, [location[:-4]+'.itp'], mod_residues, p_residues)
 
                 processing, grouped_atoms, heavy_bond[residue] = get_fragment_topology(residue, location, processing, heavy_bond) 
-
+                processing[residue]['RESIDUE'] = residue_list
                 if residue in ['SOL', 'ION']: 
                     sorted_connect[residue]={}
                 else:
@@ -303,6 +307,7 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues):
     heavy_dict, H_dict=[],[]
     residue_present = False
     atom_conversion = {}
+    residue_list=[]
     for rtp_file in rtp:
         with open(rtp_file, 'r') as itp_input:
             for line in itp_input.readlines():
@@ -317,12 +322,16 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues):
                             atoms, bonds = atom_bond_check(line_sep)
                         elif atoms:
                             if residue in p_residues:
+                                if residue not in residue_list:
+                                    residue_list.append(residue)
                                 atom_conversion[line_sep[0]]=int(line_sep[3])+1
                                 if is_hydrogen(line_sep[0]):
                                     H_dict.append(line_sep[0])
                                 else:
                                     heavy_dict.append(line_sep[0])
                             else:
+                                if line_sep[3] not in residue_list:
+                                    residue_list.append(line_sep[3])
                                 if is_hydrogen(line_sep[4]):
                                     H_dict.append(int(line_sep[0]))
                                 else:
@@ -348,7 +357,7 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues):
         hydrogen = add_to_topology_list(bond[0], bond[1], hydrogen, heavy_dict, H_dict, atom_conversion, residue, p_residues)
         heavy_bond = add_to_topology_list(bond[0], bond[1], heavy_bond, heavy_dict, heavy_dict, atom_conversion, residue, p_residues)
 
-    return hydrogen, heavy_bond
+    return hydrogen, heavy_bond, residue_list
 
 def add_to_topology_list(bond_1, bond_2, top_list, dict1, dict2, conversion, residue, p_residues):
     for bond in [[bond_1, bond_2], [bond_2, bond_1]]:
@@ -433,17 +442,20 @@ def add_to_list(root, dirs, list_to_add):
     return list_to_add
 
 def fetch_frag_number(fragments_available):
-    try: 
-        fragment_number = []
+    fragment_number = []
+    if g_var.fg != None and len(g_var.fg) > 0 :
         for frag in g_var.fg:
-            fragment_number.append(fragments_available.index(frag))
-    except:
-        if g_var.fg != None or g_var.info: 
-            if g_var.info:
-                sys.exit('Cannot find find database: '+frag)
-            print('Cannot find fragment library: '+frag+' please select library from below\n')
+            if frag in fragments_available:
+                fragment_number.append(fragments_available.index(frag))
+            else:
+                print('Cannot find fragment library: '+frag+' please select library from below\n')
+                fragment_number += database_selection(fragments_available, 'fragments').tolist()
+    else:
         fragment_number = database_selection(fragments_available, 'fragments')
-    return fragment_number
+    if len(fragment_number) > 0:
+        return fragment_number 
+    else:
+        sys.exit('no fragment databases selected')
 
 def fetch_residues(fragments_available_prov, fragment_number):
 #### list of directories and water types  [[root, folders...],[root, folders...]]
@@ -619,30 +631,37 @@ def fix_time(t1, t2):
     return int(np.round(hours)), int(np.round(minutes)), int(np.round(seconds,0))
 
 def print_script_timings(tc, system, user_at_input):
-    print('\n{:-<100}'.format(''))
-    print('\n{0:^47}{1:^22}'.format('Job','Time'))
-    print('{0:^47}{1:^22}'.format('---','----'))
+    to_print=[]
+    to_print.append('\n{:-<100}'.format(''))
+    to_print.append('\n{0:^47}{1:^22}'.format('Job','Time'))
+    to_print.append('{0:^47}{1:^22}'.format('---','----'))
     t1 = fix_time(tc['r_i_t'], tc['i_t'])
-    print('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
+    to_print.append('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
     if 'PROTEIN' in system:
         t2=fix_time(tc['p_d_n_t'],tc['r_i_t'])
         t3=fix_time(tc['f_p_t'],tc['p_d_n_t'])
         t4=fix_time(tc['f_p_t'],tc['r_i_t'])
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein: ',t2[0],'hours',t2[1],'min',t2[2],'sec'))        
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein from provided structure: ',t3[0],'hours',t3[1],'min',t3[2],'sec'))
+        to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein: ',t2[0],'hours',t2[1],'min',t2[2],'sec'))        
+        to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein from provided structure: ',t3[0],'hours',t3[1],'min',t3[2],'sec'))
     t6=fix_time(tc['n_p_t'],tc['f_p_t'])
     t7=fix_time(tc['m_t'],tc['n_p_t'])
-    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
-    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Equilibrate de novo: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
+    to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
+    to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Equilibrate de novo: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
     if g_var.o in ['all', 'steer'] and g_var.a != None and user_at_input:
         t8=fix_time(tc['s_e'],tc['s_s'])
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating steered system: ', t8[0],'hours',t8[1],'min',t8[2],'sec'))
+        to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating steered system: ', t8[0],'hours',t8[1],'min',t8[2],'sec'))
     if g_var.o in ['all', 'align'] and g_var.a != None and user_at_input:
         t9=fix_time(tc['a_e'],tc['a_s'])
-        print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating aligned system: ', t9[0],'hours',t9[1],'min',t9[2],'sec'))
-    print('{:-<69}'.format(''))
+        to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating aligned system: ', t9[0],'hours',t9[1],'min',t9[2],'sec'))
+    to_print.append('{:-<69}'.format(''))
     t10=fix_time(tc['f_t'],tc['i_t'])
-    print('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t10[0],'hours',t10[1],'min',t10[2],'sec'))
+    to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t10[0],'hours',t10[1],'min',t10[2],'sec'))
+    with open(g_var.final_dir+'script_timings.dat', 'w') as time_out:  
+        # print(g_var.final_dir+'script_timings.dat')
+        for line in to_print:
+            time_out.write(line+'\n')
+            if g_var.v >= 1:
+                print(line)
 
 def database_information(forcefield_available, fragments_available):
     print('{0:30}'.format('\nThis script is a fragment based conversion of the coarsegrain representation to atomistic.\n'))

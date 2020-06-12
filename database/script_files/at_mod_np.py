@@ -169,7 +169,7 @@ def merge_minimised(residue_type, np_system, box_vec):
     #### run through every resid 
         for resid in range(resid_range):
             merge_temp ,dump = at_mod.read_in_merged_pdbs([], [], g_var.working_dir+residue_type+'/MIN/'+residue_type+'_'+str(resid)+'.pdb')
-            merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merge_coords)    
+            merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merge_coords, residue_type)    
         if residue_type !='SOL':
             merge_coords = at_mod.check_atom_overlap(merge_coords)
         for line_val, line in enumerate(merge):

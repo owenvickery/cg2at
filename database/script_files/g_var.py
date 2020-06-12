@@ -85,10 +85,10 @@ v, messy  = args.v, args.messy
 info = args.info
 
 ### hardcoded variables for use elsewhere in the script
-variables = sys.argv
-variables_to_save={'-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, 
-                   '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, 
-                   '-vs':args.vs, '-box':box,'-loc':args.loc, '-group':args.group, '-o':args.o, '-al':args.al, 'ncpus':ncpus, 'shrink':args.sf}
+variables_to_save={'input':sys.argv, '-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, 
+                   '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, '-vs':args.vs,
+                   '-box':box,'-loc':args.loc, '-group':args.group, '-o':args.o, '-al':args.al, 
+                   'ncpus':ncpus, 'shrink':args.sf}
 
 topology = {'BACKBONE':'BB', 'C_TERMINAL':'C', 'N_TERMINAL':'N', 'STEER':[], 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}}
 

@@ -619,7 +619,7 @@ def read_in_protein_pdbs(no_chains, file, end):
                         merge_temp.append(line_sep)
         else:
             sys.exit('cannot find minimised protein chain: '+str(chain)) 
-        merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merged_coords)    
+        merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merged_coords, 'PROTEIN')    
     merged_coords = at_mod.check_atom_overlap(merge_coords)
     merged=[]
     for line_val, line in enumerate(merge):

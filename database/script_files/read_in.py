@@ -123,36 +123,6 @@ def connect_pbc(temp_coord, prev_coord, box, protein):
     else:
         return temp_coord
 
-# def fix_pbc(cg_residues, box_vec, new_box, box_shift):
-# #### fixes box PBC
-#     box = box_vec.split()[1:4]
-#     new_box = new_box.split()[1:4]
-#     for residue_type in cg_residues:
-#         cut_keys=[]
-#         for res_val, residue in enumerate(cg_residues[residue_type]):
-#             for bead_val, bead in enumerate(cg_residues[residue_type][residue]):
-#                 if g_var.box != None and residue_type not in ['PROTEIN']:
-#                     cut = check_new_box(cg_residues[residue_type][residue][bead]['coord'],box, new_box)
-#                     if cut:
-#                         cut_keys.append(residue)
-#                         break
-#                 if residue_type in ['PROTEIN'] and bead == f_loc.res_top[cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']:
-#                     BB_bead = f_loc.res_top[cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']
-#                     if res_val != 0 :
-#                         BB_cur = cg_residues[residue_type][residue][BB_bead]['coord']
-#                         for xyz in range(3):
-#                             cg_residues[residue_type][residue][BB_bead]['coord'][xyz] = connect_pbc(BB_cur[xyz], BB_pre[xyz], box[xyz], True)
-#                     BB_pre = cg_residues[residue_type][residue][BB_bead]['coord'].copy()
-#                 if bead_val != 0 and residue_type not in ['ION','SOL']:
-#                     for xyz in range(3):
-#                         cg_residues[residue_type][residue][bead]['coord'][xyz] = connect_pbc(cg_residues[residue_type][residue][bead]['coord'][xyz], 
-#                                                                                             cg_residues[residue_type][residue][bead_prev]['coord'][xyz], box[xyz], False)
-#                 bead_prev=bead
-#                 if g_var.box != None:
-#                     cg_residues[residue_type][residue][bead]['coord'] = cg_residues[residue_type][residue][bead]['coord']-box_shift
-#         for key in cut_keys:
-#             cg_residues[residue_type].pop(key)
-#     return cg_residues
 def real_box_vectors(box_vec):
     x, y, z, yz, xz, xy = [float(i) for i in box_vec.split()[1:7]]
     # return real-space vector
