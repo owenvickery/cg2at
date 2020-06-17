@@ -143,11 +143,12 @@ def minimise_protein(protein, p_system, user_at_input, box_vec):
     for chain in range(protein):
         print('Minimising protein chain: '+str(chain), end='\r')
         pdb2gmx_selections=ask_terminal(chain, p_system)
-        pdb2gmx_chain(chain, 'de_novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[0])+'\n'+str(pdb2gmx_selections[1]))
+        if not os.path.exists('PROTEIN_de_novo_'+str(chain)+'_gmx_checked.pdb'):
+            pdb2gmx_chain(chain, 'de_novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[0])+'\n'+str(pdb2gmx_selections[1]))
         pdb2gmx_selections = histidine_protonation(chain, 'de_novo_', pdb2gmx_selections)
         at_mod.check_overlap_chain(chain, 'de_novo_', box_vec)
         minimise_protein_chain(chain, 'de_novo_')
-        if user_at_input:
+        if user_at_input and not os.path.exists('PROTEIN_aligned_'+str(chain)+'_gmx_checked.pdb'):
             pdb2gmx_chain(chain, 'aligned_', pdb2gmx_selections)
             at_mod.check_overlap_chain(chain, 'aligned_', box_vec)
             minimise_protein_chain(chain, 'aligned_')
@@ -578,6 +579,7 @@ def write_nvt_mdp(loc, posres, time, timestep):
             steered_md.write('pcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nrefcoord_scaling = all\ncutoff-scheme = Verlet')   
 
 def steer(protein_type, fc, input_file ):
+    print('Applying '+fc+' position restraints', end='\r')
     gen.mkdir_directory(g_var.merged_directory+'STEER')
     equil_type = ['Berendsen', 'Parrinello-Rahman']
     for equil_type_val, npt_type in enumerate([fc+'_posres-pr.mdp', fc+'_posres-b.mdp']):

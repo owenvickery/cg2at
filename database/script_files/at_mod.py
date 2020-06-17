@@ -288,25 +288,26 @@ def align_to_vector(v1, v2):
 def merge_system_pdbs(system, protein, cg_residues, box_vec):
     os.chdir(g_var.merged_directory)
 #### create merged pdb 
-    pdb_output=gen.create_pdb(g_var.merged_directory+'merged_cg2at'+protein+'.pdb', box_vec) 
-    merge=[]
-    merge_coords=[]
-#### run through every residue type in cg_residues
-    for segment, residue_type in enumerate(cg_residues):
-    #### if file contains user input identifier 
-        if residue_type != 'PROTEIN':
-            input_type=''
-        else:
-            input_type=protein
-        merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
-    if 'novo' in protein:
-        print('checking for atom overlap in : '+protein[1:])
-        merge_coords = check_atom_overlap(merge_coords)
-    for line_val, line in enumerate(merge):
-        pdb_output.write(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
-            merge_coords[line_val][0],merge_coords[line_val][1],merge_coords[line_val][2],1,0))+'\n')
-    pdb_output.write('TER\nENDMDL')
-    pdb_output.close()
+    if not os.path.exists(g_var.merged_directory+'merged_cg2at'+protein+'.pdb'):
+        pdb_output=gen.create_pdb(g_var.merged_directory+'merged_cg2at'+protein+'.pdb', box_vec) 
+        merge=[]
+        merge_coords=[]
+    #### run through every residue type in cg_residues
+        for segment, residue_type in enumerate(cg_residues):
+        #### if file contains user input identifier 
+            if residue_type != 'PROTEIN':
+                input_type=''
+            else:
+                input_type=protein
+            merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
+        if 'novo' in protein:
+            print('checking for atom overlap in : '+protein[1:])
+            merge_coords = check_atom_overlap(merge_coords)
+        for line_val, line in enumerate(merge):
+            pdb_output.write(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
+                merge_coords[line_val][0],merge_coords[line_val][1],merge_coords[line_val][2],1,0))+'\n')
+        pdb_output.write('TER\nENDMDL')
+        pdb_output.close()
 
 def read_in_merged_pdbs(merge, merge_coords, location):
     if os.path.exists(location):
@@ -359,8 +360,6 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
             resname=residue_type
         for chiral_group in f_loc.res_top[resname]['CHIRAL']:
             if chiral_group != 'atoms':
-                # print(residue)
-                # print(f_loc.res_top[resname]['CHIRAL'][chiral_group]['m'])
                 stat = merge_temp[chiral_atoms[residue][chiral_group]]
                 move = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]]
                 c1   = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['c1']]]

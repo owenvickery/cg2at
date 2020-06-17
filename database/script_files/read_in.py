@@ -158,7 +158,7 @@ def fix_pbc(cg_residues, box_vec, new_box, box_shift):
         for res_val, residue in enumerate(cg_residues[residue_type]):
             for bead_val, bead in enumerate(cg_residues[residue_type][residue]):
                 if g_var.box != None and residue_type not in ['PROTEIN']:
-                    cut = check_new_box(cg_residues[residue_type][residue][bead]['coord'],box, new_box)
+                    cut = check_new_box(cg_residues[residue_type][residue][bead]['coord'],box_vec.split()[1:4], new_box)
                     if cut:
                         cut_keys.append(residue)
                         break

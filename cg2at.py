@@ -80,9 +80,9 @@ if protein:
     print('Minimising '+str(p_system['PROTEIN'])+' protein chains')
     gro.minimise_protein(system['PROTEIN'], p_system, user_at_input, box_vec) ## minimise user and de novo structures
     #### read in minimised de novo protein chains and merges chains
-    merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb') ## merge protein chains
-
-    at_mod_p.write_merged_pdb(merge_de_novo, '_de_novo', box_vec) ## write merged chain to pdb 
+    if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_merged.pdb'):
+        merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb') ## merge protein chains
+        at_mod_p.write_merged_pdb(merge_de_novo, '_de_novo', box_vec) ## write merged chain to pdb 
     #### runs steered MD on user supplied protein chains
     if user_at_input:
         if g_var.o in ['all', 'steer']:
@@ -91,9 +91,10 @@ if protein:
                 print('Running steered MD on protein chain: '+str(chain), end='\r')
                 gro.steered_md_atomistic_to_cg_coord(chain) ## steer user to fit CG 
             #### read in minimised user supplied protein chains and merges chains
-            merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/STEERED_MD/PROTEIN_steered', '.pdb') ## merge steered chains
-            at_mod_p.write_merged_pdb(merge_at_user, '_steered', box_vec) ## write merged chain to pdb 
-        if g_var.o in ['all', 'align']:
+            if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_steered_merged.pdb'):
+                merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/STEERED_MD/PROTEIN_steered', '.pdb') ## merge steered chains
+                at_mod_p.write_merged_pdb(merge_at_user, '_steered', box_vec) ## write merged chain to pdb 
+        if g_var.o in ['all', 'align'] and not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb'):
             merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_aligned', '_gmx.pdb') ## merge aligned chains
             at_mod_p.write_merged_pdb(merge_at_user_no_steer, '_aligned', box_vec) ## write merged chain to pdb 
 
@@ -131,17 +132,21 @@ for file_name in os.listdir(g_var.merged_directory):
            gen.file_copy_and_check(g_var.merged_directory+file_name, g_var.final_dir+file_name)
 gro.make_min('merged_cg2at') ## make minimisation directory
 #### merges provided atomistic protein and residues types into a single pdb file into merged directory
-at_mod.merge_system_pdbs(system, '_de_novo', cg_residues, box_vec) ## merge all minimised residues into a complete system 
-gro.minimise_merged_pdbs(system, '_de_novo') ## minimise system pdb
-gro.run_nvt(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb', protein) ## run nvt on system
-ringed_lipids = at_mod.check_ringed_lipids(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt.pdb', box_vec) ## check for abnormal bond lengths 
-if len(system) > 1 and g_var.alchembed and len(ringed_lipids) > 0 and protein:
-    gro.alchembed(system['PROTEIN'], 'de_novo') ## runs alchembed on protein chains 
-    ringed_lipids = at_mod.check_ringed_lipids(g_var.final_dir+'final_cg2at_de_novo.pdb', box_vec) ## rechecks for abnormal bond lengths
-    if len(ringed_lipids) > 0:
-        print('Check final output as alchembed cannot fix ringed lipid: ', ringed_lipids) ## warning that the script failed to fix bonds
-else:
-    gro.run_npt(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt', protein) ## run npt on system if no abnormal bonds found
+if not os.path.exists(g_var.merged_directory+'merged_cg2at_de_novo.pdb'):
+    at_mod.merge_system_pdbs(system, '_de_novo', cg_residues, box_vec) ## merge all minimised residues into a complete system 
+if not os.path.exists(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb'):
+    gro.minimise_merged_pdbs(system, '_de_novo') ## minimise system pdb
+if not os.path.exists(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt.pdb'):
+    gro.run_nvt(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb', protein) ## run nvt on system
+if not os.path.exists(g_var.final_dir+'final_cg2at_de_novo.pdb'):
+    ringed_lipids = at_mod.check_ringed_lipids(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt.pdb', box_vec) ## check for abnormal bond lengths 
+    if len(system) > 1 and g_var.alchembed and len(ringed_lipids) > 0 and protein:
+        gro.alchembed(system['PROTEIN'], 'de_novo') ## runs alchembed on protein chains 
+        ringed_lipids = at_mod.check_ringed_lipids(g_var.final_dir+'final_cg2at_de_novo.pdb', box_vec) ## rechecks for abnormal bond lengths
+        if len(ringed_lipids) > 0:
+            print('Check final output as alchembed cannot fix ringed lipid: ', ringed_lipids) ## warning that the script failed to fix bonds
+    else:
+        gro.run_npt(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt', protein) ## run npt on system if no abnormal bonds found
 time_counter['m_t']=time.time()
 if user_at_input and protein:
     if g_var.o in ['all', 'steer']:
