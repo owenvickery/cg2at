@@ -616,11 +616,13 @@ def clean(cg_residues):
             os.chdir(g_var.working_dir+residue_type)
             file_list = glob.glob('*temp*', recursive=True)
             for file in file_list:
-                os.remove(file)
+                if not file.endswith('.tpr'):
+                    os.remove(file)
             os.chdir(g_var.working_dir+residue_type+'/MIN')
             file_list = glob.glob('*temp*', recursive=True)
             for file in file_list:
-                os.remove(file) 
+                if not file.endswith('.tpr'):
+                    os.remove(file) 
 
 def fix_time(t1, t2):
     minutes, seconds= divmod(t1-t2, 60)

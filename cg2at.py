@@ -85,15 +85,15 @@ if protein:
         at_mod_p.write_merged_pdb(merge_de_novo, '_de_novo', box_vec) ## write merged chain to pdb 
     #### runs steered MD on user supplied protein chains
     if user_at_input:
-        if g_var.o in ['all', 'steer']:
-        #### runs steered MD on atomistic structure
-            for chain in range(system['PROTEIN']):
-                print('Running steered MD on protein chain: '+str(chain), end='\r')
-                gro.steered_md_atomistic_to_cg_coord(chain) ## steer user to fit CG 
+        # if g_var.o in ['all', 'steer']:
+        # #### runs steered MD on atomistic structure
+        #     for chain in range(system['PROTEIN']):
+        #         print('Running steered MD on protein chain: '+str(chain), end='\r')
+        #         gro.steered_md_atomistic_to_cg_coord(chain) ## steer user to fit CG 
             #### read in minimised user supplied protein chains and merges chains
-            if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_steered_merged.pdb'):
-                merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/STEERED_MD/PROTEIN_steered', '.pdb') ## merge steered chains
-                at_mod_p.write_merged_pdb(merge_at_user, '_steered', box_vec) ## write merged chain to pdb 
+            # if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_steered_merged.pdb'):
+            #     merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/STEERED_MD/PROTEIN_steered', '.pdb') ## merge steered chains
+            #     at_mod_p.write_merged_pdb(merge_at_user, '_steered', box_vec) ## write merged chain to pdb 
         if g_var.o in ['all', 'align'] and not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb'):
             merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_aligned', '_gmx.pdb') ## merge aligned chains
             at_mod_p.write_merged_pdb(merge_at_user_no_steer, '_aligned', box_vec) ## write merged chain to pdb 
@@ -149,24 +149,25 @@ if not os.path.exists(g_var.final_dir+'final_cg2at_de_novo.pdb'):
         gro.run_npt(g_var.merged_directory+'NVT/merged_cg2at_de_novo_nvt', protein) ## run npt on system if no abnormal bonds found
 time_counter['m_t']=time.time()
 if user_at_input and protein:
-    if g_var.o in ['all', 'steer']:
-        print('\nCreating steered system')
-        time_counter['s_s']=time.time()
-        at_mod.merge_system_pdbs(system, '_steered', cg_residues, box_vec) ## create restraint positions for steered system
-        gro.steer('steered', 'low', g_var.final_dir+'final_cg2at_de_novo') ## run steered md with low restraints
-        gro.steer('steered', 'mid', g_var.merged_directory+'STEER/merged_cg2at_steered_steer_low') ## run steered md with medium restraints
-        gro.steer('steered', 'high', g_var.merged_directory+'STEER/merged_cg2at_steered_steer_mid') ## run steered md with high restraints
-        gen.file_copy_and_check(g_var.merged_directory+'STEER/merged_cg2at_steered_steer_high.pdb', g_var.final_dir+'final_cg2at_steered.pdb') ## copy to final folder
-        time_counter['s_e']=time.time()
+
     if g_var.o in ['all', 'align']:   
         print('\nCreating aligned system') 
         time_counter['a_s']=time.time()
         at_mod.merge_system_pdbs(system, '_aligned', cg_residues, box_vec) ## create restraint positions for aligned system
-        gro.steer('aligned', 'low', g_var.final_dir+'final_cg2at_de_novo') ## run steered md with low restraints
-        gro.steer('aligned', 'mid', g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_low') ## run steered md with medium restraints
-        gro.steer('aligned', 'high', g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_mid') ## run steered md with high restraints
+        gro.steer_to_aligned('aligned', 'low', g_var.final_dir+'final_cg2at_de_novo') ## run steered md with low restraints
+        gro.steer_to_aligned('aligned', 'mid', g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_low') ## run steered md with medium restraints
+        gro.steer_to_aligned('aligned', 'high', g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_mid') ## run steered md with high restraints
         gen.file_copy_and_check(g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
         time_counter['a_e']=time.time()
+    if g_var.o in ['all', 'steer']:
+        print('\nCreating steered system')
+        time_counter['s_s']=time.time()
+        # at_mod.merge_system_pdbs(system, '_steered', cg_residues, box_vec) ## create restraint positions for steered system
+        gro.steer_to_de_novo(g_var.final_dir+'final_cg2at_de_novo', g_var.final_dir+'final_cg2at_aligned') ## run steered md with low restraints
+        # gro.steer('steered', 'mid', g_var.merged_directory+'STEER/merged_cg2at_steered_steer_low') ## run steered md with medium restraints
+        # gro.steer('steered', 'high', g_var.merged_directory+'STEER/merged_cg2at_steered_steer_mid') ## run steered md with high restraints
+        gen.file_copy_and_check(g_var.merged_directory+'STEER/merged_cg2at_steered.pdb', g_var.final_dir+'final_cg2at_steered.pdb') ## copy to final folder
+        time_counter['s_e']=time.time()
 
 #### removes temp file from script, anything with temp in really
 if not g_var.messy:

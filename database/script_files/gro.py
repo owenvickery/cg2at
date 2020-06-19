@@ -262,23 +262,6 @@ def write_posres(chain):
                     mid_posres.write(str(at_counter)+'     1  1000  1000  1000\n')
                     high_posres.write(str(at_counter)+'     1  6000  6000  6000\n')
 
-def steered_md_atomistic_to_cg_coord(chain):
-    os.chdir(g_var.working_dir+'PROTEIN')
-    gen.mkdir_directory('STEERED_MD')
-#### create bog standard mdp file, simulation is only 3 ps in a vaccum so settings should not have any appreciable effect 
-    write_steered_mdp(g_var.working_dir+'PROTEIN/steered_md.mdp', '-DPOSRES_STEERED','Berendsen', 2000, 0.001)
-#### run grompp on chain 
-    gromacs([g_var.gmx+' grompp '+
-                '-f steered_md.mdp '+
-                '-p topol_PROTEIN_aligned_'+str(chain)+'.top '+
-                '-c MIN/PROTEIN_aligned_'+str(chain)+'.pdb '+
-                '-r MIN/PROTEIN_de_novo_'+str(chain)+'.pdb '+
-                '-o STEERED_MD/PROTEIN_steered_'+str(chain)+' -maxwarn 2 ', 'STEERED_MD/PROTEIN_steered_'+str(chain)+'.tpr'])
-#### run mdrun on steered MD
-    os.chdir('STEERED_MD')
-    gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm PROTEIN_steered_'+str(chain)+' -c PROTEIN_steered_'+str(chain)+'.pdb', 
-                'PROTEIN_steered_'+str(chain)+'.pdb'])
-
 def convert_topology(topol, protein_number):
 #### reads in topology 
     if Path(topol+str(protein_number)+'.top').exists():
@@ -578,7 +561,9 @@ def write_nvt_mdp(loc, posres, time, timestep):
             steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\n')
             steered_md.write('pcoupl = no\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nrefcoord_scaling = all\ncutoff-scheme = Verlet')   
 
-def steer(protein_type, fc, input_file ):
+def steer_to_aligned(protein_type, fc, input_file ):
+# 'steered', 'low', g_var.final_dir+'final_cg2at_aligned'
+
     print('Applying '+fc+' position restraints', end='\r')
     gen.mkdir_directory(g_var.merged_directory+'STEER')
     equil_type = ['Berendsen', 'Parrinello-Rahman']
@@ -601,6 +586,39 @@ def steer(protein_type, fc, input_file ):
             break
     if not equil:
         sys.exit('steer failed')
+
+
+# def steered_md_atomistic_to_cg_coord(chain):
+#     os.chdir(g_var.working_dir+'PROTEIN')
+#     gen.mkdir_directory('STEERED_MD')
+# #### create bog standard mdp file, simulation is only 3 ps in a vaccum so settings should not have any appreciable effect 
+#     write_steered_mdp(g_var.working_dir+'PROTEIN/steered_md.mdp', '-DPOSRES_STEERED','Berendsen', 2000, 0.001)
+# #### run grompp on chain 
+#     gromacs([g_var.gmx+' grompp '+
+#                 '-f steered_md.mdp '+
+#                 '-p topol_PROTEIN_aligned_'+str(chain)+'.top '+
+#                 '-c MIN/PROTEIN_aligned_'+str(chain)+'.pdb '+
+#                 '-r MIN/PROTEIN_de_novo_'+str(chain)+'.pdb '+
+#                 '-o STEERED_MD/PROTEIN_steered_'+str(chain)+' -maxwarn 2 ', 'STEERED_MD/PROTEIN_steered_'+str(chain)+'.tpr'])
+# #### run mdrun on steered MD
+#     os.chdir('STEERED_MD')
+#     gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm PROTEIN_steered_'+str(chain)+' -c PROTEIN_steered_'+str(chain)+'.pdb', 
+#                 'PROTEIN_steered_'+str(chain)+'.pdb'])
+
+def steer_to_de_novo(protein_type, input_file ):
+    os.chdir(g_var.merged_directory)
+    write_steered_mdp(g_var.merged_directory+'steered_md.mdp', '-DPOSRES_STEERED -DNP','Berendsen', 3000, 0.001)
+    gromacs([g_var.gmx+' grompp '+
+                '-f steered_md.mdp '+
+                '-p topol_final.top '+
+                '-c '+input_file+'.pdb '+
+                '-r '+protein_type+' '+
+                '-o STEER/merged_cg2at_steered '+
+                ' -maxwarn 2', 'STEER/merged_cg2at_steered.tpr'])  
+    os.chdir('STEER')
+    gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_steered'+
+                                     ' -c merged_cg2at_steered.pdb -cpo merged_cg2at_steered.cpt'
+                                     ,'merged_cg2at_steered.pdb'])
 
 def run_nvt(loc, protein):
     print('Running NVT on de novo system')
