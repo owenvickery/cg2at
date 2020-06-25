@@ -85,15 +85,6 @@ if protein:
         at_mod_p.write_merged_pdb(merge_de_novo, '_de_novo', box_vec) ## write merged chain to pdb 
     #### runs steered MD on user supplied protein chains
     if user_at_input:
-        # if g_var.o in ['all', 'steer']:
-        # #### runs steered MD on atomistic structure
-        #     for chain in range(system['PROTEIN']):
-        #         print('Running steered MD on protein chain: '+str(chain), end='\r')
-        #         gro.steered_md_atomistic_to_cg_coord(chain) ## steer user to fit CG 
-            #### read in minimised user supplied protein chains and merges chains
-            # if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_steered_merged.pdb'):
-            #     merge_at_user = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/STEERED_MD/PROTEIN_steered', '.pdb') ## merge steered chains
-            #     at_mod_p.write_merged_pdb(merge_at_user, '_steered', box_vec) ## write merged chain to pdb 
         if g_var.o in ['all', 'align'] and not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb'):
             merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_aligned', '_gmx.pdb') ## merge aligned chains
             at_mod_p.write_merged_pdb(merge_at_user_no_steer, '_aligned', box_vec) ## write merged chain to pdb 

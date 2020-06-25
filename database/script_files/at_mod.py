@@ -5,7 +5,7 @@ import numpy as np
 import math
 import itertools
 from scipy.spatial import cKDTree
-import matplotlib.pyplot as plt
+import re
 import gen, g_var, f_loc
 
 def sanity_check_fragments(res, cg, sin_bead):
@@ -184,23 +184,24 @@ def get_atomistic(frag_location):
                                                                 'frag_mass':1}    
 #### updates fragment mass   
                 if not gen.is_hydrogen(line_sep['atom_name']):
-                    for atom in line_sep['atom_name']:
-                        if atom in g_var.mass:
-                            residue[group][bead][line_sep['atom_number']]['frag_mass']=g_var.mass[atom]  ### updates atom masses with crude approximations
-                            fragment_mass[bead].append([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf,g_var.mass[atom]])
+                    if line_sep['atom_name'] in f_loc.res_top[resname]['atom_masses']:
+                        residue[group][bead][line_sep['atom_number']]['frag_mass']=f_loc.res_top[resname]['atom_masses'][line_sep['atom_name']]  ### updates atom masses with crude approximations
+                        fragment_mass[bead].append([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf,f_loc.res_top[resname]['atom_masses'][line_sep['atom_name']]])               
                 else:
                     fragment_mass[bead].append([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf,1])
     return residue, fragment_mass
 
 def COM(mass, fragment):
 #### returns center of mass of fragment
-    # print(fragment)
-    if np.any(np.array(mass)[:,3]):      
-        mass = np.average(np.array(mass)[:,:3], axis=0, weights=np.array(mass)[:,3])
-    else:
-        print('bead has no mass: \n')
-        sys.exit(fragment)
-    return mass
+    
+    try:
+        if np.any(np.array(mass)[:,3]):      
+            return np.average(np.array(mass)[:,:3], axis=0, weights=np.array(mass)[:,3])
+        else:
+            print('bead has no mass: \n')
+            sys.exit(fragment)
+    except:
+        sys.exit('missing the mass one of the atoms')
 
 def rigid_fit(group, frag_mass, resid, cg):
 #### rigid fits group to CG beads

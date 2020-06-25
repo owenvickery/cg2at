@@ -297,23 +297,18 @@ def fix_carbonyl(residue_id, cg, at, cross_vector):
             BB_bead = f_loc.res_top[cg[residue_id+index][next(iter(cg[residue_id+index]))]['residue_name']]['BACKBONE']
             ca.append(cg[residue_id+index][BB_bead]['coord'])
         cross_vector = at_mod.find_cross_vector( ca )
-    if np.any(prev_BB) and np.any(next_BB):
-        ref_carbonyl = at[C]['coord']+cross_vector
-        ref_amide = at[N]['coord']-cross_vector
-        initial_coord = np.array([at[N]['coord'],at[N]['coord'], at[O]['coord'], at[C]['coord']])
-        fit_to        = np.array([prev_BB,       ref_amide,      ref_carbonyl,   next_BB])
-        xyz_rot_apply = at_mod.kabsch_rotate(initial_coord-cur_BB,fit_to-cur_BB)
-        for atom in [N, CA, C, O]:
-            at[atom]['coord'] = at_mod.rotate_atom(at[atom]['coord'], cur_BB, xyz_rot_apply) 
-        rotation = at_mod.align_to_vector(at_mod.noramlised_vector(at[O]['coord'],at[C]['coord']), cross_vector)
-        at[O]['coord'] = (at[O]['coord']-at[C]['coord']).dot(rotation)+at[C]['coord']
-    else:    
-        rotation = at_mod.align_to_vector(at_mod.noramlised_vector(at[O]['coord'],at[C]['coord']), cross_vector)
-        center_C = cur_BB+(next_BB-cur_BB)/3
-        center_N = cur_BB-(next_BB-cur_BB)/3
-        at[C]['coord'] = (at[C]['coord']-center_C).dot(rotation)+center_C
-        at[O]['coord'] = (at[O]['coord']-center_C).dot(rotation)+center_C
-        at[N]['coord'] = (at[N]['coord']-center_N).dot(rotation)+center_N
+    # if np.any(prev_BB) and np.any(next_BB):
+    rotation = at_mod.align_to_vector(at_mod.noramlised_vector(at[O]['coord'],at[C]['coord']), cross_vector)
+    at[O]['coord'] = (at[O]['coord']-at[C]['coord']).dot(rotation)+at[C]['coord']
+    at[C]['coord'] = at[C]['coord'] + cross_vector*0.2
+    at[N]['coord'] = at[N]['coord'] - cross_vector*0.5
+    # else:    
+    #     rotation = at_mod.align_to_vector(at_mod.noramlised_vector(at[O]['coord'],at[C]['coord']), cross_vector)
+    #     center_C = cur_BB+(next_BB-cur_BB)/3
+    #     center_N = cur_BB-(next_BB-cur_BB)/3
+    #     at[C]['coord'] = (at[C]['coord']-center_C).dot(rotation)+center_C
+    #     at[O]['coord'] = (at[O]['coord']-center_C).dot(rotation)+center_C
+    #     at[N]['coord'] = (at[N]['coord']-center_N).dot(rotation)+center_N
     return at, cross_vector
 
   

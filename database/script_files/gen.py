@@ -245,7 +245,6 @@ def sort_connectivity(atom_dict, heavy_bond):
                                     for frag in atom_dict[group_2]:                          
                                         if bond in atom_dict[group_2][frag]:
                                             cut_group[group][atom] = [frag]
-        # sys.exit()
     return cut_group
 
 def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, forcefield_location, mod_residues):
@@ -258,34 +257,39 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
     atoms_dict={}
     ions = []
     for directory in range(len(p_directories)):
+        at_mass_p = fetch_atom_masses(forcefield_location) 
         for residue in p_directories[directory][1:]:    
             if residue not in processing:
                 atoms_dict={}
                 location = fragment_location(residue,p_residues, p_directories, mod_directories, np_directories)
-                hydrogen[residue], heavy_bond[residue], residue_list = fetch_bond_info(residue, amino_acid_itp, mod_residues, p_residues)
+                hydrogen[residue], heavy_bond[residue], residue_list, at_mass = fetch_bond_info(residue, amino_acid_itp, mod_residues, p_residues, at_mass_p)
                 processing, grouped_atoms, heavy_bond[residue] = get_fragment_topology(residue, location, processing, heavy_bond)
                 sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue])
                 processing[residue]['RESIDUE'] = residue_list
+                processing[residue]['atom_masses'] = at_mass
     for directory in range(len(np_directories)):
         for residue in np_directories[directory][1:]:    
             if residue not in processing:
                 atoms_dict={}
                 location = fragment_location(residue,p_residues, p_directories, mod_directories, np_directories)
                 if residue in ['SOL','ION']: 
+                    at_mass = fetch_atoms_water(np_directories[directory][0]+residue+'/', at_mass_p)
                     if residue == 'ION':
                         ions = create_ion_list(location[:-4]+'.pdb', ions)
                     hydrogen[residue], heavy_bond[residue], atoms_dict = {},{},{}
                     residue_list = [residue]
+
                 else:
-                    hydrogen[residue], heavy_bond[residue], residue_list = fetch_bond_info(residue, [location[:-4]+'.itp'], mod_residues, p_residues)
+                    hydrogen[residue], heavy_bond[residue], residue_list, at_mass = fetch_bond_info(residue, [location[:-4]+'.itp'], mod_residues, p_residues, at_mass_p)
 
                 processing, grouped_atoms, heavy_bond[residue] = get_fragment_topology(residue, location, processing, heavy_bond) 
                 processing[residue]['RESIDUE'] = residue_list
+                processing[residue]['atom_masses'] = at_mass
                 if residue in ['SOL', 'ION']: 
                     sorted_connect[residue]={}
                 else:
                     sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue])
-    return processing, sorted_connect, hydrogen, heavy_bond, ions 
+    return processing, sorted_connect, hydrogen, heavy_bond, ions, at_mass_p 
 
 def atom_bond_check(line_sep):
     if line_sep[1] == 'atoms':
@@ -302,12 +306,64 @@ def fetch_amino_rtp_file_location(forcefield_loc):
             rtp.append(forcefield_loc+'/'+file)
     return rtp
 
-def fetch_bond_info(residue, rtp, mod_residues, p_residues):
+def fetch_atom_masses(forcefield_loc):
+    at_mass = {}
+    if os.path.exists(forcefield_loc+'/atomtypes.atp'):
+        with open(forcefield_loc+'/atomtypes.atp', 'r') as itp_input:
+            for line in itp_input.readlines():
+                if len(line.split()) >= 2 and not line.startswith(';'):
+                    line_sep = line.split()       
+                    at_mass[line_sep[0]]=line_sep[1] 
+    else:
+        sys.exit('cannot find atomtypes.dat in the forcefield: '+forcefield_loc)
+    return at_mass
+
+def fetch_atoms_water(forcefield_loc, at_mass_p):
+    at_mass = {}
+    for file in os.listdir(forcefield_loc):
+        if file.endswith('itp'):
+            with open(forcefield_loc+file, 'r') as itp_input:
+                for line in itp_input.readlines():
+                    line_sep = line.split()
+                    if len(line_sep) >= 3:
+                        if line[0] not in [';', '#']:
+                            line_sep = line.split()
+
+                            if line_sep[0] == '[' and line_sep[1] != 'atoms':
+                                strip_atoms = False
+                            if strip_atoms:
+                                at_mass[line_sep[4]] = float(at_mass_p[line_sep[1]])
+                            if line_sep[0] == '[' and line_sep[1] == 'atoms':
+                                strip_atoms = True
+    return at_mass
+
+# def fetch_atoms_water(forcefield_loc, at_mass_p):
+#     at_mass = {}
+#     for file in os.listdir(forcefield_loc):
+#         if file.endswith('itp'):
+#             with open(forcefield_loc+file, 'r') as itp_input:
+#                 for line in itp_input.readlines():
+#                     line_sep = line.split()
+#                     if len(line_sep) >= 3:
+#                         if line[0] not in [';', '#']:
+#                             line_sep = line.split()
+
+#                             if line_sep[0] == '[' and line_sep[1] != 'atoms':
+#                                 strip_atoms = False
+#                             if strip_atoms:
+#                                 at_mass[line_sep[4]] = float(at_mass_p[line_sep[1]])
+#                             if line_sep[0] == '[' and line_sep[1] == 'atoms':
+#                                 strip_atoms = True
+#     print
+#     return at_mass
+
+def fetch_bond_info(residue, rtp, mod_residues, p_residues, at_mass):
     bond_dict=[]
     heavy_dict, H_dict=[],[]
     residue_present = False
     atom_conversion = {}
     residue_list=[]
+    res_at_mass = {}
     for rtp_file in rtp:
         with open(rtp_file, 'r') as itp_input:
             for line in itp_input.readlines():
@@ -328,6 +384,7 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues):
                                 if is_hydrogen(line_sep[0]):
                                     H_dict.append(line_sep[0])
                                 else:
+                                    res_at_mass[line_sep[0]] = float(at_mass[line_sep[1]])
                                     heavy_dict.append(line_sep[0])
                             else:
                                 if line_sep[3] not in residue_list:
@@ -335,6 +392,7 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues):
                                 if is_hydrogen(line_sep[4]):
                                     H_dict.append(int(line_sep[0]))
                                 else:
+                                    res_at_mass[line_sep[4]] = float(line_sep[7])
                                     heavy_dict.append(int(line_sep[0]))
                         elif bonds:
                             try:
@@ -356,8 +414,7 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues):
     for bond in bond_dict:
         hydrogen = add_to_topology_list(bond[0], bond[1], hydrogen, heavy_dict, H_dict, atom_conversion, residue, p_residues)
         heavy_bond = add_to_topology_list(bond[0], bond[1], heavy_bond, heavy_dict, heavy_dict, atom_conversion, residue, p_residues)
-
-    return hydrogen, heavy_bond, residue_list
+    return hydrogen, heavy_bond, residue_list, res_at_mass
 
 def add_to_topology_list(bond_1, bond_2, top_list, dict1, dict2, conversion, residue, p_residues):
     for bond in [[bond_1, bond_2], [bond_2, bond_1]]:
@@ -460,9 +517,6 @@ def fetch_frag_number(fragments_available):
 def fetch_residues(fragments_available_prov, fragment_number):
 #### list of directories and water types  [[root, folders...],[root, folders...]]
     np_directories, p_directories,mod_directories=[], [],[]
-
-    if type(fragment_number) == int:
-        fragment_number=[0]
 #### run through selected fragments
     for database in fragment_number:
         if not g_var.info:

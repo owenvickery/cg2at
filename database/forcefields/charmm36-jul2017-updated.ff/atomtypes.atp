@@ -397,6 +397,7 @@ OG3R60     15.99940 ; O in 6-mem cyclic enol ether (PY01, PY02) or ester
   OSLP     15.99940 ; Phosphate oxygen, to avoid conflict with methylacetate type O
    OST     15.99900 ; CO2 oxygen
     OT     15.99940 ; TIPS3P WATER OXYGEN
+    OW     15.99940 ; spce water oxygen
     OX     15.99940 ; hydroxide oxygen
      P     30.97400 ; phosphorus
     P2     30.97400 ; phosphorus, adm, 2011 DNA update
@@ -432,6 +433,7 @@ SG2R50     32.06000 ; THIP, thiophene
     ZN     65.37000 ; zinc (II) cation
    MGA	   24.30500 ; Updated Mg2+	  
    HT0		1.00800 ; TIP3P WATER HYDROGEN
+   HW          1.00800 ; SPCE WATER HYDROGEN
   OWT4	   15.99940 ; TIP4P
   HWT4		1.00800 ; TIP4P
   MWT4		0.00000 ; TIP4P

@@ -212,7 +212,7 @@ def ask_terminal(chain, p_system):
 def pdb2gmx_chain(chain, input, pdb2gmx_selections):
 #### pdb2gmx on on protein chain, creates the topologies    
     gromacs([g_var.gmx+' pdb2gmx -f PROTEIN_'+input+str(chain)+'.pdb -o PROTEIN_'+input+str(chain)+'_gmx.pdb -water none \
-    -p PROTEIN_'+input+str(chain)+'.top  -i PROTEIN_'+input+str(chain)+'_posre.itp '+g_var.vs+' -ter '+pdb2gmx_selections+'\nEOF', 'PROTEIN_'+input+str(chain)+'_gmx.pdb']) #### single chains
+    -p PROTEIN_'+input+str(chain)+'.top  -i PROTEIN_'+str(chain)+'_posre.itp '+g_var.vs+' -ter '+pdb2gmx_selections+'\nEOF', 'PROTEIN_'+input+str(chain)+'_gmx.pdb']) #### single chains
 #### converts the topology file and processes it into a itp file
     convert_topology('PROTEIN_'+input, chain)
 #### writes topology overview for each chain 
@@ -245,6 +245,7 @@ def write_posres(chain):
     low_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_low_posre.itp')
     mid_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_mid_posre.itp')
     high_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_high_posre.itp')
+    ca_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_ca_posre.itp')
     #### read in each chain from after pdb2gmx 
     with open(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(chain)+'_gmx.pdb', 'r') as pdb_input:
         at_counter=0
@@ -255,8 +256,8 @@ def write_posres(chain):
             #### if atom is in the restraint list for that residue add to position restraint file
                 if line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['STEER']:
                     steered_posres.write(str(at_counter)+'     1  2000  2000  2000\n')
-                # elif not gen.is_hydrogen(line_sep['atom_name']):
-                #     steered_posres.write(str(at_counter)+'     1  100  100  100\n')
+                if line_sep['atom_name'] == 'CA':
+                    ca_posres.write(str(at_counter)+'     1  1000  1000  1000\n')
                 if not gen.is_hydrogen(line_sep['atom_name']):
                     low_posres.write(str(at_counter)+'     1  250  250  250\n')
                     mid_posres.write(str(at_counter)+'     1  1000  1000  1000\n')
@@ -284,11 +285,12 @@ def convert_topology(topol, protein_number):
                     if read:
                         itp_write.write(line)
             #### adds position restraint section to end of itp file         
-                itp_write.write('#ifdef POSRES\n#include \"PROTEIN_'+str(protein_number)+'_posre.itp\"\n#endif\n') #_low_posre
+                itp_write.write('#ifdef POSRES\n#include \"PROTEIN_'+str(protein_number)+'_posre.itp\"\n#endif\n') 
+                itp_write.write('#ifdef POSRESCA\n#include \"PROTEIN_'+str(protein_number)+'_ca_posre.itp\"\n#endif\n') 
                 itp_write.write('#ifdef LOWPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_low_posre.itp\"\n#endif\n')
                 itp_write.write('#ifdef MIDPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_mid_posre.itp\"\n#endif\n')
                 itp_write.write('#ifdef HIGHPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_high_posre.itp\"\n#endif\n')
-                itp_write.write('\n; Include CA Position restraint file\n#ifdef POSRES_STEERED\n#include \"PROTEIN_'+str(protein_number)+'_steered_posre.itp\"\n#endif')
+                itp_write.write('#ifdef POSRES_STEERED\n#include \"PROTEIN_'+str(protein_number)+'_steered_posre.itp\"\n#endif')
     else:
         sys.exit('cannot find : '+topol+'_'+str(protein_number)+'.top')
 
@@ -305,6 +307,7 @@ def write_topol(residue_type, residue_number, chain):
             for directory in range(len(f_loc.np_directories)):
                 if os.path.exists(f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp'):
                     topol_write.write('#include \"'+f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp\"\n')
+
                     found=True
                     break
             if os.path.exists(g_var.working_dir+'/PROTEIN/'+residue_type+chain+'.itp'):
@@ -433,53 +436,50 @@ def strip_atomtypes(itp_file):
 
 def write_merged_topol(system, protein):
     os.chdir(g_var.working_dir+'MERGED')
-    if not os.path.exists('topol_final.top'):
-        with open('topol_final.top', 'w') as topol_write:
-            topologies_to_include=[]
-        #### writes topology headers (will probably need updating with other forcefields)
-            if 'SOL' in system:
-                gen.file_copy_and_check(f_loc.water_dir+f_loc.water+'.itp', f_loc.water+'.itp')
-                topologies_to_include.append('#include \"'+f_loc.water+'.itp\"')
-                topologies_to_include.append('\n#include \"'+g_var.final_dir+f_loc.forcefield+'/ions.itp\"\n\n')
-        #### runs through residue types and copies to MERGED directory and simplifies the names
-            for residue_type in system:
-                if residue_type not in ['ION','SOL']:
-                #### copies 1st itp file it comes across 
-                    for directory in f_loc.np_directories:
-                        if os.path.exists(directory[0]+residue_type+'/'+residue_type+'.itp'):  
-                            topologies_to_include.append('#include \"'+residue_type+'.itp\"\n')
-                            gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'.itp', residue_type+'.itp')
-                            gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'_posre.itp', residue_type+'_posre.itp')
-                            strip_atomtypes(residue_type+'.itp')
-                            break
-                #### copies across protein itp files and simplifies the names 
-                    if residue_type == 'PROTEIN':
-                        for protein_unit in range(system[residue_type]): 
-                            topologies_to_include.append('#include \"PROTEIN_'+str(protein_unit)+'.itp\"\n')
-                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'.itp', 'PROTEIN_'+str(protein_unit)+'.itp')
-                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_steered_posre.itp', 'PROTEIN_'+str(protein_unit)+'_steered_posre.itp')
-                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_low_posre.itp', 'PROTEIN_'+str(protein_unit)+'_low_posre.itp')
-                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_mid_posre.itp', 'PROTEIN_'+str(protein_unit)+'_mid_posre.itp')
-                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+'_high_posre.itp', 'PROTEIN_'+str(protein_unit)+'_high_posre.itp')
-                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'_posre.itp', 'PROTEIN_'+str(protein_unit)+'_posre.itp')
-
-            if os.path.exists('extra_atomtypes.itp'):
-                topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
-                topol_write.write('#include \"extra_atomtypes.itp\"\n')
-            else:
-                topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
-            for line in topologies_to_include:
-                topol_write.write(line)
-
-            topol_write.write('[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
-        #### adds number of residues to the topology
-            for residue_type in system:
-                if residue_type not in  ['PROTEIN']:
-                    topol_write.write(residue_type+'    '+str(system[residue_type])+'\n')   
-            #### adds monomers separately
+    # if not os.path.exists('topol_final.top'):
+    with open('topol_final.top', 'w') as topol_write:
+        topologies_to_include=[]
+    #### writes topology headers (will probably need updating with other forcefields)
+        if 'SOL' in system:
+            gen.file_copy_and_check(f_loc.water_dir+f_loc.water+'.itp', f_loc.water+'.itp')
+            topologies_to_include.append('#include \"'+f_loc.water+'.itp\"')
+            topologies_to_include.append('\n#include \"'+g_var.final_dir+f_loc.forcefield+'/ions.itp\"\n\n')
+    #### runs through residue types and copies to MERGED directory and simplifies the names
+        for residue_type in system:
+            if residue_type not in ['ION','SOL']:
+            #### copies 1st itp file it comes across 
+                for directory in f_loc.np_directories:
+                    if os.path.exists(directory[0]+residue_type+'/'+residue_type+'.itp'):  
+                        topologies_to_include.append('#include \"'+residue_type+'.itp\"\n')
+                        gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'.itp', residue_type+'.itp')
+                        gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'_posre.itp', residue_type+'_posre.itp')
+                        strip_atomtypes(residue_type+'.itp')
+                        break
+            #### copies across protein itp files and simplifies the names 
                 if residue_type == 'PROTEIN':
-                    for protein_unit in range(system[residue_type]):
-                        topol_write.write('PROTEIN_'+str(protein_unit)+'    1\n')    
+                    for protein_unit in range(system[residue_type]): 
+                        topologies_to_include.append('#include \"PROTEIN_'+str(protein_unit)+'.itp\"\n')
+                        gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'.itp', 'PROTEIN_'+str(protein_unit)+'.itp')
+                        for posres_type in ['_steered_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_ca_posre.itp','_posre.itp' ]:
+                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+posres_type, 'PROTEIN_'+str(protein_unit)+posres_type)
+
+        if os.path.exists('extra_atomtypes.itp'):
+            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
+            topol_write.write('#include \"extra_atomtypes.itp\"\n')
+        else:
+            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
+        for line in topologies_to_include:
+            topol_write.write(line)
+
+        topol_write.write('[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
+    #### adds number of residues to the topology
+        for residue_type in system:
+            if residue_type not in  ['PROTEIN']:
+                topol_write.write(residue_type+'    '+str(system[residue_type])+'\n')   
+        #### adds monomers separately
+            if residue_type == 'PROTEIN':
+                for protein_unit in range(system[residue_type]):
+                    topol_write.write('PROTEIN_'+str(protein_unit)+'    1\n')    
 
 def minimise_merged_pdbs(system, protein):
     print('Minimising merged atomistic files : '+protein[1:])
@@ -588,23 +588,6 @@ def steer_to_aligned(protein_type, fc, input_file ):
         sys.exit('steer failed')
 
 
-# def steered_md_atomistic_to_cg_coord(chain):
-#     os.chdir(g_var.working_dir+'PROTEIN')
-#     gen.mkdir_directory('STEERED_MD')
-# #### create bog standard mdp file, simulation is only 3 ps in a vaccum so settings should not have any appreciable effect 
-#     write_steered_mdp(g_var.working_dir+'PROTEIN/steered_md.mdp', '-DPOSRES_STEERED','Berendsen', 2000, 0.001)
-# #### run grompp on chain 
-#     gromacs([g_var.gmx+' grompp '+
-#                 '-f steered_md.mdp '+
-#                 '-p topol_PROTEIN_aligned_'+str(chain)+'.top '+
-#                 '-c MIN/PROTEIN_aligned_'+str(chain)+'.pdb '+
-#                 '-r MIN/PROTEIN_de_novo_'+str(chain)+'.pdb '+
-#                 '-o STEERED_MD/PROTEIN_steered_'+str(chain)+' -maxwarn 2 ', 'STEERED_MD/PROTEIN_steered_'+str(chain)+'.tpr'])
-# #### run mdrun on steered MD
-#     os.chdir('STEERED_MD')
-#     gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm PROTEIN_steered_'+str(chain)+' -c PROTEIN_steered_'+str(chain)+'.pdb', 
-#                 'PROTEIN_steered_'+str(chain)+'.pdb'])
-
 def steer_to_de_novo(protein_type, input_file ):
     os.chdir(g_var.merged_directory)
     write_steered_mdp(g_var.merged_directory+'steered_md.mdp', '-DPOSRES_STEERED -DNP','Berendsen', 3000, 0.001)
@@ -648,7 +631,7 @@ def run_npt(input_file, protein):
     for equil_type_val, npt_type in enumerate(['npt-pr.mdp', 'npt-b.mdp']):
         os.chdir(g_var.merged_directory)   
         if protein:
-            write_steered_mdp(g_var.merged_directory+npt_type, '-DPOSRES', equil_type[equil_type_val] ,10000, 0.001)
+            write_steered_mdp(g_var.merged_directory+npt_type, '-DPOSRESCA', equil_type[equil_type_val] ,10000, 0.001)
         else:
             write_steered_mdp(g_var.merged_directory+npt_type, '', equil_type[equil_type_val] ,10000, 0.001)
         gromacs([g_var.gmx+' grompp'+

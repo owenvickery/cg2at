@@ -21,10 +21,13 @@ except:
 print('\nYou have selected the forcefield: '+forcefield_available[forcefield_number].split('.')[0])
 gen.folder_copy_and_check(g_var.database_dir+'/forcefields/'+forcefield_available[forcefield_number], g_var.final_dir+forcefield_available[forcefield_number])
 forcefield_location, forcefield=g_var.database_dir+'forcefields/', forcefield_available[forcefield_number]
-
-### reads in and sorts fragment information
-
+if g_var.ff == None:
+    g_var.variables_to_save['-ff'] = forcefield_available[forcefield_number]
 fragment_number = gen.fetch_frag_number(fragments_available)
+if g_var.fg == None:
+    g_var.variables_to_save['-fg'] = ''
+    for database in fragment_number:
+        g_var.variables_to_save['-fg'] += fragments_available[database]+' '
 
 p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted = gen.fetch_residues(fragments_available, fragment_number)
 
@@ -32,10 +35,13 @@ np_residues, p_residues, mod_residues, np_directories, p_directories, mod_direct
 																						mod_directories_unsorted, np_directories_unsorted)
 ### reads in water molecules
 water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
-
+if g_var.w == None:
+    g_var.variables_to_save['-w'] = water
     ### return backbone information
-res_top, sorted_connect, hydrogen, heavy_bond, ions = gen.fetch_fragment(p_residues, p_directories, mod_directories,  
+res_top, sorted_connect, hydrogen, heavy_bond, ions, at_mass = gen.fetch_fragment(p_residues, p_directories, mod_directories,  
                                                                     np_directories, forcefield_location+forcefield, mod_residues)
+
+
 swap_dict=gen.sort_swap_group()
 
 if g_var.group != None:

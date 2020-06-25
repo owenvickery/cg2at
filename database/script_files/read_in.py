@@ -82,7 +82,7 @@ def add_residue_to_dictionary(cg_residues, line_sep):
     if line_sep['residue_name'] in f_loc.p_residues: ## if in protein database 
         if 'PROTEIN' not in cg_residues:  ## if protein does not exist add to dict
             cg_residues['PROTEIN']={}
-    elif line_sep['residue_name'] in ['W', 'SOL', 'WN', 'WF'] and line_sep['atom_name'].startswith('W'):
+    elif line_sep['residue_name'] in g_var.cg_water_types: 
         line_sep['residue_name']='SOL'
         if line_sep['residue_name'] not in cg_residues: ## if residue type does not exist add to dict
             cg_residues[line_sep['residue_name']]={}
@@ -151,7 +151,6 @@ def brute_mic(p1, p2, r_b_vec):
 def fix_pbc(cg_residues, box_vec, new_box, box_shift):
 #### fixes box PBC
     r_b_vec, r_b_inv = real_box_vectors(box_vec)
-    # box = box_vec.split()[1:4]
     new_box = new_box.split()[1:4]
     for residue_type in cg_residues:
         cut_keys=[]
@@ -256,9 +255,8 @@ def read_in_atomistic(protein, duplicate_chains):
                         atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'frag_mass':0, 'resid':line_sep['residue_id']}
                     #### if atom is in the backbone list then its mass is updated to the correct one
                         if line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['ATOMS']:
-                            for atom in line_sep['atom_name']:
-                                if atom in g_var.mass:
-                                    atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=g_var.mass[atom]
+                            if line_sep['atom_name'] in line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['atom_masses']:
+                                atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=f_loc.res_top[line_sep['residue_name']]['atom_masses'][line_sep['atom_name']]
     if len(g_var.duplicate) != 0 and duplicate_chains:
         for ch_d in g_var.duplicate:
             duplicate = [int(x) for x in ch_d.split(':')]

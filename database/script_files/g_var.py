@@ -88,13 +88,13 @@ info = args.info
 variables_to_save={'input':sys.argv, '-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, 
                    '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, '-vs':args.vs,
                    '-box':box,'-loc':args.loc, '-group':args.group, '-o':args.o, '-al':args.al, 
-                   'ncpus':ncpus, 'shrink':args.sf}
+                   '-ncpus':ncpus, '-sf':args.sf, '-d':args.d}
 
 topology = {'BACKBONE':'BB', 'C_TERMINAL':'C', 'N_TERMINAL':'N', 'STEER':[], 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}}
 
 box_line="CRYST1 %8.3f %8.3f %8.3f %8.2f% 8.2f% 8.2f P 1           1\n"
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
-mass = {'H': 1,'C': 12,'N': 14,'O': 16,'P': 31,'M': 0, 'B': 32 ,'S': 32} 
+cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
 aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'E', 
        'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
        'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
