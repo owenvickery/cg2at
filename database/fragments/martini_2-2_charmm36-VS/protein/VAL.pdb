@@ -1,0 +1,20 @@
+TITLE     Guyana Rwanda Oman Macau Angola Cameroon Senegal
+MODEL        1
+ATOM      1  N   VAL     1      58.571  16.455  21.627  1.00  0.00           N
+ATOM      2  CA  VAL     1      59.080  16.737  22.966  1.00  0.00           C
+ATOM      3  C   VAL     1      60.492  16.226  23.127  1.00  0.00           C
+ATOM      4  O   VAL     1      60.833  15.103  22.735  1.00  0.00           O
+ATOM      5  CB  VAL     1      58.124  16.095  24.049  1.00  0.00           C
+ATOM      6  CG1 VAL     1      58.619  16.143  25.521  1.00  0.00           C
+ATOM      7  CG2 VAL     1      56.705  16.711  24.076  1.00  0.00           C
+ATOM      8  H   VAL     1      58.761  15.568  21.183  1.00  0.00           H
+ATOM      9  HA  VAL     1      59.113  17.832  23.111  1.00  0.00           H
+ATOM     10  HB  VAL     1      58.010  15.021  23.789  1.00  0.00           H
+ATOM     11 1HG1 VAL     1      58.787  17.176  25.878  1.00  0.00           H
+ATOM     12 2HG1 VAL     1      57.905  15.666  26.220  1.00  0.00           H
+ATOM     13 3HG1 VAL     1      59.568  15.591  25.665  1.00  0.00           H
+ATOM     14 1HG2 VAL     1      56.220  16.671  23.083  1.00  0.00           H
+ATOM     15 2HG2 VAL     1      56.033  16.166  24.766  1.00  0.00           H
+ATOM     16 3HG2 VAL     1      56.713  17.771  24.393  1.00  0.00           H
+TER
+ENDMDL

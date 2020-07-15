@@ -1,0 +1,21 @@
+TITLE     God Rules Over Mankind, Animals, Cosmos and Such
+MODEL        1
+ATOM      1  N   HIS     1      26.485  11.151   6.263  1.00  0.00           N
+ATOM      2  CA  HIS     1      27.927  10.961   6.140  1.00  0.00           C
+ATOM      3  C   HIS     1      28.681  12.077   6.823  1.00  0.00           C
+ATOM      4  O   HIS     1      28.362  13.267   6.683  1.00  0.00           O
+ATOM      5  CB  HIS     1      28.235  10.949   4.634  1.00  0.00           C
+ATOM      6  CG  HIS     1      28.847   9.653   4.187  1.00  0.00           C
+ATOM      7  CD2 HIS     1      28.088   8.580   3.738  1.00  0.00           C
+ATOM      8  ND1 HIS     1      30.208   9.360   4.162  1.00  0.00           N
+ATOM      9  CE1 HIS     1      30.164   8.099   3.693  1.00  0.00           C
+ATOM     10  NE2 HIS     1      28.946   7.562   3.413  1.00  0.00           N
+ATOM     11  H   HIS     1      26.078  12.069   6.159  1.00  0.00           H
+ATOM     12  HA  HIS     1      28.189  10.031   6.674  1.00  0.00           H
+ATOM     13  2HB HIS     1      28.931  11.766   4.360  1.00  0.00           H
+ATOM     14  3HB HIS     1      27.326  11.120   4.020  1.00  0.00           H
+ATOM     15  2HD HIS     1      27.004   8.580   3.668  1.00  0.00           H
+ATOM     16  1HE HIS     1      31.105   7.581   3.560  1.00  0.00           H
+ATOM     17  2HE HIS     1      28.717   6.625   3.049  1.00  0.00           H
+TER
+ENDMDL

@@ -1,0 +1,18 @@
+TITLE     Good ROcking Metal Altar for Chronical Sinners
+MODEL        1
+ATOM      1  N   THR     1      50.537  17.954  15.327  1.00  0.00           N
+ATOM      2  CA  THR     1      51.957  17.636  15.432  1.00  0.00           C
+ATOM      3  C   THR     1      52.455  17.837  16.843  1.00  0.00           C
+ATOM      4  O   THR     1      52.166  18.822  17.492  1.00  0.00           O
+ATOM      5  CB  THR     1      52.790  18.497  14.423  1.00  0.00           C
+ATOM      6  CG2 THR     1      54.318  18.273  14.430  1.00  0.00           C
+ATOM      7  OG1 THR     1      52.396  18.221  13.086  1.00  0.00           O
+ATOM      8  H   THR     1      50.155  18.757  15.806  1.00  0.00           H
+ATOM      9  HA  THR     1      52.094  16.568  15.183  1.00  0.00           H
+ATOM     10  HB  THR     1      52.594  19.571  14.636  1.00  0.00           H
+ATOM     11  1HG THR     1      52.890  18.830  12.530  1.00  0.00           H
+ATOM     12 1HG2 THR     1      54.834  18.899  13.678  1.00  0.00           H
+ATOM     13 2HG2 THR     1      54.779  18.531  15.401  1.00  0.00           H
+ATOM     14 3HG2 THR     1      54.579  17.220  14.216  1.00  0.00           H
+TER
+ENDMDL

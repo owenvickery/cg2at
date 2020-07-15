@@ -1,0 +1,18 @@
+TITLE     Good gRace! Old Maple Actually Chews Slate
+MODEL        1
+ATOM      1  N   PRO     1      45.108  18.448  11.114  1.00  0.00           N
+ATOM      2  CA  PRO     1      46.542  18.218  11.209  1.00  0.00           C
+ATOM      3  C   PRO     1      47.036  18.310  12.663  1.00  0.00           C
+ATOM      4  O   PRO     1      46.660  19.227  13.393  1.00  0.00           O
+ATOM      5  CB  PRO     1      47.101  19.334  10.313  1.00  0.00           C
+ATOM      6  CG  PRO     1      46.059  20.456  10.440  1.00  0.00           C
+ATOM      7  CD  PRO     1      44.730  19.699  10.494  1.00  0.00           C
+ATOM      8  HA  PRO     1      46.800  17.233  10.812  1.00  0.00           H
+ATOM      9  2HB PRO     1      47.126  18.981   9.280  1.00  0.00           H
+ATOM     10  3HB PRO     1      48.104  19.652  10.606  1.00  0.00           H
+ATOM     11  2HG PRO     1      46.099  21.161   9.606  1.00  0.00           H
+ATOM     12  3HG PRO     1      46.211  20.992  11.379  1.00  0.00           H
+ATOM     13  2HD PRO     1      44.348  19.506   9.489  1.00  0.00           H
+ATOM     14  3HD PRO     1      43.980  20.223  11.090  1.00  0.00           H
+TER
+ENDMDL

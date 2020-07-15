@@ -12,11 +12,25 @@ import copy
 import g_var
 
 
+def trunc_coord(xyz):
+    xyz_new = []
+    for coord in xyz:
+        if len(str(coord)) > 8:
+            if '.' in str(coord):
+                xyz_new.append(np.round(coord, 7-len(str(int(coord)))))
+            else:
+                xyz_new.append(np.round(coord, 8-len(str(int(coord)))))
+        else:
+            xyz_new.append(coord)
+    return xyz_new[0],xyz_new[1],xyz_new[2]
+
+
+
 def calculate_distance(p1, p2):
     return np.sqrt(((p1[0]-p2[0])**2)+((p1[1]-p2[1])**2)+((p1[2]-p2[2])**2))
 
 def file_copy_and_check(file_in,file_out):
-    if not os.path.exists(file_out):
+    if not os.path.exists(file_out) and os.path.exists(file_in):
         copyfile(file_in, file_out)
 
 def folder_copy_and_check(folder_in,folder_out):
@@ -30,7 +44,7 @@ def flags_used():
             if var == 'input':
                 line =  ''.join([ i+' ' for i in g_var.variables_to_save[var]])+'\n'
             else:
-                line='{0:15}{1:15}\n'.format(var,str(g_var.variables_to_save[var]))
+                line='{0:7}{1:15}\n'.format(var,str(g_var.variables_to_save[var]))
             scr_input.write(line)
 
 def is_hydrogen(atom):
@@ -185,9 +199,7 @@ def sep_fragments_topology(location):
     return topology
 
 def get_fragment_topology(residue, location, processing, heavy_bond):
-    # print(residue)
     topology = sep_fragments_topology(location[:-4])
-    # print(topology)
     processing[residue] = {'BACKBONE':topology['BACKBONE'], 'C_TERMINAL':topology['C_TERMINAL'], 'N_TERMINAL':topology['N_TERMINAL'], \
                             'STEER':topology['STEER'], 'CHIRAL':topology['CHIRAL'], 'GROUPS':{}}
     with open(location, 'r') as pdb_input:
@@ -220,6 +232,7 @@ def get_fragment_topology(residue, location, processing, heavy_bond):
                         atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
                 processing[residue]['ATOMS']=atom_list
     # print('\n'+residue+'\n',processing[residue])#,'\n\n', grouped_atoms,'\n\n', heavy_bond[residue],'\n\n')
+
     return processing, grouped_atoms, heavy_bond[residue]
 
 def switch_num_name(dictionary, input_val, num_to_letter):
@@ -233,7 +246,6 @@ def switch_num_name(dictionary, input_val, num_to_letter):
 def sort_connectivity(atom_dict, heavy_bond):
     cut_group = {}
     if len(atom_dict) > 1:
-        # print(atom_dict)
         for group in atom_dict:
             cut_group[group]={}
             for frag in atom_dict[group]:
@@ -262,11 +274,12 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
             if residue not in processing:
                 atoms_dict={}
                 location = fragment_location(residue,p_residues, p_directories, mod_directories, np_directories)
-                hydrogen[residue], heavy_bond[residue], residue_list, at_mass = fetch_bond_info(residue, amino_acid_itp, mod_residues, p_residues, at_mass_p)
+                hydrogen[residue], heavy_bond[residue], residue_list, at_mass, amide_h = fetch_bond_info(residue, amino_acid_itp, mod_residues, p_residues, at_mass_p, location)
                 processing, grouped_atoms, heavy_bond[residue] = get_fragment_topology(residue, location, processing, heavy_bond)
                 sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue])
                 processing[residue]['RESIDUE'] = residue_list
                 processing[residue]['atom_masses'] = at_mass
+                processing[residue]['amide_h'] = amide_h
     for directory in range(len(np_directories)):
         for residue in np_directories[directory][1:]:    
             if residue not in processing:
@@ -280,7 +293,7 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
                     residue_list = [residue]
 
                 else:
-                    hydrogen[residue], heavy_bond[residue], residue_list, at_mass = fetch_bond_info(residue, [location[:-4]+'.itp'], mod_residues, p_residues, at_mass_p)
+                    hydrogen[residue], heavy_bond[residue], residue_list, at_mass, amide_h  = fetch_bond_info(residue, [location[:-4]+'.itp'], mod_residues, p_residues, at_mass_p, location)
 
                 processing, grouped_atoms, heavy_bond[residue] = get_fragment_topology(residue, location, processing, heavy_bond) 
                 processing[residue]['RESIDUE'] = residue_list
@@ -337,27 +350,8 @@ def fetch_atoms_water(forcefield_loc, at_mass_p):
                                 strip_atoms = True
     return at_mass
 
-# def fetch_atoms_water(forcefield_loc, at_mass_p):
-#     at_mass = {}
-#     for file in os.listdir(forcefield_loc):
-#         if file.endswith('itp'):
-#             with open(forcefield_loc+file, 'r') as itp_input:
-#                 for line in itp_input.readlines():
-#                     line_sep = line.split()
-#                     if len(line_sep) >= 3:
-#                         if line[0] not in [';', '#']:
-#                             line_sep = line.split()
 
-#                             if line_sep[0] == '[' and line_sep[1] != 'atoms':
-#                                 strip_atoms = False
-#                             if strip_atoms:
-#                                 at_mass[line_sep[4]] = float(at_mass_p[line_sep[1]])
-#                             if line_sep[0] == '[' and line_sep[1] == 'atoms':
-#                                 strip_atoms = True
-#     print
-#     return at_mass
-
-def fetch_bond_info(residue, rtp, mod_residues, p_residues, at_mass):
+def fetch_bond_info(residue, rtp, mod_residues, p_residues, at_mass,location):
     bond_dict=[]
     heavy_dict, H_dict=[],[]
     residue_present = False
@@ -407,24 +401,43 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues, at_mass):
     hydrogen = {}
     heavy_bond = {}
     if residue in p_residues and residue not in mod_residues:
-        at_conv = {}
-        for key_val, key in enumerate(heavy_dict):
-            atom_conversion[key] = key_val+1
-
+        atom_conversion = get_atomistic(location)
     for bond in bond_dict:
-        hydrogen = add_to_topology_list(bond[0], bond[1], hydrogen, heavy_dict, H_dict, atom_conversion, residue, p_residues)
-        heavy_bond = add_to_topology_list(bond[0], bond[1], heavy_bond, heavy_dict, heavy_dict, atom_conversion, residue, p_residues)
-    return hydrogen, heavy_bond, residue_list, res_at_mass
+        hydrogen, amide_h = add_to_topology_list(bond[0], bond[1], hydrogen, heavy_dict, H_dict, atom_conversion, residue, p_residues)
+        if residue in p_residues and amide_h != None:
+            amide_hydrogen = amide_h
+        heavy_bond, amide_h= add_to_topology_list(bond[0], bond[1], heavy_bond, heavy_dict, heavy_dict, atom_conversion, residue, p_residues)
+
+    if 'amide_hydrogen' in locals():
+        return hydrogen, heavy_bond, residue_list, res_at_mass, amide_hydrogen
+    else:
+        return hydrogen, heavy_bond, residue_list, res_at_mass, None
+
+def get_atomistic(frag_location):
+#### read in atomistic fragments into dictionary    
+    residue = {} 
+    with open(frag_location, 'r') as pdb_input:
+        for line_nr, line in enumerate(pdb_input.readlines()):
+            if line.startswith('ATOM'):
+                line_sep = pdbatom(line) ## splits up pdb line
+                residue[line_sep['atom_name']] = line_sep['atom_number']
+    return residue
+
 
 def add_to_topology_list(bond_1, bond_2, top_list, dict1, dict2, conversion, residue, p_residues):
+    amide_hydrogen = None
+
     for bond in [[bond_1, bond_2], [bond_2, bond_1]]:
         if bond[0] in dict1 and bond[1] in dict2:
             if residue in p_residues:
-                bond[0], bond[1] = conversion[bond[0]],conversion[bond[1]] 
+                if bond[0] == 'N' and is_hydrogen(bond[1]):
+                    amide_hydrogen = bond[1]
+                if bond[0] in conversion and bond[1] in conversion:
+                    bond[0], bond[1] = conversion[bond[0]],conversion[bond[1]] 
             if bond[0] not in top_list:
                 top_list[bond[0]]=[]
             top_list[bond[0]].append(bond[1])
-    return top_list
+    return top_list, amide_hydrogen
 
 def fragment_location(residue, p_residues,  p_directories, mod_directories, np_directories):  
 #### runs through dirctories looking for the atomistic fragments returns the correct location
@@ -643,7 +656,7 @@ def angle_clockwise(A, B):
 
 def pdbatom(line):
 ### get information from pdb file
-### atom number, atom name, residue name,chain, resid,  x, y, z, backbone (for fragment), connect(for fragment)
+### atom number, atom name, residue name,chain, resid,  x, y, z
     try:
         return dict([('atom_number',int(line[7:11].replace(" ", ""))),('atom_name',str(line[12:16]).replace(" ", "")),('residue_name',str(line[16:21]).replace(" ", "")),\
             ('chain',line[21]),('residue_id',int(line[22:26])), ('x',float(line[30:38])),('y',float(line[38:46])),('z',float(line[46:54]))])
@@ -651,10 +664,10 @@ def pdbatom(line):
         print(line[30:38],line[38:46],line[46:54])
         sys.exit('\npdb line is wrong:\t'+line) 
 
-def create_pdb(file_name, box_vec):
+def create_pdb(file_name):
     pdb_output = open(file_name, 'w')
     pdb_output.write('TITLE     GENERATED BY CG2AT\nREMARK    Please don\'t explode\nREMARK    Good luck\n\
-'+box_vec+'MODEL        1\n')
+'+g_var.box_vec+'MODEL        1\n')
     return pdb_output
 
 def mkdir_directory(directory):
@@ -703,9 +716,6 @@ def print_script_timings(tc, system, user_at_input):
     t7=fix_time(tc['m_t'],tc['n_p_t'])
     to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
     to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Equilibrate de novo: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
-    if g_var.o in ['all', 'steer'] and g_var.a != None and user_at_input:
-        t8=fix_time(tc['s_e'],tc['s_s'])
-        to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating steered system: ', t8[0],'hours',t8[1],'min',t8[2],'sec'))
     if g_var.o in ['all', 'align'] and g_var.a != None and user_at_input:
         t9=fix_time(tc['a_e'],tc['a_s'])
         to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating aligned system: ', t9[0],'hours',t9[1],'min',t9[2],'sec'))
@@ -764,3 +774,11 @@ def database_information(forcefield_available, fragments_available):
                 except:
                     pass
     sys.exit('\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
+
+def write_system_components(system):
+    print('\n{:-<100}'.format(''))
+    print('{0:^100}'.format('Script has completed, time for a beer'))
+    print('\n{0:^10}{1:^25}'.format('molecules','number'))
+    print('{0:^10}{1:^25}'.format('---------','------'))
+    for section in system:
+        print('{0:^10}{1:^25}'.format(section, system[section]))

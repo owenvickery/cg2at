@@ -16,7 +16,7 @@ parser.add_argument('-a', help='atomistic coordinates (Optional)',metavar='pdb/g
 parser.add_argument('-d', help='duplicate atomistic chains. (0:3 1:3 means 3 copies each of chain 0 and 1)',type=str, nargs='*', default=[])
 parser.add_argument('-group', help='treat user supplied atomistic chains, as rigid bodies. (0,1 2,3 or all or chain)',type=str, nargs='*')
 parser.add_argument('-loc', help='output folder name, (default = CG2AT_timestamp)',metavar='CG2AT',type=str)
-parser.add_argument('-o', help='Final output supplied (default = all)', default='all', type=str, choices= ['all', 'align', 'steer', 'none'])
+parser.add_argument('-o', help='Final output supplied (default = all)', default='all', type=str, choices= ['all', 'align', 'de_novo', 'none'])
 parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional',metavar='tip3p',type=str)
 parser.add_argument('-ff', help='choose your forcefield. (Optional)',metavar='charmm36',type=str)
 parser.add_argument('-fg', help='choose your fragment library. (Optional)',metavar='martini-2-2',type=str, nargs='*')
@@ -92,7 +92,7 @@ variables_to_save={'input':sys.argv, '-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, 
 
 topology = {'BACKBONE':'BB', 'C_TERMINAL':'C', 'N_TERMINAL':'N', 'STEER':[], 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}}
 
-box_line="CRYST1 %8.3f %8.3f %8.3f %8.2f% 8.2f% 8.2f P 1           1\n"
+box_line="CRYST1 %8.3f %8.3f %8.3f %8.2f %8.2f %8.2f P 1           1\n"
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
 cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
 aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'E', 
@@ -115,7 +115,7 @@ input_directory = os.getcwd()+'/'+working_dir_name+'/INPUT/'  ### contains input
 merged_directory = os.getcwd()+'/'+working_dir_name+'/MERGED/'  ### contains run files
 scripts_dir     = os.path.dirname(os.path.realpath(__file__))+'/' ### contains script files
 database_dir    = str(Path(*Path(scripts_dir).parts[:-1]))+'/' ### contains database files
-
+box_vec = ''
 
 ### finds gromacs installation
 
@@ -125,14 +125,15 @@ if args.gromacs != None:
 else:
     gmx=distutils.spawn.find_executable('gmx')
 if gmx==None or type(gmx) != str:
-    for root, dirs, files in os.walk(os.environ.get("GMXBIN")):
-        for file_name in files:
-            if file_name.startswith('gmx') and file_name.islower() and '.' not in file_name:
-                gmx=distutils.spawn.find_executable(file_name)
-                if type(gmx) == str and gmx != None :
-                    break
-                else:
-                    gmx=None
-        break
+    if os.environ.get("GMXBIN") != None:
+        for root, dirs, files in os.walk(os.environ.get("GMXBIN")):
+            for file_name in files:
+                if file_name.startswith('gmx') and file_name.islower() and '.' not in file_name:
+                    gmx=distutils.spawn.find_executable(file_name)
+                    if type(gmx) == str and gmx != None :
+                        break
+                    else:
+                        gmx=None
+            break
     if gmx == None:
         sys.exit('Cannot find gromacs installation')

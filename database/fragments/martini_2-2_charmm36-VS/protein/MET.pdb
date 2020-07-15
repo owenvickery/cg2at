@@ -1,0 +1,21 @@
+TITLE     Great Red Oystrich Makes All Chemists Sane
+MODEL        1
+ATOM      1  N   MET     1      38.899  16.019   9.494  1.00  0.00           N
+ATOM      2  CA  MET     1      40.331  15.741   9.539  1.00  0.00           C
+ATOM      3  C   MET     1      41.101  16.938  10.044  1.00  0.00           C
+ATOM      4  O   MET     1      40.869  18.086   9.636  1.00  0.00           O
+ATOM      5  CB  MET     1      40.830  15.315   8.130  1.00  0.00           C
+ATOM      6  CG  MET     1      40.216  14.018   7.562  1.00  0.00           C
+ATOM      7  SD  MET     1      41.106  13.521   6.078  1.00  0.00           S
+ATOM      8  CE  MET     1      39.949  12.284   5.475  1.00  0.00           C
+ATOM      9  H   MET     1      38.561  16.914   9.171  1.00  0.00           H
+ATOM     10  HA  MET     1      40.508  14.916  10.254  1.00  0.00           H
+ATOM     11  2HB MET     1      41.929  15.185   8.155  1.00  0.00           H
+ATOM     12  3HB MET     1      40.658  16.137   7.406  1.00  0.00           H
+ATOM     13  2HG MET     1      39.150  14.180   7.313  1.00  0.00           H
+ATOM     14  3HG MET     1      40.249  13.195   8.299  1.00  0.00           H
+ATOM     15  1HE MET     1      39.761  11.511   6.241  1.00  0.00           H
+ATOM     16  2HE MET     1      38.985  12.755   5.212  1.00  0.00           H
+ATOM     17  3HE MET     1      40.347  11.789   4.572  1.00  0.00           H
+TER
+ENDMDL

@@ -7,7 +7,7 @@ from scipy.spatial import cKDTree
 import gen, g_var, f_loc, at_mod
 
 
-def build_atomistic_system(cg_residues,residue_type, box_vec):
+def build_atomistic_system(cg_residues,residue_type):
     system={}
     atomistic_fragments={}
 #### for each residue type covert to atomistic except protein
@@ -21,21 +21,25 @@ def build_atomistic_system(cg_residues,residue_type, box_vec):
     if residue_type in ['ION','SOL']:
         atomistic_fragments[residue_type] = atomistic_non_protein_solvent(residue_type, cg_residues[residue_type])
         if residue_type in ['ION']:
-            system, atomistic_fragments = solvent_ion(box_vec, system, atomistic_fragments, residue_type)
+            system, atomistic_fragments = solvent_ion( system, atomistic_fragments, residue_type)
         else:
-            system, atomistic_fragments = solvent_sol(box_vec, system, atomistic_fragments, residue_type)   
+            system, atomistic_fragments = solvent_sol( system, atomistic_fragments, residue_type)   
     else:
         atomistic_fragments[residue_type] = atomistic_non_protein_non_solvent(residue_type, cg_residues[residue_type])
-        system, atomistic_fragments = non_solvent( box_vec, system, atomistic_fragments, residue_type)
+        system, atomistic_fragments = non_solvent(system, atomistic_fragments, residue_type)
 
     return system 
 
-def non_solvent(box_vec, system, atomistic_fragments, residue_type):
+def non_solvent(system, atomistic_fragments, residue_type):
 #### loop through all resids of that residue type 
+    if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb') and not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
+        pdb_output_all = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb')     
+        pdb_all_coord = []   
+        pdb_output_all_temp = []
     for resid in atomistic_fragments[residue_type]:
         skip = os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')
-        if not skip:
-            pdb_output = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb', box_vec)         
+        if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb') and not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
+            pdb_output_ind = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')         
             atomistic_fragments[residue_type][resid] = at_mod.check_hydrogens(atomistic_fragments[residue_type][resid])
         ####### check if any atoms in residue overlap #######
             coord=[]
@@ -48,17 +52,26 @@ def non_solvent(box_vec, system, atomistic_fragments, residue_type):
             for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
             #### write residue out to a pdb file
                 short_line=atomistic_fragments[residue_type][resid][at_id+1]
-                pdb_output.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,short_line['coord'][0],
-                                 short_line['coord'][1],short_line['coord'][2],0.00, 0.00))+'\n')
+                x, y, z = gen.trunc_coord([short_line['coord'][0], short_line['coord'][1],short_line['coord'][2]])
+                pdb_output_ind.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,x,y,z,0.00, 0.00))+'\n')
+                if 'pdb_output_all' in locals():
+                    x, y, z = gen.trunc_coord([short_line['coord'][0], short_line['coord'][1],short_line['coord'][2]])
+                    pdb_all_coord.append([x, y, z])
+                    pdb_output_all_temp.append([at_id+1, short_line['atom'],short_line['res_type'],' ',1,x, y, z, 0.00, 0.00])
+    if 'pdb_output_all' in locals():
+        p_a_c=at_mod.check_atom_overlap(pdb_all_coord)
+        for at_val, line in enumerate(pdb_output_all_temp):
+            pdb_output_all.write(g_var.pdbline%((line[0],line[0],line[0],' ',1,p_a_c[at_val][0], p_a_c[at_val][1], p_a_c[at_val][2],0.00, 0.00))+'\n')
+
     system[residue_type]=int(resid)+1
     return system, atomistic_fragments
 
-def solvent_sol(box_vec, system, atomistic_fragments, residue_type):
+def solvent_sol(system, atomistic_fragments, residue_type):
     #### creates solvent directory and SOL key in system dictionay otherwise it appends solvent molecules to sol pdb
-    skip = os.path.exists(g_var.working_dir+'SOL'+'/SOL_0.pdb')
+    skip = os.path.exists(g_var.working_dir+'SOL'+'/SOL_all.pdb')
 
     if not skip:
-        pdb_sol = gen.create_pdb(g_var.working_dir+'SOL'+'/SOL_0.pdb', box_vec)
+        pdb_sol = gen.create_pdb(g_var.working_dir+'SOL'+'/SOL_all.pdb')
 
     for resid in atomistic_fragments[residue_type]:
     ####### check if any atoms in residue overlap #######
@@ -76,24 +89,24 @@ def solvent_sol(box_vec, system, atomistic_fragments, residue_type):
                 system['SOL']+=1
             if not skip:
                 short_line=atomistic_fragments[residue_type][resid][at_id+1]
-                pdb_sol.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,short_line['coord'][0],
-                          short_line['coord'][1],short_line['coord'][2],0.00, 0.00))+'\n')
+                x, y, z = gen.trunc_coord([short_line['coord'][0],short_line['coord'][1],short_line['coord'][2]])
+                pdb_sol.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,x, y, z,0.00, 0.00))+'\n')
 
     return system, atomistic_fragments
 
-def solvent_ion(box_vec, system, atomistic_fragments, residue_type):
+def solvent_ion(system, atomistic_fragments, residue_type):
     #### creates ion pdb with header
     gen.mkdir_directory(g_var.working_dir+'ION/MIN')
     skip = os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
     if not skip:
-        pdb_ion = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb', box_vec)
+        pdb_ion = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
     for resid in atomistic_fragments[residue_type]:
         for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
         #### write ion coordinate out
             if not skip:
                 short_line=atomistic_fragments[residue_type][resid][at_id+1]
-                pdb_ion.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,short_line['coord'][0],
-                              short_line['coord'][1],short_line['coord'][2],0.00, 0.00))+'\n')
+                x, y, z = gen.trunc_coord([short_line['coord'][0],short_line['coord'][1],short_line['coord'][2]])
+                pdb_ion.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,x,y,z,0.00, 0.00))+'\n')
             if atomistic_fragments[residue_type][resid][at_id+1]['res_type'] != 'SOL':
                 if atomistic_fragments[residue_type][resid][at_id+1]['res_type'] not in system:
                     system[atomistic_fragments[residue_type][resid][at_id+1]['res_type']]=1
@@ -155,12 +168,12 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
 
 
 
-def merge_minimised(residue_type, np_system, box_vec):
+def merge_minimised(residue_type, np_system):
     os.chdir(g_var.working_dir+residue_type+'/MIN')
     print('Merging individual residues : '+residue_type)
 #### create merged pdb in min folder
     if not os.path.exists(g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb'):
-        pdb_output=gen.create_pdb(g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb', box_vec)  
+        pdb_output=gen.create_pdb(g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb')  
         if residue_type =='SOL':
             resid_range=1
         else:
@@ -173,8 +186,9 @@ def merge_minimised(residue_type, np_system, box_vec):
         if residue_type !='SOL':
             merge_coords = at_mod.check_atom_overlap(merge_coords)
         for line_val, line in enumerate(merge):
+            x, y, z = gen.trunc_coord([merge_coords[line_val][0],merge_coords[line_val][1],merge_coords[line_val][2]])
             pdb_output.write(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
-                merge_coords[line_val][0],merge_coords[line_val][1],merge_coords[line_val][2],1,0))+'\n')
+                x, y, z,1,0))+'\n')
         pdb_output.write('TER\nENDMDL')
         pdb_output.close()
 

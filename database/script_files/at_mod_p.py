@@ -6,6 +6,7 @@ import copy
 from string import ascii_uppercase
 import difflib
 from scipy.spatial import cKDTree
+import multiprocessing as mp
 import gen, g_var, f_loc, at_mod
 import math
 
@@ -104,7 +105,7 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         BB_prev = f_loc.res_top[prev_resname]['BACKBONE']
         xyz_cur = cg_residues[residue_number][BB_cur]['coord']
         xyz_prev = cg_residues[residue_number-1][BB_prev]['coord']
-        if gen.calculate_distance(xyz_prev, xyz_cur) < 7 and f_loc.res_top[resname]['C_TERMINAL'] != 'TER':
+        if gen.calculate_distance(xyz_prev, xyz_cur) < 6 and f_loc.res_top[resname]['C_TERMINAL'] != 'TER':
             cg_connections.append(cg_residues[residue_number-1][BB_prev]['coord'])
             at_connections.append(at_residues[N_ter]['coord'])
 #### connect to next backbone bead in chain
@@ -113,7 +114,7 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
         BB_next = f_loc.res_top[next_resname]['BACKBONE']
         xyz_cur = cg_residues[residue_number][BB_cur]['coord']
         xyz_next = cg_residues[residue_number+1][BB_next]['coord']
-        if gen.calculate_distance(xyz_next, xyz_cur) < 7 and f_loc.res_top[next_resname]['N_TERMINAL'] != 'TER':
+        if gen.calculate_distance(xyz_next, xyz_cur) < 6 and f_loc.res_top[next_resname]['N_TERMINAL'] != 'TER':
             cg_connections.append(cg_residues[residue_number+1][BB_next]['coord'])
             at_connections.append(at_residues[C_ter]['coord'])
         else:
@@ -235,7 +236,7 @@ def shrink_coordinates(c1,c2):
             return new_c1, new_c2
     return c1, c2
 
-def finalise_novo_atomistic(atomistic, cg_residues, box_vec):
+def finalise_novo_atomistic(atomistic, cg_residues):
     final_at_residues={}
     final_at = {}
     for chain in atomistic: 
@@ -245,7 +246,7 @@ def finalise_novo_atomistic(atomistic, cg_residues, box_vec):
         coords=[]
         skip = os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(chain)+'.pdb')
         if not skip:
-            pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(chain)+'.pdb', box_vec)
+            pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(chain)+'.pdb')
         for res_index, residue_id in enumerate(atomistic[chain]):
             if atomistic[chain][residue_id][1]['res_type'] in f_loc.mod_residues:
                 atomistic[chain][residue_id] = at_mod.check_hydrogens(atomistic[chain][residue_id])
@@ -265,8 +266,9 @@ def finalise_novo_atomistic(atomistic, cg_residues, box_vec):
             final_at[chain][atom]['coord']=coords[atom]
             final_at_residues[chain][final_at[chain][atom]['resid']][atom]=final_at[chain][atom]
             if not skip:
+                x, y, z = gen.trunc_coord(final_at[chain][atom]['coord'])
                 pdb_output.write(g_var.pdbline%((atom,final_at[chain][atom]['atom'],final_at[chain][atom]['res_type'],' ',\
-                                final_at[chain][atom]['resid'],final_at[chain][atom]['coord'][0],final_at[chain][atom]['coord'][1],final_at[chain][atom]['coord'][2],1,0))+'\n')
+                                final_at[chain][atom]['resid'],x,y,z,1,0))+'\n')
     if 'pdb_output' in locals():
         pdb_output.close()
     return final_at_residues
@@ -274,15 +276,13 @@ def finalise_novo_atomistic(atomistic, cg_residues, box_vec):
 ########################################### fix carbonyl section 
 
 def fix_carbonyl(residue_id, cg, at, cross_vector):
+    chiral = {}
+    carbonyl = {}
     for atom in at:
-        if at[atom]['atom'] == 'N': 
-            N = atom
-        if at[atom]['atom'] == 'CA':   
-            CA = atom 
-        if at[atom]['atom'] == 'C': 
-            C = atom
-        if at[atom]['atom'] == 'O':   
-            O = atom 
+        if at[atom]['atom'] in ['N','CA', 'C', 'O']:
+            carbonyl[at[atom]['atom']] = atom
+        if at[atom]['atom'] in f_loc.res_top[at[atom]['res_type']]['CHIRAL']['atoms']:
+            chiral[at[atom]['atom']] = atom
     ca=[]
     prev_BB, next_BB=False, False
     cur_BB =  cg[residue_id][f_loc.res_top[cg[residue_id][next(iter(cg[residue_id]))]['residue_name']]['BACKBONE']]['coord']
@@ -297,18 +297,22 @@ def fix_carbonyl(residue_id, cg, at, cross_vector):
             BB_bead = f_loc.res_top[cg[residue_id+index][next(iter(cg[residue_id+index]))]['residue_name']]['BACKBONE']
             ca.append(cg[residue_id+index][BB_bead]['coord'])
         cross_vector = at_mod.find_cross_vector( ca )
-    # if np.any(prev_BB) and np.any(next_BB):
-    rotation = at_mod.align_to_vector(at_mod.noramlised_vector(at[O]['coord'],at[C]['coord']), cross_vector)
-    at[O]['coord'] = (at[O]['coord']-at[C]['coord']).dot(rotation)+at[C]['coord']
-    at[C]['coord'] = at[C]['coord'] + cross_vector*0.2
-    at[N]['coord'] = at[N]['coord'] - cross_vector*0.5
-    # else:    
-    #     rotation = at_mod.align_to_vector(at_mod.noramlised_vector(at[O]['coord'],at[C]['coord']), cross_vector)
-    #     center_C = cur_BB+(next_BB-cur_BB)/3
-    #     center_N = cur_BB-(next_BB-cur_BB)/3
-    #     at[C]['coord'] = (at[C]['coord']-center_C).dot(rotation)+center_C
-    #     at[O]['coord'] = (at[O]['coord']-center_C).dot(rotation)+center_C
-    #     at[N]['coord'] = (at[N]['coord']-center_N).dot(rotation)+center_N
+    rotation = at_mod.align_to_vector(at_mod.noramlised_vector(at[carbonyl['O']]['coord'],at[carbonyl['C']]['coord']), cross_vector)
+    at[carbonyl['O']]['coord'] = (at[carbonyl['O']]['coord']-at[carbonyl['C']]['coord']).dot(rotation)+at[carbonyl['C']]['coord']
+    at[carbonyl['C']]['coord'] = at[carbonyl['C']]['coord'] + cross_vector*0.2
+    at[carbonyl['N']]['coord'] = at[carbonyl['N']]['coord'] - cross_vector*0.5
+    if len(f_loc.res_top[at[1]['res_type']]['CHIRAL']) >= 2:
+        for chiral_group in f_loc.res_top[at[1]['res_type']]['CHIRAL']:
+            if chiral_group != 'atoms':
+                p1 = chiral[chiral_group]
+                c1 = chiral[f_loc.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['c1']]
+                c2 = chiral[f_loc.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['c2']]
+                c3 = chiral[f_loc.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['c3']]
+                cross_vector_chiral = at_mod.find_cross_vector( [at[c3]['coord'], at[c2]['coord'], at[c1]['coord']])
+                at[p1]['coord'] = at[p1]['coord'] + cross_vector_chiral*0.5
+                if f_loc.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['m'] in chiral:
+                    m = chiral[f_loc.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['m']]
+                    at[m]['coord'] = at[m]['coord'] + cross_vector_chiral*1
     return at, cross_vector
 
   
@@ -455,7 +459,7 @@ def fetch_backbone_mass(part, protein_mass):
                 protein_mass.append([part[residue][atom]['coord'][0],part[residue][atom]['coord'][1],part[residue][atom]['coord'][2],part[residue][atom]['frag_mass']])    
     return protein_mass
 
-def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, backbone_coords, cg_com,  box_vec, group_chain):
+def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, backbone_coords, cg_com, group_chain):
 #### run through each chain in proteins
     at_com_group, cg_com_group={},{}
     for chain in range(len(final_coordinates_atomistic)):
@@ -491,7 +495,7 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
                             number of CG residues '+str(len(backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
     return at_com_group, cg_com_group
 
-def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, at_com_group,cg_com_group,cg_com, box_vec,group_chain):
+def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, at_com_group,cg_com_group,cg_com, group_chain):
     if group_chain=='all':
         rotate_all = return_all_rotations_final(at_com_group,cg_com_group,cg_com)
     final_rotations = []
@@ -513,9 +517,9 @@ def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_cen
                     else:
                         rotations = at_com_group[chain]
 
-            final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], atomistic_protein_centered[chain], cg_com[chain], rotations, chain, box_vec)
+            final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], atomistic_protein_centered[chain], cg_com[chain], rotations, chain)
         else:
-            final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], [], [], [], chain, box_vec)
+            final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], [], [], [], chain)
     return final_user_supplied_coord
 
 def return_all_rotations_final(at_com_group,cg_com_group,cg_com):
@@ -559,7 +563,7 @@ def return_all_rotations(chain, at_centers, backbone_coords, at_com_group, cg_co
         cg_com_group['all']=np.append(cg_com_group['all'], np.array(backbone_coords[chain])[sls:sle,:3], axis=0) 
     return at_com_group, cg_com_group   
 
-def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_centered, cg_com, xyz_rot_apply, chain, box_vec):
+def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_centered, cg_com, xyz_rot_apply, chain):
 
     complete_user_at = {}
     for residue in final_coordinates_atomistic:
@@ -581,9 +585,9 @@ def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_cent
             complete_user_at[residue]=final_coordinates_atomistic[residue]
     return complete_user_at
 
-def write_user_chains_to_pdb(atomistic_user_supplied, box_vec, chain):
+def write_user_chains_to_pdb(atomistic_user_supplied, chain):
     if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_'+str(chain)+'.pdb'):
-        pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_aligned_'+str(chain)+'.pdb', box_vec)
+        pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_aligned_'+str(chain)+'.pdb')
         final_atom={}
         at_id=0
         coord=[]
@@ -597,13 +601,16 @@ def write_user_chains_to_pdb(atomistic_user_supplied, box_vec, chain):
         merge_coords=at_mod.check_atom_overlap(coord)
 
         for at_id, coord in enumerate(merge_coords):
+            x, y, z = gen.trunc_coord(coord)
             pdb_output.write(g_var.pdbline%((at_id+1,final_atom[at_id]['atom'],final_atom[at_id]['res_type'],'A',final_atom[at_id]['residue'],
-                 coord[0],coord[1],coord[2],1,0))+'\n') 
+                 x,y,z,1,0))+'\n') 
+
 ################################################################## Merge chains ####################
 
 def read_in_protein_pdbs(no_chains, file, end):
 #### reads in each chain into merge list
     merge, merged_coords = [],[]
+    count = 0
     for chain in range(0,no_chains):
         merge_temp = []
         if os.path.exists(file+'_'+str(chain)+end):
@@ -612,22 +619,87 @@ def read_in_protein_pdbs(no_chains, file, end):
                     if line.startswith('ATOM'):
                         line_sep=gen.pdbatom(line)
                         merge_temp.append(line_sep)
+                        if line_sep['atom_number'] == 125 and chain == 50:
+                            print(1, chain, line)
+                            print(1, chain, line_sep)
         else:
-            sys.exit('cannot find minimised protein chain: '+str(chain)) 
-        merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merged_coords, 'PROTEIN')    
+            sys.exit('cannot find minimised protein chain: '+file+'_'+str(chain)+end)
+        if 'PROTEIN_aligned' in file and '_gmx_checked.pdb' in end:  
+            count += write_disres(merge_temp, chain, file, count)
+        print(chain, len(merge_temp))
+
+        merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merged_coords, 'PROTEIN')   
+        for ival, i in enumerate(merge_coords):
+            if i[0]>1000:
+                print(2, merge_temp[123:127])
+                print(2, merge[ival])
+                print(2, i)
+                sys.exit()
     merged_coords = at_mod.check_atom_overlap(merge_coords)
+    # for ival, i in enumerate(merge_coords):
+    #     if i[0]>1000:
+    #         print(3, merge[ival])
+    #         print(3, i)
     merged=[]
     for line_val, line in enumerate(merge):
+        x, y, z = gen.trunc_coord(merged_coords[line_val])
+        # if x > 1000:
+        #     print(4, g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
+        #     x,y,z,1,0))) 
+        #     print(4, merged_coords[line_val])
         merged.append(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
-            merged_coords[line_val][0],merged_coords[line_val][1],merged_coords[line_val][2],1,0))+'\n')
+            x,y,z,1,0))+'\n')
     return merged
 
+def correct_amide_h(lines, coords):
+    for at_val, atom in enumerate(lines):
+        if atom['atom_name'] == 'C': 
+            C = np.array(coords[at_val])
+        if atom['atom_name'] == 'O':   
+            O = np.array(coords[at_val]) 
+        if atom['atom_name'] == f_loc.res_top[atom['residue_name']]['amide_h'] and atom['residue_id'] != 0:  
+            HN = np.array(coords[at_val]) 
+            HN_index = at_val
+        if atom['atom_name'] == 'N' and atom['residue_id'] != 0:
+            N = np.array(coords[at_val])
+        if 'C' in locals() and 'N' in locals() and 'O' in locals() and 'HN' in locals():
+            O_C = O-C
+            coords[at_val] = N - O_C
+            del N, C, O, HN 
+    return coords
 
+def write_disres(coord, chain, file, at_start):
+    if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp'):
+        with open(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'a') as disres_out:
+            disres_out.write(';backbone hydrogen bonding distance restraints\n\n')
+            disres_out.write('[ intermolecular_interactions ]\n[ distance_restraints ]\n')
+            disres_out.write(';   i     j type label      funct         lo        up1        up2     weight')
+            HN, O = [],[]
+            for atom in coord:
+                if atom['residue_name'] in f_loc.p_residues and atom['atom_name'] == f_loc.res_top[atom['residue_name']]['amide_h']:
+                    HN.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
+                if atom['residue_name'] in f_loc.p_residues and atom['atom_name'] == 'O':
+                    O.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
+            HN, O = np.array(HN), np.array(O)
+            tree = cKDTree(HN[:,1:])
+            count=0
+            for carbonyl in O:
+                ndx = tree.query_ball_point(carbonyl[1:], r=3)
+                if len(ndx) > 0:
+                    for at in ndx:
+                        if coord[int(HN[ndx[0]][0])-1]['residue_id'] < coord[int(carbonyl[0])-1]['residue_id']-1 or coord[int(HN[ndx[0]][0])-1]['residue_id'] > coord[int(carbonyl[0])-1]['residue_id']+1:
+                            count+=1
+                            xyz1 = [coord[int(carbonyl[0])-1]['x'], coord[int(carbonyl[0])-1]['y'], coord[int(carbonyl[0])-1]['z']]
+                            xyz2 = [coord[int(HN[at][0])-1]['x'], coord[int(HN[at][0])-1]['y'], coord[int(HN[at][0])-1]['z']]
+                            dist = np.round((gen.calculate_distance(xyz1, xyz2)/10)-0.05, 4)
+                            disres_out.write('\n{0:10}{1:10}{2:3}{3:12}{4:12}{5:^12}{6:14}{7:14}{8:5}'.format(str(at_start+int(HN[at][0])), str(at_start+int(carbonyl[0])), 
+                                                                                                    '1', str(count),'1', '0', str(dist), str(dist), '5'))
+    return len(coord) 
 
-def write_merged_pdb(merge, protein, box_vec):
+def write_merged_pdb(merge, protein):
 #### creates merged pdb and writes chains to it
     if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_merged.pdb'):
-        pdb_output=gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_merged.pdb', box_vec)
+        pdb_output=gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_merged.pdb')
         for line in merge:
             pdb_output.write(line)
         pdb_output.close()
@@ -667,4 +739,15 @@ def RMSD_measure(structure_atoms, system, backbone_coords):
         RMSD_dict[chain]=np.round(RMSD_val, 3)  #### stores RMSD in dictionary
     return RMSD_dict
 
+def align_user_chains(atomistic_protein_input, backbone_coords, group_chain, final_coordinates_atomistic, user_cys_bond):
+    atomistic_protein_centered, cg_com = center_atomistic(atomistic_protein_input, backbone_coords, group_chain) ## centers each chain by center of mass
+    at_com_group, cg_com_group = rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, 
+                                                                backbone_coords, cg_com, group_chain) 
+    atomistic_protein_rotated = apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, 
+                                                                at_com_group,cg_com_group,cg_com, group_chain) ## apply rotation matrix to atoms and build in missing residues
+    final_user_supplied_coord = correct_disulphide_bonds(atomistic_protein_rotated, user_cys_bond) ## fixes sulphur distances in user structure
 
+    pool = mp.Pool(g_var.ncpus)
+    pool_process = pool.starmap_async(write_user_chains_to_pdb, [(final_user_supplied_coord[chain], chain) ## write structure to pdb
+                                        for chain in final_user_supplied_coord]).get()
+    pool.close()

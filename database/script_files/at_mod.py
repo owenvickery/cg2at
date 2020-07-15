@@ -6,7 +6,7 @@ import math
 import itertools
 from scipy.spatial import cKDTree
 import re
-import gen, g_var, f_loc
+import gen, g_var, f_loc, at_mod_p, read_in
 
 def sanity_check_fragments(res, cg, sin_bead):
 #### fetches bead and atom info from fragment database
@@ -131,7 +131,9 @@ def check_atom_overlap(coordinates):
     overlapped = overlapping_atoms(tree)
 #### runs through overlapping atoms and moves atom in a random diection until it is no longer overlapping
     while len(overlapped) > 0:
-        for ndx in overlapped:
+        for ndx_val, ndx in enumerate(overlapped):
+            if len(overlapped) > 30:
+                print('fixing overlapped atoms: ', np.round((ndx_val/len(overlapped))*100,2), '%', end='\r')
             xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
             while len(tree.query_ball_point(xyz_check, r=0.3)) > 1:
                 xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
@@ -201,7 +203,9 @@ def COM(mass, fragment):
             print('bead has no mass: \n')
             sys.exit(fragment)
     except:
-        sys.exit('missing the mass one of the atoms')
+        print('missing the mass one of the atoms\n')
+        print(mass)
+        sys.exit(fragment)
 
 def rigid_fit(group, frag_mass, resid, cg):
 #### rigid fits group to CG beads
@@ -286,11 +290,11 @@ def align_to_vector(v1, v2):
 
 ################################################################### Merged system
 
-def merge_system_pdbs(system, protein, cg_residues, box_vec):
+def merge_system_pdbs(system, protein, cg_residues):
     os.chdir(g_var.merged_directory)
 #### create merged pdb 
     if not os.path.exists(g_var.merged_directory+'merged_cg2at'+protein+'.pdb'):
-        pdb_output=gen.create_pdb(g_var.merged_directory+'merged_cg2at'+protein+'.pdb', box_vec) 
+        pdb_output=gen.create_pdb(g_var.merged_directory+'merged_cg2at'+protein+'.pdb') 
         merge=[]
         merge_coords=[]
     #### run through every residue type in cg_residues
@@ -305,8 +309,9 @@ def merge_system_pdbs(system, protein, cg_residues, box_vec):
             print('checking for atom overlap in : '+protein[1:])
             merge_coords = check_atom_overlap(merge_coords)
         for line_val, line in enumerate(merge):
+            x, y, z = gen.trunc_coord(merge_coords[line_val])
             pdb_output.write(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
-                merge_coords[line_val][0],merge_coords[line_val][1],merge_coords[line_val][2],1,0))+'\n')
+                x,y,z,1,0))+'\n')
         pdb_output.write('TER\nENDMDL')
         pdb_output.close()
 
@@ -317,21 +322,30 @@ def read_in_merged_pdbs(merge, merge_coords, location):
             for line in pdb_input.readlines():
                 if line.startswith('ATOM'):
                     line_sep = gen.pdbatom(line)
+                    line_sep['x'],line_sep['y'],line_sep['z'] = gen.trunc_coord([line_sep['x'],line_sep['y'],line_sep['z']])
                     merge.append(line_sep)
                     merge_coords.append([line_sep['x'],line_sep['y'],line_sep['z']])
         return merge, merge_coords
     else:
         sys.exit('cannot find minimised residue: \n'+ location) 
 
-def check_overlap_chain(chain, input, box_vec):
-    lines, coords = read_in_merged_pdbs([], [], 'PROTEIN_'+input+str(chain)+'_gmx.pdb')
-    updated_coords = check_atom_overlap(coords)
-    pdb_output=gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_'+input+str(chain)+'_gmx_checked.pdb', box_vec) 
+def check_overlap_chain(chain, input, collate=False):
+    checked=[]
+    if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_'+input+str(chain)+'_gmx_checked.pdb'):
+        lines, coords = read_in_merged_pdbs([], [], 'PROTEIN_'+input+str(chain)+'_gmx.pdb')
+        coords = at_mod_p.correct_amide_h(lines, coords)
+        updated_coords = check_atom_overlap(coords)
+        pdb_output=gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_'+input+str(chain)+'_gmx_checked.pdb') 
 
-    for line_val, line in enumerate(lines):
-        pdb_output.write(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
-                        updated_coords[line_val][0],updated_coords[line_val][1],updated_coords[line_val][2],1,0))+'\n')
-
+        for line_val, line in enumerate(lines):
+            x, y, z = gen.trunc_coord(updated_coords[line_val])
+            pdb_output.write(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
+                            x,y,z,1,0))+'\n')
+            if collate:
+                checked.append(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
+                            x,y,z,1,0))+'\n')
+    if collate:
+        return checked
 
 def fetch_chiral_coord(merge_temp, residue_type):
     chiral_atoms={}
@@ -351,44 +365,45 @@ def fetch_chiral_coord(merge_temp, residue_type):
 
 def fix_chirality(merge, merge_temp, merged_coords, residue_type):
 #### fixes chiral groups
+    r_b_vec, r_b_inv = read_in.real_box_vectors(g_var.box_vec)
     chiral_atoms, coord= fetch_chiral_coord(merge_temp, residue_type)
     for residue in chiral_atoms:
         if residue_type == 'PROTEIN':
             for atom in chiral_atoms[residue]:
                 resname = merge_temp[chiral_atoms[residue][atom]]['residue_name']
+                resid = merge_temp[chiral_atoms[residue][atom]]['residue_id']
                 break
         else:
             resname=residue_type
         for chiral_group in f_loc.res_top[resname]['CHIRAL']:
+
             if chiral_group != 'atoms':
-                stat = merge_temp[chiral_atoms[residue][chiral_group]]
-                move = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]]
-                c1   = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['c1']]]
-                c2   = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['c2']]]
-                c3   = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['c3']]]
-
-                stat_coord = np.array([stat['x'], stat['y'], stat['z']])
-                move_coord = np.array([move['x'], move['y'], move['z']])
-
-                S_M=move_coord-stat_coord
+                stat = merge_temp[chiral_atoms[residue][chiral_group]].copy()
+                atom_move = {'stat':np.array([stat['x'],stat['y'],stat['z']]), 'm':'', 'c1':'', 'c2':'', 'c3':''}
+                for chir_atom in atom_move:
+                    if chir_atom != 'stat':
+                        test = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group][chir_atom]]].copy()
+                        atom_move[chir_atom]= np.array([test['x'],test['y'],test['z']])
+                        if gen.calculate_distance(atom_move['stat'], atom_move[chir_atom]) > 10:
+                            atom_move[chir_atom] = np.array(read_in.brute_mic(atom_move['stat'],atom_move[chir_atom], r_b_vec))
+                S_M = atom_move['m'] - atom_move['stat']
                 rotation = align_to_vector(S_M, [0,0,1])
-                center = stat_coord
-
-                c1_coord = (np.array([c1['x'], c1['y'], c1['z']]) - center).dot(rotation)
-                c2_coord = (np.array([c2['x'], c2['y'], c2['z']]) - center).dot(rotation)
-                c3_coord = (np.array([c3['x'], c3['y'], c3['z']]) - center).dot(rotation)
+                c1_coord = (atom_move['c1'] - atom_move['stat']).dot(rotation)
+                c2_coord = (atom_move['c2'] - atom_move['stat']).dot(rotation)
+                c3_coord = (atom_move['c3'] - atom_move['stat']).dot(rotation)
 
                 C1_C2_a = gen.angle_clockwise(c1_coord[0:2], c2_coord[0:2])
                 C1_C3_a = gen.angle_clockwise(c1_coord[0:2], c3_coord[0:2])
+
                 if C1_C2_a > C1_C3_a:
                     for ax_val, axis in enumerate(['x', 'y', 'z']):
                         merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] - (3*S_M[ax_val])   
                         merge_temp[chiral_atoms[residue][chiral_group]][axis] = merge_temp[chiral_atoms[residue][chiral_group]][axis] - (S_M[ax_val])        
-                    coord[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]] = move_coord - (3*S_M) 
-                    coord[chiral_atoms[residue][chiral_group]] = stat_coord - (1.5*S_M) 
+                    coord[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]] -=  (2*S_M) #move_coord -
+                    coord[chiral_atoms[residue][chiral_group]] -=  (0.25*S_M) #stat_coord -
+                
     merge+=merge_temp
     merged_coords+=coord
-
     return merge, merged_coords
 
 def check_hydrogens(residue):
@@ -419,8 +434,8 @@ def check_hydrogens(residue):
                         residue[h_at]['coord']=residue[h_at]['coord']-vector*2
     return residue
 
-def check_ringed_lipids(protein, box_vec):
-    box_vec = box_vec.split()[1:4]
+def check_ringed_lipids(protein):
+    box_vec = g_var.box_vec.split()[1:4]
     os.chdir(g_var.merged_directory)
     merge, merge_coords = read_in_merged_pdbs([], [], protein)
     resid_prev=0
@@ -460,3 +475,27 @@ def check_ringed_lipids(protein, box_vec):
 
     return ringed
 
+def write_RMSD(system):
+    RMSD={}
+    de_novo_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb', False) ## reads in final pdb
+    if chain_count != system['PROTEIN']:
+        sys.exit('number of chains in atomistic protein input ('+str(chain_count)+') does not match CG representation ('+str(system['PROTEIN'])+')')
+    RMSD['de novo '] = at_mod_p.RMSD_measure(de_novo_atoms, system, backbone_coords) ## gets rmsd of de novo
+
+    if user_at_input and 'PROTEIN' in cg_residues:
+        # if g_var.o in ['all', 'steer']:
+        #     at_input_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_steered.pdb', False)
+        #     RMSD['at steered'] = at_mod_p.RMSD_measure(at_input_atoms, system,backbone_coords)   
+        if g_var.o in ['all', 'align']: 
+            at_input_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_aligned.pdb', False)
+            RMSD['at aligned'] = at_mod_p.RMSD_measure(at_input_atoms, system,backbone_coords)   
+    with open(g_var.final_dir+'structure_quality.dat', 'w') as qual_out:   
+        qual_out.write('\n{0:^10}{1:^25}{2:^10}\n'.format('output ','chain','RMSD ('+chr(197)+')'))
+        qual_out.write('{0:^10}{1:^25}{2:^10}\n'.format('-------','-----','---------'))
+        print('\n{0:^10}{1:^25}{2:^10}'.format('output ','chain','RMSD ('+chr(197)+')'))
+        print('{0:^10}{1:^25}{2:^10}'.format('-------','-----','---------'))
+        for rmsd in RMSD:
+            for chain in RMSD[rmsd]:
+                qual_out.write('{0:^10}{1:^25}{2:^10}\n'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
+                print('{0:^10}{1:^25}{2:^10}'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
+        print()

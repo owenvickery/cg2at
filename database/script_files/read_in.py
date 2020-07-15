@@ -107,22 +107,6 @@ def check_new_box(coord,box, new_box):
                 return True
     return False
 
-def connect_pbc(temp_coord, prev_coord, box, protein):
-#### for x, y, z if the distance between bead is more than half the box length
-    if np.sqrt((temp_coord-prev_coord)**2) > float(box)/2:
-    #### if the bead if in the opposite 1/3 of the box the position the box length is add/subtracted
-        if temp_coord <= float(box)/2:
-            temp = temp_coord+float(box)
-        elif temp_coord > float(box)/2:
-            temp = temp_coord-float(box)
-    #### if distance between corrected coordinate is still > 1/2 the box length then counts as a new chain
-        if np.sqrt((temp-prev_coord)**2) < 8 or not protein:
-            return temp
-        else:
-            return temp_coord
-    else:
-        return temp_coord
-
 def real_box_vectors(box_vec):
     x, y, z, yz, xz, xy = [float(i) for i in box_vec.split()[1:7]]
     # return real-space vector
@@ -137,14 +121,17 @@ def brute_mic(p1, p2, r_b_vec):
     result = None
     n = 2
     if gen.calculate_distance(p1, p2) > 10:
-        for i0 in range(-n, n+1):
-            for i1 in range(-n, n+1):
-                for i2 in range(-n, n+1):
-                    rp = p2+np.dot(r_b_vec, [i0,i1,i2])
+        for x in range(-n, n+1):
+            for y in range(-n, n+1):
+                for z in range(-n, n+1):
+                    rp = p2+np.dot(r_b_vec, [x,y,z])
                     d = gen.calculate_distance(p1, rp)
                     if (result is None) or (result[1] > d):
                         result = (rp, d)
-        return result[0]
+        if result[1] < 10:
+            return result[0]
+        else:
+            return p2
     else:
         return p2
 
