@@ -133,7 +133,8 @@ def check_atom_overlap(coordinates):
     while len(overlapped) > 0:
         for ndx_val, ndx in enumerate(overlapped):
             if len(overlapped) > 30:
-                print('fixing overlapped atoms: ', np.round((ndx_val/len(overlapped))*100,2), '%', end='\r')
+                print('{:<130}'.format(''), end='\r')
+                print('fixing overlapped atoms: ', np.round((ndx_val/len(overlapped))*100,1), '%', end='\r')
             xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
             while len(tree.query_ball_point(xyz_check, r=0.3)) > 1:
                 xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])

@@ -619,34 +619,15 @@ def read_in_protein_pdbs(no_chains, file, end):
                     if line.startswith('ATOM'):
                         line_sep=gen.pdbatom(line)
                         merge_temp.append(line_sep)
-                        if line_sep['atom_number'] == 125 and chain == 50:
-                            print(1, chain, line)
-                            print(1, chain, line_sep)
         else:
             sys.exit('cannot find minimised protein chain: '+file+'_'+str(chain)+end)
         if 'PROTEIN_aligned' in file and '_gmx_checked.pdb' in end:  
             count += write_disres(merge_temp, chain, file, count)
-        print(chain, len(merge_temp))
-
         merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merged_coords, 'PROTEIN')   
-        for ival, i in enumerate(merge_coords):
-            if i[0]>1000:
-                print(2, merge_temp[123:127])
-                print(2, merge[ival])
-                print(2, i)
-                sys.exit()
     merged_coords = at_mod.check_atom_overlap(merge_coords)
-    # for ival, i in enumerate(merge_coords):
-    #     if i[0]>1000:
-    #         print(3, merge[ival])
-    #         print(3, i)
     merged=[]
     for line_val, line in enumerate(merge):
         x, y, z = gen.trunc_coord(merged_coords[line_val])
-        # if x > 1000:
-        #     print(4, g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
-        #     x,y,z,1,0))) 
-        #     print(4, merged_coords[line_val])
         merged.append(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
             x,y,z,1,0))+'\n')
     return merged

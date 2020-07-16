@@ -160,7 +160,6 @@ def strip_header(line):
     line = line.replace(']','')
     return line.strip()
 
-
 def sep_fragments_topology(location):
     topology={}
     group = 1
