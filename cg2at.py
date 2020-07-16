@@ -115,7 +115,7 @@ if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']])
 
 time_counter['n_p_t']=time.time()
 
-print('\nMerging all residue types to single file. (Or possibly tea)\n')
+print('Merging all residue types to single file. (Or possibly tea)\n')
 
 gro.write_merged_topol(system, '_de_novo') ## make final topology in merged directory
 
@@ -159,7 +159,7 @@ if not g_var.messy:
     gen.clean(cg_residues) 
 
 ## prints out system information
-at_mod.write_system_components(system)
+gen.write_system_components(system)
 
 ## prints out RMSD of converted proteins
 if 'PROTEIN' in cg_residues:
