@@ -83,6 +83,8 @@ def gromacs(gro):
             for err in possible_errors:
                 if err in out:
                     print('\n'+out)
+                    if 'residue naming needs to be fixed' in out and 'PROTEIN_aligned' in out:
+                        sys.exit('\n\n###  The supplied protein structure contains incorrectly named or missing atoms  ###\n\n')
                     error = True
             if 'number of atoms in the topology (' in out:
                 print('\n'+out+'\n\n')
