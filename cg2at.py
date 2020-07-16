@@ -151,7 +151,7 @@ else:
 time_counter['m_t']=time.time()
 if user_at_input and 'PROTEIN' in cg_residues and g_var.o in ['all', 'align']:   
     time_counter['a_s']=time.time()
-    create_aligned(system, cg_residues)
+    gro.create_aligned(system, cg_residues)
     time_counter['a_e']=time.time()
 
 ## removes temp file from script, anything with temp in really
