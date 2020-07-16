@@ -42,9 +42,7 @@ def collect_input(cg, at):
         if not os.path.exists(g_var.input_directory+'AT_input.pdb'):
             sys.exit('\nFailed to process atomistic input file')
         else:
-            return True         
-    else:
-        return False
+            g_var.user_at_input = True         
 
 #### fixes pbc complex pbc issue if supplied with a tpr
 def input_sort(loc, rep):
@@ -107,7 +105,7 @@ def make_min(residue):#, fragments):
         with open('em_'+residue+'.mdp','w') as em:
             em.write('define = \n integrator = steep\nnsteps = 20000\nemtol = 750\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 
-def pdb2gmx_minimise(chain, p_system, user_at_input, q):
+def pdb2gmx_minimise(chain, p_system, q):
 #### makes em.mdp for each chain
     checked={}
     os.chdir(g_var.working_dir+'/PROTEIN')
@@ -120,7 +118,7 @@ def pdb2gmx_minimise(chain, p_system, user_at_input, q):
     if not os.path.exists('PROTEIN_de_novo_'+str(chain)+'_gmx_checked.pdb'):
         at_mod.check_overlap_chain(chain, 'de_novo_')
    
-    if user_at_input and not os.path.exists('PROTEIN_aligned_'+str(chain)+'_gmx_checked.pdb'):
+    if g_var.user_at_input and not os.path.exists('PROTEIN_aligned_'+str(chain)+'_gmx_checked.pdb'):
         pdb2gmx_selections = histidine_protonation(chain, 'de_novo_', pdb2gmx_selections)
         pdb2gmx_chain(chain, 'aligned_', pdb2gmx_selections)
         at_mod.check_overlap_chain(chain, 'aligned_')
@@ -464,7 +462,7 @@ def write_merged_topol(system, protein):
 
 
 def minimise_merged_pdbs(system, protein):
-    print('Minimising merged atomistic files : '+protein[1:])
+    print('\nMinimising merged atomistic files : '+protein[1:])
     os.chdir(g_var.working_dir+'MERGED')
 #### grompps final merged systems
     gromacs([g_var.gmx+' grompp '+
@@ -574,14 +572,14 @@ def steer_to_de_novo(protein_type, input_file ):
                                      ' -c merged_cg2at_steered.pdb -cpo merged_cg2at_steered.cpt'
                                      ,'merged_cg2at_steered.pdb'])  
 
-def run_npt(input_file, protein):
+def run_npt(input_file):
     print('Running NPT on de novo system')
     os.chdir(g_var.merged_directory)        
     gen.mkdir_directory(g_var.merged_directory+'NPT')
     equil_type = [ 'Parrinello-Rahman','Berendsen']
     for equil_type_val, npt_type in enumerate(['npt-pr.mdp', 'npt-b.mdp']):
         os.chdir(g_var.merged_directory)   
-        if protein:
+        if g_var.user_at_input:
             write_steered_mdp(g_var.merged_directory+npt_type, '-DDISRES -DPOSRESCA', equil_type[equil_type_val] ,5000, 0.001) #
         else:
             write_steered_mdp(g_var.merged_directory+npt_type, '-DPOSRESCA', equil_type[equil_type_val] ,5000, 0.001)
@@ -614,3 +612,4 @@ def create_aligned(system, cg_residues):
     steer_to_aligned('aligned', 'mid', g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_low') ## run steered md with medium restraints
     steer_to_aligned('aligned', 'high', g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_mid') ## run steered md with high restraints
     gen.file_copy_and_check(g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
+    print()

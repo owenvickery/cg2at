@@ -134,7 +134,7 @@ def check_atom_overlap(coordinates):
         for ndx_val, ndx in enumerate(overlapped):
             if len(overlapped) > 30:
                 print('{:<130}'.format(''), end='\r')
-                print('fixing overlapped atoms: ', np.round((ndx_val/len(overlapped))*100,1), '%', end='\r')
+                print('fixing '+str(len(overlapped))+' overlapped atoms: '+str(np.round((ndx_val/len(overlapped))*100,1))+' %', end='\r')
             xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
             while len(tree.query_ball_point(xyz_check, r=0.3)) > 1:
                 xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
@@ -476,14 +476,14 @@ def check_ringed_lipids(protein):
 
     return ringed
 
-def write_RMSD(system):
+def write_RMSD(system, backbone_coords, cg_residues):
     RMSD={}
     de_novo_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb', False) ## reads in final pdb
     if chain_count != system['PROTEIN']:
         sys.exit('number of chains in atomistic protein input ('+str(chain_count)+') does not match CG representation ('+str(system['PROTEIN'])+')')
     RMSD['de novo '] = at_mod_p.RMSD_measure(de_novo_atoms, system, backbone_coords) ## gets rmsd of de novo
 
-    if user_at_input and 'PROTEIN' in cg_residues:
+    if g_var.user_at_input and 'PROTEIN' in cg_residues:
         # if g_var.o in ['all', 'steer']:
         #     at_input_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_steered.pdb', False)
         #     RMSD['at steered'] = at_mod_p.RMSD_measure(at_input_atoms, system,backbone_coords)   

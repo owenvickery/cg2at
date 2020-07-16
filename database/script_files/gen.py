@@ -678,14 +678,16 @@ def clean(cg_residues):
 #### cleans temp files from residue_types
     for residue_type in cg_residues:
         if residue_type not in ['SOL', 'ION']:
-            print('\ncleaning temp files from : '+residue_type)
+            print('\nCleaning temp files from : '+residue_type)
             os.chdir(g_var.working_dir+residue_type)
             file_list = glob.glob('*temp*', recursive=True)
+            file_list += glob.glob(residue_type+'*pdb', recursive=True)
             for file in file_list:
-                if not file.endswith('.tpr'):
+                if not file.endswith('.tpr') and not file.endswith('_merged.pdb') and 'gmx' not in file:
                     os.remove(file)
             os.chdir(g_var.working_dir+residue_type+'/MIN')
             file_list = glob.glob('*temp*', recursive=True)
+            file_list += glob.glob('*trr', recursive=True)
             for file in file_list:
                 if not file.endswith('.tpr'):
                     os.remove(file) 
@@ -698,7 +700,7 @@ def fix_time(t1, t2):
         hours = 0
     return int(np.round(hours)), int(np.round(minutes)), int(np.round(seconds,0))
 
-def print_script_timings(tc, system, user_at_input):
+def print_script_timings(tc, system):
     to_print=[]
     to_print.append('\n{:-<100}'.format(''))
     to_print.append('\n{0:^47}{1:^22}'.format('Job','Time'))
@@ -706,16 +708,13 @@ def print_script_timings(tc, system, user_at_input):
     t1 = fix_time(tc['r_i_t'], tc['i_t'])
     to_print.append('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
     if 'PROTEIN' in system:
-        t2=fix_time(tc['p_d_n_t'],tc['r_i_t'])
-        t3=fix_time(tc['f_p_t'],tc['p_d_n_t'])
         t4=fix_time(tc['f_p_t'],tc['r_i_t'])
-        to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build de novo protein: ',t2[0],'hours',t2[1],'min',t2[2],'sec'))        
-        to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein from provided structure: ',t3[0],'hours',t3[1],'min',t3[2],'sec'))
+        to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein systems: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
     t6=fix_time(tc['n_p_t'],tc['f_p_t'])
     t7=fix_time(tc['m_t'],tc['n_p_t'])
     to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
     to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Equilibrate de novo: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
-    if g_var.o in ['all', 'align'] and g_var.a != None and user_at_input:
+    if g_var.o in ['all', 'align'] and g_var.a != None and g_var.user_at_input:
         t9=fix_time(tc['a_e'],tc['a_s'])
         to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating aligned system: ', t9[0],'hours',t9[1],'min',t9[2],'sec'))
     to_print.append('{:-<69}'.format(''))

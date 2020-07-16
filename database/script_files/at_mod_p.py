@@ -130,7 +130,7 @@ def ask_if_disulphide(chain, res_1, res_2):
     while True:
         try:
             answer = str(input('\nAre these residues connected by a disulphide bond in chain '+str(chain)+' (Y/N): '+str(res_1)+'--'+str(res_2)+': '))
-            print(answer)
+            # print(answer)
             if answer.lower() in ['yes','y']:
                 return True
             elif answer.lower() in ['no','n']:
@@ -365,13 +365,13 @@ def align_chains(atomistic_protein_input, seq_user, sequence):
             test_chain[chain_at]=chain_cg
 
     if len(at) > 0:
-        user_at_input = True
+        g_var.user_at_input = True
     else: 
-        user_at_input = False
+        g_var.user_at_input = False
     if f_loc.group_chains == 'chain':
-        return at, test_chain, user_at_input
+        return at, test_chain
     else:
-        return at, f_loc.group_chains, user_at_input 
+        return at, f_loc.group_chains 
 
 def mask_sequence(sequence, st, end):
     for index, residue in enumerate(sequence):

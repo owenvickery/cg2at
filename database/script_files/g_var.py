@@ -116,6 +116,7 @@ merged_directory = os.getcwd()+'/'+working_dir_name+'/MERGED/'  ### contains run
 scripts_dir     = os.path.dirname(os.path.realpath(__file__))+'/' ### contains script files
 database_dir    = str(Path(*Path(scripts_dir).parts[:-1]))+'/' ### contains database files
 box_vec = ''
+user_at_input = False
 
 ### finds gromacs installation
 

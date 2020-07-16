@@ -13,7 +13,7 @@ time_counter = {}
 time_counter['i_t']=time.time()
 
 #### collects initial structures into INPUT folder
-user_at_input = gro.collect_input(g_var.c, g_var.a)
+gro.collect_input(g_var.c, g_var.a)
 
 #### saves flags used into INPUT folder
 gen.flags_used()
@@ -44,17 +44,17 @@ if 'PROTEIN' in cg_residues:
     p_system, backbone_coords, coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN']) ## converts protein to atomistic
     system['PROTEIN']=p_system['PROTEIN']
 
-    if not user_at_input and g_var.v >= 1:  ## prints protein sequences 
+    if not g_var.user_at_input and g_var.v >= 1:  ## prints protein sequences 
         print('coarse grain protein sequence:\n')
         for index in sequence:
             print('chain:', index,sequence[index], '\n') 
 
     ## reads in user chain, runs a sequence alignment and finds existing disulphide bonds
     time_counter['p_d_n_t']=time.time()
-    if user_at_input:
+    if g_var.user_at_input:
         atomistic_protein_input_raw, chain_count = read_in.read_in_atomistic(g_var.input_directory+'AT_input.pdb', True)  ## reads in user structure
         seq_user = at_mod_p.check_sequence(atomistic_protein_input_raw, chain_count)  ## gets user sequence
-        atomistic_protein_input, group_chain, user_at_input = at_mod_p.align_chains(atomistic_protein_input_raw, seq_user, sequence) ## aligns chains 
+        atomistic_protein_input, group_chain = at_mod_p.align_chains(atomistic_protein_input_raw, seq_user, sequence) ## aligns chains 
         user_cys_bond = at_mod_p.find_disulphide_bonds_user_sup(atomistic_protein_input) ## finds user disulphide bonds
     else:
         user_cys_bond = {}
@@ -64,14 +64,14 @@ if 'PROTEIN' in cg_residues:
     final_coordinates_atomistic = at_mod_p.finalise_novo_atomistic(coordinates_atomistic, cg_residues['PROTEIN']) ## fixes carbonyl oxygens, hydrogens and writes pdb 
 
     ## aligns user chains to the CG system
-    if user_at_input:
+    if g_var.user_at_input:
         at_mod_p.align_user_chains(atomistic_protein_input, backbone_coords, group_chain, final_coordinates_atomistic, user_cys_bond)
 
     ### runs pdb2gmx and minimises each protein chain
     pool = mp.Pool(g_var.ncpus)
     m = mp.Manager()
     q = m.Queue()
-    pool_process = pool.starmap_async(gro.pdb2gmx_minimise, [(chain, p_system, user_at_input, q) for chain in range(0, system['PROTEIN'])])
+    pool_process = pool.starmap_async(gro.pdb2gmx_minimise, [(chain, p_system, q) for chain in range(0, system['PROTEIN'])])
     while not pool_process.ready():
         gro.report_complete('pdb2gmx/minimisation', q.qsize(), system['PROTEIN'])
     print('{:<130}'.format(''), end='\r')
@@ -82,7 +82,7 @@ if 'PROTEIN' in cg_residues:
         merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb') ## merge protein chains
         at_mod_p.write_merged_pdb(merge_de_novo, '_de_novo') ## write merged chain to pdb 
     #### read in aligned protein chains and merges chains
-    if user_at_input:
+    if g_var.user_at_input:
         if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb'):
             merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_aligned', '_gmx_checked.pdb') ## merge aligned chains
             at_mod_p.write_merged_pdb(merge_at_user_no_steer, '_aligned') ## write merged chain to pdb 
@@ -143,13 +143,13 @@ if not os.path.exists(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
         gen.file_copy_and_check(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb', g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
 ## runs short NPT on de_novo system with disres on if available 
 if g_var.o in ['all', 'de_novo']:
-    gro.run_npt(g_var.merged_directory+'checked_ringed_lipid_de_novo', user_at_input) ## run npt on system 
+    gro.run_npt(g_var.merged_directory+'checked_ringed_lipid_de_novo') ## run npt on system 
 else:
     gen.file_copy_and_check(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')
 
 ## creates aligned system 
 time_counter['m_t']=time.time()
-if user_at_input and 'PROTEIN' in cg_residues and g_var.o in ['all', 'align']:   
+if g_var.user_at_input and 'PROTEIN' in cg_residues and g_var.o in ['all', 'align']:   
     time_counter['a_s']=time.time()
     gro.create_aligned(system, cg_residues)
     time_counter['a_e']=time.time()
@@ -163,12 +163,12 @@ gen.write_system_components(system)
 
 ## prints out RMSD of converted proteins
 if 'PROTEIN' in cg_residues:
-    at_mod.write_RMSD(system)
+    at_mod.write_RMSD(system, backbone_coords,cg_residues)
 
 time_counter['f_t']=time.time()
 
 ## prints out script timings for each section
-gen.print_script_timings(time_counter, system, user_at_input)
+gen.print_script_timings(time_counter, system)
 
 
 

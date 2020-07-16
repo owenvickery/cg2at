@@ -37,27 +37,28 @@ def non_solvent(system, atomistic_fragments, residue_type):
         pdb_all_coord = []   
         pdb_output_all_temp = []
     for resid in atomistic_fragments[residue_type]:
-        skip = os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')
-        if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb') and not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
-            pdb_output_ind = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')         
-            atomistic_fragments[residue_type][resid] = at_mod.check_hydrogens(atomistic_fragments[residue_type][resid])
-        ####### check if any atoms in residue overlap #######
-            coord=[]
-            for atom in atomistic_fragments[residue_type][resid]:
-                coord.append(atomistic_fragments[residue_type][resid][atom]['coord'])
-            coord=at_mod.check_atom_overlap(coord)
-            for atom_val, atom in enumerate(atomistic_fragments[residue_type][resid]):
-                atomistic_fragments[residue_type][resid][atom]['coord']=coord[atom_val]
+        # skip = os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')
+        if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
+            if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb'):
+                pdb_output_ind = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')         
+                atomistic_fragments[residue_type][resid] = at_mod.check_hydrogens(atomistic_fragments[residue_type][resid])
+            ####### check if any atoms in residue overlap #######
+                coord=[]
+                for atom in atomistic_fragments[residue_type][resid]:
+                    coord.append(atomistic_fragments[residue_type][resid][atom]['coord'])
+                coord=at_mod.check_atom_overlap(coord)
+                for atom_val, atom in enumerate(atomistic_fragments[residue_type][resid]):
+                    atomistic_fragments[residue_type][resid][atom]['coord']=coord[atom_val]
 
-            for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
-            #### write residue out to a pdb file
-                short_line=atomistic_fragments[residue_type][resid][at_id+1]
-                x, y, z = gen.trunc_coord([short_line['coord'][0], short_line['coord'][1],short_line['coord'][2]])
-                pdb_output_ind.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,x,y,z,0.00, 0.00))+'\n')
-                if 'pdb_output_all' in locals():
+                for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
+                #### write residue out to a pdb file
+                    short_line=atomistic_fragments[residue_type][resid][at_id+1]
                     x, y, z = gen.trunc_coord([short_line['coord'][0], short_line['coord'][1],short_line['coord'][2]])
-                    pdb_all_coord.append([x, y, z])
-                    pdb_output_all_temp.append([at_id+1, short_line['atom'],short_line['res_type'],' ',1,x, y, z, 0.00, 0.00])
+                    pdb_output_ind.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,x,y,z,0.00, 0.00))+'\n')
+                    if 'pdb_output_all' in locals():
+                        x, y, z = gen.trunc_coord([short_line['coord'][0], short_line['coord'][1],short_line['coord'][2]])
+                        pdb_all_coord.append([x, y, z])
+                        pdb_output_all_temp.append([at_id+1, short_line['atom'],short_line['res_type'],' ',1,x, y, z, 0.00, 0.00])
     if 'pdb_output_all' in locals():
         p_a_c=at_mod.check_atom_overlap(pdb_all_coord)
         for at_val, line in enumerate(pdb_output_all_temp):
