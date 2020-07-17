@@ -53,6 +53,8 @@ def read_initial_cg_pdb():
             if line.startswith('CRYST'): ### collects box vectors from pdb
                 box_vec=line
 #### adds final residue to cg_residues in the same manner as above
+    if 'line_sep' not in locals():
+        sys.exit('input coarsegrain structure seems to contain no beads')
     if 'SKIP' == line_sep['residue_name']:
         line_sep['residue_name']=line_sep_prev['residue_name']
         line_sep['atom_name']=line_sep_prev['atom_name']
