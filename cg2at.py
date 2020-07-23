@@ -71,12 +71,15 @@ if 'PROTEIN' in cg_residues:
     pool = mp.Pool(g_var.ncpus)
     m = mp.Manager()
     q = m.Queue()
+    gen.folder_copy_and_check(f_loc.forcefield_location+f_loc.forcefield, g_var.working_dir+'PROTEIN/'+f_loc.forcefield+'/.')
+    gen.file_copy_and_check(f_loc.forcefield_location+'/residuetypes.dat', 'residuetypes.dat')
     pool_process = pool.starmap_async(gro.pdb2gmx_minimise, [(chain, p_system, q) for chain in range(0, system['PROTEIN'])])
     while not pool_process.ready():
         gro.report_complete('pdb2gmx/minimisation', q.qsize(), system['PROTEIN'])
     print('{:<130}'.format(''), end='\r')
     print('pdb2gmx/minimisation completed on residue type: PROTEIN')     
     pool.close()
+    pool.join()
     #### read in minimised de novo protein chains and merges chains
     if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_merged.pdb'):
         merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb') ## merge protein chains
@@ -141,9 +144,9 @@ if not os.path.exists(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
             print('Check final output as alchembed cannot fix ringed lipid: ', ringed_lipids) ## warning that the script failed to fix bonds
     else:
         gen.file_copy_and_check(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb', g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
-## runs short NPT on de_novo system with disres on if available 
+## runs short NVT on de_novo system with disres on if available 
 if g_var.o in ['all', 'de_novo']:
-    gro.run_npt(g_var.merged_directory+'checked_ringed_lipid_de_novo') ## run npt on system 
+    gro.run_nvt(g_var.merged_directory+'checked_ringed_lipid_de_novo') ## run npt on system 
 else:
     gen.file_copy_and_check(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')
 

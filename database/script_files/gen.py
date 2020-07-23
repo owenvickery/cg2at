@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os, sys
+import filecmp
 import numpy as np
 import math
 from distutils.dir_util import copy_tree

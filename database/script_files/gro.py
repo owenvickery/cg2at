@@ -111,15 +111,12 @@ def pdb2gmx_minimise(chain, p_system, q):
 #### makes em.mdp for each chain
     checked={}
     os.chdir(g_var.working_dir+'/PROTEIN')
-    gen.folder_copy_and_check(f_loc.forcefield_location+f_loc.forcefield, g_var.working_dir+'PROTEIN/'+f_loc.forcefield+'/.')
-    gen.file_copy_and_check(f_loc.forcefield_location+'/residuetypes.dat', 'residuetypes.dat')
     make_min('PROTEIN')
     pdb2gmx_selections=ask_terminal(chain, p_system)
     if not os.path.exists('PROTEIN_de_novo_'+str(chain)+'_gmx.pdb'):
         pdb2gmx_chain(chain, 'de_novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[0])+'\n'+str(pdb2gmx_selections[1]))
     if not os.path.exists('PROTEIN_de_novo_'+str(chain)+'_gmx_checked.pdb'):
         at_mod.check_overlap_chain(chain, 'de_novo_')
-   
     if g_var.user_at_input and not os.path.exists('PROTEIN_aligned_'+str(chain)+'_gmx_checked.pdb'):
         pdb2gmx_selections = histidine_protonation(chain, 'de_novo_', pdb2gmx_selections)
         pdb2gmx_chain(chain, 'aligned_', pdb2gmx_selections)
@@ -492,7 +489,7 @@ def alchembed(system, protein_type):
                 alchembed.write('define = -DPOSRES\nintegrator = sd\nnsteps = 500\ndt = 0.001\ncontinuation = no\nconstraint_algorithm = lincs')
                 alchembed.write('\nconstraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1\nrcoulomb = 1\nrvdw = 1\ncoulombtype  = PME')
                 alchembed.write('\npme_order = 4\nfourierspacing = 0.16\ntc-grps = system\ntau_t = 0.1\nref_t = 310\ncutoff-scheme = Verlet')
-                alchembed.write('\npcoupl = Berendsen\npcoupltype = semiisotropic\n tau_p = 2.0\nref_p = 1.0 1.0\ncompressibility = 4.5e-5 4.5e-5\n')
+                alchembed.write('\npcoupl = no\n')
                 alchembed.write('\npbc = xyz\nDispCorr = no\ngen_vel = yes\ngen_temp = 310\ngen_seed = -1\nfree_energy = yes\ninit_lambda = 0.00')
                 alchembed.write('\ndelta_lambda = 1e-3\nsc-alpha = 0.1000\nsc-power = 1\nsc-r-power = 6\ncouple-moltype = protein_'+str(chain))
                 alchembed.write('\ncouple-lambda0 = none\ncouple-lambda1 = vdw\nrefcoord_scaling = all')
@@ -524,85 +521,57 @@ def alchembed(system, protein_type):
 #### copy final output to the FINAL folder
     gen.file_copy_and_check('ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
     
-
-def write_steered_mdp(loc, posres,pc_type, time, timestep):
+def write_steered_mdp(loc, posres, time, timestep):
     if not os.path.exists(loc):
         with open(loc, 'w') as steered_md:
             steered_md.write('define = '+posres+'\nintegrator = md\nnsteps = '+str(time)+'\ndt = '+str(timestep)+'\ncontinuation   = no\nconstraint_algorithm = lincs\n')
             steered_md.write('nstxtcout = 10\nnstenergy = 10\nconstraints = all-bonds\nns_type = grid\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
-            steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\n')
-            steered_md.write('pcoupl = '+pc_type+'\npcoupltype = semiisotropic\ntau_p = 2.0\nref_p = 1.0 1.0\ncompressibility = 4.5e-5 4.5e-5\n')
+            steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\n')
             steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = no\nrefcoord_scaling = all\ncutoff-scheme = Verlet\ndisre=simple\ndisre-weighting=equal\ndisre-fc=10000\ndisre-tau=0')   
 
 def steer_to_aligned(protein_type, fc, input_file ):
     print('Applying '+fc+' position restraints', end='\r')
     gen.mkdir_directory(g_var.merged_directory+'STEER')
-    equil_type = ['Parrinello-Rahman','Berendsen']
-    for equil_type_val, npt_type in enumerate([fc+'_posres-pr.mdp', fc+'_posres-b.mdp']):
-        os.chdir(g_var.merged_directory)
-        write_steered_mdp(g_var.merged_directory+npt_type, '-D'+fc.upper()+'POSRES -DNP', equil_type[equil_type_val] ,2000, 0.001)  
-        gromacs([g_var.gmx+' grompp '+
-                ' -po md_out-merged_cg2at_steer_'+fc+
-                ' -f '+npt_type+' '+
-                ' -p topol_final.top '+
-                ' -r merged_cg2at_'+protein_type+'.pdb '+
-                ' -c '+input_file+'.pdb '+
-                ' -o STEER/merged_cg2at_'+protein_type+'_steer_'+fc+'_'+equil_type[equil_type_val]+' '+
-                ' -maxwarn '+str(equil_type_val+2), 'STEER/merged_cg2at_'+protein_type+'_steer_'+fc+'_'+equil_type[equil_type_val]+'.tpr'])  
-        os.chdir('STEER')
-        complete, equil = gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_steer_'+fc+'_'+equil_type[equil_type_val]+
-                                     ' -c merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb -cpo merged_cg2at_'+protein_type+'_steer_'+fc+'.cpt'
-                                     ,'merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb'])
-        if not equil:
-            break
+    
+    os.chdir(g_var.merged_directory)
+    write_steered_mdp(g_var.merged_directory+fc+'_posres-nvt.mdp', '-D'+fc.upper()+'POSRES -DNP', 2000, 0.001)  
+    gromacs([g_var.gmx+' grompp '+
+            ' -po md_out-merged_cg2at_steer_'+fc+
+            ' -f '+fc+'_posres-nvt.mdp '+
+            ' -p topol_final.top '+
+            ' -r merged_cg2at_'+protein_type+'.pdb '+
+            ' -c '+input_file+'.pdb '+
+            ' -o STEER/merged_cg2at_'+protein_type+'_steer_'+fc+' '+
+            ' -maxwarn '+str(2), 'STEER/merged_cg2at_'+protein_type+'_steer_'+fc+'.tpr'])  
+    os.chdir('STEER')
+    complete, equil = gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_steer_'+fc+
+                                 ' -c merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb -cpo merged_cg2at_'+protein_type+'_steer_'+fc+'.cpt'
+                                 ,'merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb'])
+
     if equil:
         sys.exit('steer failed')
 
-
-def steer_to_de_novo(protein_type, input_file ):
-    os.chdir(g_var.merged_directory)
-    write_steered_mdp(g_var.merged_directory+'steered_md.mdp', '-DPOSRES_STEERED -DNP','Berendsen', 3000, 0.001)
-    gromacs([g_var.gmx+' grompp '+
-                '-f steered_md.mdp '+
-                '-p topol_final.top '+
-                '-c '+input_file+'.pdb '+
-                '-r '+protein_type+' '+
-                '-o STEER/merged_cg2at_steered '+
-                ' -maxwarn 2', 'STEER/merged_cg2at_steered.tpr'])  
-    os.chdir('STEER')
-    gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_steered'+
-                                     ' -c merged_cg2at_steered.pdb -cpo merged_cg2at_steered.cpt'
-                                     ,'merged_cg2at_steered.pdb'])  
-
-def run_npt(input_file):
-    print('Running NPT on de novo system')
-    os.chdir(g_var.merged_directory)        
-    gen.mkdir_directory(g_var.merged_directory+'NPT')
-    equil_type = [ 'Parrinello-Rahman','Berendsen']
-    for equil_type_val, npt_type in enumerate(['npt-pr.mdp', 'npt-b.mdp']):
-        os.chdir(g_var.merged_directory)   
-        if g_var.user_at_input:
-            write_steered_mdp(g_var.merged_directory+npt_type, '-DDISRES -DPOSRESCA', equil_type[equil_type_val] ,5000, 0.001) #
-        else:
-            write_steered_mdp(g_var.merged_directory+npt_type, '-DPOSRESCA', equil_type[equil_type_val] ,5000, 0.001)
-        gromacs([g_var.gmx+' grompp'+
-                ' -po md_out-merged_cg2at_npt'+
-                ' -f '+npt_type+
-                ' -p topol_final.top'+
-                ' -r '+input_file+'.pdb '+
-                ' -c '+input_file+'.pdb '+
-                ' -o NPT/merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+
-                ' -maxwarn '+str(equil_type_val+2), 'NPT/merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+'.tpr'])   
-        os.chdir(g_var.merged_directory+'NPT')
-        complete, equil = gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_de_novo_npt_'+equil_type[equil_type_val]+
-                ' -c merged_cg2at_de_novo_npt.pdb -cpo merged_cg2at_de_novo_npt.cpt'
-                , 'merged_cg2at_de_novo_npt.pdb'])  
-        if not equil:
-            break
-    if equil:
-        sys.exit('NPT run failed')
-    gen.file_copy_and_check('merged_cg2at_de_novo_npt.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb') 
-
+def run_nvt(input_file):
+    print('Running NVT on de novo system')
+    os.chdir(g_var.merged_directory)   
+    gen.mkdir_directory(g_var.merged_directory+'NVT')
+    if g_var.user_at_input:
+        write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DDISRES -DPOSRESCA', 5000, 0.001)
+    else:
+        write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DPOSRESCA', 5000, 0.001)
+    gromacs([g_var.gmx+' grompp'+
+            ' -po md_out-merged_cg2at_npt'+
+            ' -f nvt.mdp'+
+            ' -p topol_final.top'+
+            ' -r '+input_file+'.pdb '+
+            ' -c '+input_file+'.pdb '+
+            ' -o NVT/merged_cg2at_de_novo_nvt'+
+            ' -maxwarn '+str(2), 'NVT/merged_cg2at_de_novo_nvt.tpr'])   
+    os.chdir(g_var.merged_directory+'NVT')
+    gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_de_novo_nvt'+
+            ' -c merged_cg2at_de_novo_nvt.pdb -cpo merged_cg2at_de_novo_nvt.cpt'
+            , 'merged_cg2at_de_novo_nvt.pdb'])  
+    gen.file_copy_and_check('merged_cg2at_de_novo_nvt.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')    
 
 def create_aligned(system, cg_residues):
     print('\nCreating aligned system') 
