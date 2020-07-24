@@ -11,7 +11,7 @@ def read_initial_cg_pdb():
     cg_residues={}  ## dictionary of CG beads eg cg_residues[residue type(POPE)][resid(1)][bead name(BB)][residue_name(PO4)/coordinates(coord)]
     residue_list={} ## a dictionary of bead in each residue eg residue_list[bead name(BB)][residue_name(PO4)/coordinates(coord)]
     count=0  ### residue counter initialisation
-    with open(g_var.input_directory+'conversion_input.pdb', 'r') as pdb_input:
+    with open(g_var.input_directory+'CG_INPUT.pdb', 'r') as pdb_input:
         for line in pdb_input.readlines():
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)

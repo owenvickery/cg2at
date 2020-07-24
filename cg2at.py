@@ -52,7 +52,7 @@ if 'PROTEIN' in cg_residues:
     ## reads in user chain, runs a sequence alignment and finds existing disulphide bonds
     time_counter['p_d_n_t']=time.time()
     if g_var.user_at_input:
-        atomistic_protein_input_raw, chain_count = read_in.read_in_atomistic(g_var.input_directory+'AT_input.pdb', True)  ## reads in user structure
+        atomistic_protein_input_raw, chain_count = read_in.read_in_atomistic(g_var.input_directory+'AT_INPUT.pdb', True)  ## reads in user structure
         seq_user = at_mod_p.check_sequence(atomistic_protein_input_raw, chain_count)  ## gets user sequence
         atomistic_protein_input, group_chain = at_mod_p.align_chains(atomistic_protein_input_raw, seq_user, sequence) ## aligns chains 
         user_cys_bond = at_mod_p.find_disulphide_bonds_user_sup(atomistic_protein_input) ## finds user disulphide bonds
@@ -72,8 +72,9 @@ if 'PROTEIN' in cg_residues:
     m = mp.Manager()
     q = m.Queue()
     gen.folder_copy_and_check(f_loc.forcefield_location+f_loc.forcefield, g_var.working_dir+'PROTEIN/'+f_loc.forcefield+'/.')
-    gen.file_copy_and_check(f_loc.forcefield_location+'/residuetypes.dat', 'residuetypes.dat')
-    pool_process = pool.starmap_async(gro.pdb2gmx_minimise, [(chain, p_system, q) for chain in range(0, system['PROTEIN'])])
+    gen.file_copy_and_check(f_loc.forcefield_location+'/residuetypes.dat', g_var.working_dir+'PROTEIN/residuetypes.dat')
+    pdb2gmx_selections=gro.ask_terminal(p_system, system['PROTEIN'])
+    pool_process = pool.starmap_async(gro.pdb2gmx_minimise, [(chain, pdb2gmx_selections, q) for chain in range(0, system['PROTEIN'])])
     while not pool_process.ready():
         gro.report_complete('pdb2gmx/minimisation', q.qsize(), system['PROTEIN'])
     print('{:<130}'.format(''), end='\r')

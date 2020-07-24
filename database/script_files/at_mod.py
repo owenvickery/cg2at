@@ -204,9 +204,20 @@ def COM(mass, fragment):
             print('bead has no mass: \n')
             sys.exit(fragment)
     except:
-        print('missing the mass one of the atoms\n')
-        print(mass)
-        sys.exit(fragment)
+        print(fragment, mass)
+        if len(fragment) == 1:
+            for key in fragment:
+                if len(fragment[key]) == 1:
+                    # print(fragment[key][1]['coord'])
+                    return fragment[key][1]['coord']
+                else:
+                    print('missing the mass one of the atoms\n')
+                    print(mass)
+                    sys.exit('l'+fragment)
+        else:
+            print('missing the mass one of the atoms\n')
+            print(mass)
+            sys.exit('l'+fragment)
 
 def rigid_fit(group, frag_mass, resid, cg):
 #### rigid fits group to CG beads

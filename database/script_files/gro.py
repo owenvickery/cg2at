@@ -20,46 +20,20 @@ def collect_input(cg, at):
     gen.mkdir_directory(g_var.merged_directory)
 #### collates all input files in input directory
     gen.file_copy_and_check(cg, g_var.input_directory+cg.split('/')[-1])
+
     if at != None:
         if not os.path.exists(at):
-            sys.exit('cannot find AT input file: '+at)
+            sys.exit('cannot find atomistic input file: '+at)
         gen.file_copy_and_check(at, g_var.input_directory+at.split('/')[-1])
-    os.chdir(g_var.input_directory)
-    if cg.split('/')[-1].endswith('.tpr'):
-        input_sort(cg, 'conversion')
-    else:
-        gromacs([g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -c -o CG_input_temp.pdb', 'CG_input_temp.pdb'])
-        complete, convert = gromacs([g_var.gmx+' trjconv -f CG_input_temp.pdb -s '+cg.split('/')[-1]+' -pbc atom -center -o conversion_input.pdb '+
-                        '<< EOF\nProtein\nSystem\nEOF\n', 'conversion_input.pdb'])
-        if convert:
-            gromacs([g_var.gmx+' trjconv -f CG_input_temp.pdb -s '+cg.split('/')[-1]+' -pbc atom -o conversion_input.pdb '+
-                        '<< EOF\nSystem\nEOF\n', 'conversion_input.pdb'])
-    if not os.path.exists(g_var.input_directory+'conversion_input.pdb'):
-        sys.exit('\nFailed to process coarsegrain input file')
-#### converts input files into pdb files 
-    if at != None:
-        gromacs([g_var.gmx+' editconf -f '+at.split('/')[-1]+' -resnr 0 -o AT_input.pdb', 'AT_input.pdb'])
-        if not os.path.exists(g_var.input_directory+'AT_input.pdb'):
+        os.chdir(g_var.input_directory)
+        gromacs([g_var.gmx+' editconf -f '+at.split('/')[-1]+' -resnr 0 -o '+g_var.input_directory+'AT_INPUT.pdb', g_var.input_directory+'AT_INPUT.pdb'])
+        if not os.path.exists(g_var.input_directory+'AT_INPUT.pdb'):
             sys.exit('\nFailed to process atomistic input file')
         else:
-            g_var.user_at_input = True         
-
-#### fixes pbc complex pbc issue if supplied with a tpr
-def input_sort(loc, rep):
-    gromacs([g_var.gmx+' make_ndx -f '+loc.split('/')[-1]+' -o '+rep+'_input.ndx << EOF\nq\nEOF\n', rep+'_input.ndx'])
-    gromacs([g_var.gmx+' editconf -f '+loc.split('/')[-1]+' -o '+rep+'_input_temp.pdb', rep+'_input_temp.pdb'])
-    ndx_f = open(rep+'_input.ndx', "r")
-    ndx = ndx_f.read()
-    if 'Protein' in ndx:
-        gromacs([g_var.gmx+' trjconv -f '+rep+'_input_temp.pdb -s '+loc.split('/')[-1]+' -pbc whole -center -o '+rep+'_input_temp_pbc.pdb -n '+rep+'_input.ndx '+
-                        '<< EOF\nProtein\nSystem\nEOF\n', rep+'_input_temp_pbc.pdb'])
-    else:
-        gromacs([g_var.gmx+' trjconv -f '+rep+'_input_temp.pdb -s '+loc.split('/')[-1]+' -pbc whole -o '+rep+'_input_temp_pbc.pdb -n '+rep+'_input.ndx '+
-                        '<< EOF\nSystem\nEOF\n', rep+'_input_temp_pbc.pdb'])        
-    gromacs([g_var.gmx+' trjconv -f '+rep+'_input_temp_pbc.pdb -s '+loc.split('/')[-1]+' -pbc atom -o '+rep+'_input_temp_atom.pdb -n '+rep+'_input.ndx '+
-                    '<< EOF\nSystem\nEOF\n', rep+'_input_temp_atom.pdb'])
-    gromacs([g_var.gmx+' editconf -f '+rep+'_input_temp_atom.pdb -resnr 0 -o '+rep+'_input.pdb -n '+rep+'_input.ndx << EOF\nSystem\nEOF\n', rep+'_input.pdb'])
-
+            g_var.user_at_input = True
+    gromacs([g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -c -o '+g_var.input_directory+'CG_INPUT.pdb', g_var.input_directory+'CG_INPUT.pdb'])
+    if not os.path.exists(g_var.input_directory+'CG_INPUT.pdb'):
+        sys.exit('\nFailed to process coarsegrain input file')      
 #### gromacs parser
 def gromacs(gro):
     possible_errors = ['File input/output error:','Error in user input:', 'did not converge to Fmax ', 
@@ -107,22 +81,21 @@ def make_min(residue):#, fragments):
         with open('em_'+residue+'.mdp','w') as em:
             em.write('define = \n integrator = steep\nnsteps = 20000\nemtol = 750\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 
-def pdb2gmx_minimise(chain, p_system, q):
+def pdb2gmx_minimise(chain,pdb2gmx_selections, q):
 #### makes em.mdp for each chain
     checked={}
     os.chdir(g_var.working_dir+'/PROTEIN')
     make_min('PROTEIN')
-    pdb2gmx_selections=ask_terminal(chain, p_system)
+    
     if not os.path.exists('PROTEIN_de_novo_'+str(chain)+'_gmx.pdb'):
-        pdb2gmx_chain(chain, 'de_novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[0])+'\n'+str(pdb2gmx_selections[1]))
+        pdb2gmx_chain(chain, 'de_novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[chain][0])+'\n'+str(pdb2gmx_selections[chain][1]))
     if not os.path.exists('PROTEIN_de_novo_'+str(chain)+'_gmx_checked.pdb'):
         at_mod.check_overlap_chain(chain, 'de_novo_')
     if g_var.user_at_input and not os.path.exists('PROTEIN_aligned_'+str(chain)+'_gmx_checked.pdb'):
-        pdb2gmx_selections = histidine_protonation(chain, 'de_novo_', pdb2gmx_selections)
-        pdb2gmx_chain(chain, 'aligned_', pdb2gmx_selections)
+        pdb2gmx_selections[chain] = histidine_protonation(chain, 'de_novo_', pdb2gmx_selections[chain])
+        pdb2gmx_chain(chain, 'aligned_', pdb2gmx_selections[chain])
         at_mod.check_overlap_chain(chain, 'aligned_')
     minimise_protein_chain(chain, 'de_novo_')
-    os.chdir('..')
     q.put(chain)
     return chain
 
@@ -149,6 +122,8 @@ def histidine_protonation(chain, input, chain_ter):
 ### interactive terminal residue selection
 def ask_ter_question(default_ter, ter_name, ter_val, chain):
     print('\n please select species for '+ter_name[ter_val]+' residue in chain '+str(chain)+' :\n 0: charged\n 1: neutral')
+    # number = int(input('\nplease select terminal species: '))
+    # print(number)
     while True:
         try:
             number = int(input('\nplease select terminal species: '))
@@ -161,26 +136,29 @@ def ask_ter_question(default_ter, ter_name, ter_val, chain):
             print("Oops!  That was a invalid choice")
     return default_ter
 
-def ask_terminal(chain, p_system):
-#### default termini is neutral, however if ter flag is supplied you interactively choose termini 
-    default_ter=[0,0]
-    ter_name=['N terminal','C terminal']
-    for ter_val,  ter_residue in enumerate(p_system['terminal_residue'][chain]):
-        if not ter_residue:
-            if g_var.nt and ter_val==0:
-                default_ter[ter_val]=1
-            elif g_var.ct and ter_val==1:
-                default_ter[ter_val]=1
-            elif g_var.ter:
-                default_ter = ask_ter_question(default_ter, ter_name, ter_val, chain)          
-        else:
-            if g_var.ter:
-                print('\n The '+ter_name[ter_val]+' residue is non adjustable')
-            if ter_val == 0:
-                default_ter[ter_val]=3
+def ask_terminal(p_system, system):
+#### default termini is neutral, however if ter flag is supplied you interactively choose termini ]
+    system_ter = []
+    for chain in range(system):
+        default_ter=[0,0]
+        ter_name=['N terminal','C terminal']
+        for ter_val,  ter_residue in enumerate(p_system['terminal_residue'][chain]):
+            if not ter_residue:
+                if g_var.nt and ter_val==0:
+                    default_ter[ter_val]=1
+                elif g_var.ct and ter_val==1:
+                    default_ter[ter_val]=1
+                elif g_var.ter:
+                    default_ter = ask_ter_question(default_ter, ter_name, ter_val, chain)          
             else:
-                default_ter[ter_val]=4
-    return default_ter
+                if g_var.ter:
+                    print('\n The '+ter_name[ter_val]+' residue is non adjustable')
+                if ter_val == 0:
+                    default_ter[ter_val]=3
+                else:
+                    default_ter[ter_val]=4
+        system_ter.append(default_ter)
+    return system_ter
 
 def pdb2gmx_chain(chain, input, pdb2gmx_selections):
 #### pdb2gmx on on protein chain, creates the topologies    
@@ -232,8 +210,8 @@ def write_posres(chain):
                 if line_sep['atom_name'] == 'CA':
                     ca_posres.write(str(at_counter)+'     1  100  100  100\n')
                 if not gen.is_hydrogen(line_sep['atom_name']):
-                    low_posres.write(str(at_counter)+'     1  250  250  250\n')
-                    mid_posres.write(str(at_counter)+'     1  1000  1000  1000\n')
+                    low_posres.write(str(at_counter)+'     1  1000  1000  1000\n')
+                    mid_posres.write(str(at_counter)+'     1  5000  5000  5000\n')
                     high_posres.write(str(at_counter)+'     1  10000  10000  10000\n')
 
 def convert_topology(topol, protein_number):
@@ -555,7 +533,7 @@ def run_nvt(input_file):
     print('Running NVT on de novo system')
     os.chdir(g_var.merged_directory)   
     gen.mkdir_directory(g_var.merged_directory+'NVT')
-    if g_var.user_at_input:
+    if g_var.user_at_input and g_var.disre:
         write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DDISRES -DPOSRESCA', 5000, 0.001)
     else:
         write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DPOSRESCA', 5000, 0.001)

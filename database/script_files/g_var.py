@@ -28,8 +28,6 @@ group_N = parser.add_mutually_exclusive_group()
 parser.add_argument('-ter', help='interactively choose terminal species (Optional)', action='store_true')
 group_N.add_argument('-nt', help='choose neutral N terminal state', action='store_true')
 group_C.add_argument('-ct', help='choose neutral C terminal state', action='store_true')
-group_N.add_argument('-capN', help='cap N terminal with ACE (Optional) not currently working', action='store_true')
-group_C.add_argument('-capC', help='cap C terminal with NME (Optional) not currently working', action='store_true')
 parser.add_argument('-messy', help='do not remove part files CG2AT', action='store_true')
 parser.add_argument('-gromacs', help='gromacs executable name (Optional)',metavar='gmx_avx',type=str)
 parser.add_argument('-cys', help='cutoff for disulphide bonds, sometimes CYS are too far apart (Optional)',metavar='7',type=float, default=7)
@@ -40,6 +38,8 @@ parser.add_argument('-al', help='switches off alchembed (WARNING may cause issue
 parser.add_argument('-sf', help='scale factor for fragments, shrinks fragments before fitting to CG',metavar='0.9',type=float, default=0.9)
 parser.add_argument('-version', action='version', version='%(prog)s 2.0')
 parser.add_argument('-ncpus', help='maximum number of cores to use (default = all)', type=int)
+parser.add_argument('-disre', help='switches off the distance restraint matrix for the backbone', action='store_false')
+
 
 args = parser.parse_args()
 options = vars(args)
@@ -55,8 +55,8 @@ if not args.info and args.c == None:
 c, a, o = args.c, args.a, args.o
 # forcfield and fragment inputs
 w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
-cys, silent, swap, group, duplicate = args.cys, args.silent, args.swap, args.group, args.d
-ter, nt, ct, capN, capC = args.ter, args.nt, args.ct, args.capN, args.capC
+cys, silent, swap, group, duplicate, disre = args.cys, args.silent, args.swap, args.group, args.d, args.disre
+ter, nt, ct = args.ter, args.nt, args.ct
 alchembed = args.al
 #### virtual site information
 if args.ncpus != None:
