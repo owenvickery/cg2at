@@ -88,20 +88,23 @@ info = args.info
 variables_to_save={'input':sys.argv, '-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, 
                    '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, '-vs':args.vs,
                    '-box':box,'-loc':args.loc, '-group':args.group, '-o':args.o, '-al':args.al, 
-                   '-ncpus':ncpus, '-sf':args.sf, '-d':args.d}
+                   '-ncpus':ncpus, '-sf':args.sf, '-d':args.d, '-disre': args.disre}
 
 topology = {'BACKBONE':'BB', 'C_TERMINAL':'C', 'N_TERMINAL':'N', 'STEER':[], 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}}
 
 box_line="CRYST1 %8.3f %8.3f %8.3f %8.2f %8.2f %8.2f P 1           1\n"
+
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
+
 cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
+
 aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'E', 
        'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
        'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
 
 ### CG2AT folder locations
 
-timestamp       =  strftime("%Y-%m-%d_%H-%M-%S", gmtime())
+timestamp =  strftime("%Y-%m-%d_%H-%M-%S", gmtime())
 
 if args.loc != None:
     working_dir_name = args.loc
@@ -117,9 +120,17 @@ scripts_dir     = os.path.dirname(os.path.realpath(__file__))+'/' ### contains s
 database_dir    = str(Path(*Path(scripts_dir).parts[:-1]))+'/' ### contains database files
 box_vec = ''
 user_at_input = False
+np_system = {}
+p_system = {}
+system = {}
+backbone_coords = {}
+coord_atomistic = {}
+user_cys_bond = {}
+cg_residues = {}
+seq_cg = {}
+seq_at = {}
 
 ### finds gromacs installation
-
 
 if args.gromacs != None:
     gmx=distutils.spawn.find_executable(args.gromacs)

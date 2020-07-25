@@ -675,9 +675,9 @@ def mkdir_directory(directory):
     if not os.path.exists(directory):
         os.mkdir(directory)
 
-def clean(cg_residues):
+def clean():
 #### cleans temp files from residue_types
-    for residue_type in cg_residues:
+    for residue_type in g_var.cg_residues:
         if residue_type not in ['SOL', 'ION']:
             print('\nCleaning temp files from : '+residue_type)
             os.chdir(g_var.working_dir+residue_type)
@@ -701,14 +701,14 @@ def fix_time(t1, t2):
         hours = 0
     return int(np.round(hours)), int(np.round(minutes)), int(np.round(seconds,0))
 
-def print_script_timings(tc, system):
+def print_script_timings(tc):
     to_print=[]
     to_print.append('\n{:-<100}'.format(''))
     to_print.append('\n{0:^47}{1:^22}'.format('Job','Time'))
     to_print.append('{0:^47}{1:^22}'.format('---','----'))
     t1 = fix_time(tc['r_i_t'], tc['i_t'])
     to_print.append('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
-    if 'PROTEIN' in system:
+    if 'PROTEIN' in g_var.system:
         t4=fix_time(tc['f_p_t'],tc['r_i_t'])
         to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein systems: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
     t6=fix_time(tc['n_p_t'],tc['f_p_t'])
@@ -774,10 +774,10 @@ def database_information(forcefield_available, fragments_available):
                     pass
     sys.exit('\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
 
-def write_system_components(system):
+def write_system_components():
     print('\n{:-<100}'.format(''))
     print('{0:^100}'.format('Script has completed, time for a beer'))
     print('\n{0:^10}{1:^25}'.format('molecules','number'))
     print('{0:^10}{1:^25}'.format('---------','------'))
-    for section in system:
-        print('{0:^10}{1:^25}'.format(section, system[section]))
+    for section in g_var.system:
+        print('{0:^10}{1:^25}'.format(section, g_var.system[section]))

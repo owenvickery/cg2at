@@ -8,6 +8,9 @@ from scipy.spatial import cKDTree
 import re
 import gen, g_var, f_loc, at_mod_p, read_in
 
+
+### sanity checking
+
 def sanity_check_fragments(res, cg, sin_bead):
 #### fetches bead and atom info from fragment database
     location = fragment_location(res)
@@ -41,55 +44,57 @@ def sanity_check_beads(bead_list, cg, res):
             sys.exit('The bead '+bead+' is missing from the fragment library: '+res+'\n')   
     return bead_list
 
-def sanity_check(cg_residues):
+def sanity_check():
 #### runs through every bead and checks whether it exists
-    for res_type in cg_residues:
+    for res_type in g_var.cg_residues:
         if res_type == 'PROTEIN':
-            for residue in cg_residues['PROTEIN']:
-                for bead in cg_residues['PROTEIN'][residue]:
-                    resname = cg_residues['PROTEIN'][residue][bead]['residue_name']
+            for residue in g_var.cg_residues['PROTEIN']:
+                for bead in g_var.cg_residues['PROTEIN'][residue]:
+                    resname = g_var.cg_residues['PROTEIN'][residue][bead]['residue_name']
                     break
-                bead_list, atom_list = sanity_check_fragments(resname, cg_residues['PROTEIN'][residue], False)
-                bead_list_cg = sanity_check_beads(bead_list, cg_residues['PROTEIN'][residue], resname)  
+                bead_list, atom_list = sanity_check_fragments(resname, g_var.cg_residues['PROTEIN'][residue], False)
+                bead_list_cg = sanity_check_beads(bead_list, g_var.cg_residues['PROTEIN'][residue], resname)  
                 sanity_check_atoms(atom_list, resname)
                 if sorted(bead_list) != sorted(bead_list_cg):
                     if len(bead_list) == len(bead_list_cg):
-                        cg_residues = fix_atom_wrap(bead_list, bead_list_cg, cg_residues, 'PROTEIN', residue)
+                        fix_atom_wrap(bead_list, bead_list_cg, 'PROTEIN', residue)
                     else:
                         print('There is a issue with residue: '+resname+' '+str(residue+1))
                         sys.exit('number of atomistic fragments: '+str(len(bead_list))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
         elif res_type in ['SOL', 'ION']:
-            for residue in cg_residues[res_type]:
-                for bead in cg_residues[res_type][residue]:
+            for residue in g_var.cg_residues[res_type]:
+                for bead in g_var.cg_residues[res_type][residue]:
                     sin_bead=bead
                     break
-                bead_list, atom_list = sanity_check_fragments(res_type, cg_residues[res_type][residue], sin_bead)
-                sanity_check_beads(bead_list, cg_residues[res_type][residue], res_type) 
+                bead_list, atom_list = sanity_check_fragments(res_type, g_var.cg_residues[res_type][residue], sin_bead)
+                sanity_check_beads(bead_list, g_var.cg_residues[res_type][residue], res_type) 
                 sanity_check_atoms(atom_list, res_type)
         else:
-            bead_list, atom_list = sanity_check_fragments(res_type, cg_residues[res_type], False)
+            bead_list, atom_list = sanity_check_fragments(res_type, g_var.cg_residues[res_type], False)
             sanity_check_atoms(atom_list, res_type)
-            for residue in cg_residues[res_type]:
-                bead_list_cg = sanity_check_beads(bead_list, cg_residues[res_type][residue], res_type)
+            for residue in g_var.cg_residues[res_type]:
+                bead_list_cg = sanity_check_beads(bead_list, g_var.cg_residues[res_type][residue], res_type)
                 if sorted(bead_list) != sorted(bead_list_cg):
                     if len(bead_list) == len(bead_list_cg):
-                        cg_residues = fix_atom_wrap(bead_list, bead_list_cg, cg_residues, res_type, residue)
+                        fix_atom_wrap(bead_list, bead_list_cg, res_type, residue)
                     else:
                         print('There is a issue with residue: '+res_type+' '+str(residue+1))
                         sys.exit('number of atomistic fragments: '+str(len(bead_list))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
                         
-def fix_atom_wrap(bead_list_frag, bead_list_cg, cg_residues, section, resid):
+def fix_atom_wrap(bead_list_frag, bead_list_cg, section, resid):
     for bead in bead_list_cg:
         if bead not in bead_list_frag:
             new_bead = bead[1:]+bead[0]
             if new_bead in bead_list_frag and new_bead not in bead_list_cg:
-                cg_residues[section][resid][new_bead] = cg_residues[section][resid][bead]
-                del cg_residues[section][resid][bead]
+                g_var.cg_residues[section][resid][new_bead] = g_var.cg_residues[section][resid][bead]
+                del g_var.cg_residues[section][resid][bead]
             else:
                 print('There is a issue with residue: '+section+' '+str(resid+1))
                 print('cannot find: '+bead+' or '+new_bead+' in fragment list:')
                 sys.exit(bead_list_frag)
-    return cg_residues            
+
+#####  Sanity check end
+
 
 def rotate_atom(coord, center,xyz_rot_apply):
 #### rotates atom around center
@@ -208,16 +213,15 @@ def COM(mass, fragment):
         if len(fragment) == 1:
             for key in fragment:
                 if len(fragment[key]) == 1:
-                    # print(fragment[key][1]['coord'])
                     return fragment[key][1]['coord']
                 else:
                     print('missing the mass one of the atoms\n')
                     print(mass)
-                    sys.exit('l'+fragment)
+                    sys.exit(fragment)
         else:
             print('missing the mass one of the atoms\n')
             print(mass)
-            sys.exit('l'+fragment)
+            sys.exit(fragment)
 
 def rigid_fit(group, frag_mass, resid, cg):
 #### rigid fits group to CG beads
@@ -302,7 +306,7 @@ def align_to_vector(v1, v2):
 
 ################################################################### Merged system
 
-def merge_system_pdbs(system, protein, cg_residues):
+def merge_system_pdbs(protein):
     os.chdir(g_var.merged_directory)
 #### create merged pdb 
     if not os.path.exists(g_var.merged_directory+'merged_cg2at'+protein+'.pdb'):
@@ -310,7 +314,7 @@ def merge_system_pdbs(system, protein, cg_residues):
         merge=[]
         merge_coords=[]
     #### run through every residue type in cg_residues
-        for segment, residue_type in enumerate(cg_residues):
+        for segment, residue_type in enumerate(g_var.cg_residues):
         #### if file contains user input identifier 
             if residue_type != 'PROTEIN':
                 input_type=''
@@ -487,27 +491,3 @@ def check_ringed_lipids(protein):
 
     return ringed
 
-def write_RMSD(system, backbone_coords, cg_residues):
-    RMSD={}
-    de_novo_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb', False) ## reads in final pdb
-    if chain_count != system['PROTEIN']:
-        sys.exit('number of chains in atomistic protein input ('+str(chain_count)+') does not match CG representation ('+str(system['PROTEIN'])+')')
-    RMSD['de novo '] = at_mod_p.RMSD_measure(de_novo_atoms, system, backbone_coords) ## gets rmsd of de novo
-
-    if g_var.user_at_input and 'PROTEIN' in cg_residues:
-        # if g_var.o in ['all', 'steer']:
-        #     at_input_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_steered.pdb', False)
-        #     RMSD['at steered'] = at_mod_p.RMSD_measure(at_input_atoms, system,backbone_coords)   
-        if g_var.o in ['all', 'align']: 
-            at_input_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_aligned.pdb', False)
-            RMSD['at aligned'] = at_mod_p.RMSD_measure(at_input_atoms, system,backbone_coords)   
-    with open(g_var.final_dir+'structure_quality.dat', 'w') as qual_out:   
-        qual_out.write('\n{0:^10}{1:^25}{2:^10}\n'.format('output ','chain','RMSD ('+chr(197)+')'))
-        qual_out.write('{0:^10}{1:^25}{2:^10}\n'.format('-------','-----','---------'))
-        print('\n{0:^10}{1:^25}{2:^10}'.format('output ','chain','RMSD ('+chr(197)+')'))
-        print('{0:^10}{1:^25}{2:^10}'.format('-------','-----','---------'))
-        for rmsd in RMSD:
-            for chain in RMSD[rmsd]:
-                qual_out.write('{0:^10}{1:^25}{2:^10}\n'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
-                print('{0:^10}{1:^25}{2:^10}'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
-        print()

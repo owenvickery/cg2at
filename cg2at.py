@@ -21,7 +21,7 @@ gen.flags_used()
 print('\nThis script is now hopefully doing the following (Good luck):\n\nReading in your CG representation\n')
 
 #### reads in CG file and separates into residue types
-cg_residues, box_vec_initial = read_in.read_initial_cg_pdb()
+box_vec_initial = read_in.read_initial_cg_pdb()
 
 #### box size update 
 if g_var.box != None:
@@ -32,40 +32,34 @@ else:
     box_shift=np.array([0,0,0])
 
 #### pbc fix and residue truncation if required
-cg_residues = read_in.fix_pbc(cg_residues, box_vec_initial, g_var.box_vec, box_shift)
+read_in.fix_pbc(box_vec_initial, g_var.box_vec, box_shift)
 
 #### checks if fragment database is correct
-at_mod.sanity_check(cg_residues)
+at_mod.sanity_check()
 
 ### convert protein to atomistic representation
 time_counter['r_i_t']=time.time()
-system={}    
-if 'PROTEIN' in cg_residues:          
-    p_system, backbone_coords, coordinates_atomistic, sequence=at_mod_p.build_protein_atomistic_system(cg_residues['PROTEIN']) ## converts protein to atomistic
-    system['PROTEIN']=p_system['PROTEIN']
-
+if 'PROTEIN' in g_var.cg_residues:          
+    at_mod_p.build_protein_atomistic_system(g_var.cg_residues['PROTEIN']) ## converts protein to atomistic
     if not g_var.user_at_input and g_var.v >= 1:  ## prints protein sequences 
         print('coarse grain protein sequence:\n')
-        for index in sequence:
-            print('chain:', index,sequence[index], '\n') 
-
+        for index in g_var.seq_cg:
+            print('chain:', index,g_var.seq_cg[index], '\n') 
     ## reads in user chain, runs a sequence alignment and finds existing disulphide bonds
     time_counter['p_d_n_t']=time.time()
     if g_var.user_at_input:
         atomistic_protein_input_raw, chain_count = read_in.read_in_atomistic(g_var.input_directory+'AT_INPUT.pdb', True)  ## reads in user structure
-        seq_user = at_mod_p.check_sequence(atomistic_protein_input_raw, chain_count)  ## gets user sequence
-        atomistic_protein_input, group_chain = at_mod_p.align_chains(atomistic_protein_input_raw, seq_user, sequence) ## aligns chains 
-        user_cys_bond = at_mod_p.find_disulphide_bonds_user_sup(atomistic_protein_input) ## finds user disulphide bonds
-    else:
-        user_cys_bond = {}
+        at_mod_p.check_sequence(atomistic_protein_input_raw, chain_count)  ## gets user sequence
+        atomistic_protein_input, group_chain = at_mod_p.align_chains(atomistic_protein_input_raw) ## aligns chains 
+        at_mod_p.find_disulphide_bonds_user_sup(atomistic_protein_input) ## finds user disulphide bonds
 
-    user_cys_bond = at_mod_p.find_disulphide_bonds_de_novo(coordinates_atomistic, user_cys_bond) ## finds CG disulphide bonds 
-    coordinates_atomistic = at_mod_p.correct_disulphide_bonds(coordinates_atomistic, user_cys_bond) ## fixes sulphur distances
-    final_coordinates_atomistic = at_mod_p.finalise_novo_atomistic(coordinates_atomistic, cg_residues['PROTEIN']) ## fixes carbonyl oxygens, hydrogens and writes pdb 
+    at_mod_p.find_disulphide_bonds_de_novo() ## finds CG disulphide bonds 
+    g_var.coord_atomistic = at_mod_p.correct_disulphide_bonds(g_var.coord_atomistic) ## fixes sulphur distances
+    final_coordinates_atomistic = at_mod_p.finalise_novo_atomistic( g_var.cg_residues['PROTEIN']) ## fixes carbonyl oxygens, hydrogens and writes pdb 
 
     ## aligns user chains to the CG system
     if g_var.user_at_input:
-        at_mod_p.align_user_chains(atomistic_protein_input, backbone_coords, group_chain, final_coordinates_atomistic, user_cys_bond)
+        at_mod_p.align_user_chains(atomistic_protein_input, group_chain, final_coordinates_atomistic)
 
     ### runs pdb2gmx and minimises each protein chain
     pool = mp.Pool(g_var.ncpus)
@@ -73,55 +67,52 @@ if 'PROTEIN' in cg_residues:
     q = m.Queue()
     gen.folder_copy_and_check(f_loc.forcefield_location+f_loc.forcefield, g_var.working_dir+'PROTEIN/'+f_loc.forcefield+'/.')
     gen.file_copy_and_check(f_loc.forcefield_location+'/residuetypes.dat', g_var.working_dir+'PROTEIN/residuetypes.dat')
-    pdb2gmx_selections=gro.ask_terminal(p_system, system['PROTEIN'])
-    pool_process = pool.starmap_async(gro.pdb2gmx_minimise, [(chain, pdb2gmx_selections, q) for chain in range(0, system['PROTEIN'])])
+    pdb2gmx_selections=gro.ask_terminal()
+    pool_process = pool.starmap_async(gro.pdb2gmx_minimise, [(chain, pdb2gmx_selections, q) for chain in range(0, g_var.system['PROTEIN'])])
     while not pool_process.ready():
-        gro.report_complete('pdb2gmx/minimisation', q.qsize(), system['PROTEIN'])
+        gro.report_complete('pdb2gmx/minimisation', q.qsize(), g_var.system['PROTEIN'])
     print('{:<130}'.format(''), end='\r')
     print('pdb2gmx/minimisation completed on residue type: PROTEIN')     
     pool.close()
     pool.join()
     #### read in minimised de novo protein chains and merges chains
     if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_merged.pdb'):
-        merge_de_novo = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb') ## merge protein chains
-        at_mod_p.write_merged_pdb(merge_de_novo, '_de_novo') ## write merged chain to pdb 
+        at_mod_p.merge_protein_pdbs(g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb') ## merge protein chains
     #### read in aligned protein chains and merges chains
     if g_var.user_at_input:
         if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb'):
-            merge_at_user_no_steer = at_mod_p.read_in_protein_pdbs(system['PROTEIN'], g_var.working_dir+'PROTEIN/PROTEIN_aligned', '_gmx_checked.pdb') ## merge aligned chains
-            at_mod_p.write_merged_pdb(merge_at_user_no_steer, '_aligned') ## write merged chain to pdb 
+            at_mod_p.merge_protein_pdbs(g_var.working_dir+'PROTEIN/PROTEIN_aligned', '_gmx_checked.pdb') ## merge aligned chains
 
 time_counter['f_p_t']=time.time()
 
 #### converts non protein residues into atomistic (runs on all cores)
-if len([key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]) > 0:
+if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTEIN']]) > 0:
     print('\nConverting the following residues concurrently: ')
-    np_system={}
+
     pool = mp.Pool(g_var.ncpus)
-    pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(cg_residues, residue_type) 
-                                    for residue_type in [key for value, key in enumerate(cg_residues) if key not in ['PROTEIN']]]).get() ## fragment fitting done in parrallel  
+    pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(residue_type, 1) 
+                                    for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN']]]).get() ## fragment fitting done in parrallel  
     pool.close()
     for residue_type in pool_process:
-        np_system.update(residue_type) ## updates residue counts
+        g_var.np_system.update(residue_type) ## updates residue counts
     #### attempts to minimise all residues at once else falls back to doing individually
     print('\nThis may take some time....(probably time for a coffee)\n')
-    for residue_type in [key for value, key in enumerate(cg_residues) if key not in ['PROTEIN', 'ION']]:
+    for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'ION']]:
         if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
             print('Minimising merged: '+residue_type+'\n') 
-            error = gro.minimise_merged(residue_type, np_system, g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb')
+            error = gro.minimise_merged(residue_type, g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb')
             if error == True:
                 print('Failed to minimise as a group now processing individual residues: '+residue_type)
-                gro.non_protein_minimise_ind(np_system[residue_type], residue_type) ## runs grompp and minimises each residue
-                at_mod_np.merge_minimised(residue_type, np_system) ## merges minimised residues
+                gro.non_protein_minimise_ind(residue_type) ## runs grompp and minimises each residue
+                at_mod_np.merge_minimised(residue_type) ## merges minimised residues
                 print('Minimising merged: '+residue_type+'\n') 
-                gro.minimise_merged(residue_type, np_system, g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb') ## minimises merged residues
-    system.update(np_system)
-
+                gro.minimise_merged(residue_type, g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb') ## minimises merged residues
+    g_var.system.update(g_var.np_system)
 time_counter['n_p_t']=time.time()
 
 print('Merging all residue types to single file. (Or possibly tea)\n')
 
-gro.write_merged_topol(system, '_de_novo') ## make final topology in merged directory
+gro.write_merged_topol() ## make final topology in merged directory
 
 #### copies all itp files and topologies from wherever they are stored into the FINAL folder
 for file_name in os.listdir(g_var.merged_directory):
@@ -131,18 +122,15 @@ for file_name in os.listdir(g_var.merged_directory):
 gro.make_min('merged_cg2at')
 #### merges provided atomistic protein and residues types into a single pdb file into merged directory
 if not os.path.exists(g_var.merged_directory+'merged_cg2at_de_novo.pdb'):
-    at_mod.merge_system_pdbs(system, '_de_novo', cg_residues) ## merge all minimised residues into a complete system 
+    at_mod.merge_system_pdbs('_de_novo') ## merge all minimised residues into a complete system 
 ## minimise merged system
 if not os.path.exists(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb'):
-    gro.minimise_merged_pdbs(system, '_de_novo') ## minimise system pdb
+    gro.minimise_merged_pdbs( '_de_novo') ## minimise system pdb
 ## checks for threaded lipids, e.g. abnormal bonds lengths (not had a issue for a long time might delete) 
 if not os.path.exists(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb'):
     ringed_lipids = at_mod.check_ringed_lipids(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb') ## check for abnormal bond lengths 
-    if len(system) > 1 and g_var.alchembed and len(ringed_lipids) > 0 and 'PROTEIN' in cg_residues:
-        gro.alchembed(system['PROTEIN'], 'de_novo') ## runs alchembed on protein chains 
-        ringed_lipids = at_mod.check_ringed_lipids(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb') ## rechecks for abnormal bond lengths
-        if len(ringed_lipids) > 0:
-            print('Check final output as alchembed cannot fix ringed lipid: ', ringed_lipids) ## warning that the script failed to fix bonds
+    if g_var.alchembed and len(ringed_lipids) > 0 and 'PROTEIN' in g_var.cg_residues:
+        gro.alchembed() ## runs alchembed on protein chains 
     else:
         gen.file_copy_and_check(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb', g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
 ## runs short NVT on de_novo system with disres on if available 
@@ -153,26 +141,26 @@ else:
 
 ## creates aligned system 
 time_counter['m_t']=time.time()
-if g_var.user_at_input and 'PROTEIN' in cg_residues and g_var.o in ['all', 'align']:   
+if g_var.user_at_input and 'PROTEIN' in g_var.cg_residues and g_var.o in ['all', 'align']:   
     time_counter['a_s']=time.time()
-    gro.create_aligned(system, cg_residues)
+    gro.create_aligned()
     time_counter['a_e']=time.time()
 
 ## removes temp file from script, anything with temp in really
 if not g_var.messy:
-    gen.clean(cg_residues) 
+    gen.clean() 
 
 ## prints out system information
-gen.write_system_components(system)
+gen.write_system_components()
 
 ## prints out RMSD of converted proteins
-if 'PROTEIN' in cg_residues:
-    at_mod.write_RMSD(system, backbone_coords,cg_residues)
+if 'PROTEIN' in g_var.cg_residues:
+    at_mod_p.write_RMSD()
 
 time_counter['f_t']=time.time()
 
 ## prints out script timings for each section
-gen.print_script_timings(time_counter, system)
+gen.print_script_timings(time_counter)
 
 
 

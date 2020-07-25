@@ -8,7 +8,7 @@ import gen, g_var, f_loc
 
 def read_initial_cg_pdb():
 #### initialisation of dictionaries etc
-    cg_residues={}  ## dictionary of CG beads eg cg_residues[residue type(POPE)][resid(1)][bead name(BB)][residue_name(PO4)/coordinates(coord)]
+    # cg_residues={}  ## dictionary of CG beads eg cg_residues[residue type(POPE)][resid(1)][bead name(BB)][residue_name(PO4)/coordinates(coord)]
     residue_list={} ## a dictionary of bead in each residue eg residue_list[bead name(BB)][residue_name(PO4)/coordinates(coord)]
     count=0  ### residue counter initialisation
     with open(g_var.input_directory+'CG_INPUT.pdb', 'r') as pdb_input:
@@ -20,7 +20,7 @@ def read_initial_cg_pdb():
                 if 'SKIP' not in [line_sep['atom_name'].upper(), line_sep['residue_name'].upper()]:
                     # print(2, line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id'])
 #### set up resnames in dictionaries
-                    cg_residues = add_residue_to_dictionary(cg_residues, line_sep)
+                    add_residue_to_dictionary(line_sep)
     #### sets up previous resid id 
                     if 'residue_prev' not in locals(): 
                         residue_prev=line_sep.copy() 
@@ -31,18 +31,18 @@ def read_initial_cg_pdb():
     #### if resids are different then the residue list is added to cg_residues
                     else: 
                         if line_sep_prev['residue_name'] not in f_loc.p_residues:
-                            cg_residues[line_sep_prev['residue_name']][count]={} ### then create sub dictionary cg_residues[resname][count]
-                            cg_residues[line_sep_prev['residue_name']][count]=residue_list ### adds residue list to dictionary key cg_residues[resname][count]
+                            g_var.cg_residues[line_sep_prev['residue_name']][count]={} ### then create sub dictionary cg_residues[resname][count]
+                            g_var.cg_residues[line_sep_prev['residue_name']][count]=residue_list ### adds residue list to dictionary key cg_residues[resname][count]
                             if line_sep_prev['residue_name'] == 'ION':
-                                cg_residues['SOL'][count]={}
+                                g_var.cg_residues['SOL'][count]={}
                                 sol_res_list={}
 
                                 sol_res_list[f_loc.water]=residue_list[line_sep_prev['atom_name']].copy()
                                 sol_res_list[f_loc.water]['residue_name']='SOL'
-                                cg_residues['SOL'][count]=sol_res_list
+                                g_var.cg_residues['SOL'][count]=sol_res_list
                         else:
-                            cg_residues['PROTEIN'][count]={} ### then create sub dictionary cg_residues['PROTEIN'][count]
-                            cg_residues['PROTEIN'][count]=residue_list ### adds residue list to dictionary key cg_residues['PROTEIN'][count]
+                            g_var.cg_residues['PROTEIN'][count]={} ### then create sub dictionary cg_residues['PROTEIN'][count]
+                            g_var.cg_residues['PROTEIN'][count]=residue_list ### adds residue list to dictionary key cg_residues['PROTEIN'][count]
     #### updates dictionaries and counters
                         residue_list={}  ### resets residue list
                         count+=1 ### moves counter along to next residue
@@ -59,46 +59,45 @@ def read_initial_cg_pdb():
         line_sep['residue_name']=line_sep_prev['residue_name']
         line_sep['atom_name']=line_sep_prev['atom_name']
     if line_sep['residue_name'] in f_loc.p_residues: 
-        if count not in cg_residues['PROTEIN']:
-            cg_residues['PROTEIN'][count]={}
-        cg_residues['PROTEIN'][count]=residue_list
+        if count not in g_var.cg_residues['PROTEIN']:
+            g_var.cg_residues['PROTEIN'][count]={}
+        g_var.cg_residues['PROTEIN'][count]=residue_list
     else:
-        if count not in cg_residues[line_sep['residue_name']]:
-            cg_residues[line_sep['residue_name']][count]={}
-        cg_residues[line_sep['residue_name']][count]=residue_list
+        if count not in g_var.cg_residues[line_sep['residue_name']]:
+            g_var.cg_residues[line_sep['residue_name']][count]={}
+        g_var.cg_residues[line_sep['residue_name']][count]=residue_list
         if line_sep['residue_name'] == 'ION':
-            cg_residues['SOL'][count]={}
+            g_var.cg_residues['SOL'][count]={}
             sol_res_list={}
             sol_res_list[f_loc.water]=residue_list[line_sep['atom_name']].copy()
             sol_res_list[f_loc.water]['residue_name']='SOL'
-            cg_residues['SOL'][count]=sol_res_list
+            g_var.cg_residues['SOL'][count]=sol_res_list
 #### checks if box vectors exist
     if 'box_vec' not in locals():### stops script if it cannot find box vectors
         sys.exit('missing box vectors')
-    for key in cg_residues:
-        if len(cg_residues[key]) == 0:
+    for key in g_var.cg_residues:
+        if len(g_var.cg_residues[key]) == 0:
             sys.exit('there is a issue with the residue type: '+key)
-    return cg_residues, box_vec
+    return box_vec
 
-def add_residue_to_dictionary(cg_residues, line_sep):
+def add_residue_to_dictionary(line_sep):
     if line_sep['residue_name'] in f_loc.p_residues: ## if in protein database 
-        if 'PROTEIN' not in cg_residues:  ## if protein does not exist add to dict
-            cg_residues['PROTEIN']={}
+        if 'PROTEIN' not in g_var.cg_residues:  ## if protein does not exist add to dict
+            g_var.cg_residues['PROTEIN']={}
     elif line_sep['residue_name'] in g_var.cg_water_types: 
         line_sep['residue_name']='SOL'
-        if line_sep['residue_name'] not in cg_residues: ## if residue type does not exist add to dict
-            cg_residues[line_sep['residue_name']]={}
+        if line_sep['residue_name'] not in g_var.cg_residues: ## if residue type does not exist add to dict
+            g_var.cg_residues[line_sep['residue_name']]={}
         line_sep['atom_name']=f_loc.water
     elif line_sep['residue_name'] in f_loc.np_residues:
-        if line_sep['residue_name'] not in cg_residues:
-            cg_residues[line_sep['residue_name']]={}
-        if line_sep['residue_name'] == 'ION' and 'SOL' not in cg_residues:
-            cg_residues['SOL']={}
+        if line_sep['residue_name'] not in g_var.cg_residues:
+            g_var.cg_residues[line_sep['residue_name']]={}
+        if line_sep['residue_name'] == 'ION' and 'SOL' not in g_var.cg_residues:
+            g_var.cg_residues['SOL']={}
     elif line_sep['residue_name'] == 'SKIP':
         pass
     else:
         sys.exit('\n'+line_sep['residue_name']+' is not in the fragment database!') 
-    return cg_residues
 
 
 def check_new_box(coord,box, new_box):
@@ -137,34 +136,33 @@ def brute_mic(p1, p2, r_b_vec):
     else:
         return p2
 
-def fix_pbc(cg_residues, box_vec, new_box, box_shift):
+def fix_pbc(box_vec, new_box, box_shift):
 #### fixes box PBC
     r_b_vec, r_b_inv = real_box_vectors(box_vec)
     new_box = new_box.split()[1:4]
-    for residue_type in cg_residues:
+    for residue_type in g_var.cg_residues:
         cut_keys=[]
-        for res_val, residue in enumerate(cg_residues[residue_type]):
-            for bead_val, bead in enumerate(cg_residues[residue_type][residue]):
+        for res_val, residue in enumerate(g_var.cg_residues[residue_type]):
+            for bead_val, bead in enumerate(g_var.cg_residues[residue_type][residue]):
                 if g_var.box != None and residue_type not in ['PROTEIN']:
-                    cut = check_new_box(cg_residues[residue_type][residue][bead]['coord'],box_vec.split()[1:4], new_box)
+                    cut = check_new_box(g_var.cg_residues[residue_type][residue][bead]['coord'],box_vec.split()[1:4], new_box)
                     if cut:
                         cut_keys.append(residue)
                         break
-                if residue_type in ['PROTEIN'] and bead == f_loc.res_top[cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']:
-                    BB_bead = f_loc.res_top[cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']
+                if residue_type in ['PROTEIN'] and bead == f_loc.res_top[g_var.cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']:
+                    BB_bead = f_loc.res_top[g_var.cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']
                     if res_val != 0 :
-                        BB_cur = cg_residues[residue_type][residue][BB_bead]['coord']
-                        cg_residues[residue_type][residue][BB_bead]['coord'] = brute_mic(BB_pre, BB_cur, r_b_vec)
-                    BB_pre = cg_residues[residue_type][residue][BB_bead]['coord'].copy()
+                        BB_cur = g_var.cg_residues[residue_type][residue][BB_bead]['coord']
+                        g_var.cg_residues[residue_type][residue][BB_bead]['coord'] = brute_mic(BB_pre, BB_cur, r_b_vec)
+                    BB_pre = g_var.cg_residues[residue_type][residue][BB_bead]['coord'].copy()
                 if bead_val != 0 and residue_type not in ['ION','SOL']:
-                    cg_residues[residue_type][residue][bead]['coord'] = brute_mic(cg_residues[residue_type][residue][bead_prev]['coord'],
-                                                                                    cg_residues[residue_type][residue][bead]['coord'], r_b_vec)
+                    g_var.cg_residues[residue_type][residue][bead]['coord'] = brute_mic(g_var.cg_residues[residue_type][residue][bead_prev]['coord'],
+                                                                                    g_var.cg_residues[residue_type][residue][bead]['coord'], r_b_vec)
                 bead_prev=bead
                 if g_var.box != None:
-                    cg_residues[residue_type][residue][bead]['coord'] = cg_residues[residue_type][residue][bead]['coord']-box_shift
+                    g_var.cg_residues[residue_type][residue][bead]['coord'] = g_var.cg_residues[residue_type][residue][bead]['coord']-box_shift
         for key in cut_keys:
-            cg_residues[residue_type].pop(key)
-    return cg_residues
+            g_var.cg_residues[residue_type].pop(key)
 
 def swap(atom, residue, resid):
     if atom in f_loc.ions and residue != 'ION':

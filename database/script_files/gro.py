@@ -136,13 +136,13 @@ def ask_ter_question(default_ter, ter_name, ter_val, chain):
             print("Oops!  That was a invalid choice")
     return default_ter
 
-def ask_terminal(p_system, system):
+def ask_terminal():
 #### default termini is neutral, however if ter flag is supplied you interactively choose termini ]
     system_ter = []
-    for chain in range(system):
+    for chain in range(g_var.system['PROTEIN']):
         default_ter=[0,0]
         ter_name=['N terminal','C terminal']
-        for ter_val,  ter_residue in enumerate(p_system['terminal_residue'][chain]):
+        for ter_val,  ter_residue in enumerate(g_var.p_system[chain]):
             if not ter_residue:
                 if g_var.nt and ter_val==0:
                     default_ter[ter_val]=1
@@ -277,13 +277,13 @@ def write_topol(residue_type, residue_number, chain):
 
 #################################################################   Non protein
 
-def non_protein_minimise_ind(resid, residue_type):
+def non_protein_minimise_ind(residue_type):
 #### in the case of SOL all residues are minimised, whilst in all other cases individual residues are minimised separately
     if residue_type != 'SOL':
         individual = 1
-        resid=resid
+        resid=g_var.np_system[residue_type]
     else:
-        individual=resid
+        individual=g_var.np_system['SOL']
         resid=1
     os.chdir(g_var.working_dir+residue_type)
 ### write topology and minimisation parts (min folder and em.mdp)
@@ -324,11 +324,11 @@ def report_complete(func, size, resid):
     print('Running '+func+' on '+str(resid)+' residues: percentage complete: ',np.round((size/resid)*100,2),'%', end='\r')
     time.sleep(0.1)
 
-def minimise_merged(residue_type, np_system, input_file):
+def minimise_merged(residue_type, input_file):
 #### write topology for merged system    
     os.chdir(g_var.working_dir+residue_type)
     make_min(residue_type)
-    write_topol(residue_type, np_system[residue_type], '')
+    write_topol(residue_type, g_var.np_system[residue_type], '')
 #### grompp with merged system
     gromacs([g_var.gmx+' grompp '+
             '-po md_out-'+residue_type+' '+
@@ -389,18 +389,18 @@ def strip_atomtypes(itp_file):
             for line in itp_lines[mol:]: 
                 itp_output.write(line+'\n')
 
-def write_merged_topol(system, protein):
+def write_merged_topol():
     os.chdir(g_var.working_dir+'MERGED')
     # if not os.path.exists('topol_final.top'):
     with open('topol_final.top', 'w') as topol_write:
         topologies_to_include=[]
     #### writes topology headers (will probably need updating with other forcefields)
-        if 'SOL' in system:
+        if 'SOL' in g_var.system:
             gen.file_copy_and_check(f_loc.water_dir+f_loc.water+'.itp', f_loc.water+'.itp')
             topologies_to_include.append('#include \"'+f_loc.water+'.itp\"')
             topologies_to_include.append('\n#include \"'+g_var.final_dir+f_loc.forcefield+'/ions.itp\"\n\n')
     #### runs through residue types and copies to MERGED directory and simplifies the names
-        for residue_type in system:
+        for residue_type in g_var.system:
             if residue_type not in ['ION','SOL']:
             #### copies 1st itp file it comes across 
                 for directory in f_loc.np_directories:
@@ -412,9 +412,9 @@ def write_merged_topol(system, protein):
                         break
             #### copies across protein itp files and simplifies the names 
                 if residue_type == 'PROTEIN':
-                    for protein_unit in range(system[residue_type]): 
+                    for protein_unit in range(g_var.system[residue_type]): 
                         topologies_to_include.append('#include \"PROTEIN_'+str(protein_unit)+'.itp\"\n')
-                        gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_'+str(protein_unit)+'.itp', 'PROTEIN_'+str(protein_unit)+'.itp')
+                        gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(protein_unit)+'.itp', 'PROTEIN_'+str(protein_unit)+'.itp')
                         for posres_type in ['_steered_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_ca_posre.itp','_posre.itp']:
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+posres_type, 'PROTEIN_'+str(protein_unit)+posres_type)
                         gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'PROTEIN_disres.itp')  
@@ -428,17 +428,17 @@ def write_merged_topol(system, protein):
 
         topol_write.write('[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
     #### adds number of residues to the topology
-        for residue_type in system:
+        for residue_type in g_var.system:
             if residue_type not in  ['PROTEIN']:
-                topol_write.write(residue_type+'    '+str(system[residue_type])+'\n')   
+                topol_write.write(residue_type+'    '+str(g_var.system[residue_type])+'\n')   
         #### adds monomers separately
             if residue_type == 'PROTEIN':
-                for protein_unit in range(system[residue_type]):
+                for protein_unit in range(g_var.system[residue_type]):
                     topol_write.write('PROTEIN_'+str(protein_unit)+'    1\n')    
         topol_write.write('\n#ifdef DISRES\n#include \"PROTEIN_disres.itp\"\n#endif')
 
 
-def minimise_merged_pdbs(system, protein):
+def minimise_merged_pdbs(protein):
     print('\nMinimising merged atomistic files : '+protein[1:])
     os.chdir(g_var.working_dir+'MERGED')
 #### grompps final merged systems
@@ -455,11 +455,11 @@ def minimise_merged_pdbs(system, protein):
     gromacs([g_var.gmx+' mdrun -nt '+str(g_var.ncpus)+' -v -pin on -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb', 'merged_cg2at'+protein+'_minimised.pdb'])
 
 
-def alchembed(system, protein_type):
+def alchembed():
     os.chdir(g_var.working_dir+'MERGED')
     gen.mkdir_directory('ALCHEMBED')
 #### runs through each chain and run alchembed on each sequentially
-    for chain in range(system):
+    for chain in range(g_var.system['PROTEIN']):
         print('Running alchembed on chain: '+str(chain))
     #### creates a alchembed mdp for each chain 
         if not os.path.exists('alchembed_'+str(chain)+'.mdp'):
@@ -477,27 +477,29 @@ def alchembed(system, protein_type):
                     '-po md_out-merged_cg2at_alchembed_'+str(chain)+' '+
                     '-f alchembed_'+str(chain)+'.mdp '+
                     '-p topol_final.top '+
-                    '-r MIN/merged_cg2at_'+protein_type+'_minimised.pdb '+
-                    '-c MIN/merged_cg2at_'+protein_type+'_minimised.pdb '+
-                    '-o ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+' '+
-                    '-maxwarn 1', 'ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.tpr'])
+                    '-r MIN/merged_cg2at_de_novo_minimised.pdb '+
+                    '-c MIN/merged_cg2at_de_novo_minimised.pdb '+
+                    '-o ALCHEMBED/merged_cg2at_de_novo_supplied_alchembed_'+str(chain)+' '+
+                    '-maxwarn 1', 'ALCHEMBED/merged_cg2at_de_novo_supplied_alchembed_'+str(chain)+'.tpr'])
     #### if not 1st chain use the previous output of alchembed tfor the input of the next chain 
         else:
             gromacs([g_var.gmx+' grompp '+
                 '-po md_out-merged_cg2at_alchembed_'+str(chain)+' '+
                 '-f alchembed_'+str(chain)+'.mdp '+
                 '-p topol_final.top '+
-                '-r MIN/merged_cg2at_'+protein_type+'_minimised.pdb '+
-                '-c ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain-1)+'.pdb '+
-                '-o ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+' '+
-                '-maxwarn 1', 'ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.tpr'])          
+                '-r MIN/merged_cg2at_de_novo_minimised.pdb '+
+                '-c ALCHEMBED/merged_cg2at_de_novo_supplied_alchembed_'+str(chain-1)+'.pdb '+
+                '-o ALCHEMBED/merged_cg2at_de_novo_supplied_alchembed_'+str(chain)+' '+
+                '-maxwarn 1', 'ALCHEMBED/merged_cg2at_de_novo_supplied_alchembed_'+str(chain)+'.tpr'])          
         os.chdir('ALCHEMBED')
     #### run alchembed on the chain of interest
-        gromacs([g_var.gmx+' mdrun -nt '+str(g_var.ncpus)+' -v -pin on -deffnm merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+
-                ' -c merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', 'merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb'])
+        gromacs([g_var.gmx+' mdrun -nt '+str(g_var.ncpus)+' -v -pin on -deffnm merged_cg2at_de_novo_supplied_alchembed_'+str(chain)+
+                ' -c merged_cg2at_de_novo_supplied_alchembed_'+str(chain)+'.pdb', 'merged_cg2at_de_novo_supplied_alchembed_'+str(chain)+'.pdb'])
         os.chdir('..')
 #### copy final output to the FINAL folder
-    gen.file_copy_and_check('ALCHEMBED/merged_cg2at_'+protein_type+'_supplied_alchembed_'+str(chain)+'.pdb', g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
+    gen.file_copy_and_check('ALCHEMBED/merged_cg2at_de_novo_supplied_alchembed_'+str(chain)+'.pdb', g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
+    if len(at_mod.check_ringed_lipids(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')) > 0: ## rechecks for abnormal bond lengths
+        print('Check final output as alchembed cannot fix ringed lipid: ', ringed_lipids) ## warning that the script failed to fix bonds
     
 def write_steered_mdp(loc, posres, time, timestep):
     if not os.path.exists(loc):
@@ -551,9 +553,9 @@ def run_nvt(input_file):
             , 'merged_cg2at_de_novo_nvt.pdb'])  
     gen.file_copy_and_check('merged_cg2at_de_novo_nvt.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')    
 
-def create_aligned(system, cg_residues):
+def create_aligned():
     print('\nCreating aligned system') 
-    at_mod.merge_system_pdbs(system, '_aligned', cg_residues) ## create restraint positions for aligned system
+    at_mod.merge_system_pdbs('_aligned') ## create restraint positions for aligned system
     if os.path.exists(g_var.final_dir+'final_cg2at_de_novo.pdb'):
         steer_to_aligned('aligned', 'low', g_var.final_dir+'final_cg2at_de_novo') ## run steered md with low restraints
     else:

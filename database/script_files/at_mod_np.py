@@ -7,7 +7,7 @@ from scipy.spatial import cKDTree
 import gen, g_var, f_loc, at_mod
 
 
-def build_atomistic_system(cg_residues,residue_type):
+def build_atomistic_system(residue_type, a):
     system={}
     atomistic_fragments={}
 #### for each residue type covert to atomistic except protein
@@ -19,15 +19,14 @@ def build_atomistic_system(cg_residues,residue_type):
 #### creates folder for residue type
     gen.mkdir_directory(g_var.working_dir+residue_type)
     if residue_type in ['ION','SOL']:
-        atomistic_fragments[residue_type] = atomistic_non_protein_solvent(residue_type, cg_residues[residue_type])
+        atomistic_fragments[residue_type] = atomistic_non_protein_solvent(residue_type, g_var.cg_residues[residue_type])
         if residue_type in ['ION']:
-            system, atomistic_fragments = solvent_ion( system, atomistic_fragments, residue_type)
+            system= solvent_ion( system, atomistic_fragments, residue_type)
         else:
-            system, atomistic_fragments = solvent_sol( system, atomistic_fragments, residue_type)   
+            system = solvent_sol( system, atomistic_fragments, residue_type)   
     else:
-        atomistic_fragments[residue_type] = atomistic_non_protein_non_solvent(residue_type, cg_residues[residue_type])
-        system, atomistic_fragments = non_solvent(system, atomistic_fragments, residue_type)
-
+        atomistic_fragments[residue_type] = atomistic_non_protein_non_solvent(residue_type, g_var.cg_residues[residue_type])
+        system = non_solvent(system, atomistic_fragments, residue_type)
     return system 
 
 def non_solvent(system, atomistic_fragments, residue_type):
@@ -65,7 +64,7 @@ def non_solvent(system, atomistic_fragments, residue_type):
             pdb_output_all.write(g_var.pdbline%((line[0],line[0],line[0],' ',1,p_a_c[at_val][0], p_a_c[at_val][1], p_a_c[at_val][2],0.00, 0.00))+'\n')
 
     system[residue_type]=int(resid)+1
-    return system, atomistic_fragments
+    return system
 
 def solvent_sol(system, atomistic_fragments, residue_type):
     #### creates solvent directory and SOL key in system dictionay otherwise it appends solvent molecules to sol pdb
@@ -93,7 +92,7 @@ def solvent_sol(system, atomistic_fragments, residue_type):
                 x, y, z = gen.trunc_coord([short_line['coord'][0],short_line['coord'][1],short_line['coord'][2]])
                 pdb_sol.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,x, y, z,0.00, 0.00))+'\n')
 
-    return system, atomistic_fragments
+    return system
 
 def solvent_ion(system, atomistic_fragments, residue_type):
     #### creates ion pdb with header
@@ -113,7 +112,7 @@ def solvent_ion(system, atomistic_fragments, residue_type):
                     system[atomistic_fragments[residue_type][resid][at_id+1]['res_type']]=1
                 else:
                     system[atomistic_fragments[residue_type][resid][at_id+1]['res_type']]+=1
-    return system, atomistic_fragments
+    return system
 
 def atomistic_non_protein_non_solvent(cg_residue_type,cg_residues):
     atomistic_fragments={}  #### residue dictionary
@@ -169,7 +168,7 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
 
 
 
-def merge_minimised(residue_type, np_system):
+def merge_minimised(residue_type):
     os.chdir(g_var.working_dir+residue_type+'/MIN')
     print('Merging individual residues : '+residue_type)
 #### create merged pdb in min folder
@@ -178,7 +177,7 @@ def merge_minimised(residue_type, np_system):
         if residue_type =='SOL':
             resid_range=1
         else:
-            resid_range=np_system[residue_type]
+            resid_range=g_var.np_system[residue_type]
         merge,merge_coords=[],[]
     #### run through every resid 
         for resid in range(resid_range):
