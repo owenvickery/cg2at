@@ -315,7 +315,7 @@ def check_sequence(atomistic_protein_input, chain_count):
                 g_var.seq_at = at_mod.add_to_sequence(g_var.seq_at, atomistic_protein_input[chain][resid][atom]['res_type'], chain)
                 break
 
-def align_chains(atomistic_protein_input, seq_user, sequence):
+def align_chains(atomistic_protein_input):
     if g_var.v >= 2:
         print('coarse grain protein sequence:\n')
         for index in g_var.seq_cg:
@@ -617,7 +617,7 @@ def merge_protein_pdbs(file, end):
         x, y, z = gen.trunc_coord(merged_coords[line_val])
         merged.append(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
             x,y,z,1,0))+'\n')
-    if 'aligned' in file.strip('/')[-1]:
+    if 'aligned' in file.split('/')[-1]:
         write_merged_pdb(merged, '_aligned')
     else:
         write_merged_pdb(merged,'_de_novo')
