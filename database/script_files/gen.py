@@ -35,15 +35,6 @@ def path_leaf(path):
     else:
         return path.replace(tail, ''), tail
 
-    # # path2 = tail or ntpath.basename(head)
-    # # print('hello', tail,2, ntpath.basename(head))
-    # # path3 = path.replace(path2, '')
-    # # print(path3)
-    # # print(path2)
-    # # print(path)
-    # print('end')
-    # return tail or ntpath.basename(head)
-
 ### finds gromacs installation
 def find_gromacs():
     if g_var.gmx != None:
@@ -576,31 +567,34 @@ def fetch_frag_number(fragments_available):
     else:
         sys.exit('no fragment databases selected')
 
-def fetch_residues(fragments_available_prov, fragment_number):
+def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
 #### list of directories and water types  [[root, folders...],[root, folders...]]
     np_directories, p_directories,mod_directories=[], [],[]
 #### run through selected fragments
     for database in fragment_number:
         if not g_var.info:
-            print('\nYou have selected the fragment library: '+fragments_available_prov[database])
+            if g_var.database_dir in frag_dir[database]:
+                print('\nYou have selected the fragment library: '+fragments_available_prov[database])
+            else:
+                print('\nYou have chosen to use your own fragment library: '+fragments_available_prov[database]+' in '+frag_dir[database])
     #### separate selection between provided and user
-        location = g_var.database_dir+'fragments/'+ fragments_available_prov[database]
+        location = frag_dir[database]+ fragments_available_prov[database]
     #### runs through protein and non protein
         for directory_type in ['/non_protein/', '/protein/']:
     #### adds non protein residues locations to np_directories
             if os.path.exists(location+directory_type):
                 for root, dirs, files in os.walk(location+directory_type):
                     if directory_type =='/non_protein/':
-                        np_directories = add_to_list(root, dirs, np_directories)
+                        np_directories = add_to_list(g_var.start_dir+root, dirs, np_directories)
         #### adds protein residues locations to p_directories
                     else:
-                        p_directories = add_to_list(root, dirs, p_directories)
+                        p_directories = add_to_list(g_var.start_dir+root, dirs, p_directories)
                     #### adds modified residues to mod directories and removes MOD from p_directories
                         if os.path.exists(location+directory_type+'MOD/'):
                             p_directories[-1].remove('MOD')
                             for root, dirs, files in os.walk(location+directory_type+'MOD/'):
-                                p_directories = add_to_list(root, dirs, p_directories)
-                                mod_directories = add_to_list(root, dirs, mod_directories)
+                                p_directories = add_to_list(g_var.start_dir+root, dirs, p_directories)
+                                mod_directories = add_to_list(g_var.start_dir+root, dirs, mod_directories)
                                 break
                     break
     return p_directories, mod_directories, np_directories
@@ -610,13 +604,13 @@ def sort_directories(p_directories, mod_directories, np_directories):
 #### sorts directories alphabetically and creates residue database
     p_residues, np_residues, mod_residues = [],[],[]
     for directory in range(len(mod_directories)):
-        mod_directories[directory].sort()
+        mod_directories[directory][1:].sort()
         mod_residues+=mod_directories[directory][1:]
     for directory in range(len(p_directories)):
-        p_directories[directory].sort()
+        p_directories[directory][1:].sort()
         p_residues+=p_directories[directory][1:]
     for directory in range(len(np_directories)):
-        np_directories[directory].sort()
+        np_directories[directory][1:].sort()
         np_residues+=np_directories[directory][1:]
 #### if verbose prints all fragments found
     if g_var.v >= 2:
@@ -657,8 +651,7 @@ def check_water_molecules(water_input, np_directories):
             with open(directory[0]+'SOL/SOL.pdb', 'r') as sol_input:
                 for line_nr, line in enumerate(sol_input.readlines()):
                     if line.startswith('['):
-                        frag_header = strip_header(line)
-                        water.append(frag_header)
+                        water.append(strip_header(line))
     if water_input in water:
         print('\nYou have selected the water model: '+water_input)
         return directory[0]+'SOL/', water_input

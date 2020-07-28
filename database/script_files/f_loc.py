@@ -35,14 +35,23 @@ else:
         g_var.opt['ff'] = forcefield_available[forcefield_number]
 
 ##### fragment selection
-fragment_number = gen.fetch_frag_number(fragments_available)
-if g_var.fg == None:
-    g_var.opt['fg'] = ''
-    for database in fragment_number:
-        g_var.opt['fg'] += fragments_available[database]+' '
-print(fragments_available)
+frag_location, fragment_number, fragments_available = [],[],[]
+if g_var.fg != None:
+    for frag_val, frag_path in enumerate(g_var.fg):
+        if os.path.exists(frag_path):
+            frag_loc, fragments = gen.path_leaf(frag_path)
+            frag_location.append(frag_loc)
+            fragment_number.append(frag_val)
+            fragments_available.append(fragments)
+if len(fragment_number) == 0:
+    fragment_number = gen.fetch_frag_number(fragments_available)
+    frag_location = [g_var.database_dir+'fragments/']*len(fragments_available)
+    if g_var.fg == None:
+        g_var.opt['fg'] = ''
+        for database in fragment_number:
+            g_var.opt['fg'] += fragments_available[database]+' '
 
-p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted = gen.fetch_residues(fragments_available, fragment_number)
+p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted = gen.fetch_residues(frag_location, fragments_available, fragment_number)
 
 np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories = gen.sort_directories(p_directories_unsorted, 
 																						mod_directories_unsorted, np_directories_unsorted)
