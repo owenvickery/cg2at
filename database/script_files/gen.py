@@ -585,16 +585,17 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
             if os.path.exists(location+directory_type):
                 for root, dirs, files in os.walk(location+directory_type):
                     if directory_type =='/non_protein/':
-                        np_directories = add_to_list(g_var.start_dir+root, dirs, np_directories)
+                        print(root, dirs, np_directories)
+                        np_directories = add_to_list(root, dirs, np_directories)
         #### adds protein residues locations to p_directories
                     else:
-                        p_directories = add_to_list(g_var.start_dir+root, dirs, p_directories)
+                        p_directories = add_to_list(root, dirs, p_directories)
                     #### adds modified residues to mod directories and removes MOD from p_directories
                         if os.path.exists(location+directory_type+'MOD/'):
                             p_directories[-1].remove('MOD')
                             for root, dirs, files in os.walk(location+directory_type+'MOD/'):
-                                p_directories = add_to_list(g_var.start_dir+root, dirs, p_directories)
-                                mod_directories = add_to_list(g_var.start_dir+root, dirs, mod_directories)
+                                p_directories = add_to_list(root, dirs, p_directories)
+                                mod_directories = add_to_list(root, dirs, mod_directories)
                                 break
                     break
     return p_directories, mod_directories, np_directories
