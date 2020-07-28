@@ -10,9 +10,9 @@ import multiprocessing as mp
 import gen, g_var, f_loc, at_mod, read_in
 import math
 
-def build_protein_atomistic_system(cg_residues):
 
-    
+
+def build_protein_atomistic_system(cg_residues):   
 #### initisation of counters
     chain_count=0
     g_var.backbone_coords[chain_count]=[]
@@ -39,7 +39,7 @@ def build_protein_atomistic_system(cg_residues):
             if BB_bead in group_fit:
                 BB_connect = []
                 at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit[BB_bead], residue_number, BB_bead)
-                g_var.seq_cg = at_mod.add_to_sequence(g_var.seq_cg, resname, chain_count)
+                g_var.seq_cg = add_to_sequence(g_var.seq_cg, resname, chain_count)
                 g_var.backbone_coords[chain_count].append(np.append(cg_residues[residue_number][BB_bead]['coord'], 1))     
             if len(at_connect) == len(cg_connect) and len(at_connect) != 0:
                 xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
@@ -226,7 +226,11 @@ def shrink_coordinates(c1,c2):
             return new_c1, new_c2
     return c1, c2
 
-def finalise_novo_atomistic(cg_residues):
+#### disulphide checker end
+
+### writes out final de_novo atomistic coordinates
+
+def finalise_novo_atomistic():
     final_at_residues={}
     final_at = {}
     for chain in g_var.coord_atomistic: 
@@ -241,9 +245,9 @@ def finalise_novo_atomistic(cg_residues):
             if g_var.coord_atomistic[chain][residue_id][1]['res_type'] in f_loc.mod_residues:
                 g_var.coord_atomistic[chain][residue_id] = at_mod.check_hydrogens(g_var.coord_atomistic[chain][residue_id])
             if res_index <= len(g_var.coord_atomistic[chain])-3:
-                g_var.coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, cg_residues, g_var.coord_atomistic[chain][residue_id], False)
+                g_var.coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, g_var.cg_residues['PROTEIN'], g_var.coord_atomistic[chain][residue_id], False)
             elif res_index < len(g_var.coord_atomistic[chain]) and 'cross_vector' in locals():
-                g_var.coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, cg_residues, g_var.coord_atomistic[chain][residue_id], cross_vector)
+                g_var.coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, g_var.cg_residues['PROTEIN'], g_var.coord_atomistic[chain][residue_id], cross_vector)
             for at_val, atom in enumerate(g_var.coord_atomistic[chain][residue_id]):
                 g_var.coord_atomistic[chain][residue_id][at_val+1]['resid'] = res_index
                 coords.append(g_var.coord_atomistic[chain][residue_id][at_val+1]['coord'])
@@ -305,17 +309,24 @@ def fix_carbonyl(residue_id, cg, at, cross_vector):
                     at[m]['coord'] = at[m]['coord'] + cross_vector_chiral*1
     return at, cross_vector
 
-  
+### align sequences of user AT structure and CG input
 
-def check_sequence(atomistic_protein_input, chain_count):
-    for chain in range(len(atomistic_protein_input)):
+def add_to_sequence(sequence, residue, chain_count):
+    if residue  not in f_loc.mod_residues:
+        sequence[chain_count]+=g_var.aas[residue]
+    else:
+        sequence[chain_count]+='X'    
+    return sequence
+
+def check_sequence():
+    for chain in range(len(g_var.atomistic_protein_input_raw)):
         g_var.seq_at[chain]=[]
-        for resid in atomistic_protein_input[chain]:
-            for atom in atomistic_protein_input[chain][resid]:
-                g_var.seq_at = at_mod.add_to_sequence(g_var.seq_at, atomistic_protein_input[chain][resid][atom]['res_type'], chain)
+        for resid in g_var.atomistic_protein_input_raw[chain]:
+            for atom in g_var.atomistic_protein_input_raw[chain][resid]:
+                g_var.seq_at = add_to_sequence(g_var.seq_at, g_var.atomistic_protein_input_raw[chain][resid][atom]['res_type'], chain)
                 break
 
-def align_chains(atomistic_protein_input):
+def align_chain_sequence():
     if g_var.v >= 2:
         print('coarse grain protein sequence:\n')
         for index in g_var.seq_cg:
@@ -326,7 +337,7 @@ def align_chains(atomistic_protein_input):
     at={}
     sequence_temp = g_var.seq_cg.copy()
     test_chain={}
-    for chain_at in range(len(atomistic_protein_input)):
+    for chain_at in range(len(g_var.atomistic_protein_input_raw)):
         skip_sequence=False
         chain_cg=0
         s = difflib.SequenceMatcher(None, g_var.seq_at[chain_at], g_var.seq_cg[chain_cg], autojunk=False)
@@ -345,8 +356,8 @@ def align_chains(atomistic_protein_input):
             if chain_cg not in at:
                 at[chain_cg]={}
             if seq_info[0][2] == len(g_var.seq_at[chain_at]):
-                for resid,  residue in enumerate(atomistic_protein_input[chain_at]):
-                    temp[resid + seq_info[0][1]] = atomistic_protein_input[chain_at][residue]
+                for resid,  residue in enumerate(g_var.atomistic_protein_input_raw[chain_at]):
+                    temp[resid + seq_info[0][1]] = g_var.atomistic_protein_input_raw[chain_at][residue]
                 at[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
             g_var.seq_cg[chain_cg] = mask_sequence(g_var.seq_cg[chain_cg], seq_info[0][1], seq_info[0][1]+seq_info[0][2])
             test_chain[chain_at]=chain_cg
@@ -356,15 +367,29 @@ def align_chains(atomistic_protein_input):
     else: 
         g_var.user_at_input = False
     if f_loc.group_chains == 'chain':
-        return at, test_chain
+        return at , test_chain
     else:
-        return at, f_loc.group_chains 
+        return at , f_loc.group_chains 
 
 def mask_sequence(sequence, st, end):
     for index, residue in enumerate(sequence):
         if st <= index < end:
             sequence[index]='-'
     return sequence
+
+#####   aligning user protein chains
+
+def align_user_chains(atomistic_protein_input, group_chain, final_coordinates_atomistic):
+    atomistic_protein_centered, cg_com = center_atomistic(atomistic_protein_input, group_chain) ## centers each chain by center of mass
+    at_com_group, cg_com_group = rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, cg_com, group_chain) 
+    atomistic_protein_rotated = apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, 
+                                                                at_com_group,cg_com_group,cg_com, group_chain) ## apply rotation matrix to atoms and build in missing residues
+    final_user_supplied_coord = correct_disulphide_bonds(atomistic_protein_rotated) ## fixes sulphur distances in user structure
+
+    pool = mp.Pool(g_var.ncpus)
+    pool_process = pool.starmap_async(write_user_chains_to_pdb, [(final_user_supplied_coord[chain], chain) ## write structure to pdb
+                                        for chain in final_user_supplied_coord]).get()
+    pool.close()
 
 def center_atomistic(atomistic_protein_input, group_chain):
     cg_com={}
@@ -519,7 +544,6 @@ def return_all_rotations_final(at_com_group,cg_com_group,cg_com):
 def return_indivdual_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle):
     if chain not in at_com_group:
         at_com_group[chain]=[]
-## finds optimal rotation of each monomer  
     if len(at_centers) == len(np.array(g_var.backbone_coords[chain])[sls:sle,:3]):
         at_com_group[chain].append(at_mod.kabsch_rotate(np.array(at_centers)-cg_com[chain][part_val], 
                              np.array(g_var.backbone_coords[chain])[sls:sle,:3]-cg_com[chain][part_val]))
@@ -676,31 +700,21 @@ def write_merged_pdb(merge, protein):
             pdb_output.write(line)
         pdb_output.close()
 
-def align_user_chains(atomistic_protein_input, group_chain, final_coordinates_atomistic):
-    atomistic_protein_centered, cg_com = center_atomistic(atomistic_protein_input, group_chain) ## centers each chain by center of mass
-    at_com_group, cg_com_group = rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomistic, cg_com, group_chain) 
-    atomistic_protein_rotated = apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, 
-                                                                at_com_group,cg_com_group,cg_com, group_chain) ## apply rotation matrix to atoms and build in missing residues
-    final_user_supplied_coord = correct_disulphide_bonds(atomistic_protein_rotated) ## fixes sulphur distances in user structure
 
-    pool = mp.Pool(g_var.ncpus)
-    pool_process = pool.starmap_async(write_user_chains_to_pdb, [(final_user_supplied_coord[chain], chain) ## write structure to pdb
-                                        for chain in final_user_supplied_coord]).get()
-    pool.close()
 
 
 ########################################################### RMSD
 
 def write_RMSD():
     RMSD={}
-    de_novo_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb', False) ## reads in final pdb
+    de_novo_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb') ## reads in final pdb
     if chain_count != g_var.system['PROTEIN']:
         sys.exit('number of chains in atomistic protein input ('+str(chain_count)+') does not match CG representation ('+str(g_var.system['PROTEIN'])+')')
     RMSD['de novo '] = RMSD_measure(de_novo_atoms) ## gets rmsd of de novo
 
     if g_var.user_at_input and 'PROTEIN' in g_var.cg_residues: 
         if g_var.o in ['all', 'align']: 
-            at_input_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_aligned.pdb', False)
+            at_input_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_aligned.pdb')
             RMSD['at aligned'] = RMSD_measure(at_input_atoms)   
     with open(g_var.final_dir+'structure_quality.dat', 'w') as qual_out:   
         qual_out.write('\n{0:^10}{1:^25}{2:^10}\n'.format('output ','chain','RMSD ('+chr(197)+')'))

@@ -5,13 +5,65 @@ import filecmp
 import numpy as np
 import math
 from distutils.dir_util import copy_tree
+import multiprocessing as mp
+import distutils.spawn
 from shutil import copyfile
 import glob
 import re
 import shlex
 import copy
+import ntpath
 import g_var
 
+def correct_number_cpus():
+    if g_var.ncpus != None:
+        if g_var.ncpus > mp.cpu_count():
+            print('you have selected to use more CPU cores than are available: '+str(g_var.ncpus))
+            print('defaulting to the maximum number of cores: '+str(mp.cpu_count()))
+            g_var.ncpus = mp.cpu_count()
+    else:
+        if mp.cpu_count() >= 8:
+            g_var.ncpus = 8
+        else:
+            g_var.ncpus = mp.cpu_count()
+    g_var.opt['ncpus'] = g_var.ncpus
+
+def path_leaf(path):
+    head, tail = ntpath.split(path)
+    if not tail:
+        return path.replace(ntpath.basename(head)+'/', ''), ntpath.basename(head)
+    else:
+        return path.replace(tail, ''), tail
+
+    # # path2 = tail or ntpath.basename(head)
+    # # print('hello', tail,2, ntpath.basename(head))
+    # # path3 = path.replace(path2, '')
+    # # print(path3)
+    # # print(path2)
+    # # print(path)
+    # print('end')
+    # return tail or ntpath.basename(head)
+
+### finds gromacs installation
+def find_gromacs():
+    if g_var.gmx != None:
+        g_var.gmx=distutils.spawn.find_executable(g_var.gmx)
+    else:
+        g_var.gmx=distutils.spawn.find_executable('gmx')
+    if g_var.gmx==None or type(g_var.gmx) != str:
+        if os.environ.get("GMXBIN") != None:
+            for root, dirs, files in os.walk(os.environ.get("GMXBIN")):
+                for file_name in files:
+                    if file_name.startswith('gmx') and file_name.islower() and '.' not in file_name:
+                        g_var.gmx=distutils.spawn.find_executable(file_name)
+                        if type(g_var.gmx) == str and g_var.gmx != None :
+                            break
+                        else:
+                            g_var.gmx=None
+                break
+        if g_var.gmx == None:
+            sys.exit('Cannot find gromacs installation')
+    g_var.opt['gromacs'] = g_var.gmx
 
 def trunc_coord(xyz):
     xyz_new = []
@@ -24,8 +76,6 @@ def trunc_coord(xyz):
         else:
             xyz_new.append(coord)
     return xyz_new[0],xyz_new[1],xyz_new[2]
-
-
 
 def calculate_distance(p1, p2):
     return np.sqrt(((p1[0]-p2[0])**2)+((p1[1]-p2[1])**2)+((p1[2]-p2[2])**2))
@@ -41,12 +91,10 @@ def folder_copy_and_check(folder_in,folder_out):
 def flags_used():
     os.chdir(g_var.input_directory)
     with open('script_inputs.dat', 'w') as scr_input:
-        for var in g_var.variables_to_save:
-            if var == 'input':
-                line =  ''.join([ i+' ' for i in g_var.variables_to_save[var]])+'\n'
-            else:
-                line='{0:7}{1:15}\n'.format(var,str(g_var.variables_to_save[var]))
-            scr_input.write(line)
+        scr_input.write('\n'+g_var.opt['input']+'\n')
+        for var in g_var.opt:
+            if var != 'input':
+                scr_input.write('{0:9}{1:15}\n'.format(var,str(g_var.opt[var])))
 
 def is_hydrogen(atom):
     if str.isdigit(atom[0]) and atom[1] != 'H':
@@ -144,7 +192,8 @@ def print_swap_residues(s_res_d):
     
 
 def new_box_vec(box_vec, box):
-    box_vec_split = box_vec.split()[1:4]
+    print('box cutting only works for cubic boxes currently')
+    box_vec_split = box_vec.split()[1:]
     box_vec_values, box_shift = [], []
     for xyz_val, xyz in enumerate(box):
         if xyz != 0:
@@ -153,7 +202,7 @@ def new_box_vec(box_vec, box):
         else:
             box_shift.append(0)
             box_vec_values.append(float(box_vec_split[xyz_val]))
-    box_vec = g_var.box_line%(box_vec_values[0], box_vec_values[1], box_vec_values[2], 90,90,90)
+    box_vec = g_var.box_line%(box_vec_values[0], box_vec_values[1], box_vec_values[2], box_vec_split[3],box_vec_split[4],box_vec_split[5])
     return box_vec, np.array(box_shift)
 
 def strip_header(line):
@@ -701,28 +750,27 @@ def fix_time(t1, t2):
         hours = 0
     return int(np.round(hours)), int(np.round(minutes)), int(np.round(seconds,0))
 
-def print_script_timings(tc):
+def print_script_timings():
     to_print=[]
     to_print.append('\n{:-<100}'.format(''))
     to_print.append('\n{0:^47}{1:^22}'.format('Job','Time'))
     to_print.append('{0:^47}{1:^22}'.format('---','----'))
-    t1 = fix_time(tc['r_i_t'], tc['i_t'])
+    t1 = fix_time(g_var.tc['r_i_t'], g_var.tc['i_t'])
     to_print.append('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
     if 'PROTEIN' in g_var.system:
-        t4=fix_time(tc['f_p_t'],tc['r_i_t'])
+        t4=fix_time(g_var.tc['f_p_t'],g_var.tc['r_i_t'])
         to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein systems: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
-    t6=fix_time(tc['n_p_t'],tc['f_p_t'])
-    t7=fix_time(tc['m_t'],tc['n_p_t'])
+    t6=fix_time(g_var.tc['n_p_t'],g_var.tc['f_p_t'])
+    t7=fix_time(g_var.tc['m_t'],g_var.tc['n_p_t'])
     to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
     to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Equilibrate de novo: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
     if g_var.o in ['all', 'align'] and g_var.a != None and g_var.user_at_input:
-        t9=fix_time(tc['a_e'],tc['a_s'])
+        t9=fix_time(g_var.tc['a_e'],g_var.tc['a_s'])
         to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating aligned system: ', t9[0],'hours',t9[1],'min',t9[2],'sec'))
     to_print.append('{:-<69}'.format(''))
-    t10=fix_time(tc['f_t'],tc['i_t'])
+    t10=fix_time(g_var.tc['f_t'],g_var.tc['i_t'])
     to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t10[0],'hours',t10[1],'min',t10[2],'sec'))
     with open(g_var.final_dir+'script_timings.dat', 'w') as time_out:  
-        # print(g_var.final_dir+'script_timings.dat')
         for line in to_print:
             time_out.write(line+'\n')
             if g_var.v >= 1:

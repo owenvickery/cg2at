@@ -177,7 +177,7 @@ def merge_minimised(residue_type):
         if residue_type =='SOL':
             resid_range=1
         else:
-            resid_range=g_var.np_system[residue_type]
+            resid_range=g_var.system[residue_type]
         merge,merge_coords=[],[]
     #### run through every resid 
         for resid in range(resid_range):

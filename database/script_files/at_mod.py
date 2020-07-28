@@ -95,6 +95,7 @@ def fix_atom_wrap(bead_list_frag, bead_list_cg, section, resid):
 
 #####  Sanity check end
 
+#### rotations section
 
 def rotate_atom(coord, center,xyz_rot_apply):
 #### rotates atom around center
@@ -116,15 +117,94 @@ def kabsch_rotate(at_connections,cg_connections):
     rot_mat = np.dot(V, W)
     return rot_mat
 
-def add_to_sequence(sequence, residue, chain_count):
-    if residue  not in f_loc.mod_residues:
-        sequence[chain_count]+=g_var.aas[residue]
-    else:
-        sequence[chain_count]+='X'    
-    return sequence
+## rotations end
+## alignments 
+
+def find_cross_vector(ca):
+#### finds cross vector of the atoms CA, CA+1, CA+2 
+    AB = ca[0]-ca[1]
+    AC = ca[0]-ca[2] 
+    cross_vector = np.cross(AB, AC)
+    cross_vector = cross_vector/np.linalg.norm(cross_vector)
+    return cross_vector
+
+def noramlised_vector(c1, c2):
+    initial_vector= c1-c2
+    initial_vector = initial_vector/np.linalg.norm(initial_vector)
+    return initial_vector
+
+
+def align_to_vector(v1, v2):
+#### returns the rotation matrix to rotate v1 to v2
+    v = np.cross(v1,v2)
+    c = np.dot(v1,v2)
+    s = np.linalg.norm(v)
+
+    rotation=np.array([[   0, -v[2],  v[1]],
+                       [v[2],     0, -v[0]],
+                       [-v[1], v[0],    0], 
+                       ])
+
+    r = np.identity(3) - rotation + np.matmul(rotation,rotation) * ((1 - c)/(s**2))
+    return r
+
+def align_at_frag_to_CG_frag(at_com, cg_com, group):
+#### aligns atomistic fragment to cg bead
+    COM_vector=at_com-cg_com ### gets vector between COM of atoms in fragment and cg bead 
+    for bead in group:
+        for atom in group[bead]: ### runs through atoms in fragments and centers on the cg bead 
+            group[bead][atom]['coord']=group[bead][atom]['coord']-COM_vector
+    return group, COM_vector
+
+def COM(mass, fragment):
+#### returns center of mass of fragment
+    
+    try:
+        if np.any(np.array(mass)[:,3]):      
+            return np.average(np.array(mass)[:,:3], axis=0, weights=np.array(mass)[:,3])
+        else:
+            print('bead has no mass: \n')
+            sys.exit(fragment)
+    except:
+        print(fragment, mass)
+        if len(fragment) == 1:
+            for key in fragment:
+                if len(fragment[key]) == 1:
+                    return fragment[key][1]['coord']
+                else:
+                    print('missing the mass one of the atoms\n')
+                    print(mass)
+                    sys.exit(fragment)
+        else:
+            print('missing the mass one of the atoms\n')
+            print(mass)
+            sys.exit(fragment)
+
+def rigid_fit(group, frag_mass, resid, cg):
+#### rigid fits group to CG beads
+    rigid_mass_at = []
+    rigid_mass_cg = []
+    for bead in group:
+        rigid_mass_at+=frag_mass[bead]
+        rigid_mass_cg.append(cg[bead]['coord'])
+    rigid_mass_at = COM(rigid_mass_at, group)
+    rigid_mass_cg = np.mean(rigid_mass_cg, axis=0)
+    
+    group, COM_vector = align_at_frag_to_CG_frag(rigid_mass_at, rigid_mass_cg, group)
+    at_frag_centers = {}
+    cg_frag_centers = {}
+    for bead in group:
+        cg_frag_centers[bead] = cg[bead]['coord']
+        at_frag_centers[bead] = COM(frag_mass[bead], bead)
+        at_frag_centers[bead] -= COM_vector
+    return rigid_mass_cg, at_frag_centers, cg_frag_centers, group
+
+## alignment end
+
+## overlap checker
 
 def overlapping_atoms(tree):
-    overlapped_ndx = tree.query_ball_tree(tree, r=0.3)
+    overlapped_ndx = tree.query_ball_tree(tree, r=g_var.ov)
     overlapped_cut = [ndx for ndx in overlapped_ndx if len(ndx) >1]
     overlapped_cut.sort()
     overlapped=list(overlapped_cut for overlapped_cut,_ in itertools.groupby(overlapped_cut))
@@ -148,6 +228,8 @@ def check_atom_overlap(coordinates):
         overlapped = overlapping_atoms(tree)
     return coordinates
 
+## overlap end
+## get fragment information
 
 def fragment_location(residue):  
 #### runs through dirctories looking for the atomistic fragments returns the correct location
@@ -199,59 +281,6 @@ def get_atomistic(frag_location):
                     fragment_mass[bead].append([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf,1])
     return residue, fragment_mass
 
-def COM(mass, fragment):
-#### returns center of mass of fragment
-    
-    try:
-        if np.any(np.array(mass)[:,3]):      
-            return np.average(np.array(mass)[:,:3], axis=0, weights=np.array(mass)[:,3])
-        else:
-            print('bead has no mass: \n')
-            sys.exit(fragment)
-    except:
-        print(fragment, mass)
-        if len(fragment) == 1:
-            for key in fragment:
-                if len(fragment[key]) == 1:
-                    return fragment[key][1]['coord']
-                else:
-                    print('missing the mass one of the atoms\n')
-                    print(mass)
-                    sys.exit(fragment)
-        else:
-            print('missing the mass one of the atoms\n')
-            print(mass)
-            sys.exit(fragment)
-
-def rigid_fit(group, frag_mass, resid, cg):
-#### rigid fits group to CG beads
-    rigid_mass_at = []
-    rigid_mass_cg = []
-    for bead in group:
-        rigid_mass_at+=frag_mass[bead]
-        rigid_mass_cg.append(cg[bead]['coord'])
-    rigid_mass_at = COM(rigid_mass_at, group)
-    rigid_mass_cg = np.mean(rigid_mass_cg, axis=0)
-    
-    group, COM_vector = align_at_frag_to_CG_frag(rigid_mass_at, rigid_mass_cg, group)
-    at_frag_centers = {}
-    cg_frag_centers = {}
-    for bead in group:
-        cg_frag_centers[bead] = cg[bead]['coord']
-        at_frag_centers[bead] = COM(frag_mass[bead], bead)
-        at_frag_centers[bead] -= COM_vector
-    return rigid_mass_cg, at_frag_centers, cg_frag_centers, group
-
-
-def align_at_frag_to_CG_frag(at_com, cg_com, group):
-#### aligns atomistic fragment to cg bead
-    COM_vector=at_com-cg_com ### gets vector between COM of atoms in fragment and cg bead 
-    for bead in group:
-        for atom in group[bead]: ### runs through atoms in fragments and centers on the cg bead 
-            group[bead][atom]['coord']=group[bead][atom]['coord']-COM_vector
-    return group, COM_vector
-
-
 def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
 #### returns the connections between the atomistic and coarse grain beads
     at_connection, cg_connection=[],[]
@@ -276,33 +305,7 @@ def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
             at_connection.append(at_frag_centers[bead])     
     return at_connection, cg_connection    
 
-def find_cross_vector(ca):
-#### finds cross vector of the atoms CA, CA+1, CA+2 
-    AB = ca[0]-ca[1]
-    AC = ca[0]-ca[2] 
-    cross_vector = np.cross(AB, AC)
-    cross_vector = cross_vector/np.linalg.norm(cross_vector)
-    return cross_vector
 
-def noramlised_vector(c1, c2):
-    initial_vector= c1-c2
-    initial_vector = initial_vector/np.linalg.norm(initial_vector)
-    return initial_vector
-
-
-def align_to_vector(v1, v2):
-#### returns the rotation matrix to rotate v1 to v2
-    v = np.cross(v1,v2)
-    c = np.dot(v1,v2)
-    s = np.linalg.norm(v)
-
-    rotation=np.array([[   0, -v[2],  v[1]],
-                       [v[2],     0, -v[0]],
-                       [-v[1], v[0],    0], 
-                       ])
-
-    r = np.identity(3) - rotation + np.matmul(rotation,rotation) * ((1 - c)/(s**2))
-    return r
 
 ################################################################### Merged system
 
@@ -310,7 +313,6 @@ def merge_system_pdbs(protein):
     os.chdir(g_var.merged_directory)
 #### create merged pdb 
     if not os.path.exists(g_var.merged_directory+'merged_cg2at'+protein+'.pdb'):
-        pdb_output=gen.create_pdb(g_var.merged_directory+'merged_cg2at'+protein+'.pdb') 
         merge=[]
         merge_coords=[]
     #### run through every residue type in cg_residues
@@ -324,6 +326,7 @@ def merge_system_pdbs(protein):
         if 'novo' in protein:
             print('checking for atom overlap in : '+protein[1:])
             merge_coords = check_atom_overlap(merge_coords)
+        pdb_output=gen.create_pdb(g_var.merged_directory+'merged_cg2at'+protein+'.pdb')
         for line_val, line in enumerate(merge):
             x, y, z = gen.trunc_coord(merge_coords[line_val])
             pdb_output.write(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
@@ -362,6 +365,8 @@ def check_overlap_chain(chain, input, collate=False):
                             x,y,z,1,0))+'\n')
     if collate:
         return checked
+
+## fix chirality errors
 
 def fetch_chiral_coord(merge_temp, residue_type):
     chiral_atoms={}
@@ -422,6 +427,9 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
     merged_coords+=coord
     return merge, merged_coords
 
+## chirality end
+## hydrogen orientaion checker
+
 def check_hydrogens(residue):
 #### finds the connecting carbons and their associated carbons [carbon atom, hydrogen ref number, connecting ref number]    
     for atom_num, atom in enumerate(residue):
@@ -450,15 +458,14 @@ def check_hydrogens(residue):
                         residue[h_at]['coord']=residue[h_at]['coord']-vector*2
     return residue
 
+
+## check for threaded lipids
 def check_ringed_lipids(protein):
     box_vec = g_var.box_vec.split()[1:4]
     os.chdir(g_var.merged_directory)
     merge, merge_coords = read_in_merged_pdbs([], [], protein)
     resid_prev=0
     ringed=[]
-    # offset =0
-    # and atom['atom_number']-offset > max(f_loc.hydrogen[atom['residue_name']], key=f_loc.hydrogen[atom['residue_name']].get):# and atom['residue_name'] n:
-
     for at_val, atom in enumerate(merge):         
         if atom['residue_name'] in f_loc.np_residues:
             if atom['residue_id'] != resid_prev:

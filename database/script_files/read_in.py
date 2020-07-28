@@ -7,8 +7,8 @@ import copy
 import gen, g_var, f_loc
 
 def read_initial_cg_pdb():
-#### initialisation of dictionaries etc
-    # cg_residues={}  ## dictionary of CG beads eg cg_residues[residue type(POPE)][resid(1)][bead name(BB)][residue_name(PO4)/coordinates(coord)]
+    print('\nThis script is now hopefully doing the following (Good luck):\n\nReading in your CG representation\n')
+    # cg_residues={}  
     residue_list={} ## a dictionary of bead in each residue eg residue_list[bead name(BB)][residue_name(PO4)/coordinates(coord)]
     count=0  ### residue counter initialisation
     with open(g_var.input_directory+'CG_INPUT.pdb', 'r') as pdb_input:
@@ -186,14 +186,17 @@ def swap(atom, residue, resid):
 
 ##################################################################  User supplied protein ##############
 
-def read_in_atomistic(protein, duplicate_chains):
+def read_in_atomistic(protein):
 #### reset location and check if pdb exists  
     os.chdir(g_var.start_dir)
     if not os.path.exists(protein):
         sys.exit('cannot find atomistic protein : '+protein)
 #### read in atomistic fragments into dictionary residue_list[0]=x,y,z,atom_name    
     atomistic_protein_input={}
-    chain_count=0
+    if g_var.final_dir+'final_cg2at' in protein:
+        chain_count=0
+    else:
+        chain_count = g_var.chain_count
 #### read in pdb
     ter_residues=[]
     with open(protein, 'r') as pdb_input:
@@ -243,15 +246,17 @@ def read_in_atomistic(protein, duplicate_chains):
                     #### if atom is in the backbone list then its mass is updated to the correct one
                         if line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['ATOMS']:
                             if line_sep['atom_name'] in line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['atom_masses']:
-                                atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=f_loc.res_top[line_sep['residue_name']]['atom_masses'][line_sep['atom_name']]
-    if len(g_var.duplicate) != 0 and duplicate_chains:
+                                atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=f_loc.res_top[line_sep['residue_name']]['atom_masses'][line_sep['atom_name']]    
+    return atomistic_protein_input, chain_count+1    
+
+def duplicate_chain():
+    if len(g_var.duplicate) != 0:
         for ch_d in g_var.duplicate:
             duplicate = [int(x) for x in ch_d.split(':')]
-            if len(duplicate) == 2 and duplicate[0] in atomistic_protein_input:
+            if len(duplicate) == 2 and duplicate[0] in g_var.atomistic_protein_input_raw:
                 print('Using '+str(duplicate[1])+' copies of the atomistic chain '+str(duplicate[0]))
                 for chain_duplication in range(duplicate[1]-1):
-                    chain_count+=1
-                    atomistic_protein_input[chain_count]=copy.deepcopy(atomistic_protein_input[duplicate[0]])
+                    g_var.chain_count+=1
+                    g_var.atomistic_protein_input_raw[g_var.chain_count]=copy.deepcopy(g_var.atomistic_protein_input_raw[duplicate[0]])
             else:
-                sys.exit('your atomistic chain duplication input is incorrrect')       
-    return atomistic_protein_input, chain_count+1    
+                sys.exit('your atomistic chain duplication input is incorrrect')   

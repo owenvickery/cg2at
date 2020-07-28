@@ -13,27 +13,31 @@ import gen, g_var, f_loc, at_mod
 
 
 #### collects input structures and creates initial folders
-def collect_input(cg, at):
+def collect_input():
     gen.mkdir_directory(g_var.working_dir)
     gen.mkdir_directory(g_var.final_dir)
     gen.mkdir_directory(g_var.input_directory)
     gen.mkdir_directory(g_var.merged_directory)
 #### collates all input files in input directory
-    gen.file_copy_and_check(cg, g_var.input_directory+cg.split('/')[-1])
+    if g_var.a != None:
+        for file_num, file_name in enumerate(g_var.a):
+            if not os.path.exists(file_name):
+                sys.exit('cannot find atomistic input file: '+file_name)
+            gen.file_copy_and_check(file_name, g_var.input_directory+gen.path_leaf(file_name)[1])
+            os.chdir(g_var.input_directory)
+            gromacs([g_var.gmx+' editconf -f '+gen.path_leaf(file_name)[1]+' -resnr 0 -o '+g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb', g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb'])
+            if not os.path.exists(g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb'):
+                sys.exit('\nFailed to process atomistic input file')
+            else:
+                g_var.user_at_input = True
+            os.chdir(g_var.start_dir)
 
-    if at != None:
-        if not os.path.exists(at):
-            sys.exit('cannot find atomistic input file: '+at)
-        gen.file_copy_and_check(at, g_var.input_directory+at.split('/')[-1])
-        os.chdir(g_var.input_directory)
-        gromacs([g_var.gmx+' editconf -f '+at.split('/')[-1]+' -resnr 0 -o '+g_var.input_directory+'AT_INPUT.pdb', g_var.input_directory+'AT_INPUT.pdb'])
-        if not os.path.exists(g_var.input_directory+'AT_INPUT.pdb'):
-            sys.exit('\nFailed to process atomistic input file')
-        else:
-            g_var.user_at_input = True
-    gromacs([g_var.gmx+' editconf -f '+cg.split('/')[-1]+' -resnr 0 -c -o '+g_var.input_directory+'CG_INPUT.pdb', g_var.input_directory+'CG_INPUT.pdb'])
+    gen.file_copy_and_check(g_var.c, g_var.input_directory+gen.path_leaf(g_var.c)[1])
+    os.chdir(g_var.input_directory)
+    gromacs([g_var.gmx+' editconf -f '+gen.path_leaf(g_var.c)[1]+' -resnr 0 -c -o '+g_var.input_directory+'CG_INPUT.pdb', g_var.input_directory+'CG_INPUT.pdb'])
     if not os.path.exists(g_var.input_directory+'CG_INPUT.pdb'):
         sys.exit('\nFailed to process coarsegrain input file')      
+
 #### gromacs parser
 def gromacs(gro):
     possible_errors = ['File input/output error:','Error in user input:', 'did not converge to Fmax ', 
@@ -251,9 +255,9 @@ def write_topol(residue_type, residue_number, chain):
     found=False
     with open('topol_'+residue_type+chain+'.top', 'w') as topol_write:
     #### add standard headers may need to be changed dependant on forcefield
-        topol_write.write('; Include forcefield parameters\n#include \"'+f_loc.forcefield_location+f_loc.forcefield+'/forcefield.itp\"\n')
+        topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
         if 'SOL' == residue_type:
-            topol_write.write('#include \"'+f_loc.water_dir+f_loc.water+'.itp\"\n\n#include \"'+f_loc.forcefield_location+f_loc.forcefield+'/ions.itp\"\n\n')
+            topol_write.write('#include \"'+f_loc.water_dir+f_loc.water+'.itp\"\n\n#include \"'+g_var.final_dir+f_loc.forcefield+'/ions.itp\"\n\n')
     #### add location of residue topology file absolute file locations
         if residue_type not in ['ION','SOL']:
             for directory in range(len(f_loc.np_directories)):
@@ -281,9 +285,9 @@ def non_protein_minimise_ind(residue_type):
 #### in the case of SOL all residues are minimised, whilst in all other cases individual residues are minimised separately
     if residue_type != 'SOL':
         individual = 1
-        resid=g_var.np_system[residue_type]
+        resid=g_var.system[residue_type]
     else:
-        individual=g_var.np_system['SOL']
+        individual=g_var.system['SOL']
         resid=1
     os.chdir(g_var.working_dir+residue_type)
 ### write topology and minimisation parts (min folder and em.mdp)
@@ -328,14 +332,13 @@ def minimise_merged(residue_type, input_file):
 #### write topology for merged system    
     os.chdir(g_var.working_dir+residue_type)
     make_min(residue_type)
-    write_topol(residue_type, g_var.np_system[residue_type], '')
+    write_topol(residue_type, g_var.system[residue_type], '')
 #### grompp with merged system
     gromacs([g_var.gmx+' grompp '+
             '-po md_out-'+residue_type+' '+
             '-f em_'+residue_type+'.mdp '+
             '-p topol_'+residue_type+'.top '+
             '-c '+input_file+' '+
-            # '-c '+g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb '+
             '-o '+g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged_min -maxwarn 1', g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged_min.tpr'])
 #### change to min directory and minimise
     os.chdir('MIN') 

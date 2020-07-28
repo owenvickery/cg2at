@@ -2,17 +2,14 @@
 
 import os, sys
 from time import gmtime, strftime
-import distutils.spawn
 import argparse
-import multiprocessing as mp
-# from string import ascii_uppercase, ascii_lowercase
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', prog='CG2AT', epilog='Enjoy the program and best of luck!\n')
 group_req = parser.add_mutually_exclusive_group()
 group_req.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
 group_req.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)
-parser.add_argument('-a', help='atomistic coordinates (Optional)',metavar='pdb/gro/tpr',type=str)
+parser.add_argument('-a', help='atomistic coordinates (Optional)',metavar='pdb/gro/tpr',type=str, nargs='*')
 parser.add_argument('-d', help='duplicate atomistic chains. (0:3 1:3 means 3 copies each of chain 0 and 1)',type=str, nargs='*', default=[])
 parser.add_argument('-group', help='treat user supplied atomistic chains, as rigid bodies. (0,1 2,3 or all or chain)',type=str, nargs='*')
 parser.add_argument('-loc', help='output folder name, (default = CG2AT_timestamp)',metavar='CG2AT',type=str)
@@ -39,10 +36,12 @@ parser.add_argument('-sf', help='scale factor for fragments, shrinks fragments b
 parser.add_argument('-version', action='version', version='%(prog)s 2.0')
 parser.add_argument('-ncpus', help='maximum number of cores to use (default = all)', type=int)
 parser.add_argument('-disre', help='switches off the distance restraint matrix for the backbone', action='store_false')
-
+parser.add_argument('-ov', help='amount of overlap allowed between atoms', type=float, default=0.14)
 
 args = parser.parse_args()
-options = vars(args)
+opt = vars(args)
+opt['input']=''.join([ i+' ' for i in sys.argv])+'\n'
+
 #### if missing structure file print help and quit
 if not args.info and args.c == None:
     help_output = parser.print_help(sys.stderr)
@@ -52,43 +51,44 @@ if not args.info and args.c == None:
 # convert argparser into global variables to be read by the other files
 
 # input/output files  
-c, a, o = args.c, args.a, args.o
-# forcfield and fragment inputs
-w, ff, fg, mod = args.w, args.ff, args.fg, args.mod
-cys, silent, swap, group, duplicate, disre = args.cys, args.silent, args.swap, args.group, args.d, args.disre
-ter, nt, ct = args.ter, args.nt, args.ct
-alchembed = args.al
-#### virtual site information
-if args.ncpus != None:
-    if args.ncpus > mp.cpu_count():
-        print('you have selected to use more CPU cores than are available: '+str(args.ncpus))
-        print('defaulting to the maximum number of cores: '+str(mp.cpu_count()))
-        ncpus = mp.cpu_count()
-    else:
-        ncpus = args.ncpus
-else:
-    if mp.cpu_count() >= 8:
-        ncpus = 8
-    else:
-        ncpus = mp.cpu_count()
+c = args.c
+a = args.a
+o = args.o
 
+# forcfield and fragment inputs
+w = args.w
+ff = args.ff
+fg = args.fg
+mod = args.mod
+
+# modifiers
+ov = args.ov
+cys = args.cys
+silent = args.silent
+swap = args.swap
+group = args.group
+duplicate = args.d
+disre = args.disre
+ter = args.ter
+nt = args.nt
+ct = args.ct
+alchembed = args.al
+ncpus = args.ncpus
+gmx = args.gromacs
+box = args.box
+v = args.v
+messy  = args.messy
+info = args.info
+
+#### virtual site information
 if args.vs:
     vs = '-vsite h'
     sf = args.sf-0.1
 else:
     vs = ''
     sf=args.sf
-box = args.box
-v, messy  = args.v, args.messy
-
-#### print information and quit
-info = args.info
 
 ### hardcoded variables for use elsewhere in the script
-variables_to_save={'input':sys.argv, '-c':c,'-a':a, '-w':w, '-ff':ff, '-fg':fg, '-mod':mod, 
-                   '-cys':cys, '-swap':swap, '-ter':ter, '-nt':nt, '-ct':ct, '-vs':args.vs,
-                   '-box':box,'-loc':args.loc, '-group':args.group, '-o':args.o, '-al':args.al, 
-                   '-ncpus':ncpus, '-sf':args.sf, '-d':args.d, '-disre': args.disre}
 
 topology = {'BACKBONE':'BB', 'C_TERMINAL':'C', 'N_TERMINAL':'N', 'STEER':[], 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}}
 
@@ -120,32 +120,15 @@ scripts_dir     = os.path.dirname(os.path.realpath(__file__))+'/' ### contains s
 database_dir    = str(Path(*Path(scripts_dir).parts[:-1]))+'/' ### contains database files
 box_vec = ''
 user_at_input = False
-np_system = {}
-p_system = {}
-system = {}
-backbone_coords = {}
-coord_atomistic = {}
-user_cys_bond = {}
-cg_residues = {}
-seq_cg = {}
-seq_at = {}
+p_system = {} ## contains the chain termini info e.g. if chain has a non standard temini 0:[True, False]
+system = {}  ## number of system components e.g. PROTEIN:2 POPE:10, POPG:20
+backbone_coords = {} ## CG coordinates of the backbone beads
+coord_atomistic = {} ## de_novo atomisitic information e.g. coord_atomistic[chain_count][residue_number][atom][info....]
+user_cys_bond = {} ## contains resid of disulphide bonds e.g. user_cys_bond[chain][[cys_resid,cys_resid], [cys_resid,cys_resid]])
+cg_residues = {} ## dictionary of CG beads eg cg_residues[residue type(POPE)][resid(1)][bead name(BB)][residue_name(PO4)/coordinates(coord)]
+seq_cg = {} ## CG sequence e.g. seq_cg[chain][sequence]
+seq_at = {} ## user AT sequence e.g. seq_at[chain][sequence]
+tc = {} ## contains script timings
+atomistic_protein_input_raw = {} ## Raw user atomistic info coord_atomistic[chain_count][residue_number][atom][info....]
+chain_count = 0 ## number of user atomistic chains
 
-### finds gromacs installation
-
-if args.gromacs != None:
-    gmx=distutils.spawn.find_executable(args.gromacs)
-else:
-    gmx=distutils.spawn.find_executable('gmx')
-if gmx==None or type(gmx) != str:
-    if os.environ.get("GMXBIN") != None:
-        for root, dirs, files in os.walk(os.environ.get("GMXBIN")):
-            for file_name in files:
-                if file_name.startswith('gmx') and file_name.islower() and '.' not in file_name:
-                    gmx=distutils.spawn.find_executable(file_name)
-                    if type(gmx) == str and gmx != None :
-                        break
-                    else:
-                        gmx=None
-            break
-    if gmx == None:
-        sys.exit('Cannot find gromacs installation')
