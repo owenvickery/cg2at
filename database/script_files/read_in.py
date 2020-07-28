@@ -193,12 +193,13 @@ def read_in_atomistic(protein):
         sys.exit('cannot find atomistic protein : '+protein)
 #### read in atomistic fragments into dictionary residue_list[0]=x,y,z,atom_name    
     atomistic_protein_input={}
-    if g_var.final_dir+'final_cg2at' in protein:
-        chain_count=0
+    if g_var.input_directory in protein:
+        chain_count=g_var.chain_count
     else:
-        chain_count = g_var.chain_count
+        chain_count = 0
 #### read in pdb
     ter_residues=[]
+    r_b_vec, r_b_inv = real_box_vectors(g_var.box_vec)
     with open(protein, 'r') as pdb_input:
         atomistic_protein_input[chain_count]={}
         for line_nr, line in enumerate(pdb_input.readlines()):
@@ -220,6 +221,8 @@ def read_in_atomistic(protein):
                         if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
                             line_sep['atom_name']='O'
                     #### makes C_terminal connecting atom variable  
+                        if 'prev_atom_coord' in locals():
+                            line_sep['x'],line_sep['y'],line_sep['z'] = brute_mic(prev_atom_coord, [line_sep['x'],line_sep['y'],line_sep['z']], r_b_vec)
                         if line_sep['atom_name'] == f_loc.res_top[line_sep['residue_name']]['C_TERMINAL']:
                             C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
                             C_resid=line_sep['residue_id']
@@ -239,6 +242,7 @@ def read_in_atomistic(protein):
                                 atomistic_protein_input[chain_count]={} ### new chain key
                         except:
                             pass
+                        prev_atom_coord = [line_sep['x'],line_sep['y'],line_sep['z']]
                         if line_sep['residue_id'] not in atomistic_protein_input[chain_count]:  ## if protein does not exist add to dict
                             atomistic_protein_input[chain_count][line_sep['residue_id']]={}
                     #### adds atom to dictionary, every atom is given a initial mass of zero 

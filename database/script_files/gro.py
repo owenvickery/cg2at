@@ -9,7 +9,7 @@ from distutils.dir_util import copy_tree
 from pathlib import Path
 import re
 import time
-import gen, g_var, f_loc, at_mod
+import gen, g_var, f_loc, at_mod, read_in, at_mod_p
 
 
 #### collects input structures and creates initial folders
@@ -197,9 +197,12 @@ def posres_header(file_write):
 def write_posres(chain):
 #### if not posres file exist create one
     steered_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_steered_posre.itp')
+    very_low_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_very_low_posre.itp')
     low_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_low_posre.itp')
     mid_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_mid_posre.itp')
     high_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_high_posre.itp')
+    very_high_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_very_high_posre.itp')
+    ultra_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_ultra_posre.itp')
     ca_posres = posres_header(g_var.working_dir+'PROTEIN/PROTEIN_'+str(chain)+'_ca_posre.itp')
     #### read in each chain from after pdb2gmx 
     with open(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(chain)+'_gmx.pdb', 'r') as pdb_input:
@@ -214,9 +217,12 @@ def write_posres(chain):
                 if line_sep['atom_name'] == 'CA':
                     ca_posres.write(str(at_counter)+'     1  100  100  100\n')
                 if not gen.is_hydrogen(line_sep['atom_name']):
-                    low_posres.write(str(at_counter)+'     1  1000  1000  1000\n')
-                    mid_posres.write(str(at_counter)+'     1  5000  5000  5000\n')
-                    high_posres.write(str(at_counter)+'     1  10000  10000  10000\n')
+                    very_low_posres.write(str(at_counter)+'     1  200  200  200\n')
+                    low_posres.write(str(at_counter)+'     1  750  750  750\n')
+                    mid_posres.write(str(at_counter)+'     1  1500  1500  1500\n')
+                    high_posres.write(str(at_counter)+'     1  3000  3000  3000\n')
+                    very_high_posres.write(str(at_counter)+'     1  6000  6000  6000\n')
+                    ultra_posres.write(str(at_counter)+'     1  10000  10000  10000\n')
 
 def convert_topology(topol, protein_number):
 #### reads in topology 
@@ -242,11 +248,13 @@ def convert_topology(topol, protein_number):
             #### adds position restraint section to end of itp file         
                 itp_write.write('#ifdef POSRES\n#include \"PROTEIN_'+str(protein_number)+'_posre.itp\"\n#endif\n') 
                 itp_write.write('#ifdef POSRESCA\n#include \"PROTEIN_'+str(protein_number)+'_ca_posre.itp\"\n#endif\n') 
+                itp_write.write('#ifdef VERY_LOWPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_very_low_posre.itp\"\n#endif\n')
                 itp_write.write('#ifdef LOWPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_low_posre.itp\"\n#endif\n')
                 itp_write.write('#ifdef MIDPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_mid_posre.itp\"\n#endif\n')
                 itp_write.write('#ifdef HIGHPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_high_posre.itp\"\n#endif\n')
+                itp_write.write('#ifdef VERY_HIGHPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_very_high_posre.itp\"\n#endif\n')
+                itp_write.write('#ifdef ULTRAPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_ultra_posre.itp\"\n#endif\n')
                 itp_write.write('#ifdef POSRES_STEERED\n#include \"PROTEIN_'+str(protein_number)+'_steered_posre.itp\"\n#endif\n')
-                # itp_write.write('#ifdef DISRES\n#include \"PROTEIN_'+str(protein_number)+'_disres.itp\"\n#endif')
     else:
         sys.exit('cannot find : '+topol+'_'+str(protein_number)+'.top')
 
@@ -418,7 +426,7 @@ def write_merged_topol():
                     for protein_unit in range(g_var.system[residue_type]): 
                         topologies_to_include.append('#include \"PROTEIN_'+str(protein_unit)+'.itp\"\n')
                         gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(protein_unit)+'.itp', 'PROTEIN_'+str(protein_unit)+'.itp')
-                        for posres_type in ['_steered_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_ca_posre.itp','_posre.itp']:
+                        for posres_type in ['_steered_posre.itp','_very_low_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_very_high_posre.itp','_ultra_posre.itp','_ca_posre.itp','_posre.itp']:
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+posres_type, 'PROTEIN_'+str(protein_unit)+posres_type)
                         gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'PROTEIN_disres.itp')  
         if os.path.exists('extra_atomtypes.itp'):
@@ -513,9 +521,8 @@ def write_steered_mdp(loc, posres, time, timestep):
             steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = no\nrefcoord_scaling = all\ncutoff-scheme = Verlet\ndisre=simple\ndisre-weighting=equal\ndisre-fc=10000\ndisre-tau=0')   
 
 def steer_to_aligned(protein_type, fc, input_file ):
-    print('Applying '+fc+' position restraints', end='\r')
     gen.mkdir_directory(g_var.merged_directory+'STEER')
-    
+    print('Applying '+fc.replace('_',' ')+' position restraints', end='\r')
     os.chdir(g_var.merged_directory)
     write_steered_mdp(g_var.merged_directory+fc+'_posres-nvt.mdp', '-D'+fc.upper()+'POSRES -DNP', 2000, 0.001)  
     gromacs([g_var.gmx+' grompp '+
@@ -530,9 +537,9 @@ def steer_to_aligned(protein_type, fc, input_file ):
     complete, equil = gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_steer_'+fc+
                                  ' -c merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb -cpo merged_cg2at_'+protein_type+'_steer_'+fc+'.cpt'
                                  ,'merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb'])
+    print('{:<100}'.format(''), end='\r')
+    return equil
 
-    if equil:
-        sys.exit('steer failed')
 
 def run_nvt(input_file):
     print('Running NVT on de novo system')
@@ -559,11 +566,32 @@ def run_nvt(input_file):
 def create_aligned():
     print('\nCreating aligned system') 
     at_mod.merge_system_pdbs('_aligned') ## create restraint positions for aligned system
+    aligned_atoms, chain_count = read_in.read_in_atomistic(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb') ## reads in final pdb
+    rmsd = at_mod_p.RMSD_measure(aligned_atoms) ## gets rmsd of de novo
     if os.path.exists(g_var.final_dir+'final_cg2at_de_novo.pdb'):
-        steer_to_aligned('aligned', 'low', g_var.final_dir+'final_cg2at_de_novo') ## run steered md with low restraints
+        initial = g_var.final_dir+'final_cg2at_de_novo'
     else:
-        steer_to_aligned('aligned', 'low', g_var.merged_directory+'checked_ringed_lipid_de_novo') ## run steered md with low restraints
-    steer_to_aligned('aligned', 'mid', g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_low') ## run steered md with medium restraints
-    steer_to_aligned('aligned', 'high', g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_mid') ## run steered md with high restraints
-    gen.file_copy_and_check(g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_high.pdb', g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
+        initial = g_var.merged_directory+'checked_ringed_lipid_de_novo'
+    for chain in rmsd:
+        if rmsd[chain] > 2:
+            print('Your aligned structure is quite far from the CG, therefore running gentle steering')
+            steer = ['very_low', 'low', 'mid', 'high', 'very_high', 'ultra']
+            break
+        else:
+            steer = ['low', 'high', 'ultra']
+
+
+    for res_val, restraint in enumerate(steer):
+        if not os.path.exists(g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_'+restraint+'pdb'):
+            
+            if res_val == 0:
+                equil = steer_to_aligned('aligned', restraint, initial)
+            else:
+                equil = steer_to_aligned('aligned', restraint, g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_'+steer[res_val-1])
+            if equil:
+                print('Steering to aligned failed at: '+restraint)
+                print('Your aligned structure may be too far from the CG input')
+                print('The closest the script can get is found in the FINAL directory')
+                gen.file_copy_and_check(g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_'+restraint+'pdb', g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
+    gen.file_copy_and_check(g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_'+steer[-1]+'.pdb', g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
     print()
