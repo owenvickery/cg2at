@@ -585,7 +585,6 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
             if os.path.exists(location+directory_type):
                 for root, dirs, files in os.walk(location+directory_type):
                     if directory_type =='/non_protein/':
-                        print(root, dirs, np_directories)
                         np_directories = add_to_list(root, dirs, np_directories)
         #### adds protein residues locations to p_directories
                     else:

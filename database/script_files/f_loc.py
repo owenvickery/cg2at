@@ -58,7 +58,6 @@ p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted = gen.
 np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories = gen.sort_directories(p_directories_unsorted, 
 																						mod_directories_unsorted, np_directories_unsorted)
 ### reads in water molecules
-print(fragments_available, fragment_number,frag_location)
 water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
 if g_var.w == None:
     g_var.opt['w'] = water
