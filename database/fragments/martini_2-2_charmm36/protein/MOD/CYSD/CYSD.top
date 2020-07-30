@@ -1,11 +1,7 @@
-[ STEER ] 
-CA CD4 CD5 CD8 CD9 CD12 CD15 CX5 CX9 CX10 CX13 CX16 CX17  
-[ N_TERMINAL ]
-N
-[ C_TERMINAL ]
-C
-[ BACKBONE ] 
-BB
+[ CONNECT ]
+# bead_1 atom_1 bead_2 direction
+   BB      N      BB       -1
+   BB      C      BB        1  
 [ GROUPS ]
 [ CHIRAL ]
 # column must be in the order:

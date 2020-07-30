@@ -27,20 +27,19 @@ def build_protein_atomistic_system(cg_residues):
     residue_type_mass={}
     for cg_residue_id, residue_number in enumerate(cg_residues):
         resname = cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name']
-        BB_bead = f_loc.res_top[resname]['BACKBONE']
         if cg_residue_id == 0:
             g_var.p_system[chain_count].append(terminal_residue(resname)[0]) 
         g_var.coord_atomistic[chain_count][residue_number]={}
         frag_location=gen.fragment_location(resname, f_loc.database_locations) ### get fragment location from database
         residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(frag_location)
+        g_var.seq_cg = add_to_sequence(g_var.seq_cg, resname, chain_count)
         for group in residue_type[resname]:
             center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[resname][group], residue_type_mass[resname], residue_number, cg_residues[residue_number])
             at_connect, cg_connect = at_mod.connectivity(cg_residues[residue_number], at_frag_centers, cg_frag_centers, group_fit, group)
-            if BB_bead in group_fit:
-                BB_connect = []
-                at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit[BB_bead], residue_number, BB_bead)
-                g_var.seq_cg = add_to_sequence(g_var.seq_cg, resname, chain_count)
-                g_var.backbone_coords[chain_count].append(np.append(cg_residues[residue_number][BB_bead]['coord'], 1))     
+            for group_bead in group_fit:
+                if group_bead in f_loc.res_top[resname]['CONNECT']:
+                    at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit[group_bead], residue_number, group_bead)
+                    g_var.backbone_coords[chain_count].append(np.append(cg_residues[residue_number][group_bead]['coord'], 1)) 
             if len(at_connect) == len(cg_connect) and len(at_connect) != 0:
                 xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
             elif len(at_connect) == 0:
@@ -62,7 +61,6 @@ def build_protein_atomistic_system(cg_residues):
                 g_var.backbone_coords[chain_count]=[]
                 g_var.coord_atomistic[chain_count]={}
                 g_var.p_system[chain_count]=[]
-                BB_bead = f_loc.res_top[resname]['BACKBONE']
                 g_var.p_system[chain_count].append(terminal_residue(cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name'])[0])
                 g_var.seq_cg[chain_count]=[]
     if g_var.v >=1:
@@ -75,46 +73,38 @@ def build_protein_atomistic_system(cg_residues):
 
 def terminal_residue(resname):
     ter = [False, False]
-    if f_loc.res_top[resname]['N_TERMINAL'] == 'TER':
-        ter[0] = True
-    if f_loc.res_top[resname]['C_TERMINAL'] == 'TER':
-        ter[1] = True
+    if f_loc.res_top[resname]['N_TERMINAL'] in ['5TER', 'None']:
+        ter[0] = f_loc.res_top[resname]['N_TERMINAL']
+    if f_loc.res_top[resname]['C_TERMINAL'] in ['3TER', 'CT2', 'None']:
+        ter[1] = f_loc.res_top[resname]['C_TERMINAL']
     return ter
 
 
+#                 (at_connect,cg_connect,         cg_residue group_fit[group_bead], residue_number, group_bead)
 def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead):
+    con_atoms = {}
     for atom in at_residues:
         resname = at_residues[atom]['res_type']
-        # print(at_residues)
-        if at_residues[atom]['atom'] == f_loc.res_top[at_residues[atom]['res_type']]['N_TERMINAL']:
-            N_ter=atom
-        if at_residues[atom]['atom'] == f_loc.res_top[at_residues[atom]['res_type']]['C_TERMINAL']:
-            C_ter=atom
-#### connect to preceeding backbone bead in chain
-    BB_cur = f_loc.res_top[cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name']]['BACKBONE']
+        if at_residues[atom]['atom'] in f_loc.res_top[resname]['CONNECT'][BB_bead]['atom']:
+            con_atoms[f_loc.res_top[resname]['CONNECT'][BB_bead]['atom'].index(at_residues[atom]['atom'])]=atom
     new_chain=False
-    if residue_number-1 in cg_residues and 'N_ter' in locals(): 
-        prev_resname = cg_residues[residue_number-1][next(iter(cg_residues[residue_number-1]))]['residue_name']
-        BB_prev = f_loc.res_top[prev_resname]['BACKBONE']
-        xyz_cur = cg_residues[residue_number][BB_cur]['coord']
-        xyz_prev = cg_residues[residue_number-1][BB_prev]['coord']
-        if gen.calculate_distance(xyz_prev, xyz_cur) < 6 and f_loc.res_top[resname]['C_TERMINAL'] != 'TER':
-            cg_connections.append(cg_residues[residue_number-1][BB_prev]['coord'])
-            at_connections.append(at_residues[N_ter]['coord'])
-#### connect to next backbone bead in chain
-    if residue_number+1 in cg_residues and 'C_ter' in locals(): 
-        next_resname = cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name']
-        BB_next = f_loc.res_top[next_resname]['BACKBONE']
-        xyz_cur = cg_residues[residue_number][BB_cur]['coord']
-        xyz_next = cg_residues[residue_number+1][BB_next]['coord']
-        if gen.calculate_distance(xyz_next, xyz_cur) < 6 and f_loc.res_top[next_resname]['N_TERMINAL'] != 'TER':
-            cg_connections.append(cg_residues[residue_number+1][BB_next]['coord'])
-            at_connections.append(at_residues[C_ter]['coord'])
+    for con in con_atoms:
+        con_resid = residue_number+f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con]
+        if con_resid in cg_residues:
+            con_resname = cg_residues[con_resid][next(iter(cg_residues[con_resid]))]['residue_name']
+            xyz_cur = cg_residues[residue_number][BB_bead]['coord']
+            xyz_con = cg_residues[con_resid][f_loc.res_top[resname]['CONNECT'][BB_bead]['Con_Bd'][con]]['coord']
+            if gen.calculate_distance(xyz_con, xyz_cur) < 6:
+                cg_connections.append(xyz_con)
+                at_connections.append(at_residues[con_atoms[con]]['coord'])
+            else:
+                if f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
+                    new_chain=True
         else:
-            new_chain=True
-    else:
-        new_chain=True
+            if f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
+                new_chain=True
     return at_connections,cg_connections, new_chain
+
 
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
 #### 
@@ -277,20 +267,22 @@ def fix_carbonyl(residue_id, cg, at, cross_vector):
             carbonyl[at[atom]['atom']] = atom
         if at[atom]['atom'] in f_loc.res_top[at[atom]['res_type']]['CHIRAL']['atoms']:
             chiral[at[atom]['atom']] = atom
-    ca=[]
-    prev_BB, next_BB=False, False
-    cur_BB =  cg[residue_id][f_loc.res_top[cg[residue_id][next(iter(cg[residue_id]))]['residue_name']]['BACKBONE']]['coord']
-    if residue_id-1 in cg:
-        BB_bead = f_loc.res_top[cg[residue_id-1][next(iter(cg[residue_id-1]))]['residue_name']]['BACKBONE']
-        prev_BB = cg[residue_id-1][BB_bead]['coord']
-    if residue_id+1 in cg:
-        BB_bead = f_loc.res_top[cg[residue_id+1][next(iter(cg[residue_id+1]))]['residue_name']]['BACKBONE']
-        next_BB = cg[residue_id+1][BB_bead]['coord']
+    
     if not np.any(cross_vector):
-        for index in range(3):
-            BB_bead = f_loc.res_top[cg[residue_id+index][next(iter(cg[residue_id+index]))]['residue_name']]['BACKBONE']
-            ca.append(cg[residue_id+index][BB_bead]['coord'])
+        ca=[]
+        res_off = 0
+        for x in range(2):
+            for bead in cg[residue_id+res_off]:
+                resname = cg[residue_id+res_off][next(iter(cg[residue_id+res_off]))]['residue_name']
+                if bead in f_loc.res_top[resname]['CONNECT']:
+                    if x == 0 :
+                        ca.append(cg[residue_id+res_off][bead]['coord'])
+                    for con_val, con_dir in enumerate(f_loc.res_top[resname]['CONNECT'][bead]['dir']):
+                        if con_dir > 0:
+                            ca.append(cg[residue_id+con_dir+res_off][f_loc.res_top[resname]['CONNECT'][bead]['Con_Bd'][con_val]]['coord'])
+                            res_off = con_dir      
         cross_vector = at_mod.find_cross_vector( ca )
+
     rotation = at_mod.align_to_vector(at_mod.noramlised_vector(at[carbonyl['O']]['coord'],at[carbonyl['C']]['coord']), cross_vector)
     at[carbonyl['O']]['coord'] = (at[carbonyl['O']]['coord']-at[carbonyl['C']]['coord']).dot(rotation)+at[carbonyl['C']]['coord']
     at[carbonyl['C']]['coord'] = at[carbonyl['C']]['coord'] + cross_vector*0.2
@@ -634,7 +626,7 @@ def merge_protein_pdbs(file, end):
                         merge_temp.append(line_sep)
         else:
             sys.exit('cannot find minimised protein chain: '+file+'_'+str(chain)+end)
-        if 'PROTEIN_aligned' in file and '_gmx_checked.pdb' in end:  
+        if 'PROTEIN_aligned' in file:  
             count += write_disres(merge_temp, chain, file, count)
         merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merged_coords, 'PROTEIN')   
     merged_coords = at_mod.check_atom_overlap(merge_coords)

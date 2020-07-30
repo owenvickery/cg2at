@@ -1,11 +1,7 @@
-[ STEER ] 
-CA CD2 CE1 
-[ N_TERMINAL ]
-N
-[ C_TERMINAL ]
-C
-[ BACKBONE ] 
-BB
+[ CONNECT ]
+# bead_1 atom_1 bead_2 direction
+   BB      N      BB       -1
+   BB      C      BB        1
 [ GROUPS ]
 SC2 SC3
 [ CHIRAL ]

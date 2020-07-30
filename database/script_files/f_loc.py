@@ -61,13 +61,14 @@ np_residues, p_residues, mod_residues, o_residues, np_directories, p_directories
 																						mod_directories_unsorted, np_directories_unsorted, o_directories_unsorted)
 database_locations = [np_directories, p_directories, mod_directories, o_directories]
 ### reads in water molecules
-# if 'SOL' in np_directories:
-water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
-if g_var.w == None:
-    g_var.opt['w'] = water
+if any('SOL' in sublist for sublist in np_directories): 
+    water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
+    if g_var.w == None:
+        g_var.opt['w'] = water
     ### return backbone information
 res_top, sorted_connect, hydrogen, heavy_bond, ions, at_mass = gen.fetch_fragment(p_residues, o_residues, p_directories, mod_directories,  
                                                                     np_directories, o_directories, forcefield_location+forcefield, mod_residues)
+
 
 swap_dict=gen.sort_swap_group()
 

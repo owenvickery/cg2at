@@ -151,21 +151,25 @@ def fix_pbc(box_vec, new_box, box_shift):
 #### fixes box PBC
     r_b_vec, r_b_inv = real_box_vectors(box_vec)
     new_box = new_box.split()[1:4]
+    BB_pre_resid =0
     for residue_type in g_var.cg_residues:
         cut_keys=[]
         for res_val, residue in enumerate(g_var.cg_residues[residue_type]):
             for bead_val, bead in enumerate(g_var.cg_residues[residue_type][residue]):
+                bead_info = g_var.cg_residues[residue_type][residue][bead]
                 if g_var.box != None and residue_type not in ['PROTEIN', 'OTHER']:
                     cut = check_new_box(g_var.cg_residues[residue_type][residue][bead]['coord'],box_vec.split()[1:4], new_box)
                     if cut:
                         cut_keys.append(residue)
                         break
-                if residue_type in ['PROTEIN'] and bead == f_loc.res_top[g_var.cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']:
-                    BB_bead = f_loc.res_top[g_var.cg_residues[residue_type][residue][bead]['residue_name']]['BACKBONE']
-                    if res_val != 0 :
-                        BB_cur = g_var.cg_residues[residue_type][residue][BB_bead]['coord']
-                        g_var.cg_residues[residue_type][residue][BB_bead]['coord'] = brute_mic(BB_pre, BB_cur, r_b_vec)
-                    BB_pre = g_var.cg_residues[residue_type][residue][BB_bead]['coord'].copy()
+                if residue_type in ['PROTEIN', 'OTHER'] and bead in f_loc.res_top[bead_info['residue_name']]['CONNECT']:
+                    if residue != BB_pre_resid and residue != 0:
+                        con_info = f_loc.res_top[bead_info['residue_name']]['CONNECT'][bead]
+                        for con_val, connection in enumerate(con_info['dir']):
+                            if connection < 0:
+                                BB_cur = g_var.cg_residues[residue_type][residue][bead]['coord']
+                                BB_pre = g_var.cg_residues[residue_type][residue+connection][con_info['Con_Bd'][con_val]]['coord']
+                                g_var.cg_residues[residue_type][residue][bead]['coord'] = brute_mic(BB_pre, BB_cur, r_b_vec)
                 if bead_val != 0 and residue_type not in ['ION','SOL']:
                     g_var.cg_residues[residue_type][residue][bead]['coord'] = brute_mic(g_var.cg_residues[residue_type][residue][bead_prev]['coord'],
                                                                                     g_var.cg_residues[residue_type][residue][bead]['coord'], r_b_vec)
@@ -234,25 +238,19 @@ def read_in_atomistic(protein):
                     #### makes C_terminal connecting atom variable  
                         if 'prev_atom_coord' in locals():
                             line_sep['x'],line_sep['y'],line_sep['z'] = brute_mic(prev_atom_coord, [line_sep['x'],line_sep['y'],line_sep['z']], r_b_vec)
-                        if line_sep['atom_name'] == f_loc.res_top[line_sep['residue_name']]['C_TERMINAL']:
-                            C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
-                            C_resid=line_sep['residue_id']
-                            C=True
-                        try:
-                        #### tries to make a N_terminal connecting atom variable
-                            if line_sep['atom_name'] == f_loc.res_top[line_sep['residue_name']]['N_TERMINAL']:
+                        if line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['CONNECT']['atoms']:
+                            if f_loc.res_top[line_sep['residue_name']]['CONNECT']['atoms'][line_sep['atom_name']] > 0:
+                                C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
+                                C_resid=line_sep['residue_id']
+                            elif 'C_ter' in locals():
                                 N_resid=line_sep['residue_id']
                                 N_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
-                                N=True
-                        #### measures distance between N and C atoms. if the bond is over 3 A it counts as a new protein
-                            dist=gen.calculate_distance(N_ter, C_ter)
-                            if N and C and C_resid != N_resid and dist > 3.5:# and aas[line_sep['residue_name']] != sequence[chain_count][line_sep['residue_id']]:
-                                N_ter, C_ter=False, False
-                                ter_residues.append(line_sep['residue_id'])
-                                chain_count+=1
-                                atomistic_protein_input[chain_count]={} ### new chain key
-                        except:
-                            pass
+                                dist=gen.calculate_distance(N_ter, C_ter)
+                                if C_resid != N_resid and dist > 3.5:
+                                    del N_ter, C_ter
+                                    ter_residues.append(line_sep['residue_id'])
+                                    chain_count+=1
+                                    atomistic_protein_input[chain_count]={} ### new chain key
                         prev_atom_coord = [line_sep['x'],line_sep['y'],line_sep['z']]
                         if line_sep['residue_id'] not in atomistic_protein_input[chain_count]:  ## if protein does not exist add to dict
                             atomistic_protein_input[chain_count][line_sep['residue_id']]={}

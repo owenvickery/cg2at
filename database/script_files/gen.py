@@ -226,9 +226,9 @@ def sep_fragments_topology(location):
                                             topology[topology_function][bead] = group
                                         group += 1
                                     topology[topology_function]['group_max'] = group
-                                elif topology_function in ['STEER', 'CONNECT']:
+                                elif topology_function in ['STEER']:
                                     topology[topology_function] += line_sep
-                                elif topology_function in ['N_TERMINAL', 'C_TERMINAL', 'BACKBONE']:
+                                elif topology_function in ['N_TERMINAL', 'C_TERMINAL']:
                                     topology[topology_function] = ''.join(line_sep)
                                 elif topology_function == 'CHIRAL':
                                     if len(line_sep) == 5:
@@ -236,12 +236,23 @@ def sep_fragments_topology(location):
                                         topology[topology_function][line_sep[0]]={'m':line_sep[1], 'c1':line_sep[2], 'c2':line_sep[3], 'c3':line_sep[4]}
                                     else:
                                         print('The chiral group section is incorrect: \n'+location+'.top')
+                                elif topology_function == 'CONNECT':
+                                    if len(line_sep) == 4:
+                                        topology[topology_function]['atoms'][line_sep[1]] = int(line_sep[3])
+                                        if line_sep[0] in topology[topology_function]:
+                                            topology[topology_function][line_sep[0]]['atom']+=[line_sep[1]]
+                                            topology[topology_function][line_sep[0]]['Con_Bd']+=[line_sep[2]]
+                                            topology[topology_function][line_sep[0]]['dir']+=[int(line_sep[3])]
+                                        else:
+                                            topology[topology_function][line_sep[0]]={'atom':[line_sep[1]], 'Con_Bd':[line_sep[2]], 'dir':[int(line_sep[3])]}
+                                    else:
+                                        print('The bead connection group section is incorrect: \n'+location+'.top')
     return topology
 
 def get_fragment_topology(residue, location, processing, heavy_bond):
     topology = sep_fragments_topology(location[:-4])
-    processing[residue] = {'BACKBONE':topology['BACKBONE'], 'C_TERMINAL':topology['C_TERMINAL'], 'N_TERMINAL':topology['N_TERMINAL'], \
-                            'STEER':topology['STEER'], 'CHIRAL':topology['CHIRAL'], 'GROUPS':{}}
+    processing[residue] = {'C_TERMINAL':topology['C_TERMINAL'], 'N_TERMINAL':topology['N_TERMINAL'], \
+                            'STEER':topology['STEER'], 'CHIRAL':topology['CHIRAL'], 'GROUPS':{}, 'CONNECT':topology['CONNECT']}
     with open(location, 'r') as pdb_input:
         group=topology['GROUPS']['group_max']
         atom_list=[]
@@ -265,7 +276,7 @@ def get_fragment_topology(residue, location, processing, heavy_bond):
                 line_sep = pdbatom(line)
                 grouped_atoms[group_temp][bead].append(line_sep['atom_number'])
             ### return backbone info for each aminoacid residue
-            if bead == processing[residue]['BACKBONE']:
+            if bead in processing[residue]['CONNECT']:
                 if line.startswith('ATOM'):
                     line_sep = pdbatom(line)
                     if not is_hydrogen(line_sep['atom_name']):
@@ -641,6 +652,7 @@ def print_water_selection(water_input, water, directory):
     print('{0:^20}{1:^30}'.format('---------','----------'))
     for selection, water_model in enumerate(water):
         print('{0:^20}{1:^30}'.format(selection,water_model))
+
 
 def ask_for_water_model(directory, water):
     while True:
