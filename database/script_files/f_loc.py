@@ -22,14 +22,16 @@ if g_var.ff != None:
         forcefield_location, forcefield = gen.path_leaf(g_var.ff)
         gen.folder_copy_and_check(g_var.ff, g_var.final_dir+forcefield)
         print('\nYou have chosen to use your own forcefield: '+forcefield+' in '+forcefield_location)
-    elif gen.path_leaf(g_var.ff)[1] in forcefield_available:
+    elif gen.path_leaf(g_var.ff)[1]+'.ff' in forcefield_available:
         forcefield_number = forcefield_available.index(gen.path_leaf(g_var.ff)[1]+'.ff')
-
-if g_var.ff != None and 'forcefield_number' not in locals(): 
-    print('Cannot find forcefield: '+g_var.ff+'  please select one from below\n')
-if g_var.ff == None or 'forcefield_number' not in locals() or 'forcefield' not in locals():
+    elif gen.path_leaf(g_var.ff)[1] in forcefield_available:
+        forcefield_number = forcefield_available.index(gen.path_leaf(g_var.ff)[1])
+    else:
+        print('Cannot find forcefield: '+g_var.ff+'  please select one from below\n')   
+if 'forcefield_number' not in locals() and 'forcefield' not in locals():
     forcefield_number = gen.database_selection(forcefield_available, 'forcefields')    
     print('\nYou have selected the forcefield: '+forcefield_available[forcefield_number].split('.')[0])
+if 'forcefield' not in locals():
     gen.folder_copy_and_check(g_var.database_dir+'/forcefields/'+forcefield_available[forcefield_number], g_var.final_dir+forcefield_available[forcefield_number])
     forcefield_location, forcefield=g_var.database_dir+'forcefields/', forcefield_available[forcefield_number]
     g_var.opt['ff'] = forcefield_available[forcefield_number]
@@ -53,17 +55,19 @@ if len(fragment_number) == 0:
 else:
     fragments_available = fragments_available_other
 
-p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted = gen.fetch_residues(frag_location, fragments_available, fragment_number)
+p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted, o_directories_unsorted = gen.fetch_residues(frag_location, fragments_available, fragment_number)
 
-np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories = gen.sort_directories(p_directories_unsorted, 
-																						mod_directories_unsorted, np_directories_unsorted)
+np_residues, p_residues, mod_residues, o_residues, np_directories, p_directories, mod_directories, o_directories = gen.sort_directories(p_directories_unsorted, 
+																						mod_directories_unsorted, np_directories_unsorted, o_directories_unsorted)
+database_locations = [np_directories, p_directories, mod_directories, o_directories]
 ### reads in water molecules
+# if 'SOL' in np_directories:
 water_dir, water = gen.check_water_molecules(g_var.w, np_directories)
 if g_var.w == None:
     g_var.opt['w'] = water
     ### return backbone information
-res_top, sorted_connect, hydrogen, heavy_bond, ions, at_mass = gen.fetch_fragment(p_residues, p_directories, mod_directories,  
-                                                                    np_directories, forcefield_location+forcefield, mod_residues)
+res_top, sorted_connect, hydrogen, heavy_bond, ions, at_mass = gen.fetch_fragment(p_residues, o_residues, p_directories, mod_directories,  
+                                                                    np_directories, o_directories, forcefield_location+forcefield, mod_residues)
 
 swap_dict=gen.sort_swap_group()
 

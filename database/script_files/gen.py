@@ -299,22 +299,23 @@ def sort_connectivity(atom_dict, heavy_bond):
                                             cut_group[group][atom] = [frag]
     return cut_group
 
-def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, forcefield_location, mod_residues):
+def fetch_fragment(p_residues,o_residues,  p_directories, mod_directories, np_directories, o_directories, forcefield_location, mod_residues):
 #### fetches the Backbone heavy atoms and the connectivity with pre/proceeding residues 
     amino_acid_itp = fetch_amino_rtp_file_location(forcefield_location) 
+    at_mass_p = fetch_atom_masses(forcefield_location)
     processing={}     ### dictionary of backbone heavy atoms and connecting atoms eg backbone['ASP'][atoms/b_connect]
     sorted_connect={}
     hydrogen = {}
     heavy_bond = {}
     atoms_dict={}
     ions = []
+    
     for directory in range(len(p_directories)):
-        at_mass_p = fetch_atom_masses(forcefield_location) 
         for residue in p_directories[directory][1:]:    
             if residue not in processing:
                 atoms_dict={}
-                location = fragment_location(residue,p_residues, p_directories, mod_directories, np_directories)
-                hydrogen[residue], heavy_bond[residue], residue_list, at_mass, amide_h = fetch_bond_info(residue, amino_acid_itp, mod_residues, p_residues, at_mass_p, location)
+                location = fragment_location(residue, [p_directories, mod_directories, np_directories, o_directories])
+                hydrogen[residue], heavy_bond[residue], residue_list, at_mass, amide_h = fetch_bond_info(residue, amino_acid_itp, mod_residues, p_residues,o_residues, at_mass_p, location)
                 processing, grouped_atoms, heavy_bond[residue] = get_fragment_topology(residue, location, processing, heavy_bond)
                 sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue])
                 processing[residue]['RESIDUE'] = residue_list
@@ -324,16 +325,15 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
         for residue in np_directories[directory][1:]:    
             if residue not in processing:
                 atoms_dict={}
-                location = fragment_location(residue,p_residues, p_directories, mod_directories, np_directories)
+                location = fragment_location(residue, [p_directories, mod_directories, np_directories, o_directories])
                 if residue in ['SOL','ION']: 
                     at_mass = fetch_atoms_water(np_directories[directory][0]+residue+'/', at_mass_p)
                     if residue == 'ION':
                         ions = create_ion_list(location[:-4]+'.pdb', ions)
                     hydrogen[residue], heavy_bond[residue], atoms_dict = {},{},{}
                     residue_list = [residue]
-
                 else:
-                    hydrogen[residue], heavy_bond[residue], residue_list, at_mass, amide_h  = fetch_bond_info(residue, [location[:-4]+'.itp'], mod_residues, p_residues, at_mass_p, location)
+                    hydrogen[residue], heavy_bond[residue], residue_list, at_mass, amide_h  = fetch_bond_info(residue, [location[:-4]+'.itp'], mod_residues, p_residues,o_residues, at_mass_p, location)
 
                 processing, grouped_atoms, heavy_bond[residue] = get_fragment_topology(residue, location, processing, heavy_bond) 
                 processing[residue]['RESIDUE'] = residue_list
@@ -342,6 +342,16 @@ def fetch_fragment(p_residues, p_directories, mod_directories, np_directories, f
                     sorted_connect[residue]={}
                 else:
                     sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue])
+    for directory in range(len(o_directories)):
+        for residue in o_directories[directory][1:]:    
+            if residue not in processing:
+                atoms_dict={}
+                location = fragment_location(residue, [p_directories, mod_directories, np_directories, o_directories])
+                hydrogen[residue], heavy_bond[residue], residue_list, at_mass, amide_h = fetch_bond_info(residue, amino_acid_itp, mod_residues, p_residues,o_residues, at_mass_p, location)
+                processing, grouped_atoms, heavy_bond[residue] = get_fragment_topology(residue, location, processing, heavy_bond)
+                sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue])    
+                processing[residue]['RESIDUE'] = residue_list
+                processing[residue]['atom_masses'] = at_mass
     return processing, sorted_connect, hydrogen, heavy_bond, ions, at_mass_p 
 
 def atom_bond_check(line_sep):
@@ -391,7 +401,7 @@ def fetch_atoms_water(forcefield_loc, at_mass_p):
     return at_mass
 
 
-def fetch_bond_info(residue, rtp, mod_residues, p_residues, at_mass,location):
+def fetch_bond_info(residue, rtp, mod_residues, p_residues, o_residues, at_mass,location):
     bond_dict=[]
     heavy_dict, H_dict=[],[]
     residue_present = False
@@ -407,11 +417,11 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues, at_mass,location):
                         residue_present = True
                     elif line_sep[1] in ['HSE', 'HIE'] and residue == 'HIS': 
                         residue_present = True
-                    elif residue_present or residue not in p_residues:
+                    elif residue_present or residue not in p_residues+o_residues:
                         if line_sep[0] == '[':
                             atoms, bonds = atom_bond_check(line_sep)
                         elif atoms:
-                            if residue in p_residues:
+                            if residue in p_residues or residue in o_residues:
                                 if residue not in residue_list:
                                     residue_list.append(residue)
                                 atom_conversion[line_sep[0]]=int(line_sep[3])+1
@@ -433,20 +443,20 @@ def fetch_bond_info(residue, rtp, mod_residues, p_residues, at_mass,location):
                                 bond_dict.append([int(line_sep[0]),int(line_sep[1])])
                             except:
                                 bond_dict.append([line_sep[0],line_sep[1]])
-                        elif not atoms and not bonds and residue in p_residues:
+                        elif not atoms and not bonds and residue in p_residues+o_residues:
                             break
         if len(heavy_dict) > 0:
             break
     bond_dict=np.array(bond_dict)
     hydrogen = {}
     heavy_bond = {}
-    if residue in p_residues and residue not in mod_residues:
+    if residue not in mod_residues:
         atom_conversion = get_atomistic(location)
     for bond in bond_dict:
-        hydrogen, amide_h = add_to_topology_list(bond[0], bond[1], hydrogen, heavy_dict, H_dict, atom_conversion, residue, p_residues)
+        hydrogen, amide_h = add_to_topology_list(bond[0], bond[1], hydrogen, heavy_dict, H_dict, atom_conversion, residue, p_residues+o_residues)
         if residue in p_residues and amide_h != None:
             amide_hydrogen = amide_h
-        heavy_bond, amide_h= add_to_topology_list(bond[0], bond[1], heavy_bond, heavy_dict, heavy_dict, atom_conversion, residue, p_residues)
+        heavy_bond, amide_h= add_to_topology_list(bond[0], bond[1], heavy_bond, heavy_dict, heavy_dict, atom_conversion, residue, p_residues+o_residues)
 
     if 'amide_hydrogen' in locals():
         return hydrogen, heavy_bond, residue_list, res_at_mass, amide_hydrogen
@@ -479,19 +489,13 @@ def add_to_topology_list(bond_1, bond_2, top_list, dict1, dict2, conversion, res
             top_list[bond[0]].append(bond[1])
     return top_list, amide_hydrogen
 
-def fragment_location(residue, p_residues,  p_directories, mod_directories, np_directories):  
+def fragment_location(residue, database_dir):  
+    # print(database_dir)
 #### runs through dirctories looking for the atomistic fragments returns the correct location
-    if residue in p_residues:
-        for directory in range(len(p_directories)):
-            if os.path.exists(p_directories[directory][0]+residue+'/'+residue+'.pdb'):
-                return p_directories[directory][0]+residue+'/'+residue+'.pdb'
-        for directory in range(len(mod_directories)):
-            if os.path.exists(mod_directories[directory][0]+residue+'/'+residue+'.pdb'):
-                return mod_directories[directory][0]+residue+'/'+residue+'.pdb'
-    else:
-        for directory in range(len(np_directories)):
-            if os.path.exists(np_directories[directory][0]+residue+'/'+residue+'.pdb'):
-                return np_directories[directory][0]+residue+'/'+residue+'.pdb'
+    for res_type in database_dir:
+        for directory in range(len(res_type)):
+            if os.path.exists(res_type[directory][0]+residue+'/'+residue+'.pdb'):
+                return res_type[directory][0]+residue+'/'+residue+'.pdb'            
     sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
 
 
@@ -569,7 +573,7 @@ def fetch_frag_number(fragments_available):
 
 def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
 #### list of directories and water types  [[root, folders...],[root, folders...]]
-    np_directories, p_directories,mod_directories=[], [],[]
+    np_directories, p_directories,mod_directories,o_directories=[], [], [], []
 #### run through selected fragments
     for database in fragment_number:
         if not g_var.info:
@@ -580,14 +584,16 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
     #### separate selection between provided and user
         location = frag_dir[database]+ fragments_available_prov[database]
     #### runs through protein and non protein
-        for directory_type in ['/non_protein/', '/protein/']:
+        for directory_type in ['/non_protein/', '/protein/', '/other/']:
     #### adds non protein residues locations to np_directories
             if os.path.exists(location+directory_type):
                 for root, dirs, files in os.walk(location+directory_type):
                     if directory_type =='/non_protein/':
                         np_directories = add_to_list(root, dirs, np_directories)
-        #### adds protein residues locations to p_directories
-                    else:
+                    elif directory_type =='/other/':
+                        o_directories = add_to_list(root, dirs, o_directories)
+                    #### adds protein residues locations to p_directories
+                    elif directory_type =='/protein/':
                         p_directories = add_to_list(root, dirs, p_directories)
                     #### adds modified residues to mod directories and removes MOD from p_directories
                         if os.path.exists(location+directory_type+'MOD/'):
@@ -597,12 +603,12 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
                                 mod_directories = add_to_list(root, dirs, mod_directories)
                                 break
                     break
-    return p_directories, mod_directories, np_directories
+    return p_directories, mod_directories, np_directories, o_directories
 
 
-def sort_directories(p_directories, mod_directories, np_directories):
+def sort_directories(p_directories, mod_directories, np_directories, o_directories):
 #### sorts directories alphabetically and creates residue database
-    p_residues, np_residues, mod_residues = [],[],[]
+    p_residues, np_residues, mod_residues, o_residues = [],[],[],[]
     for directory in range(len(mod_directories)):
         mod_directories[directory][1:].sort()
         mod_residues+=mod_directories[directory][1:]
@@ -612,6 +618,9 @@ def sort_directories(p_directories, mod_directories, np_directories):
     for directory in range(len(np_directories)):
         np_directories[directory][1:].sort()
         np_residues+=np_directories[directory][1:]
+    for directory in range(len(o_directories)):
+        o_directories[directory][1:].sort()
+        o_residues+=o_directories[directory][1:]
 #### if verbose prints all fragments found
     if g_var.v >= 2:
         for directory in range(len(np_directories)):
@@ -620,7 +629,7 @@ def sort_directories(p_directories, mod_directories, np_directories):
         for directory in range(len(p_directories)):
             print('\nprotein residues fragment directories found: \n\nroot file system\n')
             print(p_directories[directory][0],'\n\nresidues\n\n',p_directories[directory][1:], '\n')
-    return np_residues, p_residues, mod_residues, np_directories, p_directories, mod_directories
+    return np_residues, p_residues, mod_residues, o_residues, np_directories, p_directories, mod_directories, o_directories
 
 def print_water_selection(water_input, water, directory):
     if water_input != None:

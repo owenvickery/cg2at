@@ -13,7 +13,7 @@ import gen, g_var, f_loc, at_mod_p, read_in
 
 def sanity_check_fragments(res, cg, sin_bead):
 #### fetches bead and atom info from fragment database
-    location = fragment_location(res)
+    location = gen.fragment_location(res, f_loc.database_locations)
     residue, fragment_mass = get_atomistic(location)
     atom_list = []
     bead_list = []
@@ -47,17 +47,17 @@ def sanity_check_beads(bead_list, cg, res):
 def sanity_check():
 #### runs through every bead and checks whether it exists
     for res_type in g_var.cg_residues:
-        if res_type == 'PROTEIN':
-            for residue in g_var.cg_residues['PROTEIN']:
-                for bead in g_var.cg_residues['PROTEIN'][residue]:
-                    resname = g_var.cg_residues['PROTEIN'][residue][bead]['residue_name']
+        if res_type in ['PROTEIN', 'OTHER']:
+            for residue in g_var.cg_residues[res_type]:
+                for bead in g_var.cg_residues[res_type][residue]:
+                    resname = g_var.cg_residues[res_type][residue][bead]['residue_name']
                     break
-                bead_list, atom_list = sanity_check_fragments(resname, g_var.cg_residues['PROTEIN'][residue], False)
-                bead_list_cg = sanity_check_beads(bead_list, g_var.cg_residues['PROTEIN'][residue], resname)  
+                bead_list, atom_list = sanity_check_fragments(resname, g_var.cg_residues[res_type][residue], False)
+                bead_list_cg = sanity_check_beads(bead_list, g_var.cg_residues[res_type][residue], resname)  
                 sanity_check_atoms(atom_list, resname)
                 if sorted(bead_list) != sorted(bead_list_cg):
                     if len(bead_list) == len(bead_list_cg):
-                        fix_atom_wrap(bead_list, bead_list_cg, 'PROTEIN', residue)
+                        fix_atom_wrap(bead_list, bead_list_cg, res_type, residue)
                     else:
                         print('There is a issue with residue: '+resname+' '+str(residue+1))
                         sys.exit('number of atomistic fragments: '+str(len(bead_list))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
@@ -69,6 +69,8 @@ def sanity_check():
                 bead_list, atom_list = sanity_check_fragments(res_type, g_var.cg_residues[res_type][residue], sin_bead)
                 sanity_check_beads(bead_list, g_var.cg_residues[res_type][residue], res_type) 
                 sanity_check_atoms(atom_list, res_type)
+        # elif res_type == 'OTHER':
+
         else:
             bead_list, atom_list = sanity_check_fragments(res_type, g_var.cg_residues[res_type], False)
             sanity_check_atoms(atom_list, res_type)
@@ -231,20 +233,20 @@ def check_atom_overlap(coordinates):
 ## overlap end
 ## get fragment information
 
-def fragment_location(residue):  
-#### runs through dirctories looking for the atomistic fragments returns the correct location
-    if residue in f_loc.p_residues:
-        for directory in range(len(f_loc.p_directories)):
-            if os.path.exists(f_loc.p_directories[directory][0]+residue+'/'+residue+'.pdb'):
-                return f_loc.p_directories[directory][0]+residue+'/'+residue+'.pdb'
-        for directory in range(len(f_loc.mod_directories)):
-            if os.path.exists(f_loc.mod_directories[directory][0]+residue+'/'+residue+'.pdb'):
-                return f_loc.mod_directories[directory][0]+residue+'/'+residue+'.pdb'
-    else:
-        for directory in range(len(f_loc.np_directories)):
-            if os.path.exists(f_loc.np_directories[directory][0]+residue+'/'+residue+'.pdb'):
-                return f_loc.np_directories[directory][0]+residue+'/'+residue+'.pdb'
-    sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
+# def fragment_location(residue):  
+# #### runs through dirctories looking for the atomistic fragments returns the correct location
+#     if residue in f_loc.p_residues:
+#         for directory in range(len(f_loc.p_directories)):
+#             if os.path.exists(f_loc.p_directories[directory][0]+residue+'/'+residue+'.pdb'):
+#                 return f_loc.p_directories[directory][0]+residue+'/'+residue+'.pdb'
+#         for directory in range(len(f_loc.mod_directories)):
+#             if os.path.exists(f_loc.mod_directories[directory][0]+residue+'/'+residue+'.pdb'):
+#                 return f_loc.mod_directories[directory][0]+residue+'/'+residue+'.pdb'
+#     else:
+#         for directory in range(len(f_loc.np_directories)):
+#             if os.path.exists(f_loc.np_directories[directory][0]+residue+'/'+residue+'.pdb'):
+#                 return f_loc.np_directories[directory][0]+residue+'/'+residue+'.pdb'
+#     sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
 
 
 def split_fragment_names(line, residue, resname):

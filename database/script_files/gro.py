@@ -100,6 +100,7 @@ def pdb2gmx_minimise(chain,pdb2gmx_selections, q):
         pdb2gmx_chain(chain, 'aligned_', pdb2gmx_selections[chain])
         at_mod.check_overlap_chain(chain, 'aligned_')
     minimise_protein_chain(chain, 'de_novo_')
+    minimise_protein_chain(chain, 'aligned_')
     q.put(chain)
     return chain
 

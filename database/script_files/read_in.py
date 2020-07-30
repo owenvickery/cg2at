@@ -7,6 +7,7 @@ import copy
 import gen, g_var, f_loc
 
 def read_initial_cg_pdb():
+
     print('\nThis script is now hopefully doing the following (Good luck):\n\nReading in your CG representation\n')
     # cg_residues={}  
     residue_list={} ## a dictionary of bead in each residue eg residue_list[bead name(BB)][residue_name(PO4)/coordinates(coord)]
@@ -30,7 +31,7 @@ def read_initial_cg_pdb():
                         line_sep_prev=line_sep.copy()
     #### if resids are different then the residue list is added to cg_residues
                     else: 
-                        if line_sep_prev['residue_name'] not in f_loc.p_residues:
+                        if line_sep_prev['residue_name'] not in f_loc.p_residues+f_loc.o_residues :
                             g_var.cg_residues[line_sep_prev['residue_name']][count]={} ### then create sub dictionary cg_residues[resname][count]
                             g_var.cg_residues[line_sep_prev['residue_name']][count]=residue_list ### adds residue list to dictionary key cg_residues[resname][count]
                             if line_sep_prev['residue_name'] == 'ION':
@@ -40,6 +41,9 @@ def read_initial_cg_pdb():
                                 sol_res_list[f_loc.water]=residue_list[line_sep_prev['atom_name']].copy()
                                 sol_res_list[f_loc.water]['residue_name']='SOL'
                                 g_var.cg_residues['SOL'][count]=sol_res_list
+                        elif line_sep_prev['residue_name'] in f_loc.o_residues:
+                            g_var.cg_residues['OTHER'][count]={} ### then create sub dictionary cg_residues['PROTEIN'][count]
+                            g_var.cg_residues['OTHER'][count]=residue_list ### adds residue list to dictionary key cg_residues['PROTEIN'][count]
                         else:
                             g_var.cg_residues['PROTEIN'][count]={} ### then create sub dictionary cg_residues['PROTEIN'][count]
                             g_var.cg_residues['PROTEIN'][count]=residue_list ### adds residue list to dictionary key cg_residues['PROTEIN'][count]
@@ -62,6 +66,10 @@ def read_initial_cg_pdb():
         if count not in g_var.cg_residues['PROTEIN']:
             g_var.cg_residues['PROTEIN'][count]={}
         g_var.cg_residues['PROTEIN'][count]=residue_list
+    elif line_sep['residue_name'] in f_loc.o_residues: 
+        if count not in g_var.cg_residues['OTHER']:
+            g_var.cg_residues['OTHER'][count]={}
+        g_var.cg_residues['OTHER'][count]=residue_list
     else:
         if count not in g_var.cg_residues[line_sep['residue_name']]:
             g_var.cg_residues[line_sep['residue_name']][count]={}
@@ -84,6 +92,9 @@ def add_residue_to_dictionary(line_sep):
     if line_sep['residue_name'] in f_loc.p_residues: ## if in protein database 
         if 'PROTEIN' not in g_var.cg_residues:  ## if protein does not exist add to dict
             g_var.cg_residues['PROTEIN']={}
+    elif line_sep['residue_name'] in f_loc.o_residues: ## if in protein database 
+        if 'OTHER' not in g_var.cg_residues:  ## if protein does not exist add to dict
+            g_var.cg_residues['OTHER']={}
     elif line_sep['residue_name'] in g_var.cg_water_types: 
         line_sep['residue_name']='SOL'
         if line_sep['residue_name'] not in g_var.cg_residues: ## if residue type does not exist add to dict
@@ -144,7 +155,7 @@ def fix_pbc(box_vec, new_box, box_shift):
         cut_keys=[]
         for res_val, residue in enumerate(g_var.cg_residues[residue_type]):
             for bead_val, bead in enumerate(g_var.cg_residues[residue_type][residue]):
-                if g_var.box != None and residue_type not in ['PROTEIN']:
+                if g_var.box != None and residue_type not in ['PROTEIN', 'OTHER']:
                     cut = check_new_box(g_var.cg_residues[residue_type][residue][bead]['coord'],box_vec.split()[1:4], new_box)
                     if cut:
                         cut_keys.append(residue)
@@ -260,7 +271,8 @@ def duplicate_chain():
             if len(duplicate) == 2 and duplicate[0] in g_var.atomistic_protein_input_raw:
                 print('Using '+str(duplicate[1])+' copies of the atomistic chain '+str(duplicate[0]))
                 for chain_duplication in range(duplicate[1]-1):
-                    g_var.chain_count+=1
+                    
                     g_var.atomistic_protein_input_raw[g_var.chain_count]=copy.deepcopy(g_var.atomistic_protein_input_raw[duplicate[0]])
+                    g_var.chain_count+=1
             else:
                 sys.exit('your atomistic chain duplication input is incorrrect')   

@@ -121,6 +121,7 @@ database_dir    = str(Path(*Path(scripts_dir).parts[:-1]))+'/' ### contains data
 box_vec = ''
 user_at_input = False
 p_system = {} ## contains the chain termini info e.g. if chain has a non standard temini 0:[True, False]
+o_system = {}
 system = {}  ## number of system components e.g. PROTEIN:2 POPE:10, POPG:20
 backbone_coords = {} ## CG coordinates of the backbone beads
 coord_atomistic = {} ## de_novo atomisitic information e.g. coord_atomistic[chain_count][residue_number][atom][info....]
@@ -130,5 +131,6 @@ seq_cg = {} ## CG sequence e.g. seq_cg[chain][sequence]
 seq_at = {} ## user AT sequence e.g. seq_at[chain][sequence]
 tc = {} ## contains script timings
 atomistic_protein_input_raw = {} ## Raw user atomistic info coord_atomistic[chain_count][residue_number][atom][info....]
+atomistic_protein_input_aligned = {}
 chain_count = 0 ## number of user atomistic chains
-
+# database_locations = []
