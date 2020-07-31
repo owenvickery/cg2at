@@ -7,7 +7,7 @@ import time
 import re
 import multiprocessing as mp
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/database/script_files')
-import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var, f_loc
+import gen, gro, at_mod, at_mod_p,at_mod_o, at_mod_np, read_in, g_var, f_loc
 
 
 # Nothing in the script should need changing by the user
@@ -57,31 +57,25 @@ if 'PROTEIN' in g_var.cg_residues:
     ## aligns user chains to the CG system
     if g_var.user_at_input:
         at_mod_p.align_user_chains(final_coordinates_atomistic_de_novo)
-
     ### runs pdb2gmx and minimises each protein chain
-    pool = mp.Pool(g_var.ncpus)
-    m = mp.Manager()
-    q = m.Queue()
-    gen.folder_copy_and_check(f_loc.forcefield_location+f_loc.forcefield, g_var.working_dir+'PROTEIN/'+f_loc.forcefield+'/.')
-    gen.file_copy_and_check(f_loc.forcefield_location+'/residuetypes.dat', g_var.working_dir+'PROTEIN/residuetypes.dat')
-    pdb2gmx_selections=gro.ask_terminal()
-    pool_process = pool.starmap_async(gro.pdb2gmx_minimise, [(chain, pdb2gmx_selections, q) for chain in range(0, g_var.system['PROTEIN'])])
-    while not pool_process.ready():
-        gro.report_complete('pdb2gmx/minimisation', q.qsize(), g_var.system['PROTEIN'])
-    print('{:<130}'.format(''), end='\r')
-    print('pdb2gmx/minimisation completed on residue type: PROTEIN')     
-    pool.close()
-    pool.join()
+    gro.run_parallel_pdb2gmx_min('PROTEIN', g_var.p_system)
 
     #### read in minimised de novo protein chains and merges chains
     if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_merged.pdb'):
-        at_mod_p.merge_protein_pdbs(g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb') ## merge protein chains
+        at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb', 'PROTEIN') ## merge protein chains
 
     #### read in aligned protein chains and merges chains
     if g_var.user_at_input and not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb'):
-            at_mod_p.merge_protein_pdbs(g_var.working_dir+'PROTEIN/MIN/PROTEIN_aligned', '.pdb') ## merge aligned chains
+            at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'PROTEIN/MIN/PROTEIN_aligned', '.pdb', 'PROTEIN') ## merge aligned chains
 
 g_var.tc['f_p_t']=time.time()
+if 'OTHER' in g_var.cg_residues:          
+    at_mod_o.build_non_protein_linked_atomistic_system(g_var.cg_residues['OTHER']) ## converts non protein linked residues to atomistic
+    fin_at_NP_linked_de_novo = at_mod_o.finalise_novo_atomistic()
+    gro.run_parallel_pdb2gmx_min('OTHER', g_var.o_system)
+    if not os.path.exists(g_var.working_dir+'OTHER/OTHER_de_novo_merged.pdb'):
+        at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'OTHER/MIN/OTHER_de_novo', '.pdb', 'OTHER') ## merge  chains
+
 
 #### converts non protein residues into atomistic (runs on all cores)
 if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTEIN', 'OTHER']]) > 0:
@@ -105,10 +99,8 @@ if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTE
                 gro.non_protein_minimise_ind(residue_type) ## runs grompp and minimises each residue
                 at_mod_np.merge_minimised(residue_type) ## merges minimised residues
                 gro.minimise_merged(residue_type, g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb') ## minimises merged residues
-g_var.tc['n_p_t']=time.time()
-if 'OTHER' in g_var.cg_residues:          
-    at_mod_p.build_protein_atomistic_system(g_var.cg_residues['PROTEIN']) ## converts protein to atomistic
 
+g_var.tc['n_p_t']=time.time()
 
 print('Merging all residue types to single file. (Or possibly tea)\n')
 

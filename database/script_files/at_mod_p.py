@@ -16,19 +16,19 @@ def build_protein_atomistic_system(cg_residues):
 #### initisation of counters
     chain_count=0
     g_var.backbone_coords[chain_count]=[]
-    g_var.p_system[chain_count]=[]
+    g_var.p_system[chain_count]=[False, False]
     g_var.coord_atomistic[chain_count]={}
     g_var.seq_cg[chain_count]=[]
     print('Converting Protein')
     gen.mkdir_directory(g_var.working_dir+'PROTEIN')  ### make and change to protein directory
 #### for each residue in protein
-    initial=True
     residue_type={}
     residue_type_mass={}
     for cg_residue_id, residue_number in enumerate(cg_residues):
         resname = cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name']
         if cg_residue_id == 0:
-            g_var.p_system[chain_count].append(terminal_residue(resname)[0]) 
+            # g_var.p_system[chain_count].append(terminal_residue(resname)[0]) 
+            g_var.p_system[chain_count][0] = resname
         g_var.coord_atomistic[chain_count][residue_number]={}
         frag_location=gen.fragment_location(resname, f_loc.database_locations) ### get fragment location from database
         residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(frag_location)
@@ -38,7 +38,7 @@ def build_protein_atomistic_system(cg_residues):
             at_connect, cg_connect = at_mod.connectivity(cg_residues[residue_number], at_frag_centers, cg_frag_centers, group_fit, group)
             for group_bead in group_fit:
                 if group_bead in f_loc.res_top[resname]['CONNECT']:
-                    at_connect, cg_connect, new_chain = BB_connectivity(at_connect,cg_connect, cg_residues, group_fit[group_bead], residue_number, group_bead)
+                    at_connect, cg_connect, new_chain = at_mod.BB_connectivity(at_connect,cg_connect, cg_residues, group_fit[group_bead], residue_number, group_bead)
                     g_var.backbone_coords[chain_count].append(np.append(cg_residues[residue_number][group_bead]['coord'], 1)) 
             if len(at_connect) == len(cg_connect) and len(at_connect) != 0:
                 xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
@@ -55,56 +55,39 @@ def build_protein_atomistic_system(cg_residues):
                     atom_new = group_fit[bead][atom].copy()
                     g_var.coord_atomistic[chain_count][residue_number][atom] = atom_new
         if new_chain:
-            g_var.p_system[chain_count].append(terminal_residue(resname)[1])
+            # g_var.p_system[chain_count].append(terminal_residue(resname)[1])
+            g_var.p_system[chain_count][1] = resname
             chain_count+=1
             if cg_residue_id+1 != len(cg_residues):
                 g_var.backbone_coords[chain_count]=[]
                 g_var.coord_atomistic[chain_count]={}
-                g_var.p_system[chain_count]=[]
-                g_var.p_system[chain_count].append(terminal_residue(cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name'])[0])
+                # g_var.p_system[chain_count]=[]
+                g_var.p_system[chain_count]=[resname, False]
+                
+                # g_var.p_system[chain_count].append(terminal_residue(cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name'])[0])
                 g_var.seq_cg[chain_count]=[]
     if g_var.v >=1:
+        print('Sequence of protein chains')
         print('\n{0:^15}{1:^12}'.format('chain number', 'length of chain')) #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
         print('\n{0:^15}{1:^12}'.format('------------', '---------------'))
         for chain in g_var.seq_cg:
             print('{0:^15}{1:^12}'.format(chain, len(g_var.seq_cg[chain])))
         print()
     g_var.system['PROTEIN']=chain_count
+    # print(g_var.system['PROTEIN'])
+
 
 def terminal_residue(resname):
-    ter = [False, False]
+    g_var.p_system[chain_count]
+    ter = [False, False, False]
     if f_loc.res_top[resname]['N_TERMINAL'] in ['5TER', 'None']:
         ter[0] = f_loc.res_top[resname]['N_TERMINAL']
     if f_loc.res_top[resname]['C_TERMINAL'] in ['3TER', 'CT2', 'None']:
         ter[1] = f_loc.res_top[resname]['C_TERMINAL']
+    if resname == 'PRO':
+        ter[2] = True
+
     return ter
-
-
-#                 (at_connect,cg_connect,         cg_residue group_fit[group_bead], residue_number, group_bead)
-def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead):
-    con_atoms = {}
-    for atom in at_residues:
-        resname = at_residues[atom]['res_type']
-        if at_residues[atom]['atom'] in f_loc.res_top[resname]['CONNECT'][BB_bead]['atom']:
-            con_atoms[f_loc.res_top[resname]['CONNECT'][BB_bead]['atom'].index(at_residues[atom]['atom'])]=atom
-    new_chain=False
-    for con in con_atoms:
-        con_resid = residue_number+f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con]
-        if con_resid in cg_residues:
-            con_resname = cg_residues[con_resid][next(iter(cg_residues[con_resid]))]['residue_name']
-            xyz_cur = cg_residues[residue_number][BB_bead]['coord']
-            xyz_con = cg_residues[con_resid][f_loc.res_top[resname]['CONNECT'][BB_bead]['Con_Bd'][con]]['coord']
-            if gen.calculate_distance(xyz_con, xyz_cur) < 6:
-                cg_connections.append(xyz_con)
-                at_connections.append(at_residues[con_atoms[con]]['coord'])
-            else:
-                if f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
-                    new_chain=True
-        else:
-            if f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
-                new_chain=True
-    return at_connections,cg_connections, new_chain
-
 
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
 #### 
@@ -610,36 +593,7 @@ def write_user_chains_to_pdb(atomistic_user_supplied, chain):
             pdb_output.write(g_var.pdbline%((at_id+1,final_atom[at_id]['atom'],final_atom[at_id]['res_type'],'A',final_atom[at_id]['residue'],
                  x,y,z,1,0))+'\n') 
 
-################################################################## Merge chains ####################
-
-def merge_protein_pdbs(file, end):
-#### reads in each chain into merge list
-    merge, merged_coords = [],[]
-    count = 0
-    for chain in range(0,g_var.system['PROTEIN']):
-        merge_temp = []
-        if os.path.exists(file+'_'+str(chain)+end):
-            with open(file+'_'+str(chain)+end, 'r') as pdb_input:
-                for line in pdb_input.readlines():
-                    if line.startswith('ATOM'):
-                        line_sep=gen.pdbatom(line)
-                        merge_temp.append(line_sep)
-        else:
-            sys.exit('cannot find minimised protein chain: '+file+'_'+str(chain)+end)
-        if 'PROTEIN_aligned' in file:  
-            count += write_disres(merge_temp, chain, file, count)
-        merge, merge_coords = at_mod.fix_chirality(merge,merge_temp,merged_coords, 'PROTEIN')   
-    merged_coords = at_mod.check_atom_overlap(merge_coords)
-    merged=[]
-    for line_val, line in enumerate(merge):
-        x, y, z = gen.trunc_coord(merged_coords[line_val])
-        merged.append(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
-            x,y,z,1,0))+'\n')
-    if 'aligned' in file.split('/')[-1]:
-        write_merged_pdb(merged, '_aligned')
-    else:
-        write_merged_pdb(merged,'_de_novo')
-    
+################################################################## Merge chains ####################    
 
 def correct_amide_h(lines, coords):
     for at_val, atom in enumerate(lines):
@@ -691,13 +645,7 @@ def write_disres(coord, chain, file, at_start):
                                                                                                                     '1', str(count),'1', '0', str(dist), str(dist), '5'))
     return len(coord) 
 
-def write_merged_pdb(merge, protein):
-#### creates merged pdb and writes chains to it
-    if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_merged.pdb'):
-        pdb_output=gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN'+protein+'_merged.pdb')
-        for line in merge:
-            pdb_output.write(line)
-        pdb_output.close()
+
 
 
 

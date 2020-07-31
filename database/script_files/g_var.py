@@ -103,9 +103,9 @@ aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'
        'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
 
 termini_selections = {'charmm':{'N_TERMINAL':{'PRO':{'NH':1,'NH3+':2, '5TER':3, 'NONE':4},'NORM':{'NH3+':0,'NH2':1,'5TER':2, 'NONE':3},}, 
-                                'C_TERMINAL':{'COO-':0,'COOH':1,'CT2':2, '5TER':3, 'NONE':4}},
+                                'C_TERMINAL':{'NORM':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4}}},
                      'opls':{'N_TERMINAL':{'PRO':{'NH':2, 'NH3+':3, 'NONE':5},'NORM':{'NH3+':0,'NH2':2, 'NONE':3}}, 
-                                'C_TERMINAL':{'COO-':0,'COOH':2, 'NONE':3}}
+                                'C_TERMINAL':{'NORM':{'COO-':0,'COOH':2, 'NONE':3}}}
 }
 ### CG2AT folder locations
 
@@ -134,8 +134,10 @@ user_cys_bond = {} ## contains resid of disulphide bonds e.g. user_cys_bond[chai
 cg_residues = {} ## dictionary of CG beads eg cg_residues[residue type(POPE)][resid(1)][bead name(BB)][residue_name(PO4)/coordinates(coord)]
 seq_cg = {} ## CG sequence e.g. seq_cg[chain][sequence]
 seq_at = {} ## user AT sequence e.g. seq_at[chain][sequence]
+seq_cg_other = {} ## CG seq for linked non protein residues e.g. DNA
 tc = {} ## contains script timings
 atomistic_protein_input_raw = {} ## Raw user atomistic info coord_atomistic[chain_count][residue_number][atom][info....]
 atomistic_protein_input_aligned = {}
 chain_count = 0 ## number of user atomistic chains
+other_atomistic ={}
 # database_locations = []

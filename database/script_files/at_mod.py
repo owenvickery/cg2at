@@ -60,7 +60,8 @@ def sanity_check():
                         fix_atom_wrap(bead_list, bead_list_cg, res_type, residue)
                     else:
                         print('There is a issue with residue: '+resname+' '+str(residue+1))
-                        sys.exit('number of atomistic fragments: '+str(len(bead_list))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
+                        if res_type != 'OTHER':
+                            sys.exit('number of atomistic fragments: '+str(len(bead_list))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
         elif res_type in ['SOL', 'ION']:
             for residue in g_var.cg_residues[res_type]:
                 for bead in g_var.cg_residues[res_type][residue]:
@@ -233,22 +234,6 @@ def check_atom_overlap(coordinates):
 ## overlap end
 ## get fragment information
 
-# def fragment_location(residue):  
-# #### runs through dirctories looking for the atomistic fragments returns the correct location
-#     if residue in f_loc.p_residues:
-#         for directory in range(len(f_loc.p_directories)):
-#             if os.path.exists(f_loc.p_directories[directory][0]+residue+'/'+residue+'.pdb'):
-#                 return f_loc.p_directories[directory][0]+residue+'/'+residue+'.pdb'
-#         for directory in range(len(f_loc.mod_directories)):
-#             if os.path.exists(f_loc.mod_directories[directory][0]+residue+'/'+residue+'.pdb'):
-#                 return f_loc.mod_directories[directory][0]+residue+'/'+residue+'.pdb'
-#     else:
-#         for directory in range(len(f_loc.np_directories)):
-#             if os.path.exists(f_loc.np_directories[directory][0]+residue+'/'+residue+'.pdb'):
-#                 return f_loc.np_directories[directory][0]+residue+'/'+residue+'.pdb'
-#     sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
-
-
 def split_fragment_names(line, residue, resname):
     bead = gen.strip_header(line)
     group = f_loc.res_top[resname]['GROUPS'][bead]
@@ -294,22 +279,94 @@ def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
             for group_bead in group: 
                 for bead_atom in group[group_bead]:
                     if bead_atom in f_loc.sorted_connect[resname][int(group_number)]:
+                        skip = False
                         for bead_connect in f_loc.sorted_connect[resname][int(group_number)][bead_atom]:
                             if 'cg_connect' not in locals():
-                                cg_connect = [cg[bead_connect]['coord']]
+                                if bead_connect in cg:
+                                    cg_connect = [cg[bead_connect]['coord']]
+                                else:
+                                    skip = True
                             else:
-                                cg_connect.append(cg[bead_connect]['coord'])
-                        at_connection.append(group[group_bead][bead_atom]['coord'])
-                        cg_connection.append(np.mean(np.array(cg_connect), axis=0))    
+                                if bead_connect in cg:
+                                    cg_connect.append(cg[bead_connect]['coord'])
+                        if not skip:
+                            at_connection.append(group[group_bead][bead_atom]['coord'])
+                            cg_connection.append(np.mean(np.array(cg_connect), axis=0))    
     if len(at_frag_centers)  > 1:         
         for bead in at_frag_centers:
             cg_connection.append(cg_frag_centers[bead])
             at_connection.append(at_frag_centers[bead])     
     return at_connection, cg_connection    
 
+### end fragment information
+### linked residue connectivity start
 
+def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead):
+    con_atoms = {}
+    for atom in at_residues:
+        resname = at_residues[atom]['res_type']
+        if at_residues[atom]['atom'] in f_loc.res_top[resname]['CONNECT'][BB_bead]['atom']:
+
+            con_atoms[f_loc.res_top[resname]['CONNECT'][BB_bead]['atom'].index(at_residues[atom]['atom'])]=atom
+    new_chain=False
+    for con in con_atoms:
+        con_resid = residue_number+f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con]
+        if con_resid in cg_residues:
+            con_resname = cg_residues[con_resid][next(iter(cg_residues[con_resid]))]['residue_name']
+            xyz_cur = cg_residues[residue_number][BB_bead]['coord']
+            if f_loc.res_top[resname]['CONNECT'][BB_bead]['Con_Bd'][con] in cg_residues[con_resid]:
+                xyz_con = cg_residues[con_resid][f_loc.res_top[resname]['CONNECT'][BB_bead]['Con_Bd'][con]]['coord']
+                if gen.calculate_distance(xyz_con, xyz_cur) < 6:
+                    cg_connections.append(xyz_con)
+                    at_connections.append(at_residues[con_atoms[con]]['coord'])
+                else:
+                    if f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
+                        new_chain=True
+            else:
+                    if f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
+                        new_chain=True
+        else:
+            if f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
+                new_chain=True
+    return at_connections,cg_connections, new_chain
 
 ################################################################### Merged system
+
+def merge_indivdual_chain_pdbs(file, end, res_type):
+#### reads in each chain into merge list
+    merge, merged_coords = [],[]
+    count = 0
+    for chain in range(0,g_var.system[res_type]):
+        merge_temp = []
+        if os.path.exists(file+'_'+str(chain)+end):
+            with open(file+'_'+str(chain)+end, 'r') as pdb_input:
+                for line in pdb_input.readlines():
+                    if line.startswith('ATOM'):
+                        line_sep=gen.pdbatom(line)
+                        merge_temp.append(line_sep)
+        else:
+            sys.exit('cannot find minimised protein chain: '+file+'_'+str(chain)+end)
+        if res_type+'_aligned' in file:  
+            count += at_mod_p.write_disres(merge_temp, chain, file, count)
+        merge, merge_coords = fix_chirality(merge,merge_temp,merged_coords, res_type)   
+    merged_coords = check_atom_overlap(merge_coords)
+    merged=[]
+    for line_val, line in enumerate(merge):
+        x, y, z = gen.trunc_coord(merged_coords[line_val])
+        merged.append(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
+            x,y,z,1,0))+'\n')
+    if 'aligned' in file.split('/')[-1]:
+        write_merged_pdb(merged, 'PROTEIN/PROTEIN_aligned')
+    else:
+        write_merged_pdb(merged,res_type+'/'+res_type+'_de_novo')
+
+def write_merged_pdb(merge, res_type):
+#### creates merged pdb and writes chains to it
+    if not os.path.exists(g_var.working_dir+res_type+'_merged.pdb'):
+        pdb_output=gen.create_pdb(g_var.working_dir+res_type+'_merged.pdb')
+        for line in merge:
+            pdb_output.write(line)
+        pdb_output.close()
 
 def merge_system_pdbs(protein):
     os.chdir(g_var.merged_directory)
@@ -318,10 +375,12 @@ def merge_system_pdbs(protein):
         merge=[]
         merge_coords=[]
     #### run through every residue type in cg_residues
-        for segment, residue_type in enumerate(g_var.cg_residues):
+        for segment, residue_type in enumerate(g_var.system):
         #### if file contains user input identifier 
-            if residue_type != 'PROTEIN':
+            if residue_type not in ['PROTEIN', 'OTHER']:
                 input_type=''
+                if residue_type in f_loc.ions:
+                    residue_type = 'ION'
             else:
                 input_type=protein
             merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
@@ -350,13 +409,14 @@ def read_in_merged_pdbs(merge, merge_coords, location):
     else:
         sys.exit('cannot find minimised residue: \n'+ location) 
 
-def check_overlap_chain(chain, input, collate=False):
+def check_overlap_chain(chain, input,res_type, collate=False):
     checked=[]
-    if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_'+input+str(chain)+'_gmx_checked.pdb'):
-        lines, coords = read_in_merged_pdbs([], [], 'PROTEIN_'+input+str(chain)+'_gmx.pdb')
-        coords = at_mod_p.correct_amide_h(lines, coords)
+    if not os.path.exists(g_var.working_dir+res_type+'/'+res_type+'_'+input+str(chain)+'_gmx_checked.pdb'):
+        lines, coords = read_in_merged_pdbs([], [], res_type+'_'+input+str(chain)+'_gmx.pdb')
+        if res_type == 'PROTEIN':
+            coords = at_mod_p.correct_amide_h(lines, coords)
         updated_coords = check_atom_overlap(coords)
-        pdb_output=gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_'+input+str(chain)+'_gmx_checked.pdb') 
+        pdb_output=gen.create_pdb(g_var.working_dir+res_type+'/'+res_type+'_'+input+str(chain)+'_gmx_checked.pdb') 
 
         for line_val, line in enumerate(lines):
             x, y, z = gen.trunc_coord(updated_coords[line_val])
@@ -374,7 +434,7 @@ def fetch_chiral_coord(merge_temp, residue_type):
     chiral_atoms={}
     coord=[]
     for atom in range(len(merge_temp)):
-        if residue_type == 'PROTEIN':
+        if residue_type in ['PROTEIN', 'OTHER']:
             resname = merge_temp[atom]['residue_name']
         else:
             resname=residue_type
@@ -391,7 +451,7 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
     r_b_vec, r_b_inv = read_in.real_box_vectors(g_var.box_vec)
     chiral_atoms, coord= fetch_chiral_coord(merge_temp, residue_type)
     for residue in chiral_atoms:
-        if residue_type == 'PROTEIN':
+        if residue_type in ['PROTEIN', 'OTHER']:
             for atom in chiral_atoms[residue]:
                 resname = merge_temp[chiral_atoms[residue][atom]]['residue_name']
                 resid = merge_temp[chiral_atoms[residue][atom]]['residue_id']
@@ -424,7 +484,6 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
                         merge_temp[chiral_atoms[residue][chiral_group]][axis] = merge_temp[chiral_atoms[residue][chiral_group]][axis] - (S_M[ax_val])        
                     coord[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]] -=  (2*S_M) #move_coord -
                     coord[chiral_atoms[residue][chiral_group]] -=  (0.25*S_M) #stat_coord -
-                
     merge+=merge_temp
     merged_coords+=coord
     return merge, merged_coords
@@ -437,7 +496,6 @@ def check_hydrogens(residue):
     for atom_num, atom in enumerate(residue):
         resname=residue[atom]['res_type']
         break
-
     for atom in f_loc.hydrogen[resname]:
         h_coord = []
         for group in f_loc.sorted_connect[resname]:
@@ -448,16 +506,21 @@ def check_hydrogens(residue):
                 for heavy_bond in f_loc.heavy_bond[resname][atom]:
                     for group_check in f_loc.sorted_connect[resname]:
                         if heavy_bond in f_loc.sorted_connect[resname][group_check] and group_check != group:
-                            con_heavy_atom = heavy_bond
-                            con_heavy_atom_co =  residue[con_heavy_atom]['coord']
-            #### vector between H COM and bonded carbon 
-                vector=np.array([h_com[0]-residue[atom]['coord'][0],h_com[1]-residue[atom]['coord'][1],h_com[2]-residue[atom]['coord'][2]])
-                h_com_f=h_com+vector*2
-                d1 = gen.calculate_distance(h_com, con_heavy_atom_co)    
-                d2 = gen.calculate_distance(h_com_f, con_heavy_atom_co)   
-                if d2 < d1:
-                    for h_at in f_loc.hydrogen[resname][atom]:
-                        residue[h_at]['coord']=residue[h_at]['coord']-vector*2
+                            skip = False
+                            if heavy_bond in residue:
+                                con_heavy_atom = heavy_bond
+                                con_heavy_atom_co =  residue[con_heavy_atom]['coord']
+                            else:
+                                skip = True
+                if not skip:
+                #### vector between H COM and bonded carbon 
+                    vector=np.array([h_com[0]-residue[atom]['coord'][0],h_com[1]-residue[atom]['coord'][1],h_com[2]-residue[atom]['coord'][2]])
+                    h_com_f=h_com+vector*2
+                    d1 = gen.calculate_distance(h_com, con_heavy_atom_co)    
+                    d2 = gen.calculate_distance(h_com_f, con_heavy_atom_co)   
+                    if d2 < d1:
+                        for h_at in f_loc.hydrogen[resname][atom]:
+                            residue[h_at]['coord']=residue[h_at]['coord']-vector*2
     return residue
 
 

@@ -86,23 +86,23 @@ def make_min(residue):#, fragments):
         with open('em_'+residue+'.mdp','w') as em:
             em.write('define = \n integrator = steep\nnsteps = 20000\nemtol = 750\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 
-def pdb2gmx_minimise(chain,pdb2gmx_selections, q):
+def pdb2gmx_minimise(chain,pdb2gmx_selections,res_type, q):
 #### makes em.mdp for each chain
     checked={}
-    os.chdir(g_var.working_dir+'/PROTEIN')
-    make_min('PROTEIN')
+    os.chdir(g_var.working_dir+'/'+res_type)
+    make_min(res_type)
     
-    if not os.path.exists('PROTEIN_de_novo_'+str(chain)+'_gmx.pdb'):
-        pdb2gmx_chain(chain, 'de_novo_', ' << EOF \n1\n'+str(pdb2gmx_selections[chain][0])+'\n'+str(pdb2gmx_selections[chain][1]))
-    if not os.path.exists('PROTEIN_de_novo_'+str(chain)+'_gmx_checked.pdb'):
-        at_mod.check_overlap_chain(chain, 'de_novo_')
-    if g_var.user_at_input and not os.path.exists('PROTEIN_aligned_'+str(chain)+'_gmx_checked.pdb'):
+    if not os.path.exists(res_type+'_de_novo_'+str(chain)+'_gmx.pdb'):
+        pdb2gmx_chain(chain, 'de_novo_', res_type, ' << EOF \n1\n'+str(pdb2gmx_selections[chain][0])+'\n'+str(pdb2gmx_selections[chain][1]))
+    if not os.path.exists(res_type+'_de_novo_'+str(chain)+'_gmx_checked.pdb'):
+        at_mod.check_overlap_chain(chain, 'de_novo_', res_type)
+    if g_var.user_at_input and not os.path.exists(res_type+'_aligned_'+str(chain)+'_gmx_checked.pdb') and res_type == 'PROTEIN':
         pdb2gmx_selections[chain] = histidine_protonation(chain, 'de_novo_', pdb2gmx_selections[chain])
-        pdb2gmx_chain(chain, 'aligned_', pdb2gmx_selections[chain])
-        at_mod.check_overlap_chain(chain, 'aligned_')
-    minimise_protein_chain(chain, 'de_novo_')
-    if g_var.user_at_input: 
-        minimise_protein_chain(chain, 'aligned_')
+        pdb2gmx_chain(chain, 'aligned_', res_type, pdb2gmx_selections[chain])
+        at_mod.check_overlap_chain(chain, 'aligned_', res_type)
+    minimise_protein_chain(chain, 'de_novo_', res_type)
+    if g_var.user_at_input and res_type == 'PROTEIN': 
+        minimise_protein_chain(chain, 'aligned_', res_type)
     q.put(chain)
     return chain
 
@@ -127,68 +127,99 @@ def histidine_protonation(chain, input, chain_ter):
 
 
 ### interactive terminal residue selection
-def ask_ter_question(default_ter, ter_name, ter_val, chain):
-    print('\n please select species for '+ter_name[ter_val]+' residue in chain '+str(chain)+' :\n 0: charged\n 1: neutral')
-    # number = int(input('\nplease select terminal species: '))
-    # print(number)
+def ask_ter_question(residue, options, chain):
+    print('\n please select species for '+residue+' residue in chain '+str(chain))
+    print('\nPlease select a option from below:\n')
+    print('{0:^20}{1:^30}'.format('Selection','termini'))
+    print('{0:^20}{1:^30}'.format('---------','----------'))
+    sel=[]
+    for selection, ter in enumerate(options):
+        sel.append(ter)
+        print('{0:^20}{1:^30}'.format(selection,ter))
     while True:
         try:
-            number = int(input('\nplease select terminal species: '))
-            if number in [0,1]:
-                default_ter[ter_val]=number
-                break
+            number = int(input('\nplease select a option: '))
+            if number < len(options):
+                return options[sel[number]]
         except KeyboardInterrupt:
             sys.exit('\nInterrupted')
         except:
             print("Oops!  That was a invalid choice")
-    return default_ter
 
-def ask_terminal():
+def ask_terminal(sys_info, residue_type):
 #### default termini is neutral, however if ter flag is supplied you interactively choose termini ]
+    for ff in g_var.termini_selections:
+        if ff in f_loc.forcefield:
+            ter_conv = g_var.termini_selections[ff]
+
     system_ter = []
-    for chain in range(g_var.system['PROTEIN']):
-        default_ter=[0,0]
-        ter_name=['N terminal','C terminal']
-        for ter_val,  ter_residue in enumerate(g_var.p_system[chain]):
-            if not ter_residue:
-                if g_var.nt and ter_val==0:
-                    default_ter[ter_val]=1
-                elif g_var.ct and ter_val==1:
-                    default_ter[ter_val]=1
-                elif g_var.ter:
-                    default_ter = ask_ter_question(default_ter, ter_name, ter_val, chain)          
-            else:
+    for chain in range(g_var.system[residue_type]):
+        conv_type = 'NORM'
+        default_ter=[]
+        ter_name=['N_TERMINAL','C_TERMINAL']
+        for ter_val,  ter_residue in enumerate(sys_info[chain]):
+            if ter_residue == 'PRO' and ter_val == 0:
+                conv_type = 'PRO'
+            termini = f_loc.res_top[ter_residue][ter_name[ter_val]]
+            if len(termini) == 0:
+                if g_var.nt and ter_val==0 and not g_var.ter:
+                    if conv_type == 'PRO':
+                        default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH'])
+                    else:
+                        default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH2'])
+                elif ter_val==0 and not g_var.ter:
+                    default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH3+'])
+                if g_var.ct and ter_val==1 and not g_var.ter:
+                    default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COOH'])
+                elif ter_val==1 and not g_var.ter:
+                    default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COO-'])
                 if g_var.ter:
-                    print('\n The '+ter_name[ter_val]+' residue is non adjustable')
-                if ter_val == 0:
-                    default_ter[ter_val]=3
-                else:
-                    default_ter[ter_val]=4
+                    default_ter.append(ask_ter_question(termini, ter_conv[ter_name[ter_val]][conv_type], chain))
+            else:
+                default_ter.append(ter_conv[ter_name[ter_val]][conv_type][termini])
+                if g_var.ter:
+                    print('\n The '+ter_name[ter_val]+' of residue '+ter_residue+' is non adjustable')
         system_ter.append(default_ter)
     return system_ter
 
-def pdb2gmx_chain(chain, input, pdb2gmx_selections):
-#### pdb2gmx on on protein chain, creates the topologies    
-    gromacs([g_var.gmx+' pdb2gmx -f PROTEIN_'+input+str(chain)+'.pdb -o PROTEIN_'+input+str(chain)+'_gmx.pdb -water none \
-    -p PROTEIN_'+input+str(chain)+'.top  -i PROTEIN_'+str(chain)+'_posre.itp '+g_var.vs+' -ter '+pdb2gmx_selections+'\nEOF', 'PROTEIN_'+input+str(chain)+'_gmx.pdb']) #### single chains
-#### converts the topology file and processes it into a itp file
-    convert_topology('PROTEIN_'+input, chain)
-#### writes topology overview for each chain 
-    write_topol('PROTEIN_'+input, 1, str(chain))
-#### writes restraints file for each chain
-    write_posres(chain)
+def run_parallel_pdb2gmx_min(res_type, sys_info):
+    pool = mp.Pool(g_var.ncpus)
+    m = mp.Manager()
+    q = m.Queue()
+    gen.folder_copy_and_check(f_loc.forcefield_location+f_loc.forcefield, g_var.working_dir+res_type+'/'+f_loc.forcefield+'/.')
+    gen.file_copy_and_check(f_loc.forcefield_location+'/residuetypes.dat', g_var.working_dir+res_type+'/residuetypes.dat')
+    pdb2gmx_selections=ask_terminal(sys_info, res_type)
+    pool_process = pool.starmap(pdb2gmx_minimise, [(chain, pdb2gmx_selections,res_type, q) for chain in range(0, g_var.system[res_type])])
+    while len(pool_process) != g_var.system[res_type]:#not pool_process.ready():
+        report_complete('pdb2gmx/minimisation', q.qsize(), g_var.system[res_type])
+    print('{:<130}'.format(''), end='\r')
+    print('pdb2gmx/minimisation completed on residue type: '+res_type)     
+    pool.close()
+    pool.join()
 
-def minimise_protein_chain(chain, input):
+def pdb2gmx_chain(chain, input,res_type, pdb2gmx_selections):
+#### pdb2gmx on on protein chain, creates the topologies    
+    gromacs([g_var.gmx+' pdb2gmx -f '+res_type+'_'+input+str(chain)+'.pdb -o '+res_type+'_'+input+str(chain)+'_gmx.pdb -water none \
+    -p '+res_type+'_'+input+str(chain)+'.top  -i '+res_type+'_'+str(chain)+'_posre.itp '+g_var.vs+' -ter '+pdb2gmx_selections+'\nEOF', ''+res_type+'_'+input+str(chain)+'_gmx.pdb']) #### single chains
+#### converts the topology file and processes it into a itp file
+    convert_topology(res_type+'_'+input, chain, res_type)
+#### writes topology overview for each chain 
+    write_topol(res_type+'_'+input, 1, str(chain))
+#### writes restraints file for each chain
+    if res_type == 'PROTEIN':
+        write_posres(chain)
+
+def minimise_protein_chain(chain, input, res_type):
     #### grompps each protein chain
     gromacs([g_var.gmx+' grompp '+
-                '-f em_PROTEIN.mdp '+
-                '-p topol_PROTEIN_'+input+str(chain)+'.top '+
-                '-c PROTEIN_'+input+str(chain)+'_gmx_checked.pdb '+
-                '-o MIN/PROTEIN_'+input+str(chain)+' '+
-                '-maxwarn 1 ', 'MIN/PROTEIN_'+input+str(chain)+'.tpr'])
+                '-f em_'+res_type+'.mdp '+
+                '-p topol_'+res_type+'_'+input+str(chain)+'.top '+
+                '-c '+res_type+'_'+input+str(chain)+'_gmx_checked.pdb '+
+                '-o MIN/'+res_type+'_'+input+str(chain)+' '+
+                '-maxwarn 1 ', 'MIN/'+res_type+'_'+input+str(chain)+'.tpr'])
 #### minimises chain
     os.chdir('MIN')
-    gromacs([g_var.gmx+' mdrun -v -nt 1 -deffnm PROTEIN_'+input+str(chain)+' -c PROTEIN_'+input+str(chain)+'.pdb', 'PROTEIN_'+input+str(chain)+'.pdb'])
+    gromacs([g_var.gmx+' mdrun -v -nt 1 -deffnm '+res_type+'_'+input+str(chain)+' -c '+res_type+'_'+input+str(chain)+'.pdb', ''+res_type+'_'+input+str(chain)+'.pdb'])
     os.chdir('..')  
 
 
@@ -215,8 +246,6 @@ def write_posres(chain):
                 line_sep = gen.pdbatom(line)
                 at_counter+=1
             #### if atom is in the restraint list for that residue add to position restraint file
-                if line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['STEER']:
-                    steered_posres.write(str(at_counter)+'     1  2000  2000  2000\n')
                 if line_sep['atom_name'] == 'CA':
                     ca_posres.write(str(at_counter)+'     1  100  100  100\n')
                 if not gen.is_hydrogen(line_sep['atom_name']):
@@ -227,37 +256,44 @@ def write_posres(chain):
                     very_high_posres.write(str(at_counter)+'     1  6000  6000  6000\n')
                     ultra_posres.write(str(at_counter)+'     1  10000  10000  10000\n')
 
-def convert_topology(topol, protein_number):
+def convert_topology(topol, protein_number, res_type):
 #### reads in topology 
     if Path(topol+str(protein_number)+'.top').exists():
         read=False
+        mol_type=False
         if not os.path.exists(topol+str(protein_number)+'.itp'):
             with open(topol+str(protein_number)+'.itp', 'w') as itp_write:
+
                 for line in open(topol+str(protein_number)+'.top', 'r').readlines():
+                    # print(line)
                 #### copies between moleculetype and position restraint section
                     if len(line.split()) > 1: 
                         if read == False and line.split()[1] == 'moleculetype':
                             read = True
+                        if line.split()[0]== '[' and line.split()[1] == 'moleculetype' and read:
+                            mol_type = True
+                        elif line.split()[0]== '[' and line.split()[1] == 'atoms' and read:
+                            mol_type = False
+                        elif mol_type:
+                            if not line.startswith(';'):
+                                line = '{0}       {1:20}'.format(res_type.lower()+'_'+str(protein_number), line.split()[1])
                         if read == True and line.split()[1] == 'POSRES':
                             read = False
-                    #### sorts out chain naming
-                        if line.split()[0][:-1] == 'Protein_chain_':
-                            line= re.sub('Protein_chain_.?', 'protein_'+str(protein_number),line)
-                        elif line.split()[0] == 'Protein':
-                            line= re.sub('Protein', 'protein_'+str(protein_number),line)
                 #### writes to itp file copied section          
                     if read:
+                        # print(line)
                         itp_write.write(line)
-            #### adds position restraint section to end of itp file         
-                itp_write.write('#ifdef POSRES\n#include \"PROTEIN_'+str(protein_number)+'_posre.itp\"\n#endif\n') 
-                itp_write.write('#ifdef POSRESCA\n#include \"PROTEIN_'+str(protein_number)+'_ca_posre.itp\"\n#endif\n') 
-                itp_write.write('#ifdef VERY_LOWPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_very_low_posre.itp\"\n#endif\n')
-                itp_write.write('#ifdef LOWPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_low_posre.itp\"\n#endif\n')
-                itp_write.write('#ifdef MIDPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_mid_posre.itp\"\n#endif\n')
-                itp_write.write('#ifdef HIGHPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_high_posre.itp\"\n#endif\n')
-                itp_write.write('#ifdef VERY_HIGHPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_very_high_posre.itp\"\n#endif\n')
-                itp_write.write('#ifdef ULTRAPOSRES\n#include \"PROTEIN_'+str(protein_number)+'_ultra_posre.itp\"\n#endif\n')
-                itp_write.write('#ifdef POSRES_STEERED\n#include \"PROTEIN_'+str(protein_number)+'_steered_posre.itp\"\n#endif\n')
+                if res_type in ['PROTEIN']:
+                #### adds position restraint section to end of itp file         
+                    itp_write.write('#ifdef POSRES\n#include \"'+res_type+'_'+str(protein_number)+'_posre.itp\"\n#endif\n') 
+                    itp_write.write('#ifdef POSRESCA\n#include \"'+res_type+'_'+str(protein_number)+'_ca_posre.itp\"\n#endif\n') 
+                    itp_write.write('#ifdef VERY_LOWPOSRES\n#include \"'+res_type+'_'+str(protein_number)+'_very_low_posre.itp\"\n#endif\n')
+                    itp_write.write('#ifdef LOWPOSRES\n#include \"'+res_type+'_'+str(protein_number)+'_low_posre.itp\"\n#endif\n')
+                    itp_write.write('#ifdef MIDPOSRES\n#include \"'+res_type+'_'+str(protein_number)+'_mid_posre.itp\"\n#endif\n')
+                    itp_write.write('#ifdef HIGHPOSRES\n#include \"'+res_type+'_'+str(protein_number)+'_high_posre.itp\"\n#endif\n')
+                    itp_write.write('#ifdef VERY_HIGHPOSRES\n#include \"'+res_type+'_'+str(protein_number)+'_very_high_posre.itp\"\n#endif\n')
+                    itp_write.write('#ifdef ULTRAPOSRES\n#include \"'+res_type+'_'+str(protein_number)+'_ultra_posre.itp\"\n#endif\n')
+                    itp_write.write('#ifdef POSRES_STEERED\n#include \"'+res_type+'_'+str(protein_number)+'_steered_posre.itp\"\n#endif\n')
     else:
         sys.exit('cannot find : '+topol+'_'+str(protein_number)+'.top')
 
@@ -274,10 +310,9 @@ def write_topol(residue_type, residue_number, chain):
             for directory in range(len(f_loc.np_directories)):
                 if os.path.exists(f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp'):
                     topol_write.write('#include \"'+f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp\"\n')
-
                     found=True
                     break
-            if os.path.exists(g_var.working_dir+'/PROTEIN/'+residue_type+chain+'.itp'):
+            if os.path.exists(g_var.working_dir+'/'+residue_type.split('_')[0]+'/'+residue_type+chain+'.itp'):
                 topol_write.write('#include \"'+residue_type+chain+'.itp\"\n')
                 found=True
             if not found:
@@ -285,8 +320,8 @@ def write_topol(residue_type, residue_number, chain):
     #### topology section headers
         topol_write.write('\n\n[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
     #### individual number of residues
-        if residue_type.split('_')[0] == 'PROTEIN':
-             residue_type='PROTEIN_'
+        if residue_type.split('_')[0] in ['PROTEIN', 'OTHER']:
+             residue_type=residue_type.split('_')[0]+'_'
         topol_write.write(residue_type+chain+'    '+str(residue_number))
 
 
@@ -425,13 +460,14 @@ def write_merged_topol():
                         strip_atomtypes(residue_type+'.itp')
                         break
             #### copies across protein itp files and simplifies the names 
-                if residue_type == 'PROTEIN':
-                    for protein_unit in range(g_var.system[residue_type]): 
-                        topologies_to_include.append('#include \"PROTEIN_'+str(protein_unit)+'.itp\"\n')
-                        gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(protein_unit)+'.itp', 'PROTEIN_'+str(protein_unit)+'.itp')
-                        for posres_type in ['_steered_posre.itp','_very_low_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_very_high_posre.itp','_ultra_posre.itp','_ca_posre.itp','_posre.itp']:
-                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(protein_unit)+posres_type, 'PROTEIN_'+str(protein_unit)+posres_type)
-                        gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'PROTEIN_disres.itp')  
+                if residue_type in ['PROTEIN', 'OTHER']:
+                    for unit in range(g_var.system[residue_type]): 
+                        topologies_to_include.append('#include \"'+residue_type+'_'+str(unit)+'.itp\"\n')
+                        gen.file_copy_and_check(g_var.working_dir+residue_type+'/'+residue_type+'_de_novo_'+str(unit)+'.itp', residue_type+'_'+str(unit)+'.itp')
+                        if residue_type in ['PROTEIN']:
+                            for posres_type in ['_steered_posre.itp','_very_low_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_very_high_posre.itp','_ultra_posre.itp','_ca_posre.itp','_posre.itp']:
+                                gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(unit)+posres_type, 'PROTEIN_'+str(unit)+posres_type)
+                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'PROTEIN_disres.itp')  
         if os.path.exists('extra_atomtypes.itp'):
             topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
             topol_write.write('#include \"extra_atomtypes.itp\"\n')
@@ -443,12 +479,12 @@ def write_merged_topol():
         topol_write.write('[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
     #### adds number of residues to the topology
         for residue_type in g_var.system:
-            if residue_type not in  ['PROTEIN']:
+            if residue_type not in  ['PROTEIN', 'OTHER']:
                 topol_write.write(residue_type+'    '+str(g_var.system[residue_type])+'\n')   
         #### adds monomers separately
-            if residue_type == 'PROTEIN':
-                for protein_unit in range(g_var.system[residue_type]):
-                    topol_write.write('PROTEIN_'+str(protein_unit)+'    1\n')    
+            else:
+                for unit in range(g_var.system[residue_type]):
+                    topol_write.write(residue_type+'_'+str(unit)+'    1\n')    
         topol_write.write('\n#ifdef DISRES\n#include \"PROTEIN_disres.itp\"\n#endif')
 
 

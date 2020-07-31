@@ -164,12 +164,15 @@ def fix_pbc(box_vec, new_box, box_shift):
                         break
                 if residue_type in ['PROTEIN', 'OTHER'] and bead in f_loc.res_top[bead_info['residue_name']]['CONNECT']:
                     if residue != BB_pre_resid and residue != 0:
+                        BB_pre_resid = residue
                         con_info = f_loc.res_top[bead_info['residue_name']]['CONNECT'][bead]
                         for con_val, connection in enumerate(con_info['dir']):
                             if connection < 0:
                                 BB_cur = g_var.cg_residues[residue_type][residue][bead]['coord']
-                                BB_pre = g_var.cg_residues[residue_type][residue+connection][con_info['Con_Bd'][con_val]]['coord']
-                                g_var.cg_residues[residue_type][residue][bead]['coord'] = brute_mic(BB_pre, BB_cur, r_b_vec)
+                                if residue+connection in g_var.cg_residues[residue_type]:
+                                    BB_pre = g_var.cg_residues[residue_type][residue+connection][con_info['Con_Bd'][con_val]]['coord']
+                                    g_var.cg_residues[residue_type][residue][bead]['coord'] = brute_mic(BB_pre, BB_cur, r_b_vec)
+
                 if bead_val != 0 and residue_type not in ['ION','SOL']:
                     g_var.cg_residues[residue_type][residue][bead]['coord'] = brute_mic(g_var.cg_residues[residue_type][residue][bead_prev]['coord'],
                                                                                     g_var.cg_residues[residue_type][residue][bead]['coord'], r_b_vec)
