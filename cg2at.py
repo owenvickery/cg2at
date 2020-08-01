@@ -121,7 +121,6 @@ if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTE
 ### MERGES system
 g_var.tc['n_p_t']=time.time()
 
-print(g_var.system)
 print('Merging all residue types to single file. (Or possibly tea)\n')
 
 gro.write_merged_topol() ## make final topology in merged directory
