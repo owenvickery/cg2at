@@ -166,6 +166,8 @@ def fetch_chain_groups():
             
         else:
             g_var.group_chains =  g_var.group[0]
+    else:
+        g_var.group_chains = None
     
 
 def split_swap(swap):
@@ -702,7 +704,7 @@ def sort_directories():
         for directory in range(len(g_var.np_directories)):
             print('\nnon protein residues fragment directories found: \n\nroot file system\n')
             print(g_var.np_directories[directory][0],'\n\nresidues\n\n',g_var.np_directories[directory][1:], '\n')
-        for directory in range(len(p_directories)):
+        for directory in range(len(g_var.p_directories)):
             print('\nprotein residues fragment directories found: \n\nroot file system\n')
             print(g_var.p_directories[directory][0],'\n\nresidues\n\n',g_var.p_directories[directory][1:], '\n')
     # return np_residues, p_residues, mod_residues, o_residues, np_directories, p_directories, mod_directories, o_directories
