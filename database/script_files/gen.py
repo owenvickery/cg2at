@@ -166,8 +166,7 @@ def fetch_chain_groups():
             
         else:
             g_var.group_chains =  g_var.group[0]
-    else:
-        g_var.group_chains = None
+
     
 
 def split_swap(swap):

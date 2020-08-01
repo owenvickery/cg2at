@@ -150,4 +150,4 @@ database_locations = [] ## grouped directories
 water_dir, water = [],[] ## water information
 swap_dict ={} ## CG residue swap
 res_top, sorted_connect, hydrogen, heavy_bond, ions, at_mass = {},{},{},{},[],{}
-group_chains = {}
+group_chains = None

@@ -362,7 +362,6 @@ def align_user_chains(final_coordinates_atomistic):
     atomistic_protein_rotated = apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, 
                                                                 at_com_group,cg_com_group,cg_com) ## apply rotation matrix to atoms and build in missing residues
     final_user_supplied_coord = correct_disulphide_bonds(atomistic_protein_rotated) ## fixes sulphur distances in user structure
-    mp.set_start_method('spawn')
     pool = mp.Pool(g_var.ncpus)
     pool_process = pool.starmap_async(write_user_chains_to_pdb, [(final_user_supplied_coord[chain], chain) ## write structure to pdb
                                         for chain in final_user_supplied_coord]).get()
