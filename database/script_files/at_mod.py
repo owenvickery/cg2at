@@ -6,14 +6,14 @@ import math
 import itertools
 from scipy.spatial import cKDTree
 import re
-import gen, g_var, f_loc, at_mod_p, read_in
+import gen, g_var, at_mod_p, read_in
 
 
 ### sanity checking
 
 def sanity_check_fragments(res, cg, sin_bead):
 #### fetches bead and atom info from fragment database
-    location = gen.fragment_location(res, f_loc.database_locations)
+    location = gen.fragment_location(res)
     residue, fragment_mass = get_atomistic(location)
     atom_list = []
     bead_list = []
@@ -236,7 +236,7 @@ def check_atom_overlap(coordinates):
 
 def split_fragment_names(line, residue, resname):
     bead = gen.strip_header(line)
-    group = f_loc.res_top[resname]['GROUPS'][bead]
+    group = g_var.res_top[resname]['GROUPS'][bead]
     if group not in residue:
         residue[group] = {}
     if bead not in residue[group]:
@@ -261,9 +261,9 @@ def get_atomistic(frag_location):
                                                                 'frag_mass':1}    
 #### updates fragment mass   
                 if not gen.is_hydrogen(line_sep['atom_name']):
-                    if line_sep['atom_name'] in f_loc.res_top[resname]['atom_masses']:
-                        residue[group][bead][line_sep['atom_number']]['frag_mass']=f_loc.res_top[resname]['atom_masses'][line_sep['atom_name']]  ### updates atom masses with crude approximations
-                        fragment_mass[bead].append([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf,f_loc.res_top[resname]['atom_masses'][line_sep['atom_name']]])               
+                    if line_sep['atom_name'] in g_var.res_top[resname]['atom_masses']:
+                        residue[group][bead][line_sep['atom_number']]['frag_mass']=g_var.res_top[resname]['atom_masses'][line_sep['atom_name']]  ### updates atom masses with crude approximations
+                        fragment_mass[bead].append([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf,g_var.res_top[resname]['atom_masses'][line_sep['atom_name']]])               
                 else:
                     fragment_mass[bead].append([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf,1])
     return residue, fragment_mass
@@ -274,13 +274,13 @@ def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
     for bead in cg:
         resname = cg[bead]['residue_name']
         break
-    if resname in f_loc.sorted_connect:
-        if len(f_loc.sorted_connect[resname]) > 0:
+    if resname in g_var.sorted_connect:
+        if len(g_var.sorted_connect[resname]) > 0:
             for group_bead in group: 
                 for bead_atom in group[group_bead]:
-                    if bead_atom in f_loc.sorted_connect[resname][int(group_number)]:
+                    if bead_atom in g_var.sorted_connect[resname][int(group_number)]:
                         skip = False
-                        for bead_connect in f_loc.sorted_connect[resname][int(group_number)][bead_atom]:
+                        for bead_connect in g_var.sorted_connect[resname][int(group_number)][bead_atom]:
                             if 'cg_connect' not in locals():
                                 if bead_connect in cg:
                                     cg_connect = [cg[bead_connect]['coord']]
@@ -305,28 +305,28 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
     con_atoms = {}
     for atom in at_residues:
         resname = at_residues[atom]['res_type']
-        if at_residues[atom]['atom'] in f_loc.res_top[resname]['CONNECT'][BB_bead]['atom']:
+        if at_residues[atom]['atom'] in g_var.res_top[resname]['CONNECT'][BB_bead]['atom']:
 
-            con_atoms[f_loc.res_top[resname]['CONNECT'][BB_bead]['atom'].index(at_residues[atom]['atom'])]=atom
+            con_atoms[g_var.res_top[resname]['CONNECT'][BB_bead]['atom'].index(at_residues[atom]['atom'])]=atom
     new_chain=False
     for con in con_atoms:
-        con_resid = residue_number+f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con]
+        con_resid = residue_number+g_var.res_top[resname]['CONNECT'][BB_bead]['dir'][con]
         if con_resid in cg_residues:
             con_resname = cg_residues[con_resid][next(iter(cg_residues[con_resid]))]['residue_name']
             xyz_cur = cg_residues[residue_number][BB_bead]['coord']
-            if f_loc.res_top[resname]['CONNECT'][BB_bead]['Con_Bd'][con] in cg_residues[con_resid]:
-                xyz_con = cg_residues[con_resid][f_loc.res_top[resname]['CONNECT'][BB_bead]['Con_Bd'][con]]['coord']
+            if g_var.res_top[resname]['CONNECT'][BB_bead]['Con_Bd'][con] in cg_residues[con_resid]:
+                xyz_con = cg_residues[con_resid][g_var.res_top[resname]['CONNECT'][BB_bead]['Con_Bd'][con]]['coord']
                 if gen.calculate_distance(xyz_con, xyz_cur) < 6:
                     cg_connections.append(xyz_con)
                     at_connections.append(at_residues[con_atoms[con]]['coord'])
                 else:
-                    if f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
+                    if g_var.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
                         new_chain=True
             else:
-                    if f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
+                    if g_var.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
                         new_chain=True
         else:
-            if f_loc.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
+            if g_var.res_top[resname]['CONNECT'][BB_bead]['dir'][con] > 0:
                 new_chain=True
     return at_connections,cg_connections, new_chain
 
@@ -375,15 +375,19 @@ def merge_system_pdbs(protein):
         merge=[]
         merge_coords=[]
     #### run through every residue type in cg_residues
+        done = []
         for segment, residue_type in enumerate(g_var.system):
         #### if file contains user input identifier 
             if residue_type not in ['PROTEIN', 'OTHER']:
                 input_type=''
-                if residue_type in f_loc.ions:
+                if residue_type in g_var.ions:
                     residue_type = 'ION'
+                    ion_done = True
             else:
                 input_type=protein
-            merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
+            if residue_type not in done:
+                done.append(residue_type)
+                merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
         if 'novo' in protein:
             print('checking for atom overlap in : '+protein[1:])
             merge_coords = check_atom_overlap(merge_coords)
@@ -438,8 +442,8 @@ def fetch_chiral_coord(merge_temp, residue_type):
             resname = merge_temp[atom]['residue_name']
         else:
             resname=residue_type
-        if len(f_loc.res_top[resname]['CHIRAL']['atoms']) > 0:
-            if merge_temp[atom]['atom_name'] in f_loc.res_top[resname]['CHIRAL']['atoms']:
+        if len(g_var.res_top[resname]['CHIRAL']['atoms']) > 0:
+            if merge_temp[atom]['atom_name'] in g_var.res_top[resname]['CHIRAL']['atoms']:
                 if merge_temp[atom]['residue_id'] not in chiral_atoms:
                     chiral_atoms[merge_temp[atom]['residue_id']]={}
                 chiral_atoms[merge_temp[atom]['residue_id']][merge_temp[atom]['atom_name']]=atom
@@ -458,14 +462,14 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
                 break
         else:
             resname=residue_type
-        for chiral_group in f_loc.res_top[resname]['CHIRAL']:
+        for chiral_group in g_var.res_top[resname]['CHIRAL']:
 
             if chiral_group != 'atoms':
                 stat = merge_temp[chiral_atoms[residue][chiral_group]].copy()
                 atom_move = {'stat':np.array([stat['x'],stat['y'],stat['z']]), 'm':'', 'c1':'', 'c2':'', 'c3':''}
                 for chir_atom in atom_move:
                     if chir_atom != 'stat':
-                        test = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group][chir_atom]]].copy()
+                        test = merge_temp[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group][chir_atom]]].copy()
                         atom_move[chir_atom]= np.array([test['x'],test['y'],test['z']])
                         if gen.calculate_distance(atom_move['stat'], atom_move[chir_atom]) > 10:
                             atom_move[chir_atom] = np.array(read_in.brute_mic(atom_move['stat'],atom_move[chir_atom], r_b_vec))
@@ -480,9 +484,9 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
 
                 if C1_C2_a > C1_C3_a:
                     for ax_val, axis in enumerate(['x', 'y', 'z']):
-                        merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] = merge_temp[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] - (3*S_M[ax_val])   
+                        merge_temp[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] = merge_temp[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] - (3*S_M[ax_val])   
                         merge_temp[chiral_atoms[residue][chiral_group]][axis] = merge_temp[chiral_atoms[residue][chiral_group]][axis] - (S_M[ax_val])        
-                    coord[chiral_atoms[residue][f_loc.res_top[resname]['CHIRAL'][chiral_group]['m']]] -=  (2*S_M) #move_coord -
+                    coord[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group]['m']]] -=  (2*S_M) #move_coord -
                     coord[chiral_atoms[residue][chiral_group]] -=  (0.25*S_M) #stat_coord -
     merge+=merge_temp
     merged_coords+=coord
@@ -496,16 +500,16 @@ def check_hydrogens(residue):
     for atom_num, atom in enumerate(residue):
         resname=residue[atom]['res_type']
         break
-    for atom in f_loc.hydrogen[resname]:
+    for atom in g_var.hydrogen[resname]:
         h_coord = []
-        for group in f_loc.sorted_connect[resname]:
-            if atom in f_loc.sorted_connect[resname][group]:
-                for hydrogen in f_loc.hydrogen[resname][atom]:
+        for group in g_var.sorted_connect[resname]:
+            if atom in g_var.sorted_connect[resname][group]:
+                for hydrogen in g_var.hydrogen[resname][atom]:
                     h_coord.append(residue[hydrogen]['coord'])
                 h_com=np.mean(np.array(h_coord), axis=0)
-                for heavy_bond in f_loc.heavy_bond[resname][atom]:
-                    for group_check in f_loc.sorted_connect[resname]:
-                        if heavy_bond in f_loc.sorted_connect[resname][group_check] and group_check != group:
+                for heavy_bond in g_var.heavy_bond[resname][atom]:
+                    for group_check in g_var.sorted_connect[resname]:
+                        if heavy_bond in g_var.sorted_connect[resname][group_check] and group_check != group:
                             skip = False
                             if heavy_bond in residue:
                                 con_heavy_atom = heavy_bond
@@ -519,7 +523,7 @@ def check_hydrogens(residue):
                     d1 = gen.calculate_distance(h_com, con_heavy_atom_co)    
                     d2 = gen.calculate_distance(h_com_f, con_heavy_atom_co)   
                     if d2 < d1:
-                        for h_at in f_loc.hydrogen[resname][atom]:
+                        for h_at in g_var.hydrogen[resname][atom]:
                             residue[h_at]['coord']=residue[h_at]['coord']-vector*2
     return residue
 
@@ -532,19 +536,19 @@ def check_ringed_lipids(protein):
     resid_prev=0
     ringed=[]
     for at_val, atom in enumerate(merge):         
-        if atom['residue_name'] in f_loc.np_residues:
+        if atom['residue_name'] in g_var.np_residues:
             if atom['residue_id'] != resid_prev:
-                if 'offset' in locals() and len(f_loc.heavy_bond[resname])>0: 
-                    if at_val-offset >= max(f_loc.heavy_bond[resname]): 
+                if 'offset' in locals() and len(g_var.heavy_bond[resname])>0: 
+                    if at_val-offset >= max(g_var.heavy_bond[resname]): 
                         offset=at_val
                 else:
                     offset=at_val
                     resname = atom['residue_name']
             resid_prev=atom['residue_id']
-            if atom['atom_number']-offset in f_loc.heavy_bond[atom['residue_name']]:
+            if atom['atom_number']-offset in g_var.heavy_bond[atom['residue_name']]:
                 resname = atom['residue_name']
                 at_coord = [atom['x'], atom['y'], atom['z']]
-                for at_bond in f_loc.heavy_bond[atom['residue_name']][atom['atom_number']-offset]:
+                for at_bond in g_var.heavy_bond[atom['residue_name']][atom['atom_number']-offset]:
                     at_bond_coord = [merge[at_bond+offset-1]['x'], merge[at_bond+offset-1]['y'], merge[at_bond+offset-1]['z']]
                     for xyz in range(3):
                     #### for x, y, z if the distance between bead is more than half the box length

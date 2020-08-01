@@ -4,16 +4,19 @@ import os, sys
 import numpy as np
 import subprocess 
 import multiprocessing as mp
+# from multiprocessing import get_context
 from shutil import copyfile
 from distutils.dir_util import copy_tree
 from pathlib import Path
 import re
 import time
-import gen, g_var, f_loc, at_mod, read_in, at_mod_p
+import gen, g_var, at_mod, read_in, at_mod_p
 
 
 #### collects input structures and creates initial folders
 def collect_input():
+    if not os.path.exists(g_var.c):
+        sys.exit('Cannot find CG input file: '+g_var.c)
     gen.mkdir_directory(g_var.working_dir)
     gen.mkdir_directory(g_var.final_dir)
     gen.mkdir_directory(g_var.input_directory)
@@ -149,7 +152,7 @@ def ask_ter_question(residue, options, chain):
 def ask_terminal(sys_info, residue_type):
 #### default termini is neutral, however if ter flag is supplied you interactively choose termini ]
     for ff in g_var.termini_selections:
-        if ff in f_loc.forcefield:
+        if ff in g_var.forcefield:
             ter_conv = g_var.termini_selections[ff]
 
     system_ter = []
@@ -160,7 +163,7 @@ def ask_terminal(sys_info, residue_type):
         for ter_val,  ter_residue in enumerate(sys_info[chain]):
             if ter_residue == 'PRO' and ter_val == 0:
                 conv_type = 'PRO'
-            termini = f_loc.res_top[ter_residue][ter_name[ter_val]]
+            termini = g_var.res_top[ter_residue][ter_name[ter_val]]
             if len(termini) == 0:
                 if g_var.nt and ter_val==0 and not g_var.ter:
                     if conv_type == 'PRO':
@@ -183,11 +186,15 @@ def ask_terminal(sys_info, residue_type):
     return system_ter
 
 def run_parallel_pdb2gmx_min(res_type, sys_info):
+    # mp.set_start_method('spawn')
+    # with mp.get_context("spawn").Pool(g_var.ncpus) as pool:
     pool = mp.Pool(g_var.ncpus)
     m = mp.Manager()
     q = m.Queue()
-    gen.folder_copy_and_check(f_loc.forcefield_location+f_loc.forcefield, g_var.working_dir+res_type+'/'+f_loc.forcefield+'/.')
-    gen.file_copy_and_check(f_loc.forcefield_location+'/residuetypes.dat', g_var.working_dir+res_type+'/residuetypes.dat')
+    os.chdir(g_var.working_dir+res_type)
+    make_min(res_type)
+    gen.folder_copy_and_check(g_var.forcefield_location+g_var.forcefield, g_var.working_dir+res_type+'/'+g_var.forcefield+'/.')
+    gen.file_copy_and_check(g_var.forcefield_location+'/residuetypes.dat', g_var.working_dir+res_type+'/residuetypes.dat')
     pdb2gmx_selections=ask_terminal(sys_info, res_type)
     pool_process = pool.starmap(pdb2gmx_minimise, [(chain, pdb2gmx_selections,res_type, q) for chain in range(0, g_var.system[res_type])])
     while len(pool_process) != g_var.system[res_type]:#not pool_process.ready():
@@ -302,14 +309,14 @@ def write_topol(residue_type, residue_number, chain):
     found=False
     with open('topol_'+residue_type+chain+'.top', 'w') as topol_write:
     #### add standard headers may need to be changed dependant on forcefield
-        topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
+        topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+g_var.forcefield+'/forcefield.itp\"\n')
         if 'SOL' == residue_type:
-            topol_write.write('#include \"'+f_loc.water_dir+f_loc.water+'.itp\"\n\n#include \"'+g_var.final_dir+f_loc.forcefield+'/ions.itp\"\n\n')
+            topol_write.write('#include \"'+g_var.water_dir+g_var.water+'.itp\"\n\n#include \"'+g_var.final_dir+g_var.forcefield+'/ions.itp\"\n\n')
     #### add location of residue topology file absolute file locations
         if residue_type not in ['ION','SOL']:
-            for directory in range(len(f_loc.np_directories)):
-                if os.path.exists(f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp'):
-                    topol_write.write('#include \"'+f_loc.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp\"\n')
+            for directory in range(len(g_var.np_directories)):
+                if os.path.exists(g_var.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp'):
+                    topol_write.write('#include \"'+g_var.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp\"\n')
                     found=True
                     break
             if os.path.exists(g_var.working_dir+'/'+residue_type.split('_')[0]+'/'+residue_type+chain+'.itp'):
@@ -445,14 +452,14 @@ def write_merged_topol():
         topologies_to_include=[]
     #### writes topology headers (will probably need updating with other forcefields)
         if 'SOL' in g_var.system:
-            gen.file_copy_and_check(f_loc.water_dir+f_loc.water+'.itp', f_loc.water+'.itp')
-            topologies_to_include.append('#include \"'+f_loc.water+'.itp\"')
-            topologies_to_include.append('\n#include \"'+g_var.final_dir+f_loc.forcefield+'/ions.itp\"\n\n')
+            gen.file_copy_and_check(g_var.water_dir+g_var.water+'.itp', g_var.water+'.itp')
+            topologies_to_include.append('#include \"'+g_var.water+'.itp\"')
+            topologies_to_include.append('\n#include \"'+g_var.final_dir+g_var.forcefield+'/ions.itp\"\n\n')
     #### runs through residue types and copies to MERGED directory and simplifies the names
         for residue_type in g_var.system:
             if residue_type not in ['ION','SOL']:
             #### copies 1st itp file it comes across 
-                for directory in f_loc.np_directories:
+                for directory in g_var.np_directories:
                     if os.path.exists(directory[0]+residue_type+'/'+residue_type+'.itp'):  
                         topologies_to_include.append('#include \"'+residue_type+'.itp\"\n')
                         gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'.itp', residue_type+'.itp')
@@ -469,10 +476,10 @@ def write_merged_topol():
                                 gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(unit)+posres_type, 'PROTEIN_'+str(unit)+posres_type)
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'PROTEIN_disres.itp')  
         if os.path.exists('extra_atomtypes.itp'):
-            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
+            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+g_var.forcefield+'/forcefield.itp\"\n')
             topol_write.write('#include \"extra_atomtypes.itp\"\n')
         else:
-            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+f_loc.forcefield+'/forcefield.itp\"\n')
+            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+g_var.forcefield+'/forcefield.itp\"\n')
         for line in topologies_to_include:
             topol_write.write(line)
 

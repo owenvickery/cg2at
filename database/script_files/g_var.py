@@ -116,6 +116,9 @@ if args.loc != None:
 else:
     working_dir_name =  'CG2AT_'+timestamp
 
+
+
+
 start_dir       = os.getcwd()+'/'  ### initial working directory
 working_dir     = os.getcwd()+'/'+working_dir_name+'/'   ### working directory 
 final_dir       = os.getcwd()+'/'+working_dir_name+'/FINAL/'  ### final directory for run files
@@ -140,4 +143,10 @@ atomistic_protein_input_raw = {} ## Raw user atomistic info coord_atomistic[chai
 atomistic_protein_input_aligned = {}
 chain_count = 0 ## number of user atomistic chains
 other_atomistic ={}
-# database_locations = []
+forcefield_available, fragments_available = '',''
+forcefield_location, forcefield = '','' ## forcefield info
+np_residues, p_residues, mod_residues, o_residues, np_directories, p_directories, mod_directories, o_directories = [],[],[],[],[],[],[],[]  ## fragment info
+database_locations = [] ## grouped directories
+water_dir, water = [],[] ## water information
+swap_dict ={} ## CG residue swap
+res_top, sorted_connect, hydrogen, heavy_bond, ions, at_mass = {},{},{},{},[],{}

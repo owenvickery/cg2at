@@ -3,12 +3,7 @@
 import os, sys
 import numpy as np
 import copy
-from string import ascii_uppercase
-import difflib
-from scipy.spatial import cKDTree
-import multiprocessing as mp
-import gen, g_var, f_loc, at_mod, read_in
-import math
+import gen, g_var, at_mod, read_in
 
 def build_non_protein_linked_atomistic_system(cg_residues):   
 #### initisation of counters
@@ -28,20 +23,20 @@ def build_non_protein_linked_atomistic_system(cg_residues):
             g_var.o_system[chain_count][0]=resname
             # g_var.o_system[chain_count].append(terminal_residue(resname)[0]) 
         g_var.other_atomistic[chain_count][residue_number]={}
-        frag_location=gen.fragment_location(resname, f_loc.database_locations) ### get fragment location from database
+        frag_location=gen.fragment_location(resname) ### get fragment location from database
         residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(frag_location)
         g_var.seq_cg_other = add_to_sequence(g_var.seq_cg_other, resname, chain_count)
         new_chain = False
         for group in residue_type[resname]:
             skip = False
-            if next(iter(residue_type[resname][group])) in f_loc.res_top[resname]['CONNECT'] and next(iter(residue_type[resname][group])) not in cg_residues[residue_number]:
+            if next(iter(residue_type[resname][group])) in g_var.res_top[resname]['CONNECT'] and next(iter(residue_type[resname][group])) not in cg_residues[residue_number]:
                 next(iter(residue_type[resname][group]))
                 skip = True
             if not skip:
                 center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[resname][group], residue_type_mass[resname], residue_number, cg_residues[residue_number])
                 at_connect, cg_connect = at_mod.connectivity(cg_residues[residue_number], at_frag_centers, cg_frag_centers, group_fit, group)
                 for group_bead in group_fit:
-                    if group_bead in f_loc.res_top[resname]['CONNECT']:
+                    if group_bead in g_var.res_top[resname]['CONNECT']:
                         at_connect, cg_connect, new_chain = at_mod.BB_connectivity(at_connect,cg_connect, cg_residues, group_fit[group_bead], residue_number, group_bead)
                         # g_var.backbone_coords[chain_count].append(np.append(cg_residues[residue_number][group_bead]['coord'], 1)) 
                 if len(at_connect) == len(cg_connect) and len(at_connect) != 0:
@@ -80,7 +75,7 @@ def build_non_protein_linked_atomistic_system(cg_residues):
     g_var.system['OTHER']
 
 def add_to_sequence(sequence, residue, chain_count):
-    if residue  not in f_loc.o_residues:
+    if residue  not in g_var.o_residues:
         sequence[chain_count]+=residue
     else:
         sequence[chain_count]+='X'    
@@ -125,8 +120,8 @@ def finalise_novo_atomistic():
 
 def terminal_residue(resname):
     ter = ['5TER', '3TER']
-    if f_loc.res_top[resname]['N_TERMINAL'] in ['5TER', 'None']:
-        ter[0] = f_loc.res_top[resname]['N_TERMINAL']
-    if f_loc.res_top[resname]['C_TERMINAL'] in ['3TER', 'CT2', 'None']:
-        ter[1] = f_loc.res_top[resname]['C_TERMINAL']
+    if g_var.res_top[resname]['N_TERMINAL'] in ['5TER', 'None']:
+        ter[0] = g_var.res_top[resname]['N_TERMINAL']
+    if g_var.res_top[resname]['C_TERMINAL'] in ['3TER', 'CT2', 'None']:
+        ter[1] = g_var.res_top[resname]['C_TERMINAL']
     return ter

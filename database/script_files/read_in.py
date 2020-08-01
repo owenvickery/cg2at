@@ -4,7 +4,7 @@ import sys, os
 import numpy as np
 import math
 import copy
-import gen, g_var, f_loc
+import gen, g_var
 
 def read_initial_cg_pdb():
 
@@ -31,17 +31,17 @@ def read_initial_cg_pdb():
                         line_sep_prev=line_sep.copy()
     #### if resids are different then the residue list is added to cg_residues
                     else: 
-                        if line_sep_prev['residue_name'] not in f_loc.p_residues+f_loc.o_residues :
+                        if line_sep_prev['residue_name'] not in g_var.p_residues+g_var.o_residues :
                             g_var.cg_residues[line_sep_prev['residue_name']][count]={} ### then create sub dictionary cg_residues[resname][count]
                             g_var.cg_residues[line_sep_prev['residue_name']][count]=residue_list ### adds residue list to dictionary key cg_residues[resname][count]
                             if line_sep_prev['residue_name'] == 'ION':
                                 g_var.cg_residues['SOL'][count]={}
                                 sol_res_list={}
 
-                                sol_res_list[f_loc.water]=residue_list[line_sep_prev['atom_name']].copy()
-                                sol_res_list[f_loc.water]['residue_name']='SOL'
+                                sol_res_list[g_var.water]=residue_list[line_sep_prev['atom_name']].copy()
+                                sol_res_list[g_var.water]['residue_name']='SOL'
                                 g_var.cg_residues['SOL'][count]=sol_res_list
-                        elif line_sep_prev['residue_name'] in f_loc.o_residues:
+                        elif line_sep_prev['residue_name'] in g_var.o_residues:
                             g_var.cg_residues['OTHER'][count]={} ### then create sub dictionary cg_residues['PROTEIN'][count]
                             g_var.cg_residues['OTHER'][count]=residue_list ### adds residue list to dictionary key cg_residues['PROTEIN'][count]
                         else:
@@ -62,11 +62,11 @@ def read_initial_cg_pdb():
     if 'SKIP' == line_sep['residue_name']:
         line_sep['residue_name']=line_sep_prev['residue_name']
         line_sep['atom_name']=line_sep_prev['atom_name']
-    if line_sep['residue_name'] in f_loc.p_residues: 
+    if line_sep['residue_name'] in g_var.p_residues: 
         if count not in g_var.cg_residues['PROTEIN']:
             g_var.cg_residues['PROTEIN'][count]={}
         g_var.cg_residues['PROTEIN'][count]=residue_list
-    elif line_sep['residue_name'] in f_loc.o_residues: 
+    elif line_sep['residue_name'] in g_var.o_residues: 
         if count not in g_var.cg_residues['OTHER']:
             g_var.cg_residues['OTHER'][count]={}
         g_var.cg_residues['OTHER'][count]=residue_list
@@ -77,8 +77,8 @@ def read_initial_cg_pdb():
         if line_sep['residue_name'] == 'ION':
             g_var.cg_residues['SOL'][count]={}
             sol_res_list={}
-            sol_res_list[f_loc.water]=residue_list[line_sep['atom_name']].copy()
-            sol_res_list[f_loc.water]['residue_name']='SOL'
+            sol_res_list[g_var.water]=residue_list[line_sep['atom_name']].copy()
+            sol_res_list[g_var.water]['residue_name']='SOL'
             g_var.cg_residues['SOL'][count]=sol_res_list
 #### checks if box vectors exist
     if 'box_vec' not in locals():### stops script if it cannot find box vectors
@@ -89,18 +89,18 @@ def read_initial_cg_pdb():
     return box_vec
 
 def add_residue_to_dictionary(line_sep):
-    if line_sep['residue_name'] in f_loc.p_residues: ## if in protein database 
+    if line_sep['residue_name'] in g_var.p_residues: ## if in protein database 
         if 'PROTEIN' not in g_var.cg_residues:  ## if protein does not exist add to dict
             g_var.cg_residues['PROTEIN']={}
-    elif line_sep['residue_name'] in f_loc.o_residues: ## if in protein database 
+    elif line_sep['residue_name'] in g_var.o_residues: ## if in protein database 
         if 'OTHER' not in g_var.cg_residues:  ## if protein does not exist add to dict
             g_var.cg_residues['OTHER']={}
     elif line_sep['residue_name'] in g_var.cg_water_types: 
         line_sep['residue_name']='SOL'
         if line_sep['residue_name'] not in g_var.cg_residues: ## if residue type does not exist add to dict
             g_var.cg_residues[line_sep['residue_name']]={}
-        line_sep['atom_name']=f_loc.water
-    elif line_sep['residue_name'] in f_loc.np_residues:
+        line_sep['atom_name']=g_var.water
+    elif line_sep['residue_name'] in g_var.np_residues:
         if line_sep['residue_name'] not in g_var.cg_residues:
             g_var.cg_residues[line_sep['residue_name']]={}
         if line_sep['residue_name'] == 'ION' and 'SOL' not in g_var.cg_residues:
@@ -162,10 +162,10 @@ def fix_pbc(box_vec, new_box, box_shift):
                     if cut:
                         cut_keys.append(residue)
                         break
-                if residue_type in ['PROTEIN', 'OTHER'] and bead in f_loc.res_top[bead_info['residue_name']]['CONNECT']:
+                if residue_type in ['PROTEIN', 'OTHER'] and bead in g_var.res_top[bead_info['residue_name']]['CONNECT']:
                     if residue != BB_pre_resid and residue != 0:
                         BB_pre_resid = residue
-                        con_info = f_loc.res_top[bead_info['residue_name']]['CONNECT'][bead]
+                        con_info = g_var.res_top[bead_info['residue_name']]['CONNECT'][bead]
                         for con_val, connection in enumerate(con_info['dir']):
                             if connection < 0:
                                 BB_cur = g_var.cg_residues[residue_type][residue][bead]['coord']
@@ -183,21 +183,21 @@ def fix_pbc(box_vec, new_box, box_shift):
             g_var.cg_residues[residue_type].pop(key)
 
 def swap(atom, residue, resid):
-    if atom in f_loc.ions and residue != 'ION':
+    if atom in g_var.ions and residue != 'ION':
         residue = 'ION'
-    if residue in f_loc.swap_dict:
-        for key, value in f_loc.swap_dict[residue].items():
+    if residue in g_var.swap_dict:
+        for key, value in g_var.swap_dict[residue].items():
             break
-        if 'ALL' in f_loc.swap_dict[residue][key]['resid'] or resid in f_loc.swap_dict[residue][key]['resid']:
-            if atom in f_loc.swap_dict[residue][key]:
-                atom = f_loc.swap_dict[residue][key][atom]
+        if 'ALL' in g_var.swap_dict[residue][key]['resid'] or resid in g_var.swap_dict[residue][key]['resid']:
+            if atom in g_var.swap_dict[residue][key]:
+                atom = g_var.swap_dict[residue][key][atom]
             residue = key.split(':')[1].upper()
-    elif residue == 'ION' and atom in f_loc.swap_dict:
-        for key, value in f_loc.swap_dict[atom].items():
+    elif residue == 'ION' and atom in g_var.swap_dict:
+        for key, value in g_var.swap_dict[atom].items():
             break
-        if 'ALL' in f_loc.swap_dict[atom][key]['resid'] or resid in f_loc.swap_dict[atom][key]['resid']:
-            if atom in f_loc.swap_dict[atom][key]:
-                atom = f_loc.swap_dict[atom][key][atom]
+        if 'ALL' in g_var.swap_dict[atom][key]['resid'] or resid in g_var.swap_dict[atom][key]['resid']:
+            if atom in g_var.swap_dict[atom][key]:
+                atom = g_var.swap_dict[atom][key][atom]
             residue = key.split(':')[1].upper()
     return atom, residue
 
@@ -228,21 +228,21 @@ def read_in_atomistic(protein):
                 # print(line_sep['atom_name'])
                 if not gen.is_hydrogen(line_sep['atom_name']):
                     run=True
-                if line_sep['residue_name'] in f_loc.mod_residues:
+                if line_sep['residue_name'] in g_var.mod_residues:
                     run=True
             #### if line is correct
             if run:
-                if line_sep['residue_name'] in f_loc.p_residues:
-                    # print(f_loc.p_residues)
-                    if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in f_loc.mod_residues:  
+                if line_sep['residue_name'] in g_var.p_residues:
+                    # print(g_var.p_residues)
+                    if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in g_var.mod_residues:  
                     #### sorts out wrong atoms in terminal residues
                         if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
                             line_sep['atom_name']='O'
                     #### makes C_terminal connecting atom variable  
                         if 'prev_atom_coord' in locals():
                             line_sep['x'],line_sep['y'],line_sep['z'] = brute_mic(prev_atom_coord, [line_sep['x'],line_sep['y'],line_sep['z']], r_b_vec)
-                        if line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['CONNECT']['atoms']:
-                            if f_loc.res_top[line_sep['residue_name']]['CONNECT']['atoms'][line_sep['atom_name']] > 0:
+                        if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']:
+                            if g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms'][line_sep['atom_name']] > 0:
                                 C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
                                 C_resid=line_sep['residue_id']
                             elif 'C_ter' in locals():
@@ -260,9 +260,9 @@ def read_in_atomistic(protein):
                     #### adds atom to dictionary, every atom is given a initial mass of zero 
                         atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'frag_mass':0, 'resid':line_sep['residue_id']}
                     #### if atom is in the backbone list then its mass is updated to the correct one
-                        if line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['ATOMS']:
-                            if line_sep['atom_name'] in line_sep['atom_name'] in f_loc.res_top[line_sep['residue_name']]['atom_masses']:
-                                atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=f_loc.res_top[line_sep['residue_name']]['atom_masses'][line_sep['atom_name']]    
+                        if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['ATOMS']:
+                            if line_sep['atom_name'] in line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['atom_masses']:
+                                atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=g_var.res_top[line_sep['residue_name']]['atom_masses'][line_sep['atom_name']]    
     return atomistic_protein_input, chain_count+1    
 
 def duplicate_chain():

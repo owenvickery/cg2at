@@ -4,7 +4,7 @@ import os, sys
 import numpy as np
 import math
 from scipy.spatial import cKDTree
-import gen, g_var, f_loc, at_mod
+import gen, g_var, at_mod
 
 
 def build_atomistic_system(residue_type, a):
@@ -121,7 +121,7 @@ def atomistic_non_protein_non_solvent(cg_residue_type,cg_residues):
     residue_type_mass={}
     for cg_resid, cg_residue in enumerate(cg_residues):
         atomistic_fragments[cg_resid]={}
-        frag_location=gen.fragment_location(cg_residue_type, f_loc.database_locations) ### get fragment location from database
+        frag_location=gen.fragment_location(cg_residue_type) ### get fragment location from database
         residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
         for group in residue_type[cg_residue_type]:
             center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][group], residue_type_mass[cg_residue_type], cg_residue, cg_residues[cg_residue])
@@ -151,7 +151,7 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
             fragment = bead
             break
         atomistic_fragments[cg_resid]={}
-        frag_location=gen.fragment_location(cg_residue_type,f_loc.database_locations) ### get fragment location from database
+        frag_location=gen.fragment_location(cg_residue_type) ### get fragment location from database
         residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
         for res_type in residue_type[cg_residue_type]:
             if fragment in residue_type[cg_residue_type][res_type]:
