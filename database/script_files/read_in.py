@@ -9,7 +9,6 @@ import gen, g_var
 def read_initial_cg_pdb():
 
     print('\nThis script is now hopefully doing the following (Good luck):\n\nReading in your CG representation\n')
-    # cg_residues={}  
     residue_list={} ## a dictionary of bead in each residue eg residue_list[bead name(BB)][residue_name(PO4)/coordinates(coord)]
     count=0  ### residue counter initialisation
     with open(g_var.input_directory+'CG_INPUT.pdb', 'r') as pdb_input:
@@ -17,9 +16,7 @@ def read_initial_cg_pdb():
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)
                 line_sep['atom_name'], line_sep['residue_name'] = swap(line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id']) ## implements swap group
-                # print(1, line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id'])
                 if 'SKIP' not in [line_sep['atom_name'].upper(), line_sep['residue_name'].upper()]:
-                    # print(2, line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id'])
 #### set up resnames in dictionaries
                     add_residue_to_dictionary(line_sep)
     #### sets up previous resid id 
@@ -233,7 +230,6 @@ def read_in_atomistic(protein):
             #### if line is correct
             if run:
                 if line_sep['residue_name'] in g_var.p_residues:
-                    # print(g_var.p_residues)
                     if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in g_var.mod_residues:  
                     #### sorts out wrong atoms in terminal residues
                         if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
@@ -272,7 +268,6 @@ def duplicate_chain():
             if len(duplicate) == 2 and duplicate[0] in g_var.atomistic_protein_input_raw:
                 print('Using '+str(duplicate[1])+' copies of the atomistic chain '+str(duplicate[0]))
                 for chain_duplication in range(duplicate[1]-1):
-                    
                     g_var.atomistic_protein_input_raw[g_var.chain_count]=copy.deepcopy(g_var.atomistic_protein_input_raw[duplicate[0]])
                     g_var.chain_count+=1
             else:

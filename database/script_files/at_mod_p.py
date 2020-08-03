@@ -8,86 +8,73 @@ import difflib
 from scipy.spatial import cKDTree
 import multiprocessing as mp
 import gen, g_var, at_mod, read_in
-import math
+import math 
 
-
-
-def build_protein_atomistic_system(cg_residues):   
+def build_multi_residue_atomistic_system(cg_residues, sys_type):   
 #### initisation of counters
     chain_count=0
-    g_var.backbone_coords[chain_count]=[]
-    g_var.p_system[chain_count]=[False, False]
-    g_var.coord_atomistic[chain_count]={}
-    g_var.seq_cg[chain_count]=[]
-    print('Converting Protein')
-    gen.mkdir_directory(g_var.working_dir+'PROTEIN')  ### make and change to protein directory
+    if sys_type == 'PROTEIN':
+        g_var.backbone_coords[chain_count]=[]
+    coord_atomistic={chain_count:{}}
+    g_var.seq_cg={sys_type:{chain_count:[]}}
+    g_var.ter_res={sys_type:{chain_count:[]}}
+    gen.mkdir_directory(g_var.working_dir+sys_type)  ### make and change to protein directory
 #### for each residue in protein
     residue_type={}
     residue_type_mass={}
-    for cg_residue_id, residue_number in enumerate(cg_residues):
-        resname = cg_residues[residue_number][next(iter(cg_residues[residue_number]))]['residue_name']
+    for cg_residue_id, residue_number in enumerate(cg_residues[sys_type]):
+        resname = cg_residues[sys_type][residue_number][next(iter(cg_residues[sys_type][residue_number]))]['residue_name']
         if cg_residue_id == 0:
-            # g_var.p_system[chain_count].append(terminal_residue(resname)[0]) 
-            g_var.p_system[chain_count][0] = resname
-        g_var.coord_atomistic[chain_count][residue_number]={}
+            g_var.ter_res={sys_type:{chain_count:[resname, False]}}
+            # g_var.ter_res[sys_type][chain_count]=[resname, False]
+        coord_atomistic[chain_count][residue_number]={}
         frag_location=gen.fragment_location(resname) ### get fragment location from database
         residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(frag_location)
-        g_var.seq_cg = add_to_sequence(g_var.seq_cg, resname, chain_count)
+        g_var.seq_cg[sys_type] = add_to_sequence(g_var.seq_cg[sys_type], resname, chain_count)
+        new_chain = False
         for group in residue_type[resname]:
-            center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[resname][group], residue_type_mass[resname], residue_number, cg_residues[residue_number])
-            at_connect, cg_connect = at_mod.connectivity(cg_residues[residue_number], at_frag_centers, cg_frag_centers, group_fit, group)
-            for group_bead in group_fit:
-                if group_bead in g_var.res_top[resname]['CONNECT']:
-                    at_connect, cg_connect, new_chain = at_mod.BB_connectivity(at_connect,cg_connect, cg_residues, group_fit[group_bead], residue_number, group_bead)
-                    g_var.backbone_coords[chain_count].append(np.append(cg_residues[residue_number][group_bead]['coord'], 1)) 
-            if len(at_connect) == len(cg_connect) and len(at_connect) != 0:
-                xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
-            elif len(at_connect) == 0:
-                xyz_rot_apply = False
-                print('Cannot find any connectivity for residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+str(group))
-            else:
-                print('atom connections: '+str(len(at_connect))+' does not equal CG connections: '+str(len(cg_connect)))
-                sys.exit('residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
+            for key in list(residue_type[resname][group].keys()):
+                if key not in cg_residues[sys_type][residue_number]:
+                    del residue_type[resname][group][key]
+            if len(residue_type[resname][group]) > 0:
+                center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[resname][group], residue_type_mass[resname], residue_number, cg_residues[sys_type][residue_number])
+                at_connect, cg_connect = at_mod.connectivity(cg_residues[sys_type][residue_number], at_frag_centers, cg_frag_centers, group_fit, group)
+                for group_bead in group_fit:
+                    if group_bead in g_var.res_top[resname]['CONNECT']:
+                        at_connect, cg_connect, new_chain = at_mod.BB_connectivity(at_connect,cg_connect, cg_residues[sys_type], group_fit[group_bead], residue_number, group_bead)
+                        if sys_type == 'PROTEIN':
+                            g_var.backbone_coords[chain_count].append(np.append(cg_residues[sys_type][residue_number][group_bead]['coord'], 1)) 
+                if len(at_connect) == len(cg_connect) and len(at_connect) != 0:
+                    xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
+                elif len(at_connect) == 0:
+                    xyz_rot_apply = False
+                    print('Cannot find any connectivity for residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+str(group))
+                else:
+                    print('atom connections: '+str(len(at_connect))+' does not equal CG connections: '+str(len(cg_connect)))
+                    sys.exit('residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
 
-            for bead in group_fit:
-                for atom in group_fit[bead]:
-                    group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   
-                    atom_new = group_fit[bead][atom].copy()
-                    g_var.coord_atomistic[chain_count][residue_number][atom] = atom_new
+                for bead in group_fit:
+                    for atom in group_fit[bead]:
+                        group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   
+                        atom_new = group_fit[bead][atom].copy()
+                        coord_atomistic[chain_count][residue_number][atom] = atom_new
         if new_chain:
-            # g_var.p_system[chain_count].append(terminal_residue(resname)[1])
-            g_var.p_system[chain_count][1] = resname
+            g_var.ter_res[sys_type][chain_count][1] = resname
             chain_count+=1
-            if cg_residue_id+1 != len(cg_residues):
+            if cg_residue_id+1 != len(cg_residues[sys_type]):
                 g_var.backbone_coords[chain_count]=[]
-                g_var.coord_atomistic[chain_count]={}
-                # g_var.p_system[chain_count]=[]
-                g_var.p_system[chain_count]=[resname, False]
-
-                # g_var.p_system[chain_count].append(terminal_residue(cg_residues[residue_number+1][next(iter(cg_residues[residue_number+1]))]['residue_name'])[0])
-                g_var.seq_cg[chain_count]=[]
+                coord_atomistic[chain_count]={}
+                g_var.ter_res[sys_type][chain_count]=[resname, False]
+                g_var.seq_cg[sys_type][chain_count]=[]
     if g_var.v >=1:
-        print('Sequence of protein chains')
+        print('Length of '+sys_type+' chains')
         print('\n{0:^15}{1:^12}'.format('chain number', 'length of chain')) #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
         print('\n{0:^15}{1:^12}'.format('------------', '---------------'))
-        for chain in g_var.seq_cg:
-            print('{0:^15}{1:^12}'.format(chain, len(g_var.seq_cg[chain])))
+        for chain in g_var.seq_cg[sys_type]:
+            print('{0:^15}{1:^12}'.format(chain, len(g_var.seq_cg[sys_type][chain])))
         print()
-    g_var.system['PROTEIN']=chain_count
-    # print(g_var.system['PROTEIN'])
-
-
-def terminal_residue(resname):
-    g_var.p_system[chain_count]
-    ter = [False, False, False]
-    if g_var.res_top[resname]['N_TERMINAL'] in ['5TER', 'None']:
-        ter[0] = g_var.res_top[resname]['N_TERMINAL']
-    if g_var.res_top[resname]['C_TERMINAL'] in ['3TER', 'CT2', 'None']:
-        ter[1] = g_var.res_top[resname]['C_TERMINAL']
-    if resname == 'PRO':
-        ter[2] = True
-
-    return ter
+    g_var.system[sys_type]=chain_count
+    return coord_atomistic
 
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
 #### 
@@ -96,7 +83,6 @@ def ask_if_disulphide(chain, res_1, res_2):
     while True:
         try:
             answer = str(input('\nAre these residues connected by a disulphide bond in chain '+str(chain)+' (Y/N): '+str(res_1)+'--'+str(res_2)+': '))
-            # print(answer)
             if answer.lower() in ['yes','y']:
                 return True
             elif answer.lower() in ['no','n']:
@@ -203,31 +189,32 @@ def shrink_coordinates(c1,c2):
 
 ### writes out final de_novo atomistic coordinates
 
-def finalise_novo_atomistic():
+def finalise_novo_atomistic(coord_atomistic, sys_type):
     final_at_residues={}
     final_at = {}
-    for chain in g_var.coord_atomistic: 
+    for chain in coord_atomistic: 
         at_number=0    
         final_at_residues[chain]={}  
         final_at[chain]={}
         coords=[]
-        skip = os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(chain)+'.pdb')
+        skip = os.path.exists(g_var.working_dir+sys_type+'/'+sys_type+'_de_novo_'+str(chain)+'.pdb')
         if not skip:
-            pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_'+str(chain)+'.pdb')
-        for res_index, residue_id in enumerate(g_var.coord_atomistic[chain]):
-            if g_var.coord_atomistic[chain][residue_id][1]['res_type'] in g_var.mod_residues:
-                g_var.coord_atomistic[chain][residue_id] = at_mod.check_hydrogens(g_var.coord_atomistic[chain][residue_id])
-            if res_index <= len(g_var.coord_atomistic[chain])-3:
-                g_var.coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, g_var.cg_residues['PROTEIN'], g_var.coord_atomistic[chain][residue_id], False)
-            elif res_index < len(g_var.coord_atomistic[chain]) and 'cross_vector' in locals():
-                g_var.coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, g_var.cg_residues['PROTEIN'], g_var.coord_atomistic[chain][residue_id], cross_vector)
-            for at_val, atom in enumerate(g_var.coord_atomistic[chain][residue_id]):
-                g_var.coord_atomistic[chain][residue_id][at_val+1]['resid'] = res_index
-                coords.append(g_var.coord_atomistic[chain][residue_id][at_val+1]['coord'])
-                final_at[chain][at_number]=g_var.coord_atomistic[chain][residue_id][at_val+1]
-                at_number+=1
-            final_at_residues[chain][res_index]=g_var.coord_atomistic[chain][residue_id]
-
+            pdb_output = gen.create_pdb(g_var.working_dir+sys_type+'/'+sys_type+'_de_novo_'+str(chain)+'.pdb')
+        for res_index, residue_id in enumerate(coord_atomistic[chain]):
+            if coord_atomistic[chain][residue_id][next(iter(coord_atomistic[chain][residue_id]))]['res_type'] in g_var.mod_residues+g_var.o_residues:
+                coord_atomistic[chain][residue_id] = at_mod.check_hydrogens(coord_atomistic[chain][residue_id])
+            if sys_type == 'PROTEIN':
+                if res_index <= len(coord_atomistic[chain])-3:
+                    coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, g_var.cg_residues['PROTEIN'], coord_atomistic[chain][residue_id], False)
+                elif res_index < len(coord_atomistic[chain]) and 'cross_vector' in locals():
+                    coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, g_var.cg_residues['PROTEIN'], coord_atomistic[chain][residue_id], cross_vector)
+            order = np.sort(np.array(list(coord_atomistic[chain][residue_id].keys())))
+            for at_val, atom in enumerate(order):
+                coord_atomistic[chain][residue_id][atom]['resid'] = res_index
+                coords.append(coord_atomistic[chain][residue_id][atom]['coord'])
+                final_at[chain][at_number]=coord_atomistic[chain][residue_id][atom]
+                at_number+=1               
+            final_at_residues[chain][res_index]=coord_atomistic[chain][residue_id]
         coords = at_mod.check_atom_overlap(coords)
         for atom in final_at[chain]:
             final_at[chain][atom]['coord']=coords[atom]
@@ -287,46 +274,46 @@ def fix_carbonyl(residue_id, cg, at, cross_vector):
 ### align sequences of user AT structure and CG input
 
 def add_to_sequence(sequence, residue, chain_count):
-    if residue  not in g_var.mod_residues:
+    if residue in g_var.o_residues:
+        sequence[chain_count]+=residue
+    elif residue  not in g_var.mod_residues:
         sequence[chain_count]+=g_var.aas[residue]
     else:
         sequence[chain_count]+='X'    
     return sequence
 
 def check_sequence():
-    # print(g_var.atomistic_protein_input_raw)
     for chain in range(len(g_var.atomistic_protein_input_raw)):
         g_var.seq_at[chain]=[]
-        # print(len(g_var.atomistic_protein_input_raw[chain]))
         for resid in g_var.atomistic_protein_input_raw[chain]:
             for atom in g_var.atomistic_protein_input_raw[chain][resid]:
                 g_var.seq_at = add_to_sequence(g_var.seq_at, g_var.atomistic_protein_input_raw[chain][resid][atom]['res_type'], chain)
                 break
 
-def align_chain_sequence():
+def align_chain_sequence(sys_type):
     if g_var.v >= 2:
         print('coarse grain protein sequence:\n')
-        for index in g_var.seq_cg:
-            print('chain:', index,g_var.seq_cg[index], '\n')
+        for index in g_var.seq_cg[sys_type]:
+            print('chain:', index,g_var.seq_cg[sys_type][index], '\n')
         print('\nuser supplied structure:\n')
         for index in g_var.seq_at:
             print('chain:', index, g_var.seq_at[index], '\n')        
     at={}
-    sequence_temp = g_var.seq_cg.copy()
+    sequence_temp = g_var.seq_cg[sys_type].copy()
     test_chain={}
     for chain_at in range(len(g_var.atomistic_protein_input_raw)):
         skip_sequence=False
         chain_cg=0
-        s = difflib.SequenceMatcher(None, g_var.seq_at[chain_at], g_var.seq_cg[chain_cg], autojunk=False)
+        s = difflib.SequenceMatcher(None, g_var.seq_at[chain_at], g_var.seq_cg[sys_type][chain_cg], autojunk=False)
         seq_info = s.get_matching_blocks()
         while seq_info[0][2] != len(g_var.seq_at[chain_at]):
-            if chain_cg >= len(g_var.seq_cg)-1:
+            if chain_cg >= len(g_var.seq_cg[sys_type])-1:
                 print('\nCannot find a match for user supplied chain: '+str(chain_at))#+'\n\nAtomistic chain:\n'+str(seq_user[chain_at]),'\n\nIn CG:\n'+str(sequence))
                 skip_sequence = True
                 break
             if not skip_sequence:
                 chain_cg+=1
-                s = difflib.SequenceMatcher(None, g_var.seq_at[chain_at], g_var.seq_cg[chain_cg], autojunk=False)
+                s = difflib.SequenceMatcher(None, g_var.seq_at[chain_at], g_var.seq_cg[sys_type][chain_cg], autojunk=False)
                 seq_info = s.get_matching_blocks()
         if not skip_sequence:
             temp={}
@@ -336,9 +323,10 @@ def align_chain_sequence():
                 for resid,  residue in enumerate(g_var.atomistic_protein_input_raw[chain_at]):
                     temp[resid + seq_info[0][1]] = g_var.atomistic_protein_input_raw[chain_at][residue]
                 at[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
-            g_var.seq_cg[chain_cg] = mask_sequence(g_var.seq_cg[chain_cg], seq_info[0][1], seq_info[0][1]+seq_info[0][2])
+            g_var.seq_cg[sys_type][chain_cg] = mask_sequence(g_var.seq_cg[sys_type][chain_cg], seq_info[0][1], seq_info[0][1]+seq_info[0][2])
             test_chain[chain_at]=chain_cg
-
+    if len(g_var.atomistic_protein_input_raw) < len(g_var.seq_cg[sys_type]):
+        print('### WARNING you have supplied fewer chains than exist in the CG system ###\n')
     if len(at) > 0:
         g_var.user_at_input = True
         g_var.atomistic_protein_input_aligned=at
@@ -613,34 +601,35 @@ def correct_amide_h(lines, coords):
 
 def write_disres(coord, chain, file, at_start):
     P_R = np.array([])
-    for key in g_var.atomistic_protein_input_aligned[chain].keys():
-        P_R = np.append(P_R, np.arange(int(key.split(':')[0]), int(key.split(':')[1])+1))
+    if chain in g_var.atomistic_protein_input_aligned:
+        for key in g_var.atomistic_protein_input_aligned[chain].keys():
+            P_R = np.append(P_R, np.arange(int(key.split(':')[0]), int(key.split(':')[1])+1))
 
-    if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp'):
-        with open(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'a') as disres_out:
-            disres_out.write(';backbone hydrogen bonding distance restraints\n\n')
-            disres_out.write('[ intermolecular_interactions ]\n[ distance_restraints ]\n')
-            disres_out.write(';   i     j type label      funct         lo        up1        up2     weight')
-            HN, O = [],[]
-            for atom in coord:
-                if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == g_var.res_top[atom['residue_name']]['amide_h']:
-                    HN.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
-                if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == 'O':
-                    O.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
-            HN, O = np.array(HN), np.array(O)
-            tree = cKDTree(HN[:,1:])
-            count=0
-            for carbonyl in O:
-                ndx = tree.query_ball_point(carbonyl[1:], r=3)
-                if len(ndx) > 0:
-                    for at in ndx:
-                        if coord[int(HN[ndx[0]][0])-1]['residue_id'] in P_R and coord[int(carbonyl[0])-1]['residue_id'] in P_R:
-                            if coord[int(HN[ndx[0]][0])-1]['residue_id'] < coord[int(carbonyl[0])-1]['residue_id']-1 or coord[int(HN[ndx[0]][0])-1]['residue_id'] > coord[int(carbonyl[0])-1]['residue_id']+1:
-                                count+=1
-                                xyz1 = [coord[int(carbonyl[0])-1]['x'], coord[int(carbonyl[0])-1]['y'], coord[int(carbonyl[0])-1]['z']]
-                                xyz2 = [coord[int(HN[at][0])-1]['x'], coord[int(HN[at][0])-1]['y'], coord[int(HN[at][0])-1]['z']]
-                                dist = np.round((gen.calculate_distance(xyz1, xyz2)/10)-0.05, 4)
-                                disres_out.write('\n{0:10}{1:10}{2:3}{3:12}{4:12}{5:^12}{6:14}{7:14}{8:5}'.format(str(at_start+int(HN[at][0])), str(at_start+int(carbonyl[0])), 
+        if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp'):
+            with open(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'a') as disres_out:
+                disres_out.write(';backbone hydrogen bonding distance restraints\n\n')
+                disres_out.write('[ intermolecular_interactions ]\n[ distance_restraints ]\n')
+                disres_out.write(';   i     j type label      funct         lo        up1        up2     weight')
+                HN, O = [],[]
+                for atom in coord:
+                    if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == g_var.res_top[atom['residue_name']]['amide_h']:
+                        HN.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
+                    if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == 'O':
+                        O.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
+                HN, O = np.array(HN), np.array(O)
+                tree = cKDTree(HN[:,1:])
+                count=0
+                for carbonyl in O:
+                    ndx = tree.query_ball_point(carbonyl[1:], r=3)
+                    if len(ndx) > 0:
+                        for at in ndx:
+                            if coord[int(HN[ndx[0]][0])-1]['residue_id'] in P_R and coord[int(carbonyl[0])-1]['residue_id'] in P_R:
+                                if coord[int(HN[ndx[0]][0])-1]['residue_id'] < coord[int(carbonyl[0])-1]['residue_id']-1 or coord[int(HN[ndx[0]][0])-1]['residue_id'] > coord[int(carbonyl[0])-1]['residue_id']+1:
+                                    count+=1
+                                    xyz1 = [coord[int(carbonyl[0])-1]['x'], coord[int(carbonyl[0])-1]['y'], coord[int(carbonyl[0])-1]['z']]
+                                    xyz2 = [coord[int(HN[at][0])-1]['x'], coord[int(HN[at][0])-1]['y'], coord[int(HN[at][0])-1]['z']]
+                                    dist = np.round((gen.calculate_distance(xyz1, xyz2)/10)-0.05, 4)
+                                    disres_out.write('\n{0:10}{1:10}{2:3}{3:12}{4:12}{5:^12}{6:14}{7:14}{8:5}'.format(str(at_start+int(HN[at][0])), str(at_start+int(carbonyl[0])), 
                                                                                                                     '1', str(count),'1', '0', str(dist), str(dist), '5'))
     return len(coord) 
 

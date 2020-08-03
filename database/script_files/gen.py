@@ -28,13 +28,13 @@ def forcefield_selection():
     ##### forcefield selection
     if g_var.ff != None:
         if os.path.exists(g_var.ff):
-            g_var.forcefield_location, g_var.forcefield = gen.path_leaf(g_var.ff)
+            g_var.forcefield_location, g_var.forcefield = path_leaf(g_var.ff)
             folder_copy_and_check(g_var.ff, g_var.final_dir+forcefield)
             print('\nYou have chosen to use your own forcefield: '+g_var.forcefield+' in '+g_var.forcefield_location)
         elif path_leaf(g_var.ff)[1]+'.ff' in g_var.forcefield_available:
-            forcefield_number = g_var.forcefield_available.index(gen.path_leaf(g_var.ff)[1]+'.ff')
+            forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.ff)[1]+'.ff')
         elif path_leaf(g_var.ff)[1] in g_var.forcefield_available:
-            forcefield_number = g_var.forcefield_available.index(gen.path_leaf(g_var.ff)[1])
+            forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.ff)[1])
         else:
             print('Cannot find forcefield: '+g_var.ff+'  please select one from below\n')   
     if 'forcefield_number' not in locals() and 'forcefield' not in locals():
@@ -165,9 +165,7 @@ def fetch_chain_groups():
                     g_var.group_chains[int(chain)]=group_val 
             
         else:
-            g_var.group_chains =  g_var.group[0]
-
-    
+            g_var.group_chains =  g_var.group[0]   
 
 def split_swap(swap):
     try:
@@ -195,7 +193,6 @@ def sort_swap_group():
             
             if len(res_s) == len(res_e):
                 res_range, res_id = split_swap(swap)
-                # print(res_s, res_e, res_range, res_id)
                 if res_s[0] not in g_var.swap_dict:
                     g_var.swap_dict[res_s[0]]={}
                 if len(res_s) == 1:
@@ -218,7 +215,6 @@ def create_ion_list(ion_pdb):
                 header = strip_header(line)
                 if header not in g_var.ions:
                     g_var.ions.append(header)
-    # return ions
 
 
 def print_swap_residues():
@@ -310,9 +306,9 @@ def sep_fragments_topology(location):
                                         print('The bead connection group section is incorrect: \n'+location+'.top')
     return topology
 
-def get_fragment_topology(residue, location, processing, heavy_bond):
+def get_fragment_topology(residue, location):
     topology = sep_fragments_topology(location[:-4])
-    processing[residue] = {'C_TERMINAL':topology['C_TERMINAL'], 'N_TERMINAL':topology['N_TERMINAL'], \
+    g_var.res_top[residue] = {'C_TERMINAL':topology['C_TERMINAL'], 'N_TERMINAL':topology['N_TERMINAL'], \
                             'STEER':topology['STEER'], 'CHIRAL':topology['CHIRAL'], 'GROUPS':{}, 'CONNECT':topology['CONNECT']}
     with open(location, 'r') as pdb_input:
         group=topology['GROUPS']['group_max']
@@ -329,23 +325,21 @@ def get_fragment_topology(residue, location, processing, heavy_bond):
                     group+=1
                 if group_temp not in grouped_atoms:
                     grouped_atoms[group_temp]={bead:[]}
-                    processing[residue]['GROUPS'][bead]=group_temp
+                    g_var.res_top[residue]['GROUPS'][bead]=group_temp
                 else:
                     grouped_atoms[group_temp][bead]=[]
-                    processing[residue]['GROUPS'][bead]=group_temp
+                    g_var.res_top[residue]['GROUPS'][bead]=group_temp
             if line.startswith('ATOM'):
                 line_sep = pdbatom(line)
                 grouped_atoms[group_temp][bead].append(line_sep['atom_number'])
             ### return backbone info for each aminoacid residue
-            if bead in processing[residue]['CONNECT']:
+            if bead in g_var.res_top[residue]['CONNECT']:
                 if line.startswith('ATOM'):
                     line_sep = pdbatom(line)
                     if not is_hydrogen(line_sep['atom_name']):
                         atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
-                processing[residue]['ATOMS']=atom_list
-    # print('\n'+residue+'\n',processing[residue])#,'\n\n', grouped_atoms,'\n\n', heavy_bond[residue],'\n\n')
-
-    return processing, grouped_atoms, heavy_bond[residue]
+                g_var.res_top[residue]['ATOMS']=atom_list
+    return grouped_atoms
 
 def switch_num_name(dictionary, input_val, num_to_letter):
     if num_to_letter:
@@ -388,7 +382,7 @@ def fetch_fragment():
                     atoms_dict={}
                     location = fragment_location(residue)
                     g_var.hydrogen[residue], g_var.heavy_bond[residue], residue_list, at_mass, amide_h = fetch_bond_info(residue, amino_acid_itp, g_var.at_mass, location)
-                    g_var.res_top, grouped_atoms, g_var.heavy_bond[residue] = get_fragment_topology(residue, location, g_var.res_top, g_var.heavy_bond)
+                    grouped_atoms = get_fragment_topology(residue, location)
                     g_var.sorted_connect[residue]  = sort_connectivity(grouped_atoms, g_var.heavy_bond[residue])
                     g_var.res_top[residue]['RESIDUE'] = residue_list
                     g_var.res_top[residue]['atom_masses'] = at_mass
@@ -408,25 +402,13 @@ def fetch_fragment():
                 else:
                     g_var.hydrogen[residue], g_var.heavy_bond[residue], residue_list, at_mass, amide_h  = fetch_bond_info(residue, [location[:-4]+'.itp'], g_var.at_mass, location)
 
-                g_var.res_top, grouped_atoms, g_var.heavy_bond[residue] = get_fragment_topology(residue, location, g_var.res_top, g_var.heavy_bond) 
+                grouped_atoms = get_fragment_topology(residue, location) 
                 g_var.res_top[residue]['RESIDUE'] = residue_list
                 g_var.res_top[residue]['atom_masses'] = at_mass
                 if residue in ['SOL', 'ION']: 
                     g_var.sorted_connect[residue]={}
                 else:
                     g_var.sorted_connect[residue]  = sort_connectivity(grouped_atoms, g_var.heavy_bond[residue])
-    # for directory in range(len(g_var.o_directories)):
-    #     for residue in g_var.o_directories[directory][1:]:    
-    #         if residue not in processing:
-    #             atoms_dict={}
-    # #             location = fragment_location(residue)
-    # #             hydrogen[residue], heavy_bond[residue], residue_list, at_mass, amide_h = fetch_bond_info(residue, amino_acid_itp, at_mass_p, location)
-    # #             processing, grouped_atoms, heavy_bond[residue] = get_fragment_topology(residue, location, processing, heavy_bond)
-    # #             sorted_connect[residue]  = sort_connectivity(grouped_atoms, heavy_bond[residue])    
-    # #             processing[residue]['RESIDUE'] = residue_list
-    # #             processing[residue]['atom_masses'] = at_mass
-    # g_var.res_top, sorted_connect, hydrogen, heavy_bond, ions, g_var.at_mass
-    # return processing, sorted_connect, hydrogen, heavy_bond, ions, at_mass_p 
 
 def atom_bond_check(line_sep):
     if line_sep[1] == 'atoms':

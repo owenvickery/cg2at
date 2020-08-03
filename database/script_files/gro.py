@@ -66,7 +66,7 @@ def gromacs(gro):
                 if err in out:
                     print('\n'+out)
                     if 'residue naming needs to be fixed' in out and 'PROTEIN_aligned' in out:
-                        sys.exit('\n\n###  The supplied protein structure contains incorrectly named or missing atoms  ###\n\n')
+                        print('\n\n###  The supplied protein structure contains incorrectly named or missing atoms  ###\n\n')
                     error = True
             if 'number of atoms in the topology (' in out:
                 print('\n'+out+'\n\n')
@@ -90,11 +90,7 @@ def make_min(residue):#, fragments):
             em.write('define = \n integrator = steep\nnsteps = 20000\nemtol = 750\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 
 def pdb2gmx_minimise(chain,pdb2gmx_selections,res_type, q):
-#### makes em.mdp for each chain
-    checked={}
     os.chdir(g_var.working_dir+'/'+res_type)
-    make_min(res_type)
-    
     if not os.path.exists(res_type+'_de_novo_'+str(chain)+'_gmx.pdb'):
         pdb2gmx_chain(chain, 'de_novo_', res_type, ' << EOF \n1\n'+str(pdb2gmx_selections[chain][0])+'\n'+str(pdb2gmx_selections[chain][1]))
     if not os.path.exists(res_type+'_de_novo_'+str(chain)+'_gmx_checked.pdb'):
@@ -186,8 +182,6 @@ def ask_terminal(sys_info, residue_type):
     return system_ter
 
 def run_parallel_pdb2gmx_min(res_type, sys_info):
-    # mp.set_start_method('spawn')
-    # with mp.get_context("spawn").Pool(g_var.ncpus) as pool:
     pool = mp.Pool(g_var.ncpus)
     m = mp.Manager()
     q = m.Queue()
@@ -197,7 +191,7 @@ def run_parallel_pdb2gmx_min(res_type, sys_info):
     gen.file_copy_and_check(g_var.forcefield_location+'/residuetypes.dat', g_var.working_dir+res_type+'/residuetypes.dat')
     pdb2gmx_selections=ask_terminal(sys_info, res_type)
     pool_process = pool.starmap(pdb2gmx_minimise, [(chain, pdb2gmx_selections,res_type, q) for chain in range(0, g_var.system[res_type])])
-    while len(pool_process) != g_var.system[res_type]:#not pool_process.ready():
+    while len(pool_process) != g_var.system[res_type]:
         report_complete('pdb2gmx/minimisation', q.qsize(), g_var.system[res_type])
     print('{:<130}'.format(''), end='\r')
     print('pdb2gmx/minimisation completed on residue type: '+res_type)     
@@ -206,7 +200,7 @@ def run_parallel_pdb2gmx_min(res_type, sys_info):
 
 def pdb2gmx_chain(chain, input,res_type, pdb2gmx_selections):
 #### pdb2gmx on on protein chain, creates the topologies    
-    gromacs([g_var.gmx+' pdb2gmx -f '+res_type+'_'+input+str(chain)+'.pdb -o '+res_type+'_'+input+str(chain)+'_gmx.pdb -water none \
+    out, err = gromacs([g_var.gmx+' pdb2gmx -f '+res_type+'_'+input+str(chain)+'.pdb -o '+res_type+'_'+input+str(chain)+'_gmx.pdb -water none \
     -p '+res_type+'_'+input+str(chain)+'.top  -i '+res_type+'_'+str(chain)+'_posre.itp '+g_var.vs+' -ter '+pdb2gmx_selections+'\nEOF', ''+res_type+'_'+input+str(chain)+'_gmx.pdb']) #### single chains
 #### converts the topology file and processes it into a itp file
     convert_topology(res_type+'_'+input, chain, res_type)

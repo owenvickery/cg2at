@@ -70,8 +70,6 @@ def sanity_check():
                 bead_list, atom_list = sanity_check_fragments(res_type, g_var.cg_residues[res_type][residue], sin_bead)
                 sanity_check_beads(bead_list, g_var.cg_residues[res_type][residue], res_type) 
                 sanity_check_atoms(atom_list, res_type)
-        # elif res_type == 'OTHER':
-
         else:
             bead_list, atom_list = sanity_check_fragments(res_type, g_var.cg_residues[res_type], False)
             sanity_check_atoms(atom_list, res_type)

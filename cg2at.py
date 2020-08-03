@@ -7,9 +7,8 @@ import time
 import re
 import multiprocessing as mp
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/database/script_files')
-import gen, gro, at_mod, at_mod_p,at_mod_o, at_mod_np, read_in, g_var
+import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
 
-# mp.set_start_method('spawn')
 # Nothing in the script should need changing by the user
 
 g_var.tc['i_t']=time.time()
@@ -34,24 +33,20 @@ gen.flags_used()
 
 #### reads in CG file and separates into residue types
 box_vec_initial = read_in.read_initial_cg_pdb()
-
 #### box size update 
 if g_var.box != None:
     g_var.box_vec, box_shift = gen.new_box_vec(box_vec_initial, g_var.box)
 else:
     g_var.box_vec=box_vec_initial
     box_shift=np.array([0,0,0])
-
 #### pbc fix and residue truncation if required
 read_in.fix_pbc(box_vec_initial, g_var.box_vec, box_shift)
-
 #### checks if fragment database and input files match  
 at_mod.sanity_check()
-
 ### convert protein to atomistic representation
 g_var.tc['r_i_t']=time.time()
 if 'PROTEIN' in g_var.cg_residues:          
-    at_mod_p.build_protein_atomistic_system(g_var.cg_residues['PROTEIN']) ## converts protein to atomistic
+    g_var.coord_atomistic = at_mod_p.build_multi_residue_atomistic_system(g_var.cg_residues, 'PROTEIN') ## converts protein to atomistic
     if not g_var.user_at_input and g_var.v >= 1:  ## prints protein sequences 
         print('coarse grain protein sequence:\n')
         for index in g_var.seq_cg:
@@ -64,17 +59,17 @@ if 'PROTEIN' in g_var.cg_residues:
             g_var.atomistic_protein_input_raw.update(atomistic_protein_input_raw)
         read_in.duplicate_chain()
         at_mod_p.check_sequence()  ## gets user sequence
-        at_mod_p.align_chain_sequence() ## aligns chains 
+        at_mod_p.align_chain_sequence('PROTEIN') ## aligns chains 
         at_mod_p.find_disulphide_bonds_user_sup() ## finds user disulphide bonds
     at_mod_p.find_disulphide_bonds_de_novo() ## finds CG disulphide bonds 
     g_var.coord_atomistic = at_mod_p.correct_disulphide_bonds(g_var.coord_atomistic) ## fixes sulphur distances
-    final_coordinates_atomistic_de_novo = at_mod_p.finalise_novo_atomistic() ## fixes carbonyl oxygens, hydrogens and writes pdb 
+    final_coordinates_atomistic_de_novo = at_mod_p.finalise_novo_atomistic(g_var.coord_atomistic, 'PROTEIN') ## fixes carbonyl oxygens, hydrogens and writes pdb 
 
     ## aligns user chains to the CG system
     if g_var.user_at_input:
         at_mod_p.align_user_chains(final_coordinates_atomistic_de_novo)
     ### runs pdb2gmx and minimises each protein chain
-    gro.run_parallel_pdb2gmx_min('PROTEIN', g_var.p_system)
+    gro.run_parallel_pdb2gmx_min('PROTEIN', g_var.ter_res['PROTEIN'])
 
     #### read in minimised de novo protein chains and merges chains
     if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_merged.pdb'):
@@ -86,12 +81,10 @@ if 'PROTEIN' in g_var.cg_residues:
 
 ### converts other linked residues  
 g_var.tc['f_p_t']=time.time()
-if 'OTHER' in g_var.cg_residues:          
-    at_mod_o.build_non_protein_linked_atomistic_system(g_var.cg_residues['OTHER']) ## converts non protein linked residues to atomistic
-    fin_at_NP_linked_de_novo = at_mod_o.finalise_novo_atomistic()
-    os.chdir('OTHER')
-    gro.make_min('OTHER')
-    gro.run_parallel_pdb2gmx_min('OTHER', g_var.o_system)
+if 'OTHER' in g_var.cg_residues:  
+    g_var.other_atomistic = at_mod_p.build_multi_residue_atomistic_system(g_var.cg_residues, 'OTHER')      
+    fin_at_NP_linked_de_novo = at_mod_p.finalise_novo_atomistic(g_var.other_atomistic, 'OTHER')
+    gro.run_parallel_pdb2gmx_min('OTHER', g_var.ter_res['OTHER'])
     if not os.path.exists(g_var.working_dir+'OTHER/OTHER_de_novo_merged.pdb'):
         at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'OTHER/MIN/OTHER_de_novo', '.pdb', 'OTHER') ## merge  chains
 
