@@ -159,7 +159,7 @@ def ask_terminal(sys_info, residue_type):
         for ter_val,  ter_residue in enumerate(sys_info[chain]):
             if ter_residue == 'PRO' and ter_val == 0:
                 conv_type = 'PRO'
-            termini = g_var.res_top[ter_residue][ter_name[ter_val]]
+            termini = g_var.res_top[ter_residue][ter_name[ter_val]].upper()
             if len(termini) == 0:
                 if g_var.nt and ter_val==0 and not g_var.ter:
                     if conv_type == 'PRO':
@@ -194,7 +194,7 @@ def run_parallel_pdb2gmx_min(res_type, sys_info):
     while len(pool_process) != g_var.system[res_type]:
         report_complete('pdb2gmx/minimisation', q.qsize(), g_var.system[res_type])
     print('{:<130}'.format(''), end='\r')
-    print('pdb2gmx/minimisation completed on residue type: '+res_type)     
+    print('\npdb2gmx/minimisation completed on residue type: '+res_type)     
     pool.close()
     pool.join()
 
