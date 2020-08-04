@@ -23,6 +23,7 @@ if g_var.info:
     database_information()
 gen.fetch_fragment()    
 gen.fetch_chain_groups()
+gen.sort_swap_group()
 ###
 
 #### collects initial structures into INPUT folder
@@ -91,7 +92,6 @@ if 'OTHER' in g_var.cg_residues:
 #### converts non protein residues into atomistic (runs on all cores)
 if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTEIN', 'OTHER']]) > 0:
     print('\nConverting the following residues concurrently: ')
-    # with mp.get_context("spawn").Pool(g_var.ncpus) as pool:
     pool = mp.Pool(g_var.ncpus)
     pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(residue_type, 1) 
                                     for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'OTHER']]]).get() ## fragment fitting done in parrallel  

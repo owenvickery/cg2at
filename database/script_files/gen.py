@@ -723,15 +723,13 @@ def check_water_molecules():
                         if line.startswith('['):
                             water.append(strip_header(line))
         if g_var.w in water:
-            print('\nYou have selected the water model: '+g_var.water_input)
-            g_var.water_dir, g_var.water = directory[0]+'SOL/', g_var.water_input
-            # return directory[0]+'SOL/', water_input
+            print('\nYou have selected the water model: '+g_var.w)
+            g_var.water_dir, g_var.water = directory[0]+'SOL/', g_var.w
         else:
             print_water_selection(water, directory)
             g_var.water_dir, g_var.water = ask_for_water_model(directory, water)
         if g_var.w == None:
             g_var.opt['w'] = water
-    # return ask_for_water_model(directory, water)                         
 
 ############################################################################################## fragment rotation #################################################################################
 
