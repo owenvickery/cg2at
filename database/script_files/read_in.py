@@ -8,11 +8,14 @@ import gen, g_var
 
 def read_initial_cg_pdb():
 
-    print('\nThis script is now hopefully doing the following (Good luck):\n\nReading in your CG representation\n')
+    print('\nThis script is now hopefully doing the following (Good luck):\n')
     residue_list={} ## a dictionary of bead in each residue eg residue_list[bead name(BB)][residue_name(PO4)/coordinates(coord)]
     count=0  ### residue counter initialisation
     with open(g_var.input_directory+'CG_INPUT.pdb', 'r') as pdb_input:
-        for line in pdb_input.readlines():
+        pdb_lines = pdb_input.readlines()
+        for line_val, line in enumerate(pdb_lines):
+            if np.round((line_val/len(pdb_lines))*100,2).is_integer():
+                print('Reading in your CG representation: ',np.round((line_val/len(pdb_lines))*100,2),'%', end='\r')
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)
                 line_sep['atom_name'], line_sep['residue_name'] = swap(line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id']) ## implements swap group
@@ -151,7 +154,10 @@ def fix_pbc(box_vec, new_box, box_shift):
     BB_pre_resid =0
     for residue_type in g_var.cg_residues:
         cut_keys=[]
+        print('{:<100}'.format(''), end='\r')
         for res_val, residue in enumerate(g_var.cg_residues[residue_type]):
+            if np.round((res_val/len(g_var.cg_residues[residue_type]))*100,2).is_integer():
+                print('Fixing PBC of residue type '+residue_type+': ',np.round((res_val/len(g_var.cg_residues[residue_type]))*100,2),'%', end='\r')
             for bead_val, bead in enumerate(g_var.cg_residues[residue_type][residue]):
                 bead_info = g_var.cg_residues[residue_type][residue][bead]
                 if g_var.box != None and residue_type not in ['PROTEIN', 'OTHER']:
@@ -178,6 +184,7 @@ def fix_pbc(box_vec, new_box, box_shift):
                     g_var.cg_residues[residue_type][residue][bead]['coord'] = g_var.cg_residues[residue_type][residue][bead]['coord']-box_shift
         for key in cut_keys:
             g_var.cg_residues[residue_type].pop(key)
+    print('{:<100}'.format(''), end='\r')
 
 def swap(atom, residue, resid):
     if atom in g_var.ions and residue != 'ION':
@@ -263,6 +270,8 @@ def read_in_atomistic(protein):
 
 def duplicate_chain():
     if len(g_var.duplicate) != 0:
+        print('{:<100}'.format(''), end='\r')
+        print('Now duplicating the supplied chains')
         for ch_d in g_var.duplicate:
             duplicate = [int(x) for x in ch_d.split(':')]
             if len(duplicate) == 2 and duplicate[0] in g_var.atomistic_protein_input_raw:

@@ -36,7 +36,7 @@ parser.add_argument('-sf', help='scale factor for fragments, shrinks fragments b
 parser.add_argument('-version', action='version', version='%(prog)s 2.0')
 parser.add_argument('-ncpus', help='maximum number of cores to use (default = all)', type=int)
 parser.add_argument('-disre', help='switches off the distance restraint matrix for the backbone', action='store_false')
-parser.add_argument('-ov', help='amount of overlap allowed between atoms', type=float, default=0.14)
+parser.add_argument('-ov', help='amount of overlap allowed between atoms', type=float, default=0.3)
 
 args = parser.parse_args()
 opt = vars(args)
@@ -128,9 +128,7 @@ scripts_dir     = os.path.dirname(os.path.realpath(__file__))+'/' ### contains s
 database_dir    = str(Path(*Path(scripts_dir).parts[:-1]))+'/' ### contains database files
 box_vec = ''
 user_at_input = False
-p_system = {} ## contains the chain termini info e.g. if chain has a non standard temini 0:[True, False]
-o_system = {}
-ter_res = {}
+ter_res = {}  ## contains the chain termini residue info e.g.  0:[ARG, PRO]
 system = {}  ## number of system components e.g. PROTEIN:2 POPE:10, POPG:20
 backbone_coords = {} ## CG coordinates of the backbone beads
 coord_atomistic = {} ## de_novo atomisitic information e.g. coord_atomistic[chain_count][residue_number][atom][info....]
@@ -143,7 +141,7 @@ tc = {} ## contains script timings
 atomistic_protein_input_raw = {} ## Raw user atomistic info coord_atomistic[chain_count][residue_number][atom][info....]
 atomistic_protein_input_aligned = {}
 chain_count = 0 ## number of user atomistic chains
-other_atomistic ={}
+other_atomistic ={} ## 
 forcefield_available, fragments_available = '',''
 forcefield_location, forcefield = '','' ## forcefield info
 np_residues, p_residues, mod_residues, o_residues, np_directories, p_directories, mod_directories, o_directories = [],[],[],[],[],[],[],[]  ## fragment info

@@ -23,10 +23,11 @@ def build_multi_residue_atomistic_system(cg_residues, sys_type):
     residue_type={}
     residue_type_mass={}
     for cg_residue_id, residue_number in enumerate(cg_residues[sys_type]):
+        if np.round((cg_residue_id/len(cg_residues[sys_type]))*100,2).is_integer():
+            print('Converting de_novo '+sys_type+': ',np.round((cg_residue_id/len(cg_residues[sys_type]))*100,2),'%', end='\r')
         resname = cg_residues[sys_type][residue_number][next(iter(cg_residues[sys_type][residue_number]))]['residue_name']
         if cg_residue_id == 0:
             g_var.ter_res={sys_type:{chain_count:[resname, False]}}
-            # g_var.ter_res[sys_type][chain_count]=[resname, False]
         coord_atomistic[chain_count][residue_number]={}
         frag_location=gen.fragment_location(resname) ### get fragment location from database
         residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(frag_location)
@@ -74,6 +75,7 @@ def build_multi_residue_atomistic_system(cg_residues, sys_type):
             print('{0:^15}{1:^12}'.format(chain, len(g_var.seq_cg[sys_type][chain])))
         print()
     g_var.system[sys_type]=chain_count
+    print('Completed initial conversion of '+sys_type)
     return coord_atomistic
 
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
@@ -218,7 +220,6 @@ def finalise_novo_atomistic(coord_atomistic, sys_type):
         coords = at_mod.check_atom_overlap(coords)
         for atom in final_at[chain]:
             final_at[chain][atom]['coord']=coords[atom]
-            final_at_residues[chain][final_at[chain][atom]['resid']][atom]=final_at[chain][atom]
             if not skip:
                 x, y, z = gen.trunc_coord(final_at[chain][atom]['coord'])
                 pdb_output.write(g_var.pdbline%((atom,final_at[chain][atom]['atom'],final_at[chain][atom]['res_type'],' ',\
@@ -492,7 +493,6 @@ def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_cen
                         rotations.append(rotate_chain)
                     else:
                         rotations = at_com_group[chain]
-
             final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], atomistic_protein_centered[chain], cg_com[chain], rotations, chain)
         else:
             final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], [], [], [], chain)
@@ -539,7 +539,6 @@ def return_all_rotations(chain, at_centers, at_com_group, cg_com_group, sls, sle
     return at_com_group, cg_com_group   
 
 def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_centered, cg_com, xyz_rot_apply, chain):
-
     complete_user_at = {}
     for residue in final_coordinates_atomistic:
         exists=False
@@ -574,7 +573,6 @@ def write_user_chains_to_pdb(atomistic_user_supplied, chain):
                                     'x':short_line['coord'][0],'y':short_line['coord'][1],'z':short_line['coord'][2]}
                 at_id+=1
         merge_coords=at_mod.check_atom_overlap(coord)
-
         for at_id, coord in enumerate(merge_coords):
             x, y, z = gen.trunc_coord(coord)
             pdb_output.write(g_var.pdbline%((at_id+1,final_atom[at_id]['atom'],final_atom[at_id]['res_type'],'A',final_atom[at_id]['residue'],
@@ -641,6 +639,7 @@ def write_disres(coord, chain, file, at_start):
 ########################################################### RMSD
 
 def write_RMSD():
+    print('Calculating backbone RMSDs', end='\r')
     RMSD={}
     de_novo_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb') ## reads in final pdb
     if chain_count != g_var.system['PROTEIN']:
@@ -660,7 +659,7 @@ def write_RMSD():
             for chain in RMSD[rmsd]:
                 qual_out.write('{0:^10}{1:^25}{2:^10}\n'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
                 print('{0:^10}{1:^25}{2:^10}'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
-        print()
+        print('\nAll RMSDs have been saved in : '+g_var.final_dir+'structure_quality.dat\n')
 
 def RMSD_measure(structure_atoms):
     RMSD_dict = {}

@@ -13,6 +13,9 @@ import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
 
 g_var.tc['i_t']=time.time()
 ### initialise script 
+## prevent gromacs filling the file system with step files
+os.environ['GMX_SUPPRESS_DUMP']='1'
+
 gen.correct_number_cpus()
 gen.find_gromacs()
 gen.read_database()
@@ -25,7 +28,6 @@ gen.fetch_fragment()
 gen.fetch_chain_groups()
 gen.sort_swap_group()
 ###
-
 #### collects initial structures into INPUT folder
 gro.collect_input()
 
@@ -58,17 +60,17 @@ if 'PROTEIN' in g_var.cg_residues:
         for file_num, file_name in enumerate(g_var.a):
             atomistic_protein_input_raw, g_var.chain_count = read_in.read_in_atomistic(g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb')  ## reads in user structure
             g_var.atomistic_protein_input_raw.update(atomistic_protein_input_raw)
-        read_in.duplicate_chain()
+        read_in.duplicate_chain()  ## duplicates user chcains
         at_mod_p.check_sequence()  ## gets user sequence
         at_mod_p.align_chain_sequence('PROTEIN') ## aligns chains 
         at_mod_p.find_disulphide_bonds_user_sup() ## finds user disulphide bonds
     at_mod_p.find_disulphide_bonds_de_novo() ## finds CG disulphide bonds 
     g_var.coord_atomistic = at_mod_p.correct_disulphide_bonds(g_var.coord_atomistic) ## fixes sulphur distances
     final_coordinates_atomistic_de_novo = at_mod_p.finalise_novo_atomistic(g_var.coord_atomistic, 'PROTEIN') ## fixes carbonyl oxygens, hydrogens and writes pdb 
-
     ## aligns user chains to the CG system
     if g_var.user_at_input:
         at_mod_p.align_user_chains(final_coordinates_atomistic_de_novo)
+
     ### runs pdb2gmx and minimises each protein chain
     gro.run_parallel_pdb2gmx_min('PROTEIN', g_var.ter_res['PROTEIN'])
 
@@ -78,7 +80,10 @@ if 'PROTEIN' in g_var.cg_residues:
 
     #### read in aligned protein chains and merges chains
     if g_var.user_at_input and not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb'):
+        if g_var.o not in ['none', 'align']:
             at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'PROTEIN/MIN/PROTEIN_aligned', '.pdb', 'PROTEIN') ## merge aligned chains
+        else:
+            at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'PROTEIN/PROTEIN_aligned', '_gmx_checked.pdb', 'PROTEIN')
 
 ### converts other linked residues  
 g_var.tc['f_p_t']=time.time()
@@ -91,14 +96,13 @@ if 'OTHER' in g_var.cg_residues:
 
 #### converts non protein residues into atomistic (runs on all cores)
 if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTEIN', 'OTHER']]) > 0:
-    print('\nConverting the following residues concurrently: ')
+    print('\nConverting the following residues concurrently: \n')
     pool = mp.Pool(g_var.ncpus)
     pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(residue_type, 1) 
                                     for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'OTHER']]]).get() ## fragment fitting done in parrallel  
     pool.close()
     for residue_type in pool_process:
         g_var.system.update(residue_type) ## updates residue counts 
-
     #### attempts to minimise all residues at once else falls back to doing individually
     print('\nThis may take some time....(probably time for a coffee)\n')
     for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'ION', 'OTHER']]:
@@ -135,15 +139,9 @@ if not os.path.exists(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised
 
 ## checks for threaded lipids, e.g. abnormal bonds lengths (not had a issue for a long time might delete) 
 if not os.path.exists(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb'):
-    ringed_lipids = at_mod.check_ringed_lipids(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb') ## check for abnormal bond lengths 
-    if g_var.alchembed and len(ringed_lipids) > 0 and 'PROTEIN' in g_var.cg_residues:
-        gro.alchembed() ## runs alchembed on protein chains 
-    else:
-        gen.file_copy_and_check(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb', g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
-
-
+    at_mod.check_ringed_lipids(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb') ## check for abnormal bond lengths 
 ## runs short NVT on de_novo system with disres on if available 
-if g_var.o in ['all', 'de_novo']:
+if g_var.o not in ['none', 'align']:
     gro.run_nvt(g_var.merged_directory+'checked_ringed_lipid_de_novo') ## run npt on system 
 else:
     gen.file_copy_and_check(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')

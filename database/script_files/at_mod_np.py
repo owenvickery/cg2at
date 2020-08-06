@@ -19,80 +19,89 @@ def build_atomistic_system(residue_type, a):
 #### creates folder for residue type
     gen.mkdir_directory(g_var.working_dir+residue_type)
     if residue_type in ['ION','SOL']:
-        atomistic_fragments[residue_type] = atomistic_non_protein_solvent(residue_type, g_var.cg_residues[residue_type])
+        atomistic_fragments[residue_type], solvent_number = atomistic_non_protein_solvent(residue_type, g_var.cg_residues[residue_type])
         if residue_type in ['ION']:
-            system= solvent_ion( system, atomistic_fragments, residue_type)
+            system = solvent_ion( system, atomistic_fragments, residue_type)
         else:
-            system = solvent_sol( system, atomistic_fragments, residue_type)   
+            if solvent_number != 0:
+                system['SOL']=solvent_number
+            else:
+                system = solvent_sol( system, atomistic_fragments, residue_type)   
     else:
-        atomistic_fragments[residue_type] = atomistic_non_protein_non_solvent(residue_type, g_var.cg_residues[residue_type])
-        system = non_solvent(system, atomistic_fragments, residue_type)
+        atomistic_fragments[residue_type], solvent_number = atomistic_non_protein_non_solvent(residue_type, g_var.cg_residues[residue_type])
+        if solvent_number != 0:
+            system[residue_type]=solvent_number
+        else:
+            system = non_solvent(system, atomistic_fragments, residue_type)
+    print('{:<100}'.format(''), end='\r')
+    print('Finished converting: '+residue_type)
     return system 
 
 def non_solvent(system, atomistic_fragments, residue_type):
 #### loop through all resids of that residue type 
+    system[residue_type]=len(atomistic_fragments[residue_type])
+    
     if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb') and not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
-        pdb_output_all = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb')     
-        pdb_all_coord = []   
-        pdb_output_all_temp = []
-    for resid in atomistic_fragments[residue_type]:
-        # skip = os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')
-        if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
-            if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb'):
-                pdb_output_ind = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_'+str(resid)+'.pdb')         
+        NP = {}
+        count = 0
+        coord = []
+        index_conversion = {}
+        for resid in atomistic_fragments[residue_type]:
+            if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
                 atomistic_fragments[residue_type][resid] = at_mod.check_hydrogens(atomistic_fragments[residue_type][resid])
-            ####### check if any atoms in residue overlap #######
-                coord=[]
-                for atom in atomistic_fragments[residue_type][resid]:
-                    coord.append(atomistic_fragments[residue_type][resid][atom]['coord'])
-                coord=at_mod.check_atom_overlap(coord)
-                for atom_val, atom in enumerate(atomistic_fragments[residue_type][resid]):
-                    atomistic_fragments[residue_type][resid][atom]['coord']=coord[atom_val]
-
                 for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
-                #### write residue out to a pdb file
-                    short_line=atomistic_fragments[residue_type][resid][at_id+1]
-                    x, y, z = gen.trunc_coord([short_line['coord'][0], short_line['coord'][1],short_line['coord'][2]])
-                    pdb_output_ind.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,x,y,z,0.00, 0.00))+'\n')
-                    if 'pdb_output_all' in locals():
-                        x, y, z = gen.trunc_coord([short_line['coord'][0], short_line['coord'][1],short_line['coord'][2]])
-                        pdb_all_coord.append([x, y, z])
-                        pdb_output_all_temp.append([at_id+1, short_line['atom'],short_line['res_type'],' ',1,x, y, z, 0.00, 0.00])
-    if 'pdb_output_all' in locals():
-        p_a_c=at_mod.check_atom_overlap(pdb_all_coord)
-        for at_val, line in enumerate(pdb_output_all_temp):
-            pdb_output_all.write(g_var.pdbline%((line[0],line[0],line[0],' ',1,p_a_c[at_val][0], p_a_c[at_val][1], p_a_c[at_val][2],0.00, 0.00))+'\n')
-
-    system[residue_type]=int(resid)+1
+                    if not atomistic_fragments[residue_type][resid][atom]['atom'].startswith('M'):
+                        index_conversion[count] = len(coord)
+                        coord.append(atomistic_fragments[residue_type][resid][atom]['coord'])
+                    NP[count] = atomistic_fragments[residue_type][resid][atom]
+                    count+=1
+        
+        coord=at_mod.check_atom_overlap(coord)
+        pdb_output_all = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb')
+        atom_counter = 1
+        for at_val, atom in enumerate(NP):
+            if at_val in index_conversion:
+                x, y, z = gen.trunc_coord(coord[index_conversion[at_val]])
+            else:
+                x, y, z = gen.trunc_coord([NP[atom]['coord'][0],NP[atom]['coord'][1],NP[atom]['coord'][2]])
+            if atom_counter >= 99_999:
+                atom_counter=1
+            else:
+                atom_counter+=1
+            pdb_output_all.write(g_var.pdbline%((atom_counter,NP[atom]['atom'],NP[atom]['res_type'],' ',1, x, y, z,0.00, 0.00))+'\n')
     return system
 
 def solvent_sol(system, atomistic_fragments, residue_type):
     #### creates solvent directory and SOL key in system dictionay otherwise it appends solvent molecules to sol pdb
-    skip = os.path.exists(g_var.working_dir+'SOL'+'/SOL_all.pdb')
-
-    if not skip:
+    sol = {}
+    coord=[]
+    count = 0 
+    index_conversion = {}
+    if not os.path.exists(g_var.working_dir+'SOL'+'/SOL_all.pdb'):
         pdb_sol = gen.create_pdb(g_var.working_dir+'SOL'+'/SOL_all.pdb')
-
-    for resid in atomistic_fragments[residue_type]:
-    ####### check if any atoms in residue overlap #######
-        if not skip:
-            coord=[]
+        for resid in atomistic_fragments[residue_type]:
+        ####### check if any atoms in residue overlap #######
             for atom in atomistic_fragments[residue_type][resid]:
-                coord.append(atomistic_fragments[residue_type][resid][atom]['coord'])
-            coord=at_mod.check_atom_overlap(coord)
-            for atom_val, atom in enumerate(atomistic_fragments[residue_type][resid]):
-                atomistic_fragments[residue_type][resid][atom]['coord']=coord[atom_val]
-
-        for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
-        #### separates out the water molecules from the ion in the fragment
-            if atomistic_fragments[residue_type][resid][at_id+1]['frag_mass'] > 1:                  
+                if not atomistic_fragments[residue_type][resid][atom]['atom'].startswith('M'):
+                    index_conversion[count] = len(coord)
+                    coord.append(atomistic_fragments[residue_type][resid][atom]['coord'])
+                sol[count] = atomistic_fragments[residue_type][resid][atom]
+                count+=1
+        coord=at_mod.check_atom_overlap(coord)
+        atom_counter = 1
+        for at_val, atom in enumerate(sol):
+            if sol[atom]['frag_mass'] > 1:                  
                 system['SOL']+=1
-            if not skip:
-                short_line=atomistic_fragments[residue_type][resid][at_id+1]
-                x, y, z = gen.trunc_coord([short_line['coord'][0],short_line['coord'][1],short_line['coord'][2]])
-                pdb_sol.write(g_var.pdbline%((at_id+1,short_line['atom'],short_line['res_type'],' ',1,x, y, z,0.00, 0.00))+'\n')
-
-    return system
+            if at_val in index_conversion:
+                x, y, z = gen.trunc_coord(coord[index_conversion[at_val]])
+            else:
+                x, y, z = gen.trunc_coord([sol[atom]['coord'][0],sol[atom]['coord'][1],sol[atom]['coord'][2]])
+            if atom_counter >= 99_999:
+                atom_counter=1
+            else:
+                atom_counter+=1
+            pdb_sol.write(g_var.pdbline%((atom_counter,sol[atom]['atom'],sol[atom]['res_type'],' ',1,x, y, z,0.00, 0.00))+'\n')
+        return system
 
 def solvent_ion(system, atomistic_fragments, residue_type):
     #### creates ion pdb with header
@@ -119,33 +128,37 @@ def atomistic_non_protein_non_solvent(cg_residue_type,cg_residues):
 #### run through every residue in a particular residue type
     residue_type={}
     residue_type_mass={}
-    for cg_resid, cg_residue in enumerate(cg_residues):
-        atomistic_fragments[cg_resid]={}
-        frag_location=gen.fragment_location(cg_residue_type) ### get fragment location from database
-        residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
-        for group in residue_type[cg_residue_type]:
-            center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][group], residue_type_mass[cg_residue_type], cg_residue, cg_residues[cg_residue])
-            at_connect, cg_connect = at_mod.connectivity(cg_residues[cg_residue], at_frag_centers, cg_frag_centers, group_fit, group)
-            if len(at_connect) == len(cg_connect) and len(cg_connect) > 0:
-                try:
-                    xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
-                except:
-                    sys.exit('There is a issue with residue: '+cg_residue_type+' in group: '+str(group))
-            else:
-                print('atom connections: '+str(len(at_connect))+' does not match CG connections: '+str(len(cg_connect)))
-                sys.exit('residue number: '+str(cg_resid)+', residue type: '+str(cg_residue_type)+', group: '+group)
-            for bead in group_fit:
-                for atom in group_fit[bead]:
-                    group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   
-                    atom_new = group_fit[bead][atom].copy()
-                    atomistic_fragments[cg_resid][atom] = atom_new
-    return atomistic_fragments   
+    if not os.path.exists(g_var.working_dir+cg_residue_type+'/'+cg_residue_type+'_all.pdb'):
+        for cg_resid, cg_residue in enumerate(cg_residues):
+            atomistic_fragments[cg_resid]={}
+            frag_location=gen.fragment_location(cg_residue_type) ### get fragment location from database
+            residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
+            for group in residue_type[cg_residue_type]:
+                center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][group], residue_type_mass[cg_residue_type], cg_residue, cg_residues[cg_residue])
+                at_connect, cg_connect = at_mod.connectivity(cg_residues[cg_residue], at_frag_centers, cg_frag_centers, group_fit, group)
+                if len(at_connect) == len(cg_connect) and len(cg_connect) > 0:
+                    try:
+                        xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
+                    except:
+                        sys.exit('There is a issue with residue: '+cg_residue_type+' in group: '+str(group))
+                else:
+                    print('atom connections: '+str(len(at_connect))+' does not match CG connections: '+str(len(cg_connect)))
+                    sys.exit('residue number: '+str(cg_resid)+', residue type: '+str(cg_residue_type)+', group: '+group)
+                for bead in group_fit:
+                    for atom in group_fit[bead]:
+                        group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   
+                        atom_new = group_fit[bead][atom].copy()
+                        atomistic_fragments[cg_resid][atom] = atom_new
+        return atomistic_fragments, 0
+    else:
+        return atomistic_fragments, len(cg_residues)   
 
 def atomistic_non_protein_solvent(cg_residue_type,cg_residues): 
     atomistic_fragments={}  #### residue dictionary
 #### run through every residue in a particular residue type
     residue_type={}
     residue_type_mass={}
+
     for cg_resid, cg_residue in enumerate(cg_residues):
         for bead in cg_residues[cg_residue]:
             fragment = bead
@@ -153,9 +166,14 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
         atomistic_fragments[cg_resid]={}
         frag_location=gen.fragment_location(cg_residue_type) ### get fragment location from database
         residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
+        if os.path.exists(g_var.working_dir+'SOL'+'/SOL_all.pdb') and cg_residue_type == 'SOL':
+            sol_p_bead = 0
+            for atom in residue_type_mass[cg_residue_type][g_var.water]:
+                if atom[3] > 1:
+                    sol_p_bead+=1
+            return sol_p_bead, sol_p_bead*len(cg_residues)
         for res_type in residue_type[cg_residue_type]:
             if fragment in residue_type[cg_residue_type][res_type]:
-                
                 center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][res_type], residue_type_mass[cg_residue_type]
                                                                                        , cg_residue, cg_residues[cg_residue])
                 xyz_rot_apply=gen.AnglesToRotMat([np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2)])
@@ -164,7 +182,7 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
                         group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   
                         atom_new = group_fit[bead][atom].copy()
                         atomistic_fragments[cg_resid][atom] = atom_new
-    return atomistic_fragments
+    return atomistic_fragments, 0
 
 
 

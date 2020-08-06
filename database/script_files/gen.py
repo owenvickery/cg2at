@@ -39,8 +39,8 @@ def forcefield_selection():
             print('Cannot find forcefield: '+g_var.ff+'  please select one from below\n')   
     if 'forcefield_number' not in locals() and 'forcefield' not in locals():
         forcefield_number = database_selection(g_var.forcefield_available, 'forcefields')    
-        print('\nYou have selected the forcefield: '+g_var.forcefield_available[forcefield_number].split('.')[0])
     if 'forcefield' not in locals():
+        print('\nYou have selected the forcefield: '+g_var.forcefield_available[forcefield_number].split('.')[0])
         folder_copy_and_check(g_var.database_dir+'/forcefields/'+g_var.forcefield_available[forcefield_number], g_var.final_dir+g_var.forcefield_available[forcefield_number])
         g_var.forcefield_location, g_var.forcefield=g_var.database_dir+'forcefields/', g_var.forcefield_available[forcefield_number]
         g_var.opt['ff'] = g_var.forcefield_available[forcefield_number]
@@ -65,17 +65,8 @@ def fragment_selection():
     else:
         fragments_available = fragments_available_other
 
-    g_var.p_directories, g_var.mod_directories, g_var.np_directories,  g_var.o_directories = fetch_residues(frag_location, g_var.fragments_available, fragment_number)
-# p_directories, mod_directories, np_directories, o_directories
-    sort_directories()
-    # g_var.database_locations = [np_directories, p_directories, mod_directories, o_directories]
-
-# def water_selection():
-#     # ### reads in water molecules
-#     if any('SOL' in sublist for sublist in np_directories): 
-#         g_var.water_dir, g_var.water = gen.check_water_molecules(g_var.w, np_directories)
-#         if g_var.w == None:
-#             g_var.opt['w'] = water
+    # g_var.p_directories, g_var.mod_directories, g_var.np_directories,  g_var.o_directories = 
+    fetch_residues(frag_location, g_var.fragments_available, fragment_number)
 
 def correct_number_cpus():
     if g_var.ncpus != None:
@@ -142,6 +133,7 @@ def folder_copy_and_check(folder_in,folder_out):
         copy_tree(folder_in, folder_out)
 
 def flags_used():
+    print('\nAll variables supplied have been saved in : '+g_var.input_directory+'script_inputs.dat')
     os.chdir(g_var.input_directory)
     with open('script_inputs.dat', 'w') as scr_input:
         scr_input.write('\n'+g_var.opt['input']+'\n')
@@ -163,7 +155,6 @@ def fetch_chain_groups():
             for group_val, group in enumerate(g_var.group):
                 for chain in group.split(','):
                     g_var.group_chains[int(chain)]=group_val 
-            
         else:
             g_var.group_chains =  g_var.group[0]   
 
@@ -317,7 +308,6 @@ def get_fragment_topology(residue, location):
         for line_nr, line in enumerate(pdb_input.readlines()):
             if line.startswith('['):
                 bead = strip_header(line)
-                # print(bead)
                 if bead in topology['GROUPS']:
                     group_temp = topology['GROUPS'][bead]
                 else:
@@ -354,15 +344,14 @@ def sort_connectivity(atom_dict, heavy_bond):
     if len(atom_dict) > 1:
         for group in atom_dict:
             cut_group[group]={}
-            for frag in atom_dict[group]:
-                for atom in atom_dict[group][frag]:
-                    if atom in heavy_bond:
-                        for bond in heavy_bond[atom]:
-                            for group_2 in atom_dict:
-                                if group_2 != group:
-                                    for frag in atom_dict[group_2]:                          
-                                        if bond in atom_dict[group_2][frag]:
-                                            cut_group[group][atom] = [frag]
+            group_atoms = [atom for frag in atom_dict[group] for atom in atom_dict[group][frag] if atom in heavy_bond]
+            non_self_group = [x for x in atom_dict.keys() if x != group]
+            for atom in group_atoms:
+                for bond in heavy_bond[atom]:
+                    for group_2 in non_self_group:
+                        for frag in atom_dict[group_2]:                          
+                            if bond in atom_dict[group_2][frag]:
+                                cut_group[group][atom] = [frag]
     return cut_group
 
 def fetch_fragment():
@@ -605,13 +594,6 @@ def ask_database(provided, selection_type):
         except:
             print("Oops!  That was a invalid choice")
 
-def add_to_list(root, dirs, list_to_add):
-    list_to_add.append([])
-    list_to_add[-1].append(root)
-    list_to_add[-1]+=dirs
-    list_to_add[-1] = [x for x in list_to_add[-1] if not x.startswith('_')]    
-    return list_to_add
-
 def fetch_frag_number(fragments_available):
     fragment_number = []
     if g_var.fg != None and len(g_var.fg) > 0 :
@@ -628,9 +610,18 @@ def fetch_frag_number(fragments_available):
     else:
         sys.exit('no fragment databases selected')
 
+def add_to_list(root, dirs, list_to_add, residues):
+    list_to_add.append([])
+    list_to_add[-1].append(root)
+    list_to_add[-1] += dirs
+    list1 = [x for x in list_to_add[-1] if not x.startswith('_')]
+    list1.sort()
+    list_to_add[-1] = list1
+    residues += list_to_add[-1][1:]
+    residues.sort()    
+
 def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
 #### list of directories and water types  [[root, folders...],[root, folders...]]
-    np_directories, p_directories,mod_directories,o_directories=[], [], [], []
 #### run through selected fragments
     for database in fragment_number:
         if not g_var.info:
@@ -646,40 +637,21 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
             if os.path.exists(location+directory_type):
                 for root, dirs, files in os.walk(location+directory_type):
                     if directory_type =='/non_protein/':
-                        np_directories = add_to_list(root, dirs, np_directories)
+                        add_to_list(root, dirs, g_var.np_directories, g_var.np_residues)
                     elif directory_type =='/other/':
-                        o_directories = add_to_list(root, dirs, o_directories)
+                        add_to_list(root, dirs, g_var.o_directories, g_var.o_residues)
                     #### adds protein residues locations to p_directories
                     elif directory_type =='/protein/':
-                        p_directories = add_to_list(root, dirs, p_directories)
+                        add_to_list(root, dirs, g_var.p_directories, g_var.p_residues)
                     #### adds modified residues to mod directories and removes MOD from p_directories
                         if os.path.exists(location+directory_type+'MOD/'):
-                            p_directories[-1].remove('MOD')
+                            g_var.p_directories[-1].remove('MOD')
+                            g_var.p_residues.remove('MOD')
                             for root, dirs, files in os.walk(location+directory_type+'MOD/'):
-                                p_directories = add_to_list(root, dirs, p_directories)
-                                mod_directories = add_to_list(root, dirs, mod_directories)
+                                add_to_list(root, dirs, g_var.p_directories, g_var.p_residues)
+                                add_to_list(root, dirs, g_var.mod_directories, g_var.mod_residues)
                                 break
                     break
-    return p_directories, mod_directories, np_directories, o_directories
-
-
-def sort_directories():
-    # g_var.np_residues, g_var.p_residues, g_var.mod_residues, g_var.o_residues, g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories
-#### sorts directories alphabetically and creates residue database
-    # p_residues, np_residues, mod_residues, o_residues = [],[],[],[]
-    for directory in range(len(g_var.mod_directories)):
-        g_var.mod_directories[directory][1:].sort()
-        g_var.mod_residues+=g_var.mod_directories[directory][1:]
-    for directory in range(len(g_var.p_directories)):
-        g_var.p_directories[directory][1:].sort()
-        g_var.p_residues+=g_var.p_directories[directory][1:]
-    for directory in range(len(g_var.np_directories)):
-        g_var.np_directories[directory][1:].sort()
-        g_var.np_residues+=g_var.np_directories[directory][1:]
-    for directory in range(len(g_var.o_directories)):
-        g_var.o_directories[directory][1:].sort()
-        g_var.o_residues+=g_var.o_directories[directory][1:]
-    g_var.database_locations = [g_var.p_directories, g_var.mod_directories, g_var.np_directories, g_var.o_directories]
 #### if verbose prints all fragments found
     if g_var.v >= 2:
         for directory in range(len(g_var.np_directories)):
@@ -688,7 +660,6 @@ def sort_directories():
         for directory in range(len(g_var.p_directories)):
             print('\nprotein residues fragment directories found: \n\nroot file system\n')
             print(g_var.p_directories[directory][0],'\n\nresidues\n\n',g_var.p_directories[directory][1:], '\n')
-    # return np_residues, p_residues, mod_residues, o_residues, np_directories, p_directories, mod_directories, o_directories
 
 def print_water_selection(water, directory):
     if g_var.w != None:
@@ -791,9 +762,10 @@ def mkdir_directory(directory):
 
 def clean():
 #### cleans temp files from residue_types
+    print()
     for residue_type in g_var.cg_residues:
         if residue_type not in ['SOL', 'ION']:
-            print('\nCleaning temp files from : '+residue_type)
+            print('Cleaning temp files from : '+residue_type)
             os.chdir(g_var.working_dir+residue_type)
             file_list = glob.glob('*temp*', recursive=True)
             file_list += glob.glob(residue_type+'*pdb', recursive=True)
@@ -836,6 +808,7 @@ def print_script_timings():
     t10=fix_time(g_var.tc['f_t'],g_var.tc['i_t'])
     to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t10[0],'hours',t10[1],'min',t10[2],'sec'))
     with open(g_var.final_dir+'script_timings.dat', 'w') as time_out:  
+        print('All script timings have been saved in : '+g_var.final_dir+'script_timings.dat\n')
         for line in to_print:
             time_out.write(line+'\n')
             if g_var.v >= 1:
@@ -857,7 +830,6 @@ def database_information():
     if g_var.fg != None:
         
         fragment_number = fetch_frag_number(g_var.fragments_available)
-        # p_directories_unsorted, mod_directories_unsorted, np_directories_unsorted = fetch_residues(g_var.fragments_available, fragment_number)
         for database_val, database in enumerate(sorted(g_var.fg)):
             print('\n\n{0:^90}\n{1:-<90}\n'.format('The following residues are available in the database: '+database, ''))
             res_type_name = ['protein residues', 'modified protein residues', 'non protein residues']

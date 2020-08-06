@@ -6,7 +6,7 @@ import math
 import itertools
 from scipy.spatial import cKDTree
 import re
-import gen, g_var, at_mod_p, read_in
+import gen, g_var, at_mod_p, read_in, gro
 
 
 ### sanity checking
@@ -27,7 +27,7 @@ def sanity_check_fragments(res, cg, sin_bead):
                 if bead == sin_bead:
                     for atom in residue[group][bead]:
                         atom_list.append(atom)
-    return bead_list, atom_list
+    return sorted(bead_list), atom_list
 
 def sanity_check_atoms(atom_list, res):
 #### checks atom order
@@ -46,42 +46,47 @@ def sanity_check_beads(bead_list, cg, res):
 
 def sanity_check():
 #### runs through every bead and checks whether it exists
+    bead_list, atom_list = {},{}
     for res_type in g_var.cg_residues:
         if res_type in ['PROTEIN', 'OTHER']:
             for residue in g_var.cg_residues[res_type]:
                 for bead in g_var.cg_residues[res_type][residue]:
                     resname = g_var.cg_residues[res_type][residue][bead]['residue_name']
                     break
-                bead_list, atom_list = sanity_check_fragments(resname, g_var.cg_residues[res_type][residue], False)
-                bead_list_cg = sanity_check_beads(bead_list, g_var.cg_residues[res_type][residue], resname)  
-                sanity_check_atoms(atom_list, resname)
-                if sorted(bead_list) != sorted(bead_list_cg):
-                    if len(bead_list) == len(bead_list_cg):
-                        fix_atom_wrap(bead_list, bead_list_cg, res_type, residue)
+                if resname not in bead_list or resname not in atom_list:
+                    bead_list[resname], atom_list[resname] = sanity_check_fragments(resname, g_var.cg_residues[res_type][residue], False)
+                    sanity_check_atoms(atom_list[resname], resname)
+                bead_list_cg = sanity_check_beads(bead_list[resname], g_var.cg_residues[res_type][residue], resname)  
+                
+                if bead_list[resname] != sorted(bead_list_cg):
+                    if len(bead_list[resname]) == len(bead_list_cg):
+                        fix_atom_wrap(bead_list[resname], bead_list_cg, res_type, residue)
                     else:
                         print('There is a issue with residue: '+resname+' '+str(residue+1))
                         if res_type != 'OTHER':
-                            sys.exit('number of atomistic fragments: '+str(len(bead_list))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
+                            sys.exit('number of atomistic fragments: '+str(len(bead_list[resname]))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
         elif res_type in ['SOL', 'ION']:
             for residue in g_var.cg_residues[res_type]:
                 for bead in g_var.cg_residues[res_type][residue]:
                     sin_bead=bead
                     break
-                bead_list, atom_list = sanity_check_fragments(res_type, g_var.cg_residues[res_type][residue], sin_bead)
-                sanity_check_beads(bead_list, g_var.cg_residues[res_type][residue], res_type) 
-                sanity_check_atoms(atom_list, res_type)
+                if sin_bead not in bead_list or sin_bead not in atom_list:
+                    bead_list[sin_bead], atom_list[sin_bead] = sanity_check_fragments(res_type, g_var.cg_residues[res_type][residue], sin_bead)
+                    sanity_check_atoms(atom_list[sin_bead], res_type)
+                sanity_check_beads(bead_list[sin_bead], g_var.cg_residues[res_type][residue], res_type) 
         else:
-            bead_list, atom_list = sanity_check_fragments(res_type, g_var.cg_residues[res_type], False)
-            sanity_check_atoms(atom_list, res_type)
+            if res_type not in bead_list or res_type not in atom_list:
+                bead_list[res_type], atom_list[res_type] = sanity_check_fragments(res_type, g_var.cg_residues[res_type], False)
+                sanity_check_atoms(atom_list[res_type], res_type)
             for residue in g_var.cg_residues[res_type]:
                 bead_list_cg = sanity_check_beads(bead_list, g_var.cg_residues[res_type][residue], res_type)
-                if sorted(bead_list) != sorted(bead_list_cg):
-                    if len(bead_list) == len(bead_list_cg):
-                        fix_atom_wrap(bead_list, bead_list_cg, res_type, residue)
+                if bead_list[res_type] != sorted(bead_list_cg):
+                    if len(bead_list[res_type]) == len(bead_list_cg):
+                        fix_atom_wrap(bead_list[res_type], bead_list_cg, res_type, residue)
                     else:
                         print('There is a issue with residue: '+res_type+' '+str(residue+1))
-                        sys.exit('number of atomistic fragments: '+str(len(bead_list))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
-                        
+                        sys.exit('number of atomistic fragments: '+str(len(bead_list[res_type]))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
+
 def fix_atom_wrap(bead_list_frag, bead_list_cg, section, resid):
     for bead in bead_list_cg:
         if bead not in bead_list_frag:
@@ -167,7 +172,6 @@ def COM(mass, fragment):
             print('bead has no mass: \n')
             sys.exit(fragment)
     except:
-        print(fragment, mass)
         if len(fragment) == 1:
             for key in fragment:
                 if len(fragment[key]) == 1:
@@ -206,7 +210,7 @@ def rigid_fit(group, frag_mass, resid, cg):
 
 def overlapping_atoms(tree):
     overlapped_ndx = tree.query_ball_tree(tree, r=g_var.ov)
-    overlapped_cut = [ndx for ndx in overlapped_ndx if len(ndx) >1]
+    overlapped_cut = [ndx for ndx in overlapped_ndx if len(ndx) >1]      
     overlapped_cut.sort()
     overlapped=list(overlapped_cut for overlapped_cut,_ in itertools.groupby(overlapped_cut))
     return overlapped
@@ -218,15 +222,15 @@ def check_atom_overlap(coordinates):
 #### runs through overlapping atoms and moves atom in a random diection until it is no longer overlapping
     while len(overlapped) > 0:
         for ndx_val, ndx in enumerate(overlapped):
-            if len(overlapped) > 30:
-                print('{:<130}'.format(''), end='\r')
-                print('fixing '+str(len(overlapped))+' overlapped atoms: '+str(np.round((ndx_val/len(overlapped))*100,1))+' %', end='\r')
+            if np.round((ndx_val/len(overlapped))*100,2).is_integer():
+                print('fixing '+str(len(overlapped))+' overlapped atoms: '+str(np.round((ndx_val/len(overlapped))*100,2))+' %', end='\r')
             xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
             while len(tree.query_ball_point(xyz_check, r=0.3)) > 1:
                 xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
             coordinates[ndx[0]]=xyz_check
             tree = cKDTree(coordinates)
         overlapped = overlapping_atoms(tree)
+        print('{:<100}'.format(''), end='\r')
     return coordinates
 
 ## overlap end
@@ -343,7 +347,7 @@ def merge_indivdual_chain_pdbs(file, end, res_type):
                         line_sep=gen.pdbatom(line)
                         merge_temp.append(line_sep)
         else:
-            sys.exit('cannot find minimised protein chain: '+file+'_'+str(chain)+end)
+            sys.exit('cannot find chain: '+file+'_'+str(chain)+end)
         if res_type+'_aligned' in file:  
             count += at_mod_p.write_disres(merge_temp, chain, file, count)
         merge, merge_coords = fix_chirality(merge,merge_temp,merged_coords, res_type)   
@@ -374,37 +378,51 @@ def merge_system_pdbs(protein):
         merge_coords=[]
     #### run through every residue type in cg_residues
         done = []
-        for segment, residue_type in enumerate(g_var.system):
-        #### if file contains user input identifier 
-            if residue_type not in ['PROTEIN', 'OTHER']:
-                input_type=''
-                if residue_type in g_var.ions:
-                    residue_type = 'ION'
-                    ion_done = True
-            else:
-                input_type=protein
-            if residue_type not in done:
-                done.append(residue_type)
-                merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+input_type+'_merged.pdb')
         if 'novo' in protein:
             print('checking for atom overlap in : '+protein[1:])
-            merge_coords = check_atom_overlap(merge_coords)
+        for segment, residue_type in enumerate(g_var.system):
+            if residue_type not in done:
+                if residue_type not in ['PROTEIN', 'OTHER']:
+                    if residue_type in g_var.ions and 'ION' not in done:
+                        merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+'ION/ION_merged.pdb')
+                        done.append('ION')
+                    elif residue_type not in g_var.ions:
+                        merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
+                else:
+                    merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+protein+'_merged.pdb')
+                done.append(residue_type)
+        index_conversion = {}
+        if 'novo' in protein:
+            coords = []
+            for at_val, atom in enumerate(merge):
+                if not atom['atom_name'].startswith('M'):
+                    index_conversion[atom['atom_number']] = len(coords)
+                    coords.append(merge_coords[at_val])
+            coords = check_atom_overlap(coords)
         pdb_output=gen.create_pdb(g_var.merged_directory+'merged_cg2at'+protein+'.pdb')
+        atom_counter=1
         for line_val, line in enumerate(merge):
-            x, y, z = gen.trunc_coord(merge_coords[line_val])
-            pdb_output.write(g_var.pdbline%((int(line['atom_number']), line['atom_name'], line['residue_name'],' ',line['residue_id'],\
+            if line['atom_number'] in index_conversion:
+                x, y, z = gen.trunc_coord(coords[index_conversion[line_val]])
+            else:
+                x, y, z = merge_coords[line_val]
+            if atom_counter >= 99_999:
+                atom_counter=1
+            else:
+                atom_counter+=1
+            pdb_output.write(g_var.pdbline%((atom_counter, line['atom_name'], line['residue_name'],' ',line['residue_id'],\
                 x,y,z,1,0))+'\n')
-        pdb_output.write('TER\nENDMDL')
         pdb_output.close()
 
 def read_in_merged_pdbs(merge, merge_coords, location):
     if os.path.exists(location):
     #### opens pdb files and writes straight to merged_cg2at pdb
         with open(location, 'r') as pdb_input:
-            for line in pdb_input.readlines():
+            for line_val, line in enumerate(pdb_input.readlines()):
                 if line.startswith('ATOM'):
                     line_sep = gen.pdbatom(line)
                     line_sep['x'],line_sep['y'],line_sep['z'] = gen.trunc_coord([line_sep['x'],line_sep['y'],line_sep['z']])
+                    line_sep['atom_number'] = len(merge_coords)
                     merge.append(line_sep)
                     merge_coords.append([line_sep['x'],line_sep['y'],line_sep['z']])
         return merge, merge_coords
@@ -477,10 +495,7 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
                 c2_coord = (atom_move['c2'] - atom_move['stat']).dot(rotation)
                 c3_coord = (atom_move['c3'] - atom_move['stat']).dot(rotation)
 
-                C1_C2_a = gen.angle_clockwise(c1_coord[0:2], c2_coord[0:2])
-                C1_C3_a = gen.angle_clockwise(c1_coord[0:2], c3_coord[0:2])
-
-                if C1_C2_a > C1_C3_a:
+                if gen.angle_clockwise(c1_coord[0:2], c2_coord[0:2]) > gen.angle_clockwise(c1_coord[0:2], c3_coord[0:2]):
                     for ax_val, axis in enumerate(['x', 'y', 'z']):
                         merge_temp[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] = merge_temp[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] - (3*S_M[ax_val])   
                         merge_temp[chiral_atoms[residue][chiral_group]][axis] = merge_temp[chiral_atoms[residue][chiral_group]][axis] - (S_M[ax_val])        
@@ -525,43 +540,104 @@ def check_hydrogens(residue):
                             residue[h_at]['coord']=residue[h_at]['coord']-vector*2
     return residue
 
-
 ## check for threaded lipids
 def check_ringed_lipids(protein):
-    box_vec = g_var.box_vec.split()[1:4]
-    os.chdir(g_var.merged_directory)
-    merge, merge_coords = read_in_merged_pdbs([], [], protein)
-    resid_prev=0
-    ringed=[]
-    for at_val, atom in enumerate(merge):         
-        if atom['residue_name'] in g_var.np_residues:
-            if atom['residue_id'] != resid_prev:
-                if 'offset' in locals() and len(g_var.heavy_bond[resname])>0: 
-                    if at_val-offset >= max(g_var.heavy_bond[resname]): 
-                        offset=at_val
-                else:
-                    offset=at_val
-                    resname = atom['residue_name']
-            resid_prev=atom['residue_id']
-            if atom['atom_number']-offset in g_var.heavy_bond[atom['residue_name']]:
-                resname = atom['residue_name']
-                at_coord = [atom['x'], atom['y'], atom['z']]
-                for at_bond in g_var.heavy_bond[atom['residue_name']][atom['atom_number']-offset]:
-                    at_bond_coord = [merge[at_bond+offset-1]['x'], merge[at_bond+offset-1]['y'], merge[at_bond+offset-1]['z']]
-                    for xyz in range(3):
-                    #### for x, y, z if the distance between bead is more than half the box length
-                        if gen.calculate_distance(at_coord, at_bond_coord) > float(box_vec[xyz])/2:
-                        #### if the bead if in the opposite 1/3 of the box the position the box length is add/subtracted
-                            if at_bond_coord[xyz] <= float(box_vec[xyz])/2:
-                                temp = at_bond_coord[xyz]+float(box_vec[xyz])
-                            elif at_bond_coord[xyz] > float(box_vec[xyz])/2:
-                                temp = at_bond_coord[xyz]-float(box_vec[xyz])
-                        #### if distance between corrected coordinate is still > 1/2 the box length then counts as a new chain
-                            if np.sqrt((temp-at_coord[xyz])**2) < 2:
-                                at_bond_coord[xyz] = temp
-                    dist = gen.calculate_distance(at_coord, at_bond_coord)
-                    if dist > 2:
-                         ringed.append([at_val, at_bond+offset-1])
+    print('Checking for ringed lipids')
+    if not os.path.exists(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb'):
+        if not os.path.exists(g_var.merged_directory+'merged_cg2at_threaded.pdb'):
+            box_vec = g_var.box_vec.split()[1:4]
+            r_b_vec, r_b_inv = read_in.real_box_vectors(g_var.box_vec)
+            os.chdir(g_var.merged_directory)
+            merge, merge_coords = read_in_merged_pdbs([], [], protein)
+            resid_prev=0
+            ringed=False
+            lipid_atoms = []
+            with open(g_var.merged_directory+'overlapping_atoms.dat', 'w') as ring_ouput:
+                for at_val, atom in enumerate(merge):         
+                    if atom['residue_name'] in g_var.np_residues:
+                        if atom['residue_id'] != resid_prev:
+                            if 'offset' in locals() and len(g_var.heavy_bond[resname])>0: 
+                                if at_val-offset >= max(g_var.heavy_bond[resname]): 
+                                    offset=at_val-1
+                            else:
+                                offset=at_val-1
+                                resname = atom['residue_name']
+                        resid_prev=atom['residue_id']
+                        if atom['atom_number']-offset in g_var.heavy_bond[atom['residue_name']]:
+                            resname = atom['residue_name']
+                            for at_bond in g_var.heavy_bond[atom['residue_name']][atom['atom_number']-offset]:
+                                if merge[at_bond+offset]['atom_number'] > merge[at_val]['atom_number']:
+                                    merge[at_bond+offset]['x'], merge[at_bond+offset]['y'], merge[at_bond+offset]['z'] = np.array(read_in.brute_mic(merge_coords[at_val],merge_coords[at_bond+offset], r_b_vec))
+                                    merge_coords[at_bond+offset] = merge[at_bond+offset]['x'], merge[at_bond+offset]['y'], merge[at_bond+offset]['z']
+                                    dist = gen.calculate_distance(merge_coords[at_val], merge_coords[at_bond+offset])
+                                    if 2 < dist < 6:
+                                        lipid_atoms.append([at_val, at_bond+offset, (np.array(merge_coords[at_val])+np.array(merge_coords[at_bond+offset]))/2])
+                                        ring_ouput.write('{0:10}{1:6}{2:6}{3:10}{4:5}{5:5}{6:5}{7:5}{8:5}\n'.format(
+                                                            'distance: ',str(np.round(dist,2)),'residue: ', merge[at_val]['residue_name'], merge[at_val]['residue_id'],
+                                                            'atom_1: ', merge[at_val]['atom_name'],
+                                                            'atom_2: ', merge[at_bond+offset]['atom_name']))
+                                        ringed = True
+        if ringed or os.path.exists(g_var.merged_directory+'merged_cg2at_threaded.pdb'):
+            print('Found '+str(len(lipid_atoms))+' abnormal bonds, now attempting to fix.')
+            print('See this file for a complete list: '+g_var.merged_directory+'overlapping_atoms.dat')
+            fix_threaded_lipids(lipid_atoms, merge, merge_coords)
+        else:
+            gen.file_copy_and_check(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb', g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
 
-    return ringed
+def fetch_start_of_residue(at, merge):
+    count = at
+    while True:
+        if merge[count]['residue_id'] != merge[at]['residue_id']:
+            count+=1
+            return count
+        else:
+            count-=1
 
+def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
+    if not os.path.exists(g_var.merged_directory+'merged_cg2at_threaded.pdb'):
+        tree = cKDTree(merge_coords)         
+        for threaded in lipid_atoms:          
+            atoms = tree.query_ball_point(threaded[2], r=3)
+            for at in atoms:
+                if merge[at]['residue_id'] != merge[threaded[0]]['residue_id']:
+                    P_count = fetch_start_of_residue(at, merge)
+                    break
+            NP_count= fetch_start_of_residue(threaded[0], merge)
+            bb = []
+            for at in merge[P_count:]:
+                if at['residue_id'] != merge[P_count]['residue_id']:
+                    break
+                if at['atom_name'] in g_var.res_top[at['residue_name']]['ATOMS']:
+                    bb.append([at['x'], at['y'], at['z']])
+            bb = np.mean(np.array(bb), axis=0)
+            BB_M3 = (threaded[2]-bb)/np.linalg.norm((threaded[2]-bb))
+            for heavy_atom in threaded[:2]:
+                merge_coords[heavy_atom] += BB_M3*3 
+                merge[heavy_atom]['x'], merge[heavy_atom]['y'], merge[heavy_atom]['z'] = merge_coords[heavy_atom]
+                for hydrogen in g_var.hydrogen[merge[NP_count]['residue_name']][heavy_atom-NP_count+1]:
+                    merge_coords[NP_count+hydrogen-1] += BB_M3*3 
+                    merge[NP_count+hydrogen-1]['x'], merge[NP_count+hydrogen-1]['y'], merge[NP_count+hydrogen-1]['z'] = merge_coords[NP_count+hydrogen-1]
+        index_conversion = {}
+        coords = []
+        for at_val, atom in enumerate(merge):
+            if not atom['atom_name'].startswith('M'):
+                index_conversion[atom['atom_number']] = len(coords)
+                coords.append(merge_coords[at_val])
+        coords = check_atom_overlap(coords)
+        pdb_output=gen.create_pdb(g_var.merged_directory+'merged_cg2at_threaded.pdb')
+        atom_counter=1
+        for line_val, line in enumerate(merge):
+            if line['atom_number'] in index_conversion:
+                x, y, z = gen.trunc_coord(coords[index_conversion[line_val]])
+            else:
+                x, y, z = merge_coords[line_val]
+            if atom_counter >= 99_999:
+                atom_counter=1
+            else:
+                atom_counter+=1
+            pdb_output.write(g_var.pdbline%((atom_counter, line['atom_name'], line['residue_name'],' ',line['residue_id'],\
+                x,y,z,1,0))+'\n')
+        pdb_output.close()
+    if not os.path.exists(g_var.merged_directory+'MIN/merged_cg2at_threaded_minimised.pdb'):
+        gro.minimise_merged_pdbs('_threaded')
+    gen.file_copy_and_check(g_var.merged_directory+'MIN/merged_cg2at_threaded_minimised.pdb', g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
