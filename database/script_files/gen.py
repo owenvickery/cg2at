@@ -133,7 +133,7 @@ def folder_copy_and_check(folder_in,folder_out):
         copy_tree(folder_in, folder_out)
 
 def flags_used():
-    print('\nAll variables supplied have been saved in : '+g_var.input_directory+'script_inputs.dat')
+    print('\nAll variables supplied have been saved in : \n'+g_var.input_directory+'script_inputs.dat')
     os.chdir(g_var.input_directory)
     with open('script_inputs.dat', 'w') as scr_input:
         scr_input.write('\n'+g_var.opt['input']+'\n')
@@ -785,34 +785,32 @@ def fix_time(t1, t2):
         hours, minutes = divmod(minutes, 60)
     else:
         hours = 0
-    return int(np.round(hours)), int(np.round(minutes)), int(np.round(seconds,0))
+    return '{0:^3}{1:^6}{2:^3}{3:^4}{4:^3}{5:^4}'.format(int(np.round(hours)),'hours',int(np.round(minutes)),'min',int(np.round(seconds,0)),'sec') 
 
 def print_script_timings():
     to_print=[]
     to_print.append('\n{:-<100}'.format(''))
     to_print.append('\n{0:^47}{1:^22}'.format('Job','Time'))
     to_print.append('{0:^47}{1:^22}'.format('---','----'))
-    t1 = fix_time(g_var.tc['r_i_t'], g_var.tc['i_t'])
-    to_print.append('\n{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Read in CG system: ',t1[0],'hours',t1[1],'min',t1[2],'sec')) 
+    to_print.append('\n{0:47}{1}'.format('Initialisation: ', fix_time(g_var.tc['i_t_e'],g_var.tc['i_t'])))
+    to_print.append('{0:47}{1}'.format('Read in CG system: ', fix_time(g_var.tc['r_i_t'],g_var.tc['i_t_e']))) 
     if 'PROTEIN' in g_var.system:
-        t4=fix_time(g_var.tc['f_p_t'],g_var.tc['r_i_t'])
-        to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build protein systems: ',t4[0],'hours',t4[1],'min',t4[2],'sec'))
-    t6=fix_time(g_var.tc['n_p_t'],g_var.tc['f_p_t'])
-    t7=fix_time(g_var.tc['m_t'],g_var.tc['n_p_t'])
-    to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Build non protein system: ',t6[0],'hours',t6[1],'min',t6[2],'sec'))
-    to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Equilibrate de novo: ', t7[0],'hours',t7[1],'min',t7[2],'sec'))
+        to_print.append('{0:47}{1}'.format('Build protein systems: ',fix_time(g_var.tc['f_p_t'],g_var.tc['r_i_t'])))
+    if 'OTHER' in g_var.system:
+        to_print.append('{0:47}{1}'.format('Build other systems: ',fix_time(g_var.tc['f_o_t'],g_var.tc['f_p_t'])))        
+    to_print.append('{0:47}{1}'.format('Build non protein system: ',fix_time(g_var.tc['n_p_t'],g_var.tc['f_o_t'])))
+    to_print.append('{0:47}{1}'.format('merge and minimise de novo: ',fix_time(g_var.tc['m_t'],g_var.tc['n_p_t'])))
+    to_print.append('{0:47}{1}'.format('NVT on de novo: ',fix_time(g_var.tc['eq_t'],g_var.tc['m_t'])))
     if g_var.o in ['all', 'align'] and g_var.a != None and g_var.user_at_input:
-        t9=fix_time(g_var.tc['a_e'],g_var.tc['a_s'])
-        to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Creating aligned system: ', t9[0],'hours',t9[1],'min',t9[2],'sec'))
+        to_print.append('{0:47}{1}'.format('Creating aligned system: ',fix_time(g_var.tc['a_e'],g_var.tc['a_s'])))
     to_print.append('{:-<69}'.format(''))
-    t10=fix_time(g_var.tc['f_t'],g_var.tc['i_t'])
-    to_print.append('{0:47}{1:^3}{2:^6}{3:^3}{4:^4}{5:^3}{6:^4}'.format('Total run time: ',t10[0],'hours',t10[1],'min',t10[2],'sec'))
+    to_print.append('{0:47}{1}'.format('Total run time: ',fix_time(g_var.tc['f_t'],g_var.tc['i_t'])))
     with open(g_var.final_dir+'script_timings.dat', 'w') as time_out:  
-        print('All script timings have been saved in : '+g_var.final_dir+'script_timings.dat\n')
         for line in to_print:
             time_out.write(line+'\n')
             if g_var.v >= 1:
                 print(line)
+        print('\nAll script timings have been saved in: \n'+g_var.final_dir+'script_timings.dat\n')
 
 def database_information():
     print('{0:30}'.format('\nThis script is a fragment based conversion of the coarsegrain representation to atomistic.\n'))

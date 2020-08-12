@@ -102,10 +102,10 @@ aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'
        'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
        'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
 
-termini_selections = {'charmm':{'N_TERMINAL':{'PRO':{'NH':1,'NH3+':2, '5TER':3, 'NONE':4},'NORM':{'NH3+':0,'NH2':1,'5TER':2, 'NONE':3},}, 
-                                'C_TERMINAL':{'NORM':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4}}},
+termini_selections = {'charmm':{'N_TERMINAL':{'PRO':{'NH2+':0,'NH':1,'NH3+':2, '5TER':3, 'NONE':4},'NORM':{'NH3+':0,'NH2':1,'5TER':2, 'NONE':3},}, 
+                                'C_TERMINAL':{'NORM':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4},'PRO':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4}}},
                      'opls':{'N_TERMINAL':{'PRO':{'NH':2, 'NH3+':3, 'NONE':5},'NORM':{'NH3+':0,'NH2':2, 'NONE':3}}, 
-                                'C_TERMINAL':{'NORM':{'COO-':0,'COOH':2, 'NONE':3}}}
+                                'C_TERMINAL':{'NORM':{'COO-':0,'COOH':2, 'NONE':3},'PRO':{'COO-':0,'COOH':2, 'NONE':3}}}
 }
 ### CG2AT folder locations
 

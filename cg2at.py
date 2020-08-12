@@ -13,8 +13,8 @@ import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
 
 g_var.tc['i_t']=time.time()
 ### initialise script 
-## prevent gromacs filling the file system with step files
-os.environ['GMX_SUPPRESS_DUMP']='1'
+
+os.environ['GMX_SUPPRESS_DUMP'] = '1'  ## prevent gromacs filling the file system with step files
 
 gen.correct_number_cpus()
 gen.find_gromacs()
@@ -33,7 +33,7 @@ gro.collect_input()
 
 #### saves flags used into INPUT folder
 gen.flags_used()
-
+g_var.tc['i_t_e']=time.time()
 #### reads in CG file and separates into residue types
 box_vec_initial = read_in.read_initial_cg_pdb()
 #### box size update 
@@ -42,18 +42,21 @@ if g_var.box != None:
 else:
     g_var.box_vec=box_vec_initial
     box_shift=np.array([0,0,0])
+
 #### pbc fix and residue truncation if required
 read_in.fix_pbc(box_vec_initial, g_var.box_vec, box_shift)
+
 #### checks if fragment database and input files match  
 at_mod.sanity_check()
+
 ### convert protein to atomistic representation
 g_var.tc['r_i_t']=time.time()
 if 'PROTEIN' in g_var.cg_residues:          
     g_var.coord_atomistic = at_mod_p.build_multi_residue_atomistic_system(g_var.cg_residues, 'PROTEIN') ## converts protein to atomistic
     if not g_var.user_at_input and g_var.v >= 1:  ## prints protein sequences 
         print('coarse grain protein sequence:\n')
-        for index in g_var.seq_cg:
-            print('chain:', index,g_var.seq_cg[index], '\n') 
+        for index in g_var.seq_cg['PROTEIN']:
+            print('chain:', index,g_var.seq_cg['PROTEIN'][index], '\n') 
     ## reads in user chain, runs a sequence alignment and finds existing disulphide bonds
     g_var.tc['p_d_n_t']=time.time()
     if g_var.user_at_input:
@@ -71,15 +74,15 @@ if 'PROTEIN' in g_var.cg_residues:
     if g_var.user_at_input:
         at_mod_p.align_user_chains(final_coordinates_atomistic_de_novo)
 
-    ### runs pdb2gmx and minimises each protein chain
-    gro.run_parallel_pdb2gmx_min('PROTEIN', g_var.ter_res['PROTEIN'])
-
     #### read in minimised de novo protein chains and merges chains
     if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_merged.pdb'):
+        gro.run_parallel_pdb2gmx_min('PROTEIN', g_var.ter_res['PROTEIN'])### runs pdb2gmx and minimises each protein chain
+        print('Merging de_novo protein chains')
         at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb', 'PROTEIN') ## merge protein chains
 
     #### read in aligned protein chains and merges chains
     if g_var.user_at_input and not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb'):
+        print('Merging aligned protein chains')
         if g_var.o not in ['none', 'align']:
             at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'PROTEIN/MIN/PROTEIN_aligned', '.pdb', 'PROTEIN') ## merge aligned chains
         else:
@@ -93,7 +96,7 @@ if 'OTHER' in g_var.cg_residues:
     gro.run_parallel_pdb2gmx_min('OTHER', g_var.ter_res['OTHER'])
     if not os.path.exists(g_var.working_dir+'OTHER/OTHER_de_novo_merged.pdb'):
         at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'OTHER/MIN/OTHER_de_novo', '.pdb', 'OTHER') ## merge  chains
-
+g_var.tc['f_o_t']=time.time()
 #### converts non protein residues into atomistic (runs on all cores)
 if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTEIN', 'OTHER']]) > 0:
     print('\nConverting the following residues concurrently: \n')
@@ -136,7 +139,7 @@ if not os.path.exists(g_var.merged_directory+'merged_cg2at_de_novo.pdb'):
 if not os.path.exists(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb'):
     gro.make_min('merged_cg2at') 
     gro.minimise_merged_pdbs( '_de_novo') ## minimise system pdb
-
+g_var.tc['m_t']=time.time()
 ## checks for threaded lipids, e.g. abnormal bonds lengths (not had a issue for a long time might delete) 
 if not os.path.exists(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb'):
     at_mod.check_ringed_lipids(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb') ## check for abnormal bond lengths 
@@ -145,9 +148,9 @@ if g_var.o not in ['none', 'align']:
     gro.run_nvt(g_var.merged_directory+'checked_ringed_lipid_de_novo') ## run npt on system 
 else:
     gen.file_copy_and_check(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')
-
+g_var.tc['eq_t']=time.time()
 ## creates aligned system 
-g_var.tc['m_t']=time.time()
+
 if g_var.user_at_input and 'PROTEIN' in g_var.cg_residues and g_var.o in ['all', 'align']:   
     g_var.tc['a_s']=time.time()
     gro.create_aligned()

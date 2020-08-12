@@ -13,21 +13,26 @@ import math
 def build_multi_residue_atomistic_system(cg_residues, sys_type):   
 #### initisation of counters
     chain_count=0
-    if sys_type == 'PROTEIN':
-        g_var.backbone_coords[chain_count]=[]
-    coord_atomistic={chain_count:{}}
-    g_var.seq_cg={sys_type:{chain_count:[]}}
-    g_var.ter_res={sys_type:{chain_count:[]}}
+    coord_atomistic={}
+    g_var.seq_cg={sys_type:{}}
+    g_var.ter_res={sys_type:{}}
     gen.mkdir_directory(g_var.working_dir+sys_type)  ### make and change to protein directory
 #### for each residue in protein
     residue_type={}
     residue_type_mass={}
+    new_chain = True
     for cg_residue_id, residue_number in enumerate(cg_residues[sys_type]):
         if np.round((cg_residue_id/len(cg_residues[sys_type]))*100,2).is_integer():
             print('Converting de_novo '+sys_type+': ',np.round((cg_residue_id/len(cg_residues[sys_type]))*100,2),'%', end='\r')
         resname = cg_residues[sys_type][residue_number][next(iter(cg_residues[sys_type][residue_number]))]['residue_name']
-        if cg_residue_id == 0:
-            g_var.ter_res={sys_type:{chain_count:[resname, False]}}
+        if new_chain: 
+            if chain_count not in coord_atomistic:
+                if sys_type == 'PROTEIN':
+                    g_var.backbone_coords[chain_count]=[]
+                coord_atomistic[chain_count]={}
+                g_var.seq_cg[sys_type][chain_count]=[]
+                g_var.ter_res[sys_type][chain_count]=[resname, False]
+            new_chain = False
         coord_atomistic[chain_count][residue_number]={}
         frag_location=gen.fragment_location(resname) ### get fragment location from database
         residue_type[resname], residue_type_mass[resname] = at_mod.get_atomistic(frag_location)
@@ -62,11 +67,8 @@ def build_multi_residue_atomistic_system(cg_residues, sys_type):
         if new_chain:
             g_var.ter_res[sys_type][chain_count][1] = resname
             chain_count+=1
-            if cg_residue_id+1 != len(cg_residues[sys_type]):
-                g_var.backbone_coords[chain_count]=[]
-                coord_atomistic[chain_count]={}
-                g_var.ter_res[sys_type][chain_count]=[resname, False]
-                g_var.seq_cg[sys_type][chain_count]=[]
+
+    print('Completed initial conversion of '+sys_type+'\n')        
     if g_var.v >=1:
         print('Length of '+sys_type+' chains')
         print('\n{0:^15}{1:^12}'.format('chain number', 'length of chain')) #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
@@ -75,7 +77,7 @@ def build_multi_residue_atomistic_system(cg_residues, sys_type):
             print('{0:^15}{1:^12}'.format(chain, len(g_var.seq_cg[sys_type][chain])))
         print()
     g_var.system[sys_type]=chain_count
-    print('Completed initial conversion of '+sys_type)
+    
     return coord_atomistic
 
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
@@ -639,7 +641,7 @@ def write_disres(coord, chain, file, at_start):
 ########################################################### RMSD
 
 def write_RMSD():
-    print('Calculating backbone RMSDs', end='\r')
+    print('\nCalculating backbone RMSDs\n')
     RMSD={}
     de_novo_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb') ## reads in final pdb
     if chain_count != g_var.system['PROTEIN']:
@@ -659,7 +661,7 @@ def write_RMSD():
             for chain in RMSD[rmsd]:
                 qual_out.write('{0:^10}{1:^25}{2:^10}\n'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
                 print('{0:^10}{1:^25}{2:^10}'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
-        print('\nAll RMSDs have been saved in : '+g_var.final_dir+'structure_quality.dat\n')
+        print('\nAll RMSDs have been saved in: \n'+g_var.final_dir+'structure_quality.dat\n')
 
 def RMSD_measure(structure_atoms):
     RMSD_dict = {}

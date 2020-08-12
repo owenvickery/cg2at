@@ -100,7 +100,7 @@ def pdb2gmx_minimise(chain,pdb2gmx_selections,res_type, q):
         pdb2gmx_chain(chain, 'aligned_', res_type, pdb2gmx_selections[chain])
         at_mod.check_overlap_chain(chain, 'aligned_', res_type)
     minimise_protein_chain(chain, 'de_novo_', res_type)
-    if g_var.user_at_input and res_type == 'PROTEIN' and g_var.o not in ['none', 'de_novo']: 
+    if g_var.user_at_input and res_type == 'PROTEIN': 
         minimise_protein_chain(chain, 'aligned_', res_type)
     q.put(chain)
     return chain
@@ -146,11 +146,10 @@ def ask_ter_question(residue, options, chain):
             print("Oops!  That was a invalid choice")
 
 def ask_terminal(sys_info, residue_type):
-#### default termini is neutral, however if ter flag is supplied you interactively choose termini ]
+#### default termini is neutral, however if ter flag is supplied you interactively choose termini 
     for ff in g_var.termini_selections:
         if ff in g_var.forcefield:
             ter_conv = g_var.termini_selections[ff]
-
     system_ter = []
     for chain in range(g_var.system[residue_type]):
         conv_type = 'NORM'
@@ -161,18 +160,22 @@ def ask_terminal(sys_info, residue_type):
                 conv_type = 'PRO'
             termini = g_var.res_top[ter_residue][ter_name[ter_val]].upper()
             if len(termini) == 0:
-                if g_var.nt and ter_val==0 and not g_var.ter:
-                    if conv_type == 'PRO':
-                        default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH'])
-                    else:
-                        default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH2'])
-                elif ter_val==0 and not g_var.ter:
-                    default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH3+'])
-                if g_var.ct and ter_val==1 and not g_var.ter:
-                    default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COOH'])
-                elif ter_val==1 and not g_var.ter:
-                    default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COO-'])
-                if g_var.ter:
+                if not g_var.ter:
+                    if g_var.nt and ter_val==0:
+                        if conv_type == 'PRO':
+                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH'])
+                        else:
+                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH2'])
+                    elif ter_val==0:
+                        if conv_type == 'PRO':
+                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH2+'])
+                        else:
+                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH3+'])
+                    if g_var.ct and ter_val==1:
+                        default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COOH'])
+                    elif ter_val==1:
+                        default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COO-'])
+                else:
                     default_ter.append(ask_ter_question(termini, ter_conv[ter_name[ter_val]][conv_type], chain))
             else:
                 default_ter.append(ter_conv[ter_name[ter_val]][conv_type][termini])
@@ -194,7 +197,7 @@ def run_parallel_pdb2gmx_min(res_type, sys_info):
     while not pool_process.ready(): 
         report_complete('pdb2gmx/minimisation', q.qsize(), g_var.system[res_type])
     print('{:<130}'.format(''), end='\r')
-    print('\npdb2gmx/minimisation completed on residue type: '+res_type)     
+    print('\npdb2gmx/minimisation completed on residue type: '+res_type+'\n')     
     pool.close()
     pool.join()
 
@@ -510,7 +513,8 @@ def write_steered_mdp(loc, posres, time, timestep):
             steered_md.write('define = '+posres+'\nintegrator = md\nnsteps = '+str(time)+'\ndt = '+str(timestep)+'\ncontinuation   = no\nconstraint_algorithm = lincs\n')
             steered_md.write('nstxtcout = 10\nnstenergy = 10\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
             steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\n')
-            steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = no\nrefcoord_scaling = all\ncutoff-scheme = Verlet\ndisre=simple\ndisre-weighting=equal\ndisre-fc=10000\ndisre-tau=0')   
+            steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = no\nrefcoord_scaling = all\ncutoff-scheme = Verlet\n')
+            steered_md.write('disre=simple\ndisre-weighting=equal\ndisre-fc=10000\ndisre-tau=0\nnstdisreout=0\n')   
 
 def steer_to_aligned(protein_type, fc, input_file ):
     gen.mkdir_directory(g_var.merged_directory+'STEER')
@@ -534,7 +538,7 @@ def steer_to_aligned(protein_type, fc, input_file ):
 
 
 def run_nvt(input_file):
-    print('Running NVT on de novo system')
+    print('\nRunning NVT on de novo system', end='\r')
     os.chdir(g_var.merged_directory)   
     gen.mkdir_directory(g_var.merged_directory+'NVT')
     if g_var.user_at_input and g_var.disre:
@@ -554,6 +558,7 @@ def run_nvt(input_file):
             ' -c merged_cg2at_de_novo_nvt.pdb -cpo merged_cg2at_de_novo_nvt.cpt'
             , 'merged_cg2at_de_novo_nvt.pdb'])  
     gen.file_copy_and_check('merged_cg2at_de_novo_nvt.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')    
+    print('Completed NVT, please find final de_novo system: \n'+g_var.final_dir+'final_cg2at_de_novo.pdb')
 
 def create_aligned():
     print('\nCreating aligned system') 
@@ -565,8 +570,11 @@ def create_aligned():
     else:
         initial = g_var.merged_directory+'checked_ringed_lipid_de_novo'
     for chain in rmsd:
-        if rmsd[chain] > 2:
-            print('Your aligned structure is quite far from the CG, therefore running gentle steering')
+        if rmsd[chain] > 3.5:
+            print('Your aligned structure is quite far from the CG, therefore running gentle steering: ')
+            print('\n{0:^25}{1:^10}'.format('chain','RMSD ('+chr(197)+')'))
+            print('{0:^25}{1:^10}'.format('-----','---------'))
+            for key, rmsd_val in rmsd.items(): print('{0:^25}{1:^10}'.format(str(key), float(rmsd_val)))
             steer = ['very_low', 'low', 'mid', 'high', 'very_high', 'ultra']
             break
         else:

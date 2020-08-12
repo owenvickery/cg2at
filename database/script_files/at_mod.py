@@ -222,15 +222,16 @@ def check_atom_overlap(coordinates):
 #### runs through overlapping atoms and moves atom in a random diection until it is no longer overlapping
     while len(overlapped) > 0:
         for ndx_val, ndx in enumerate(overlapped):
-            if np.round((ndx_val/len(overlapped))*100,2).is_integer():
+            if np.round((ndx_val/len(overlapped))*100,2).is_integer() and len(overlapped) > 30:
                 print('fixing '+str(len(overlapped))+' overlapped atoms: '+str(np.round((ndx_val/len(overlapped))*100,2))+' %', end='\r')
             xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
             while len(tree.query_ball_point(xyz_check, r=0.3)) > 1:
                 xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
             coordinates[ndx[0]]=xyz_check
             tree = cKDTree(coordinates)
+        if len(overlapped) > 30:
+            print('{:<100}'.format(''), end='\r')
         overlapped = overlapping_atoms(tree)
-        print('{:<100}'.format(''), end='\r')
     return coordinates
 
 ## overlap end
@@ -351,7 +352,8 @@ def merge_indivdual_chain_pdbs(file, end, res_type):
         if res_type+'_aligned' in file:  
             count += at_mod_p.write_disres(merge_temp, chain, file, count)
         merge, merge_coords = fix_chirality(merge,merge_temp,merged_coords, res_type)   
-    merged_coords = check_atom_overlap(merge_coords)
+    if res_type+'_aligned' not in file:
+        merged_coords = check_atom_overlap(merge_coords)
     merged=[]
     for line_val, line in enumerate(merge):
         x, y, z = gen.trunc_coord(merged_coords[line_val])

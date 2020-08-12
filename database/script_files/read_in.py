@@ -151,7 +151,7 @@ def fix_pbc(box_vec, new_box, box_shift):
 #### fixes box PBC
     r_b_vec, r_b_inv = real_box_vectors(box_vec)
     new_box = new_box.split()[1:4]
-    BB_pre_resid =0
+    BB_pre_resid = 0
     for residue_type in g_var.cg_residues:
         cut_keys=[]
         print('{:<100}'.format(''), end='\r')
@@ -229,12 +229,10 @@ def read_in_atomistic(protein):
             run=False ## turns to true is line is a bead/atom
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)
-                # print(line_sep['atom_name'])
                 if not gen.is_hydrogen(line_sep['atom_name']):
                     run=True
                 if line_sep['residue_name'] in g_var.mod_residues:
                     run=True
-            #### if line is correct
             if run:
                 if line_sep['residue_name'] in g_var.p_residues:
                     if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in g_var.mod_residues:  
@@ -245,7 +243,12 @@ def read_in_atomistic(protein):
                         if 'prev_atom_coord' in locals():
                             line_sep['x'],line_sep['y'],line_sep['z'] = brute_mic(prev_atom_coord, [line_sep['x'],line_sep['y'],line_sep['z']], r_b_vec)
                         if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']:
+
                             if g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms'][line_sep['atom_name']] > 0:
+                                if 'C_ter' in locals() and len(g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']) <=1:
+                                    ter_residues.append(line_sep['residue_id'])
+                                    chain_count+=1
+                                    atomistic_protein_input[chain_count]={}
                                 C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
                                 C_resid=line_sep['residue_id']
                             elif 'C_ter' in locals():
