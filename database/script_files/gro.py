@@ -150,6 +150,9 @@ def ask_terminal(sys_info, residue_type):
     for ff in g_var.termini_selections:
         if ff in g_var.forcefield:
             ter_conv = g_var.termini_selections[ff]
+    if 'ter_conv' not in locals():
+        print('Cannot find terminal definitions for: '+g_var.forcefield+'\nDefaulting to CHARMM terminal definitions\n')
+        ter_conv = g_var.termini_selections['charmm']
     system_ter = []
     for chain in range(g_var.system[residue_type]):
         conv_type = 'NORM'

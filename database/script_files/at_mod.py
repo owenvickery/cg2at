@@ -62,7 +62,7 @@ def sanity_check():
                     if len(bead_list[resname]) == len(bead_list_cg):
                         fix_atom_wrap(bead_list[resname], bead_list_cg, res_type, residue)
                     else:
-                        print('There is a issue with residue: '+resname+' '+str(residue+1))
+                        print('There is a issue with residue: '+resname+' '+str(residue+1)+'. If expected ignore this message.' )
                         if res_type != 'OTHER':
                             sys.exit('number of atomistic fragments: '+str(len(bead_list[resname]))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
         elif res_type in ['SOL', 'ION']:
@@ -390,8 +390,10 @@ def merge_system_pdbs(protein):
                         done.append('ION')
                     elif residue_type not in g_var.ions:
                         merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
-                else:
-                    merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+protein+'_merged.pdb')
+                elif residue_type == 'OTHER':
+                    merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+'_de_novo_merged.pdb')
+                elif residue_type == 'PROTEIN':
+                    merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+protein+'_merged.pdb')     
                 done.append(residue_type)
         index_conversion = {}
         if 'novo' in protein:

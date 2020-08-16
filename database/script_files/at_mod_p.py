@@ -115,7 +115,7 @@ def find_disulphide_bonds_user_sup():
             tree = cKDTree(cysteines)
             done_query=[]
             for cys_index, cys in enumerate(cysteines):
-                query = tree.query_ball_point(cys, r=2.1)
+                query = tree.query_ball_point(cys, r=2.3)
                 if len(query) == 2 and query not in done_query:
                     g_var.user_cys_bond[chain].append([cys_resid[query[0]],cys_resid[query[1]]])
                     done_query.append(query)

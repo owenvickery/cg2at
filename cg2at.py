@@ -97,6 +97,7 @@ if 'OTHER' in g_var.cg_residues:
     if not os.path.exists(g_var.working_dir+'OTHER/OTHER_de_novo_merged.pdb'):
         at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'OTHER/MIN/OTHER_de_novo', '.pdb', 'OTHER') ## merge  chains
 g_var.tc['f_o_t']=time.time()
+
 #### converts non protein residues into atomistic (runs on all cores)
 if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTEIN', 'OTHER']]) > 0:
     print('\nConverting the following residues concurrently: \n')
