@@ -77,7 +77,6 @@ def sanity_check():
         else:
             if res_type not in bead_list or res_type not in atom_list:
                 bead_list[res_type], atom_list[res_type] = sanity_check_fragments(res_type, g_var.cg_residues[res_type], False)
-                sanity_check_atoms(atom_list[res_type], res_type)
             for residue in g_var.cg_residues[res_type]:
                 bead_list_cg = sanity_check_beads(bead_list, g_var.cg_residues[res_type][residue], res_type)
                 if bead_list[res_type] != sorted(bead_list_cg):
@@ -88,6 +87,7 @@ def sanity_check():
                         sys.exit('number of atomistic fragments: '+str(len(bead_list[res_type]))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
 
 def fix_atom_wrap(bead_list_frag, bead_list_cg, section, resid):
+
     for bead in bead_list_cg:
         if bead not in bead_list_frag:
             new_bead = bead[1:]+bead[0]
@@ -96,7 +96,8 @@ def fix_atom_wrap(bead_list_frag, bead_list_cg, section, resid):
                 del g_var.cg_residues[section][resid][bead]
             else:
                 print('There is a issue with residue: '+section+' '+str(resid+1))
-                print('cannot find: '+bead+' or '+new_bead+' in fragment list:')
+                print('input file list:\n',bead_list_cg)
+                print('\ncannot find: '+bead+' or '+new_bead+' in fragment list:')
                 sys.exit(bead_list_frag)
 
 #####  Sanity check end
@@ -250,7 +251,6 @@ def get_atomistic(frag_location):
 #### read in atomistic fragments into dictionary    
     residue = {} ## a dictionary of bead in each residue eg residue[group][bead][atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
     fragment_mass = {}
-    group=0
     resname = frag_location.split('/')[-1][:-4]
     with open(frag_location, 'r') as pdb_input:
         for line_nr, line in enumerate(pdb_input.readlines()):
@@ -602,12 +602,15 @@ def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
         tree = cKDTree(merge_coords)         
         for threaded in lipid_atoms:          
             atoms = tree.query_ball_point(threaded[2], r=3)
+            print(atoms)
             for at in atoms:
+                print(merge[at])
                 if merge[at]['residue_id'] != merge[threaded[0]]['residue_id']:
                     P_count = fetch_start_of_residue(at, merge)
                     break
             NP_count= fetch_start_of_residue(threaded[0], merge)
             bb = []
+
             for at in merge[P_count:]:
                 if at['residue_id'] != merge[P_count]['residue_id']:
                     break

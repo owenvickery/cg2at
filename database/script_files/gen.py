@@ -247,6 +247,8 @@ def new_box_vec(box_vec, box):
 def strip_header(line):
     line = line.replace('[','')
     line = line.replace(']','')
+    if len(line.split())>1:
+        sys.exit('There is a issue in one of the fragment headers: \n', line)
     return line.strip()
 
 def sep_fragments_topology(location):
