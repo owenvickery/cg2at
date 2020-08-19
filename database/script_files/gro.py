@@ -514,7 +514,7 @@ def write_steered_mdp(loc, posres, time, timestep):
     if not os.path.exists(loc):
         with open(loc, 'w') as steered_md:
             steered_md.write('define = '+posres+'\nintegrator = md\nnsteps = '+str(time)+'\ndt = '+str(timestep)+'\ncontinuation   = no\nconstraint_algorithm = lincs\n')
-            steered_md.write('nstxtcout = 10\nnstenergy = 10\nconstraints = h-bonds\nns_type = grid\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
+            steered_md.write('nstxout-compressed = 10\nnstenergy = 10\nconstraints = h-bonds\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
             steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\n')
             steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = no\nrefcoord_scaling = all\ncutoff-scheme = Verlet\n')
             steered_md.write('disre=simple\ndisre-weighting=equal\ndisre-fc=10000\ndisre-tau=0\nnstdisreout=0\n')   

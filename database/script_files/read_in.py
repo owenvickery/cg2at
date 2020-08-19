@@ -86,7 +86,6 @@ def read_initial_cg_pdb():
     for key in g_var.cg_residues:
         if len(g_var.cg_residues[key]) == 0:
             sys.exit('there is a issue with the residue type: '+key)
-    print(1)
     return box_vec
 
 def add_residue_to_dictionary(line_sep):

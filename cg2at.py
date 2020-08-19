@@ -48,7 +48,6 @@ read_in.fix_pbc(box_vec_initial, g_var.box_vec, box_shift)
 
 #### checks if fragment database and input files match  
 at_mod.sanity_check()
-
 ### convert protein to atomistic representation
 g_var.tc['r_i_t']=time.time()
 if 'PROTEIN' in g_var.cg_residues:          
@@ -76,6 +75,7 @@ if 'PROTEIN' in g_var.cg_residues:
 
     #### read in minimised de novo protein chains and merges chains
     if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_merged.pdb'):
+        print()
         gro.run_parallel_pdb2gmx_min('PROTEIN', g_var.ter_res['PROTEIN'])### runs pdb2gmx and minimises each protein chain
         print('Merging de_novo protein chains')
         at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb', 'PROTEIN') ## merge protein chains

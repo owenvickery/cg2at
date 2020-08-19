@@ -122,39 +122,40 @@ def find_disulphide_bonds_user_sup():
 
 def find_disulphide_bonds_de_novo():
     for chain in g_var.coord_atomistic:
-        offset = next(iter(g_var.coord_atomistic[chain]))
-        if chain not in g_var.user_cys_bond:
-            g_var.user_cys_bond[chain]=[]
-        cysteines = []
-        cys_resid = []
-        for resid in g_var.coord_atomistic[chain]:
-            resid_corrected=np.array(resid)-offset
-            run = True
-            if len(g_var.user_cys_bond) > 0:
-                for bonds in g_var.user_cys_bond[chain]:
-                    if resid_corrected in bonds:
-                        run=False
-            if run:
-                atom = next(iter(g_var.coord_atomistic[chain][resid]))
-                if g_var.coord_atomistic[chain][resid][atom]['res_type'] == 'CYS':
-                    for atom in g_var.coord_atomistic[chain][resid]:
-                        if 'S' in g_var.coord_atomistic[chain][resid][atom]['atom'].upper():
-                            cys_resid.append(resid_corrected)
-                            cysteines.append(g_var.coord_atomistic[chain][resid][atom]['coord'])
-        if len(cys_resid)>=2:
-            tree = cKDTree(cysteines)
-            done_query=[]
-            for cys_index, cys in enumerate(cysteines):
-                query = tree.query_ball_point(cys, r=g_var.cys)
-                if len(query) == 2 and query not in done_query:
-                    if cys_resid[query[1]] - cys_resid[query[0]] > 4:
-                        if g_var.silent==True:
-                            disul = True
-                        else:
-                            disul = ask_if_disulphide(chain, cys_resid[query[0]],cys_resid[query[1]])
-                        if disul:
-                            g_var.user_cys_bond[chain].append([cys_resid[query[0]],cys_resid[query[1]]])
-                    done_query.append(query)
+        if not g_var.skip_disul[chain]:
+            offset = next(iter(g_var.coord_atomistic[chain]))
+            if chain not in g_var.user_cys_bond:
+                g_var.user_cys_bond[chain]=[]
+            cysteines = []
+            cys_resid = []
+            for resid in g_var.coord_atomistic[chain]:
+                resid_corrected=np.array(resid)-offset
+                run = True
+                if len(g_var.user_cys_bond) > 0:
+                    for bonds in g_var.user_cys_bond[chain]:
+                        if resid_corrected in bonds:
+                            run=False
+                if run:
+                    atom = next(iter(g_var.coord_atomistic[chain][resid]))
+                    if g_var.coord_atomistic[chain][resid][atom]['res_type'] == 'CYS':
+                        for atom in g_var.coord_atomistic[chain][resid]:
+                            if 'S' in g_var.coord_atomistic[chain][resid][atom]['atom'].upper():
+                                cys_resid.append(resid_corrected)
+                                cysteines.append(g_var.coord_atomistic[chain][resid][atom]['coord'])
+            if len(cys_resid)>=2:
+                tree = cKDTree(cysteines)
+                done_query=[]
+                for cys_index, cys in enumerate(cysteines):
+                    query = tree.query_ball_point(cys, r=g_var.cys)
+                    if len(query) == 2 and query not in done_query:
+                        if cys_resid[query[1]] - cys_resid[query[0]] > 4:
+                            if g_var.silent==True:
+                                disul = True
+                            else:
+                                disul = ask_if_disulphide(chain, cys_resid[query[0]],cys_resid[query[1]])
+                            if disul:
+                                g_var.user_cys_bond[chain].append([cys_resid[query[0]],cys_resid[query[1]]])
+                        done_query.append(query)
 
 def correct_disulphide_bonds(coordinates_atomistic):
     for chain in coordinates_atomistic:
@@ -328,6 +329,9 @@ def align_chain_sequence(sys_type):
                 at[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
             g_var.seq_cg[sys_type][chain_cg] = mask_sequence(g_var.seq_cg[sys_type][chain_cg], seq_info[0][1], seq_info[0][1]+seq_info[0][2])
             test_chain[chain_at]=chain_cg
+
+    check_chain_alignment_coverage(at, sys_type)
+
     if len(g_var.atomistic_protein_input_raw) < len(g_var.seq_cg[sys_type]):
         print('### WARNING you have supplied fewer chains than exist in the CG system ###\n')
     if len(at) > 0:
@@ -338,6 +342,16 @@ def align_chain_sequence(sys_type):
     if g_var.group_chains == 'chain':
         g_var.group_chains = test_chain
 
+def check_chain_alignment_coverage(at, sys_type):
+    for chain in at:
+        total = 0
+        for fragment in at[chain]:
+            resid_range = fragment.split(':')
+            total+=(int(resid_range[1])-int(resid_range[0]))
+        if total == len(g_var.seq_cg[sys_type][chain]):
+            g_var.skip_disul[chain]=True
+        else:
+            g_var.skip_disul[chain]=False
 
 def mask_sequence(sequence, st, end):
     for index, residue in enumerate(sequence):

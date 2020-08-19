@@ -96,9 +96,9 @@ def fix_atom_wrap(bead_list_frag, bead_list_cg, section, resid):
                 del g_var.cg_residues[section][resid][bead]
             else:
                 print('There is a issue with residue: '+section+' '+str(resid+1))
-                print('input file list:\n',bead_list_cg)
+                print('input file list:\n',sorted(bead_list_cg))
                 print('\ncannot find: '+bead+' or '+new_bead+' in fragment list:')
-                sys.exit(bead_list_frag)
+                sys.exit(sorted(bead_list_frag))
 
 #####  Sanity check end
 
@@ -389,7 +389,11 @@ def merge_system_pdbs(protein):
                         merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+'ION/ION_merged.pdb')
                         done.append('ION')
                     elif residue_type not in g_var.ions:
+                        if residue_type != 'SOL':
+                            start_num = len(merge_coords)
                         merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
+                        if residue_type != 'SOL':
+                            g_var.np_blocks[residue_type]=[start_num,len(merge_coords)]
                 elif residue_type == 'OTHER':
                     merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+'_de_novo_merged.pdb')
                 elif residue_type == 'PROTEIN':
@@ -556,34 +560,38 @@ def check_ringed_lipids(protein):
             resid_prev=0
             ringed=False
             lipid_atoms = []
-            with open(g_var.merged_directory+'overlapping_atoms.dat', 'w') as ring_ouput:
-                for at_val, atom in enumerate(merge):         
-                    if atom['residue_name'] in g_var.np_residues:
+            with open(g_var.merged_directory+'threaded_lipids.dat', 'w') as ring_ouput:
+                for at_val, atom in enumerate(merge):   
+                    for res_check in g_var.np_blocks:
+                        if g_var.np_blocks[res_check][0] <= at_val < g_var.np_blocks[res_check][1]:
+                            resname = res_check 
+                            break
+                    if 'resname' in locals():
                         if atom['residue_id'] != resid_prev:
                             if 'offset' in locals() and len(g_var.heavy_bond[resname])>0: 
-                                if at_val-offset >= max(g_var.heavy_bond[resname]): 
+                                if at_val-offset > int(len(g_var.np_blocks[resname_prev])/g_var.system[resname_prev]): 
                                     offset=at_val-1
                             else:
                                 offset=at_val-1
-                                resname = atom['residue_name']
                         resid_prev=atom['residue_id']
-                        if atom['atom_number']-offset in g_var.heavy_bond[atom['residue_name']]:
-                            resname = atom['residue_name']
-                            for at_bond in g_var.heavy_bond[atom['residue_name']][atom['atom_number']-offset]:
+                        resname_prev = resname
+                        if atom['atom_number']-offset in g_var.heavy_bond[resname]:
+                            for at_bond in g_var.heavy_bond[resname][atom['atom_number']-offset]:
                                 if merge[at_bond+offset]['atom_number'] > merge[at_val]['atom_number']:
                                     merge[at_bond+offset]['x'], merge[at_bond+offset]['y'], merge[at_bond+offset]['z'] = np.array(read_in.brute_mic(merge_coords[at_val],merge_coords[at_bond+offset], r_b_vec))
                                     merge_coords[at_bond+offset] = merge[at_bond+offset]['x'], merge[at_bond+offset]['y'], merge[at_bond+offset]['z']
                                     dist = gen.calculate_distance(merge_coords[at_val], merge_coords[at_bond+offset])
                                     if 2 < dist < 6:
                                         lipid_atoms.append([at_val, at_bond+offset, (np.array(merge_coords[at_val])+np.array(merge_coords[at_bond+offset]))/2])
-                                        ring_ouput.write('{0:10}{1:6}{2:6}{3:10}{4:5}{5:5}{6:5}{7:5}{8:5}\n'.format(
+                                        ring_ouput.write('{0:10}{1:6}{2:6}{3:5}{4:8}{5:8}{6:5}{7:5}{8:5}\n'.format(
                                                             'distance: ',str(np.round(dist,2)),'residue: ', merge[at_val]['residue_name'], merge[at_val]['residue_id'],
                                                             'atom_1: ', merge[at_val]['atom_name'],
                                                             'atom_2: ', merge[at_bond+offset]['atom_name']))
                                         ringed = True
+                        del resname
         if ringed or os.path.exists(g_var.merged_directory+'merged_cg2at_threaded.pdb'):
             print('Found '+str(len(lipid_atoms))+' abnormal bonds, now attempting to fix.')
-            print('See this file for a complete list: '+g_var.merged_directory+'overlapping_atoms.dat')
+            print('See this file for a complete list: '+g_var.merged_directory+'threaded_lipids.dat')
             fix_threaded_lipids(lipid_atoms, merge, merge_coords)
         else:
             gen.file_copy_and_check(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb', g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb')
@@ -602,15 +610,14 @@ def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
         tree = cKDTree(merge_coords)         
         for threaded in lipid_atoms:          
             atoms = tree.query_ball_point(threaded[2], r=3)
-            print(atoms)
             for at in atoms:
-                print(merge[at])
                 if merge[at]['residue_id'] != merge[threaded[0]]['residue_id']:
                     P_count = fetch_start_of_residue(at, merge)
                     break
             NP_count= fetch_start_of_residue(threaded[0], merge)
             bb = []
-
+            if 'P_count' not in locals():
+                sys.exit('There is an issue with the bond length detection')
             for at in merge[P_count:]:
                 if at['residue_id'] != merge[P_count]['residue_id']:
                     break
@@ -618,10 +625,14 @@ def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
                     bb.append([at['x'], at['y'], at['z']])
             bb = np.mean(np.array(bb), axis=0)
             BB_M3 = (threaded[2]-bb)/np.linalg.norm((threaded[2]-bb))
+            for res_check in g_var.np_blocks:
+                if g_var.np_blocks[res_check][0] <= threaded[0] < g_var.np_blocks[res_check][1]:
+                    resname = res_check 
+                    break
             for heavy_atom in threaded[:2]:
                 merge_coords[heavy_atom] += BB_M3*3 
                 merge[heavy_atom]['x'], merge[heavy_atom]['y'], merge[heavy_atom]['z'] = merge_coords[heavy_atom]
-                for hydrogen in g_var.hydrogen[merge[NP_count]['residue_name']][heavy_atom-NP_count+1]:
+                for hydrogen in g_var.hydrogen[resname][heavy_atom-NP_count+1]:
                     merge_coords[NP_count+hydrogen-1] += BB_M3*3 
                     merge[NP_count+hydrogen-1]['x'], merge[NP_count+hydrogen-1]['y'], merge[NP_count+hydrogen-1]['z'] = merge_coords[NP_count+hydrogen-1]
         index_conversion = {}

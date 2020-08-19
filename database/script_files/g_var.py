@@ -148,5 +148,7 @@ np_residues, p_residues, mod_residues, o_residues, np_directories, p_directories
 database_locations = [] ## grouped directories
 water_dir, water = [],[] ## water information
 swap_dict ={} ## CG residue swap
-res_top, sorted_connect, hydrogen, heavy_bond, ions, at_mass = {},{},{},{},[],{}
+res_top, sorted_connect, hydrogen, heavy_bond, ions, at_mass = {},{},{},{},[],{} ### topology information
 group_chains = None
+np_blocks = {}
+skip_disul = {}  ## contains info on whether user supplied complete chain information   
