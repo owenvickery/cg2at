@@ -2,9 +2,7 @@
 
 import os, sys
 import numpy as np
-from shutil import copyfile
 import time
-import re
 import multiprocessing as mp
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/database/script_files')
 import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
@@ -75,7 +73,6 @@ if 'PROTEIN' in g_var.cg_residues:
 
     #### read in minimised de novo protein chains and merges chains
     if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_merged.pdb'):
-        print()
         gro.run_parallel_pdb2gmx_min('PROTEIN', g_var.ter_res['PROTEIN'])### runs pdb2gmx and minimises each protein chain
         print('Merging de_novo protein chains')
         at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'PROTEIN/MIN/PROTEIN_de_novo', '.pdb', 'PROTEIN') ## merge protein chains

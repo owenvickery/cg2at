@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os, sys
-import filecmp
 import numpy as np
 import math
 from distutils.dir_util import copy_tree
@@ -10,7 +9,6 @@ import distutils.spawn
 from shutil import copyfile
 import glob
 import re
-import shlex
 import copy
 import ntpath
 import g_var
@@ -58,14 +56,12 @@ def fragment_selection():
     if len(fragment_number) == 0:
         fragment_number = fetch_frag_number(g_var.fragments_available)
         frag_location = [g_var.database_dir+'fragments/']*len(g_var.fragments_available)
-        if g_var.fg == None:
+        if g_var.fg is None:
             g_var.opt['fg'] = ''
             for database in fragment_number:
                 g_var.opt['fg'] += g_var.fragments_available[database]+' '
     else:
-        fragments_available = fragments_available_other
-
-    # g_var.p_directories, g_var.mod_directories, g_var.np_directories,  g_var.o_directories = 
+        g_var.fragments_available = fragments_available_other
     fetch_residues(frag_location, g_var.fragments_available, fragment_number)
 
 def correct_number_cpus():
@@ -94,7 +90,7 @@ def find_gromacs():
         g_var.gmx=distutils.spawn.find_executable(g_var.gmx)
     else:
         g_var.gmx=distutils.spawn.find_executable('gmx')
-    if g_var.gmx==None or type(g_var.gmx) != str:
+    if g_var.gmx is None or type(g_var.gmx) != str:
         if os.environ.get("GMXBIN") != None:
             for root, dirs, files in os.walk(os.environ.get("GMXBIN")):
                 for file_name in files:
@@ -105,7 +101,7 @@ def find_gromacs():
                         else:
                             g_var.gmx=None
                 break
-        if g_var.gmx == None:
+        if g_var.gmx is None:
             sys.exit('Cannot find gromacs installation')
     g_var.opt['gromacs'] = g_var.gmx
 
@@ -360,17 +356,10 @@ def fetch_fragment():
 #### fetches the Backbone heavy atoms and the connectivity with pre/proceeding residues 
     amino_acid_itp = fetch_amino_rtp_file_location(g_var.forcefield_location+g_var.forcefield) 
     g_var.at_mass = fetch_atom_masses(g_var.forcefield_location+g_var.forcefield)
-    processing={}     ### dictionary of backbone heavy atoms and connecting atoms eg backbone['ASP'][atoms/b_connect]
-    sorted_connect={}
-    hydrogen = {}
-    heavy_bond = {}
-    atoms_dict={}
-    ions = []
     for residue_type in [g_var.p_directories, g_var.o_directories]:
         for directory in range(len(residue_type)):
             for residue in residue_type[directory][1:]:    
                 if residue not in g_var.res_top:
-                    atoms_dict={}
                     location = fragment_location(residue)
                     g_var.hydrogen[residue], g_var.heavy_bond[residue], residue_list, at_mass, amide_h = fetch_bond_info(residue, amino_acid_itp, g_var.at_mass, location)
                     grouped_atoms = get_fragment_topology(residue, location)
@@ -382,13 +371,12 @@ def fetch_fragment():
     for directory in range(len(g_var.np_directories)):
         for residue in g_var.np_directories[directory][1:]:    
             if residue not in g_var.res_top:
-                atoms_dict={}
                 location = fragment_location(residue)
                 if residue in ['SOL','ION']: 
                     at_mass = fetch_atoms_water(g_var.np_directories[directory][0]+residue+'/', g_var.at_mass)
                     if residue == 'ION':
                         create_ion_list(location[:-4]+'.pdb')
-                    g_var.hydrogen[residue], g_var.heavy_bond[residue], atoms_dict = {},{},{}
+                    g_var.hydrogen[residue], g_var.heavy_bond[residue] = {},{}
                     residue_list = [residue]
                 else:
                     g_var.hydrogen[residue], g_var.heavy_bond[residue], residue_list, at_mass, amide_h  = fetch_bond_info(residue, [location[:-4]+'.itp'], g_var.at_mass, location)
@@ -649,9 +637,9 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
                         if os.path.exists(location+directory_type+'MOD/'):
                             g_var.p_directories[-1].remove('MOD')
                             g_var.p_residues.remove('MOD')
-                            for root, dirs, files in os.walk(location+directory_type+'MOD/'):
-                                add_to_list(root, dirs, g_var.p_directories, g_var.p_residues)
-                                add_to_list(root, dirs, g_var.mod_directories, g_var.mod_residues)
+                            for root_mod, dirs_mod, files_mod in os.walk(location+directory_type+'MOD/'):
+                                add_to_list(root_mod, dirs_mod, g_var.p_directories, g_var.p_residues)
+                                add_to_list(root_mod, dirs_mod, g_var.mod_directories, g_var.mod_residues)
                                 break
                     break
 #### if verbose prints all fragments found
@@ -701,7 +689,7 @@ def check_water_molecules():
         else:
             print_water_selection(water, directory)
             g_var.water_dir, g_var.water = ask_for_water_model(directory, water)
-        if g_var.w == None:
+        if g_var.w is None:
             g_var.opt['w'] = water
 
 ############################################################################################## fragment rotation #################################################################################
@@ -828,8 +816,6 @@ def database_information():
     for fragments in g_var.fragments_available:
         print('{0:^90}'.format(fragments))    
     if g_var.fg != None:
-        
-        fragment_number = fetch_frag_number(g_var.fragments_available)
         for database_val, database in enumerate(sorted(g_var.fg)):
             print('\n\n{0:^90}\n{1:-<90}\n'.format('The following residues are available in the database: '+database, ''))
             res_type_name = ['protein residues', 'modified protein residues', 'non protein residues']

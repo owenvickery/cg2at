@@ -4,11 +4,7 @@ import os, sys
 import numpy as np
 import subprocess 
 import multiprocessing as mp
-# from multiprocessing import get_context
-from shutil import copyfile
-from distutils.dir_util import copy_tree
 from pathlib import Path
-import re
 import time
 import gen, g_var, at_mod, read_in, at_mod_p
 
@@ -56,7 +52,6 @@ def gromacs(gro):
         output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # output.wait()
         err, out = output.communicate()
-        exitcode = output.returncode
         out=out.decode("utf-8")
     #### all gromacs outputs will be saved into gromacs_outputs within the folder it is run
         with open('gromacs_outputs', 'a') as checks:
@@ -206,7 +201,7 @@ def run_parallel_pdb2gmx_min(res_type, sys_info):
 
 def pdb2gmx_chain(chain, input,res_type, pdb2gmx_selections):
 #### pdb2gmx on on protein chain, creates the topologies    
-    out, err = gromacs([g_var.gmx+' pdb2gmx -f '+res_type+'_'+input+str(chain)+'.pdb -o '+res_type+'_'+input+str(chain)+'_gmx.pdb -water none \
+    gromacs([g_var.gmx+' pdb2gmx -f '+res_type+'_'+input+str(chain)+'.pdb -o '+res_type+'_'+input+str(chain)+'_gmx.pdb -water none \
     -p '+res_type+'_'+input+str(chain)+'.top  -i '+res_type+'_'+str(chain)+'_posre.itp '+g_var.vs+' -ter '+pdb2gmx_selections+'\nEOF', ''+res_type+'_'+input+str(chain)+'_gmx.pdb']) #### single chains
 #### converts the topology file and processes it into a itp file
     convert_topology(res_type+'_'+input, chain, res_type)
@@ -412,7 +407,6 @@ def check_atom_type(line, a_line, atomtypes_itp_lines):
 def strip_atomtypes(itp_file): 
     with open(itp_file, 'r') as itp_input: 
         itp_lines = itp_input.read().splitlines() 
-    atom_types=[] 
     if '[ atomtypes ]' in itp_lines: 
         a_lines_sep = []
         if not os.path.exists('extra_atomtypes.itp'): 

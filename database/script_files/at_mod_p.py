@@ -2,13 +2,10 @@
 
 import os, sys
 import numpy as np
-import copy
-from string import ascii_uppercase
 import difflib
 from scipy.spatial import cKDTree
 import multiprocessing as mp
 import gen, g_var, at_mod, read_in
-import math 
 
 def build_multi_residue_atomistic_system(cg_residues, sys_type):   
 #### initisation of counters
@@ -175,7 +172,6 @@ def correct_disulphide_bonds(coordinates_atomistic):
     return coordinates_atomistic
 
 def shrink_coordinates(c1,c2):
-    dist = gen.calculate_distance(c1,c2)
     vector = c1-c2
     scale=0.05
     while True:
@@ -188,7 +184,6 @@ def shrink_coordinates(c1,c2):
             scale-=0.001
         else:
             return new_c1, new_c2
-    return c1, c2
 
 #### disulphide checker end
 
@@ -303,7 +298,6 @@ def align_chain_sequence(sys_type):
         for index in g_var.seq_at:
             print('chain:', index, g_var.seq_at[index], '\n')        
     at={}
-    sequence_temp = g_var.seq_cg[sys_type].copy()
     test_chain={}
     for chain_at in range(len(g_var.atomistic_protein_input_raw)):
         skip_sequence=False
@@ -368,7 +362,7 @@ def align_user_chains(final_coordinates_atomistic):
                                                                 at_com_group,cg_com_group,cg_com) ## apply rotation matrix to atoms and build in missing residues
     final_user_supplied_coord = correct_disulphide_bonds(atomistic_protein_rotated) ## fixes sulphur distances in user structure
     pool = mp.Pool(g_var.ncpus)
-    pool_process = pool.starmap_async(write_user_chains_to_pdb, [(final_user_supplied_coord[chain], chain) ## write structure to pdb
+    pool.starmap_async(write_user_chains_to_pdb, [(final_user_supplied_coord[chain], chain) ## write structure to pdb
                                         for chain in final_user_supplied_coord]).get()
     pool.close()
 
@@ -379,7 +373,7 @@ def center_atomistic():
         cg_com[chain]=[]
         for part_val, part in enumerate(g_var.atomistic_protein_input_aligned[chain]):
             sls, sle= int(part.split(':')[0]),int(part.split(':')[1])
-            if g_var.group_chains==None:
+            if g_var.group_chains is None:
                 protein_mass=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], [])
                 atomistic_protein_mass = at_mod.COM(protein_mass, 'protein at: '+str(chain)+' '+part)#### add center of mass of CG_proteins
                 cg_com[chain].append(at_mod.COM(g_var.backbone_coords[chain][sls:sle], 'protein cg: '+str(chain)+' '+part))
@@ -433,7 +427,6 @@ def center_at_protein_all_chains(atomistic_protein_input, cg_com,  protein_mass,
     for chain in atomistic_protein_input:
         for part_val, part in enumerate(atomistic_protein_input[chain]):
             cg_com[chain].append(at_mod.COM(cg_backbone_masses['all'], 'All CG protein chains'))
-            sls, sle= int(part.split(':')[0]),int(part.split(':')[1])
             atomistic_protein_input[chain][part] = update_part_coordinate(atomistic_protein_input[chain][part], atomistic_protein_mass, cg_com[chain][part_val])
     return atomistic_protein_input, cg_com
 
@@ -479,7 +472,7 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
                 if len(at_centers) == len(np.array(g_var.backbone_coords[chain])[sls:sle,:3]):
                     if g_var.group_chains=='all':
                         at_com_group, cg_com_group = return_all_rotations(chain, at_centers, at_com_group, cg_com_group, sls, sle)
-                    elif g_var.group_chains==None:
+                    elif g_var.group_chains is None:
                         at_com_group = return_indivdual_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle)
                     else:
                         at_com_group, cg_com_group = return_grouped_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle,g_var.group_chains)
@@ -502,7 +495,7 @@ def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_cen
             for part_val, part in enumerate(atomistic_protein_centered[chain]):
                 if 'rotate_all' in locals():
                     rotations.append(rotate_all)
-                elif g_var.group_chains==None:
+                elif g_var.group_chains is None:
                     rotations = at_com_group[chain]
                 else:
                     if chain in g_var.group_chains:

@@ -2,10 +2,8 @@
 
 import os, sys
 import numpy as np
-import math
 import itertools
 from scipy.spatial import cKDTree
-import re
 import gen, g_var, at_mod_p, read_in, gro
 
 
@@ -309,13 +307,11 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
     for atom in at_residues:
         resname = at_residues[atom]['res_type']
         if at_residues[atom]['atom'] in g_var.res_top[resname]['CONNECT'][BB_bead]['atom']:
-
             con_atoms[g_var.res_top[resname]['CONNECT'][BB_bead]['atom'].index(at_residues[atom]['atom'])]=atom
     new_chain=False
     for con in con_atoms:
         con_resid = residue_number+g_var.res_top[resname]['CONNECT'][BB_bead]['dir'][con]
         if con_resid in cg_residues:
-            con_resname = cg_residues[con_resid][next(iter(cg_residues[con_resid]))]['residue_name']
             xyz_cur = cg_residues[residue_number][BB_bead]['coord']
             if g_var.res_top[resname]['CONNECT'][BB_bead]['Con_Bd'][con] in cg_residues[con_resid]:
                 xyz_con = cg_residues[con_resid][g_var.res_top[resname]['CONNECT'][BB_bead]['Con_Bd'][con]]['coord']
@@ -482,12 +478,10 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
         if residue_type in ['PROTEIN', 'OTHER']:
             for atom in chiral_atoms[residue]:
                 resname = merge_temp[chiral_atoms[residue][atom]]['residue_name']
-                resid = merge_temp[chiral_atoms[residue][atom]]['residue_id']
                 break
         else:
             resname=residue_type
         for chiral_group in g_var.res_top[resname]['CHIRAL']:
-
             if chiral_group != 'atoms':
                 stat = merge_temp[chiral_atoms[residue][chiral_group]].copy()
                 atom_move = {'stat':np.array([stat['x'],stat['y'],stat['z']]), 'm':'', 'c1':'', 'c2':'', 'c3':''}
@@ -561,12 +555,9 @@ def check_ringed_lipids(protein):
             ringed=False
             lipid_atoms = []
             with open(g_var.merged_directory+'threaded_lipids.dat', 'w') as ring_ouput:
-                for at_val, atom in enumerate(merge):   
-                    for res_check in g_var.np_blocks:
-                        if g_var.np_blocks[res_check][0] <= at_val < g_var.np_blocks[res_check][1]:
-                            resname = res_check 
-                            break
-                    if 'resname' in locals():
+                for at_val, atom in enumerate(merge): 
+                    resname = get_np_resname(at_val)
+                    if resname != None:
                         if atom['residue_id'] != resid_prev:
                             if 'offset' in locals() and len(g_var.heavy_bond[resname])>0: 
                                 if at_val-offset > int(len(g_var.np_blocks[resname_prev])/g_var.system[resname_prev]): 
@@ -588,7 +579,6 @@ def check_ringed_lipids(protein):
                                                             'atom_1: ', merge[at_val]['atom_name'],
                                                             'atom_2: ', merge[at_bond+offset]['atom_name']))
                                         ringed = True
-                        del resname
         if ringed or os.path.exists(g_var.merged_directory+'merged_cg2at_threaded.pdb'):
             print('Found '+str(len(lipid_atoms))+' abnormal bonds, now attempting to fix.')
             print('See this file for a complete list: '+g_var.merged_directory+'threaded_lipids.dat')
@@ -605,6 +595,11 @@ def fetch_start_of_residue(at, merge):
         else:
             count-=1
 
+def get_np_resname(atom):
+    for res_check in g_var.np_blocks:
+        if g_var.np_blocks[res_check][0] <= atom < g_var.np_blocks[res_check][1]:
+            return res_check 
+
 def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
     if not os.path.exists(g_var.merged_directory+'merged_cg2at_threaded.pdb'):
         tree = cKDTree(merge_coords)         
@@ -614,7 +609,7 @@ def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
                 if merge[at]['residue_id'] != merge[threaded[0]]['residue_id']:
                     P_count = fetch_start_of_residue(at, merge)
                     break
-            NP_count= fetch_start_of_residue(threaded[0], merge)
+            NP_count = fetch_start_of_residue(threaded[0], merge)
             bb = []
             if 'P_count' not in locals():
                 sys.exit('There is an issue with the bond length detection')
@@ -625,10 +620,9 @@ def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
                     bb.append([at['x'], at['y'], at['z']])
             bb = np.mean(np.array(bb), axis=0)
             BB_M3 = (threaded[2]-bb)/np.linalg.norm((threaded[2]-bb))
-            for res_check in g_var.np_blocks:
-                if g_var.np_blocks[res_check][0] <= threaded[0] < g_var.np_blocks[res_check][1]:
-                    resname = res_check 
-                    break
+            
+            resname = get_np_resname(threaded[0])
+
             for heavy_atom in threaded[:2]:
                 merge_coords[heavy_atom] += BB_M3*3 
                 merge[heavy_atom]['x'], merge[heavy_atom]['y'], merge[heavy_atom]['z'] = merge_coords[heavy_atom]
