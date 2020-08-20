@@ -3,7 +3,6 @@
 import os, sys
 import numpy as np
 import math
-from scipy.spatial import cKDTree
 import gen, g_var, at_mod
 
 
@@ -139,7 +138,7 @@ def atomistic_non_protein_non_solvent(cg_residue_type,cg_residues):
                 if len(at_connect) == len(cg_connect) and len(cg_connect) > 0:
                     try:
                         xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
-                    except:
+                    except BaseException:
                         sys.exit('There is a issue with residue: '+cg_residue_type+' in group: '+str(group))
                 else:
                     print('atom connections: '+str(len(at_connect))+' does not match CG connections: '+str(len(cg_connect)))

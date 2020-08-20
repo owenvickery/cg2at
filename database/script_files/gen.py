@@ -166,7 +166,7 @@ def split_swap(swap):
             else:
                 res_id.append(int(resid_section))
         return res_range, res_id
-    except:
+    except BaseException:
         return 'ALL', 'ALL'
 
 def sort_swap_group():
@@ -476,7 +476,7 @@ def fetch_bond_info(residue, rtp, at_mass,location):
                         elif bonds:
                             try:
                                 bond_dict.append([int(line_sep[0]),int(line_sep[1])])
-                            except:
+                            except BaseException:
                                 bond_dict.append([line_sep[0],line_sep[1]])
                         elif not atoms and not bonds and residue in g_var.p_residues+g_var.o_residues:
                             break
@@ -581,7 +581,7 @@ def ask_database(provided, selection_type):
                     return number
         except KeyboardInterrupt:
             sys.exit('\nInterrupted')
-        except:
+        except BaseException:
             print("Oops!  That was a invalid choice")
 
 def fetch_frag_number(fragments_available):
@@ -671,7 +671,7 @@ def ask_for_water_model(directory, water):
                 return directory[0]+'SOL/', water[number]
         except KeyboardInterrupt:
             sys.exit('\nInterrupted')
-        except:
+        except BaseException:
             print("Oops!  That was a invalid choice")
 
 def check_water_molecules():
@@ -735,7 +735,7 @@ def pdbatom(line):
     try:
         return dict([('atom_number',int(line[7:11].replace(" ", ""))),('atom_name',str(line[12:16]).replace(" ", "")),('residue_name',str(line[16:21]).replace(" ", "")),\
             ('chain',line[21]),('residue_id',int(line[22:26])), ('x',float(line[30:38])),('y',float(line[38:46])),('z',float(line[46:54]))])
-    except:
+    except BaseException:
         print(line[30:38],line[38:46],line[46:54])
         sys.exit('\npdb line is wrong:\t'+line) 
 
@@ -841,7 +841,7 @@ def database_information():
                                     break
                             print('{0:^90}'.format(line))
                             start = end
-                except:
+                except BaseException:
                     pass
     sys.exit('\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
 

@@ -137,7 +137,7 @@ def ask_ter_question(residue, options, chain):
                 return options[sel[number]]
         except KeyboardInterrupt:
             sys.exit('\nInterrupted')
-        except:
+        except BaseException:
             print("Oops!  That was a invalid choice")
 
 def ask_terminal(sys_info, residue_type):

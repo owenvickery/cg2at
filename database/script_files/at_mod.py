@@ -170,7 +170,7 @@ def COM(mass, fragment):
         else:
             print('bead has no mass: \n')
             sys.exit(fragment)
-    except:
+    except BaseException:
         if len(fragment) == 1:
             for key in fragment:
                 if len(fragment[key]) == 1:

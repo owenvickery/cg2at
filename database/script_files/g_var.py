@@ -43,7 +43,7 @@ opt = vars(args)
 opt['input']=''.join([ i+' ' for i in sys.argv])+'\n'
 
 #### if missing structure file print help and quit
-if not args.info and args.c == None:
+if not args.info and args.c is None:
     help_output = parser.print_help(sys.stderr)
     print(parser.print_help(sys.stderr), '\n')
     sys.exit('Error: the following arguments are required: -c\n')

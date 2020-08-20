@@ -19,6 +19,7 @@ def build_multi_residue_atomistic_system(cg_residues, sys_type):
     residue_type_mass={}
     new_chain = True
     for cg_residue_id, residue_number in enumerate(cg_residues[sys_type]):
+
         if np.round((cg_residue_id/len(cg_residues[sys_type]))*100,2).is_integer():
             print('Converting de_novo '+sys_type+': ',np.round((cg_residue_id/len(cg_residues[sys_type]))*100,2),'%', end='\r')
         resname = cg_residues[sys_type][residue_number][next(iter(cg_residues[sys_type][residue_number]))]['residue_name']
@@ -74,7 +75,9 @@ def build_multi_residue_atomistic_system(cg_residues, sys_type):
             print('{0:^15}{1:^12}'.format(chain, len(g_var.seq_cg[sys_type][chain])))
         print()
     g_var.system[sys_type]=chain_count
-    
+    if sys_type == 'PROTEIN':
+        for chain in range(chain_count):
+            g_var.skip_disul[chain]=False
     return coord_atomistic
 
 ################# Fixes disulphide bond, martini cysteine bone is too far apart to be picked up by pdb2gmx. 
@@ -92,7 +95,7 @@ def ask_if_disulphide(chain, res_1, res_2):
                 print("Oops!  That was a invalid choice")
         except KeyboardInterrupt:
             sys.exit('\nInterrupted')
-        except:
+        except BaseException:
             print("Oops!  That was a invalid choice")
 
 def find_disulphide_bonds_user_sup():
@@ -465,7 +468,7 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
                             at_centers_iter.append(np.append(atomistic_protein_centered[chain][part][residue][atom]['coord'],atomistic_protein_centered[chain][part][residue][atom]['frag_mass']))
                     try:
                         at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
-                    except:
+                    except BaseException:
                         for atom in atomistic_protein_centered[chain][part][residue]:
                             print(atomistic_protein_centered[chain][part][residue][atom])
                         sys.exit()
@@ -682,7 +685,7 @@ def RMSD_measure(structure_atoms):
                 at_centers_iter.append(np.append(structure_atoms[chain][residue][atom]['coord'],structure_atoms[chain][residue][atom]['frag_mass']))
             try:
                 at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
-            except:
+            except BaseException:
                 print('The fragment probably has no mass\n')
                 for atom in structure_atoms[chain][residue]:
                     print(structure_atoms[chain][residue][atom])
