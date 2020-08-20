@@ -1,5 +1,5 @@
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/owenvickery/cg2at.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/owenvickery/cg2at/alerts/)
-
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/owenvickery/cg2at.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/owenvickery/cg2at/context:python)
 <p align="center">
                                    <b>**CG2AT v2 README**</b>
 </p>
