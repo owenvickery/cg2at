@@ -7,7 +7,7 @@
 </p>
 If you are using this script please acknowledge me (Dr Owen Vickery) and cite the following DOI.
 
-DOI: xxx
+DOI: 10.5281/zenodo.3890163
 
 <p align="center">
                                    <b>**CG2AT SCRIPT OVERVIEW**</b>
