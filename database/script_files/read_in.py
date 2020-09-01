@@ -7,7 +7,6 @@ import copy
 import gen, g_var
 
 def read_initial_cg_pdb():
-
     print('\nThis script is now hopefully doing the following (Good luck):\n')
     residue_list={} ## a dictionary of bead in each residue eg residue_list[bead name(BB)][residue_name(PO4)/coordinates(coord)]
     count=0  ### residue counter initialisation
@@ -26,7 +25,7 @@ def read_initial_cg_pdb():
                     if 'residue_prev' not in locals(): 
                         residue_prev=line_sep.copy() 
     #### if resid the same as previous line
-                    if residue_prev['residue_id'] == line_sep['residue_id'] and line_sep['residue_name'] == residue_prev['residue_name']:   ### if resid is the same as the previous line, it adds resname and coordinates to the atom name key in residue_list 
+                    if residue_prev['residue_id'] == line_sep['residue_id'] and line_sep['residue_name'] == residue_prev['residue_name'] and line_sep['atom_name'] not in residue_list:   ### if resid is the same as the previous line, it adds resname and coordinates to the atom name key in residue_list 
                         residue_list[line_sep['atom_name']]={'residue_name':line_sep['residue_name'],'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']])}
                         line_sep_prev=line_sep.copy()
     #### if resids are different then the residue list is added to cg_residues
