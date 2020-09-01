@@ -16,12 +16,14 @@ os.environ['GMX_SUPPRESS_DUMP'] = '1'  ## prevent gromacs filling the file syste
 
 gen.correct_number_cpus()
 gen.find_gromacs()
-gen.read_database()
+gen.read_database_directories()
 gen.forcefield_selection()
 gen.fragment_selection()
 gen.check_water_molecules()
 if g_var.info:
-    database_information()
+    gen.database_information()
+if g_var.v >= 2:
+    gen.fragments_in_use()
 gen.fetch_fragment()    
 gen.fetch_chain_groups()
 gen.sort_swap_group()

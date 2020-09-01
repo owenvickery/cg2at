@@ -13,15 +13,6 @@ import copy
 import ntpath
 import g_var
 
-
-
-def read_database():
-    g_var.forcefield_available, g_var.fragments_available = read_database_directories()
-    if g_var.info:
-        database_information()
-    elif not os.path.exists(g_var.c):
-        sys.exit('Cannot find CG input file: '+g_var.c)
-
 def forcefield_selection():
     ##### forcefield selection
     if g_var.ff != None:
@@ -548,8 +539,7 @@ def read_database_directories():
             sys.exit('no '+directory_type+' found')
             available_provided=[]
         available_provided_database.append(available_provided)
-
-    return  available_provided_database[0], available_provided_database[1]
+    g_var.forcefield_available, g_var.fragments_available = available_provided_database[0], available_provided_database[1]
 
 
 def database_selection(provided, selection_type):
@@ -642,14 +632,7 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
                                 add_to_list(root_mod, dirs_mod, g_var.mod_directories, g_var.mod_residues)
                                 break
                     break
-#### if verbose prints all fragments found
-    if g_var.v >= 2:
-        for directory in range(len(g_var.np_directories)):
-            print('\nnon protein residues fragment directories found: \n\nroot file system\n')
-            print(g_var.np_directories[directory][0],'\n\nresidues\n\n',g_var.np_directories[directory][1:], '\n')
-        for directory in range(len(g_var.p_directories)):
-            print('\nprotein residues fragment directories found: \n\nroot file system\n')
-            print(g_var.p_directories[directory][0],'\n\nresidues\n\n',g_var.p_directories[directory][1:], '\n')
+    
 
 def print_water_selection(water, directory):
     if g_var.w != None:
@@ -679,18 +662,21 @@ def check_water_molecules():
         water=[]
         for directory in g_var.np_directories:
             if os.path.exists(directory[0]+'SOL/SOL.pdb'):
+                g_var.water_info.append([directory[0]+'SOL'])
                 with open(directory[0]+'SOL/SOL.pdb', 'r') as sol_input:
                     for line_nr, line in enumerate(sol_input.readlines()):
                         if line.startswith('['):
                             water.append(strip_header(line))
-        if g_var.w in water:
-            print('\nYou have selected the water model: '+g_var.w)
-            g_var.water_dir, g_var.water = directory[0]+'SOL/', g_var.w
-        else:
-            print_water_selection(water, directory)
-            g_var.water_dir, g_var.water = ask_for_water_model(directory, water)
-        if g_var.w is None:
-            g_var.opt['w'] = water
+                            g_var.water_info[-1].append(strip_header(line))
+        if not g_var.info:
+            if g_var.w in water:
+                print('\nYou have selected the water model: '+g_var.w)
+                g_var.water_dir, g_var.water = directory[0]+'SOL/', g_var.w
+            else:
+                print_water_selection(water, directory)
+                g_var.water_dir, g_var.water = ask_for_water_model(directory, water)
+            if g_var.w is None:
+                g_var.opt['w'] = water
 
 ############################################################################################## fragment rotation #################################################################################
 
@@ -803,11 +789,14 @@ def print_script_timings():
         print('\nAll script timings have been saved in: \n'+g_var.final_dir+'script_timings.dat\n')
 
 def database_information():
+
     print('{0:30}'.format('\nThis script is a fragment based conversion of the coarsegrain representation to atomistic.\n'))
-    print('{0:^90}'.format('Written by Owen Vickery'))
+    print('{0:^90}\n'.format('CG2AT2 version: '+str(g_var.version)))
+    print('{0:^90}'.format('CG2AT2 is written by Owen Vickery'))
     print('{0:^90}'.format('Project leader Phillip Stansfeld'))
     print('\n{0:^90}\n{1:^90}'.format('Contact email address:','owen.vickery@warwick.ox.ac.uk'))
     print('\n{0:^90}\n{1:^90}\n{2:^90}\n{3:-<90}'.format('Address:','School of Life Sciences, University of Warwick,','Gibbet Hill Road, Coventry, CV4 7AL, UK', ''))
+    # print('\n{0}\n{1}'.format('If you are using this script please acknowledge me (Dr Owen Vickery) and cite the following DOI.','DOI: 10.5281/zenodo.3890163'))
     print('\n{0:^90}\n{1:-<90}\n'.format('The available forcefields within your database are (flag -ff):', ''))
 
     for forcefields in g_var.forcefield_available:
@@ -816,34 +805,44 @@ def database_information():
     for fragments in g_var.fragments_available:
         print('{0:^90}'.format(fragments))    
     if g_var.fg != None:
-        for database_val, database in enumerate(sorted(g_var.fg)):
-            print('\n\n{0:^90}\n{1:-<90}\n'.format('The following residues are available in the database: '+database, ''))
-            res_type_name = ['protein residues', 'modified protein residues', 'non protein residues']
-            for res_val, residue in enumerate([g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories]):
-                try:
-                    res_type = sorted(residue[database_val][1:])
-                    print('\n{0:^90}\n{1:^90}'.format(res_type_name[res_val], '-'*len(res_type_name[res_val])))
-                    if len(', '.join(map(str, res_type))) <= 80:
-                        print('{0:^90}'.format(', '.join(map(str, res_type))))
-                    else:
-                        start, end = 0, 1                       
-                        while end < len(res_type):
-                            line = ', '.join(map(str, res_type[start:end]))
-                            while len(line) <= 80:
-                                if end < len(res_type):
-                                    end+=1
-                                    line = ', '.join(map(str, res_type[start:end]))
-                                    if len(line) > 80:
-                                        end-=1
-                                        line = ', '.join(map(str, res_type[start:end]))
-                                        break
-                                else:
-                                    break
-                            print('{0:^90}'.format(line))
-                            start = end
-                except BaseException:
-                    pass
+        fragments_in_use()
+
+    print('\n{0:^90}'.format('Executable: '+g_var.opt['input'].split()[0]))
+    print('{0:^90}'.format('Database locations: '+g_var.database_dir))
+    print('{0:^90}'.format('Script locations: '+g_var.scripts_dir))
     sys.exit('\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
+
+def fragments_in_use():
+    for database_val, database in enumerate(sorted(g_var.fg)):
+        if len(g_var.p_directories) > 0:
+            protein_directories = [sublist for sublist in g_var.p_directories if path_leaf(sublist[0])[1] != 'MOD']
+        print('\n\n{0:^90}\n{1:-<90}\n'.format('The following residues are available in the database: '+database,''))
+        res_type_name = ['Non protein residues', 'Protein residues', 'Modified protein residues', 'Other linked residues', 'Water residues']
+        for res_val, residue in enumerate([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
+            try:
+                res_type = sorted(residue[database_val][1:])
+                print('\n{0:^90}\n{1:^90}'.format(res_type_name[res_val], '-'*len(res_type_name[res_val])))
+                if len(', '.join(map(str, res_type))) <= 80:
+                    print('{0:^90}'.format(', '.join(map(str, res_type))))
+                else:
+                    start, end = 0, 1                       
+                    while end < len(res_type):
+                        line = ', '.join(map(str, res_type[start:end]))
+                        while len(line) <= 80:
+                            if end < len(res_type):
+                                end+=1
+                                line = ', '.join(map(str, res_type[start:end]))
+                                if len(line) > 80:
+                                    end-=1
+                                    line = ', '.join(map(str, res_type[start:end]))
+                                    break
+                            else:
+                                break
+                        print('{0:^90}'.format(line))
+                        start = end
+            except:
+                pass
+    print('\n{0:-<90}\n'.format(''))
 
 def write_system_components():
     print('\n{:-<100}'.format(''))

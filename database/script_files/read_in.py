@@ -36,7 +36,6 @@ def read_initial_cg_pdb():
                             if line_sep_prev['residue_name'] == 'ION':
                                 g_var.cg_residues['SOL'][count]={}
                                 sol_res_list={}
-
                                 sol_res_list[g_var.water]=residue_list[line_sep_prev['atom_name']].copy()
                                 sol_res_list[g_var.water]['residue_name']='SOL'
                                 g_var.cg_residues['SOL'][count]=sol_res_list

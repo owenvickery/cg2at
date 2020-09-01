@@ -40,7 +40,7 @@ parser.add_argument('-ov', help='amount of overlap allowed between atoms', type=
 
 args = parser.parse_args()
 opt = vars(args)
-opt['input']=''.join([ i+' ' for i in sys.argv])+'\n'
+opt['input']=os.path.abspath(sys.argv[0])+' '+''.join([ i+' ' for i in sys.argv[1:]])+'\n'
 
 #### if missing structure file print help and quit
 if not args.info and args.c is None:
@@ -116,7 +116,7 @@ if args.loc != None:
 else:
     working_dir_name =  'CG2AT_'+timestamp
 
-
+version = 0.2
 
 
 start_dir       = os.getcwd()+'/'  ### initial working directory
@@ -146,7 +146,7 @@ forcefield_available, fragments_available = '',''
 forcefield_location, forcefield = '','' ## forcefield info
 np_residues, p_residues, mod_residues, o_residues, np_directories, p_directories, mod_directories, o_directories = [],[],[],[],[],[],[],[]  ## fragment info
 database_locations = [] ## grouped directories
-water_dir, water = [],[] ## water information
+water_dir, water, water_info = [],[],[] ## water information
 swap_dict ={} ## CG residue swap
 res_top, sorted_connect, hydrogen, heavy_bond, ions, at_mass = {},{},{},{},[],{} ### topology information
 group_chains = None
