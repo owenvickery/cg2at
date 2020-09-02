@@ -31,6 +31,8 @@ For a detailed description of the script workflow please read the file in
 database/script_files/workflow.pdf
 </b>
 
+![Alt text](/database/scripts/images/fragments.png?raw=true "Optional Title")
+
 <pre>
            CG beads         Fragments           COM aligned fragments           Aligned fragments                 Atomistic
                                                                               
