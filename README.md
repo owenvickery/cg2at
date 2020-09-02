@@ -13,7 +13,9 @@ DOI: 10.5281/zenodo.3890163
                                    <b>**CG2AT SCRIPT OVERVIEW**</b>
 </p>
 
-The script is a fragment based conversion of the CG representation into atomistic. 
+The script is a fragment based conversion of  coarse grain systems such as martini to atomistic. This method generates a selection of outputs for further refinement and analysis via atomistic simulations. 
+
+CG2AT2 has been designed for ease of use, where for the majority of users only only need to supply the coordinate file of the coarsegrain system and the original atomisitc file. CG2AT2 will provide all the files required to run the further atomistic simulation. 
 
 <p align="center">
                                    <b>**REQUIREMENTS**</b>
@@ -100,12 +102,6 @@ OPTIONAL
 
 
 This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
-
-Individual fragments can be treated as a group (specified within the topology file), this lowers the risk of a failed conversion and improves the quality of the conversion.
-
-<p align="center">
-  <img width="500" src="database/script_files/images/group_vs_mod.png">
-</p>
 
 This script roughly follows the following workflow.
 
@@ -246,41 +242,42 @@ Examples:
 
 swap all ASP to ASN:
 
-<b>- -swap ASP:ASN </b>
+<b>-swap ASP:ASN </b>
 
 Swap ASP to ASN in the resid range 0-10 and 30-40:
 
-<b>- -swap ASP:ASN:0-10,30-40</b>
+<b>-swap ASP:ASN:0-10,30-40</b>
 
 <p align="center">If the beads are different:</p>
 
 Switch residues with different beads:
 
-<b>- -swap POPC,NC3:POPG,GL0</b>
+<b>-swap POPC,NC3:POPG,GL0</b>
 
 If you wish to switch within the same residue:
 
-<b>- -swap POPG,D2B:POPG,C2B</b>
+<b>-swap POPG,D2B:POPG,C2B</b>
 
 <p align="center">To skip residues or beads:</p>
 
 To skip a bead.
 
-<b>- -swap GLU,SC2:ASP,skip</b>
+<b>-swap GLU,SC2:ASP,skip</b>
 
 To skip a residue.
 
-<b>- -swap POPG:skip</b>
+<b>-swap POPG:skip</b>
 
 <p align="center">Mutiple residues</p>
 
+
 The following switches all POPE to POPG and all POPG to POPE:
 
-<b>- -swap POPE,NH3:POPG,GL0 POPG,GL0:POPE,NH3</b>
+<b>-swap POPE,NH3:POPG,GL0 POPG,GL0:POPE,NH3</b>
 
 The following will skip all NA+ between resid 4000 and 4100:
 
-<b>- -swap NA+:skip:4000-4100</b>
+<b>-swap NA+:skip:4000-4100</b>
 
 
 <p align="center">
@@ -341,26 +338,26 @@ The script provides 3 types of coarsegrain conversions.
 You can select which of these is supplied using the flag:
 - -o ['all', 'align', 'de_novo', 'none']
 
-<p align="center">none:</p>
+<p align="center"><b>none:</b></p>
 
 - The atomistic framgents are fitted to the CG structure and minismised.
 - Threaded lipids are fixed
 - Final output is located FINAL/final_cg2at_de_novo.pdb
 
-<p align="center">de_novo:</p>
+<p align="center"><b>de_novo:</b></p>
 
 - The atomistic framgents are fitted to the CG structure and minismised.
 - Threaded lipids are fixed
 - Short 5 ps NVT simulation is run  
 - Final output is located FINAL/final_cg2at_de_novo.pdb
 
-<p align="center">align:</p>
+<p align="center"><b>align:</b></p>
 - The atomistic framgents are fitted to the CG structure and minismised.
 - Threaded lipids are fixed
 - Minimised de_novo is morphed by steered MD to the user supplied structure 
 - Final output is located FINAL/final_cg2at_aligned.pdb
 
-<p align="center">all (default):</p>
+<p align="center"><b>all (default):</b></p>
 
 - The atomistic framgents are fitted to the CG structure and minismised.
 - Threaded lipids are fixed
@@ -379,14 +376,11 @@ If you know in advance which settings you wish to use, these can be supplied by 
 - w   (str) water model         e.g. tip3p
 - fg  (str) fragment databases  e.g. martini_2-2_charmm36
 - ff  (str) forcefield          e.g. charmm36-jul2017
-- box (int) box size (Angstrom) e.g. 100 100 100
-- nt  (T/F) neutral N-terminus
-- ct  (T/F) neutral C-terminus
 
 example input.
 
 <pre>
-    python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update  -box 100 100 100 -nt -ct
+    python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update 
 </pre>
 
 <p align="center">
@@ -398,26 +392,30 @@ The database has the following file structure and is checked everytime the scrip
 New forcefields and fragments can be added very easily by creating a new folder within the directory structure below. 
 
 <pre>
-    | --    database
-                | --    scripts_files
-                                - run files
-                | --    forcefields
-                                -  forcefield directories for gromacs (eg. charmm36.ff)
-                | --    fragments
-                              | -- forcefield type (eg. charmm36)
-                                            | -- protein
-                                                    | -- Aminoacids (eg. cg residue name ASP)
-                                                                 - fragment pdb called the same as bead names (eg. ASP.pdb)
-                                                                 - topology file (eg. ASP.top) (optional)
-                                                    | -- MOD
-                                                          | -- modified residues (eg. cg residue name CYSD) 
-                                                                    - fragment pdb called the same as bead names (eg. CYSD.pdb)
-                                                                    - topology file (eg. CYSD.top) (optional)            
-                                            | -- non_protein                                             
-                                                      | --non protein molecules (eg. lipids POPC)
-                                                                    - fragment pdb called the same as residue names (eg. POPC.pdb)
-                                                                    - itp file of residue called the same as residue names (eg. POPC.itp)
-                                                                    - topology file (eg. POPC.top) (optional)
+    | -- database
+                | -- scripts_files
+                     - run files
+                | -- forcefields
+                     -  forcefield directories for gromacs (eg. charmm36.ff)
+                | -- fragments
+                     | -- forcefield type (eg. charmm36)
+                          | -- protein
+                               | -- Aminoacids (eg. ASP)
+                                    - fragment pdb called the same as bead names (eg. ASP.pdb)
+                                    - topology file (eg. ASP.top) (optional)
+                               | -- MOD
+                                    | -- modified residues (eg. CYSD) 
+                                         - fragment pdb called the same as bead names (eg. CYSD.pdb)
+                                         - topology file (eg. CYSD.top) (optional)            
+                          | -- non_protein 
+                               | -- non protein molecules (eg. lipids POPC)
+                                    - fragment pdb called the same as residue names (eg. POPC.pdb)
+                                    - itp file of residue called the same as residue names (eg. POPC.itp)
+                                    - topology file (eg. POPC.top) (optional)
+                          | -- other
+                               | -- multi residue constructs (eg. DNA)
+                                    - fragment pdb called the same as bead names (eg. DA.pdb)
+                                    - topology file (eg. DA.top) (optional)
 </pre>
 
 You can prevent the script from reading any file or folder by prefixing the name with a underscore.
@@ -431,11 +429,12 @@ The fragment database is separated into three parts (protein, non-protein and ot
 Each fragment file contains the following flags:
 
 <pre>
-[ BB ]
+[ bead_name ]
 atom 1
+atom 5
 atom 2
 ...
-[ SC1 ]
+[ bead_name ]
 atom 8
 atom 9
 ...
@@ -450,15 +449,17 @@ Whilst the modified protein and non protein fragments retain all their hydrogens
 
 This is due to problematic adding of every residue to the gromacs hydrogen database. 
 
-For ring like structures, I have implemented a grouping system.
-
-In this particular case, the fragments SC2 and SC3 are treated as a rigid body in the fitting and rotation steps.
+multiple fragments can be treated as a group (specified within the topology file), this lowers the risk of a failed conversion and improves the quality of the conversion. 
 
 This default grouping can be switched off using the flag:
 
 - -mod
 
 The grouping is especially useful for converting sugar groups in which the hydrogen geometry should be retained as much as possible.
+
+<p align="center">
+  <img width="500" src="database/script_files/images/group_vs_mod.png">
+</p>
 
 An example of a normal amino acid fragment files:
 
