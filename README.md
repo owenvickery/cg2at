@@ -31,7 +31,7 @@ For a detailed description of the script workflow please read the file in
 database/script_files/workflow.pdf
 </b>
 
-![Alt text](./database/script_files/images/Fragments.png "Optional Title")
+![Alt text](./database/script_files/images/Fragments.png)
 
 
 <pre>
