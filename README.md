@@ -31,38 +31,6 @@ For a detailed description of the script workflow please read the file in
 database/script_files/workflow.pdf
 </b>
 
-![Alt text](database/script_files/images/Fragment.png)
-![Alt text abs](https://github.com/owenvickery/cg2at/blob/master/database/script_files/images/Fragment.png)
-
-<pre>
-           CG beads         Fragments           COM aligned fragments           Aligned fragments                 Atomistic
-                                                                              
-           --------                                    --------                      --------      
-          (        )                                  (        )                    (        )     
-         (          )             O1                 (      O1  )                  (  O1  O2  )                     
-        (            )           /                  (       /    )                (    \  /    )                      
-       (     SC1      )    [CB]-CG                 (  [CB]-CG     )              (      CG      )                     
-        (            )           \                  (       \    )                (     |      )                    O1  O2
-         (          )             O2                 (      O2  )                  (   [CB]   )                      \  /
-          (        )                                  (        )                    (        )                        CG
-           --------                       COM          --------       rotation       --------      Minimisation       |
-               |                      ---------->          |         ---------->         |         ----------->       CB  
-           --------                    Alignment       --------       Alignment      --------                         | 
-          (        )                                  (        )                    (        )                    X1  CA   X2
-         (          )          [C]-O                 (   [C]-O  )                  (    CA    )                    \ /  \ /
-        (            )         /                    (    /       )                (    /  \    )                    N    C
-    X1-(      BB      )-X2   [CA]               X1-(   [CA]       )-X2        X1-(   (N)  [C]   )-X2                     |
-        (            )         \                    (    \       )                (        |   )                         O
-         (          )          [N]                   (   [N]    )                  (       O  )    
-          (        )                                  (        )                    (        )     
-           --------                                    --------                      --------       
-
-The connecting atoms are highlighted by square brackets
-
-</pre> 
-
-This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
-
 <p align="center">
                                    <b>**REQUIREMENTS**</b>
 </p>
@@ -129,6 +97,14 @@ OPTIONAL
 - -info       (True/False)
 - -version    (True/False)
 - -v          (-vvv) 
+
+<p align="center">
+                                   <b>**Fragment based fitting**</b>
+</p>
+
+![Alt text](database/script_files/images/Fragment.png)
+
+This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
 
 <p align="center">
                                    <b>**INPUT**</b>
@@ -617,103 +593,3 @@ ATOM      1  NA   NA     1      21.863  22.075  76.118  1.00  0.00
 [ NA ]
 ATOM      1  NA   NA     1      21.863  22.075  76.118  1.00  0.00
 </pre>
-
-<p align="center">
-                                   <b>**AT2CG SCRIPT OVERVIEW**</b>
-</p>
-                                    
-Within this script I have included a the reverse of CG2AT. Here the fragment library is used to convert a atomistic system into a coarsegrain representation.
-
-This script roughly follows the following workflow.
-
-- Finds the center of mass of each fragment's heavy atoms as described by the database.
-- Writes out a pdb file containing the beads placed at the COM of each fragment.
-
-<pre>
-   Atomistic                     CG fragments                            CG beads
-                                   --------                              --------    
-                                  (        )                            (        )    
-                                 (  O1  O2  )                          (          )      
-                                (    \  /    )                        (            )   
-                               (      CG      )                      (     SC1      )        
-    O1  O2                      (     |      )                        (            )    
-     \  /                        (    CB    )                          (          )    
-      CG                          (        )                            (        )       
-      |        Fragments           --------            Coarse            --------  
-      CB      ----------->            |             ----------->             |        
-      |                            --------             grain            --------   
-  X1  CA   X2                     (        )                            (        )  
-   \ /  \ /                      (    CA    )                          (          )
-    N    C                      (    /  \    )                        (            ) 
-         |                  X1-(    N    C    )-X2                X1-(      BB      )-X2
-         O                      (        |   )                        (            )     
-                                 (       O  )                          (          )
-                                  (        )                            (        ) 
-                                   --------                              -------- 
-</pre> 
-
-This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
-
-<p align="center">
-                                   <b>**FLAGS**</b>
-</p>
-           
-The conversion follows a similar syntax to CG2AT.
-
-The following flags are required:
-
-- -c (str)
-- -at2cg (True/False)
-
-The following flags are optional
-- -fg (str)
-- -ff (str)
-- -swap (eg POPI:POP2)
-
-
-example input.
-
-<pre>
-python cg2at.py -c at_input.gro -fg martini_2-2_charmm36 -ff martini_2-2 -at2cg 
-</pre>
-
-Due the truncation of PI lipid types residue names to 4 characters. The swap group is required to specify to correct lipid type.
-
-example input.
-
-resname POPI (which in reality is POPI2_3-5 not POPI1_3) in martini is called POP2.
-
-<pre>
-python cg2at.py -c at_input.gro -fg martini_2-2_charmm36 -ff martini_2-2 -at2cg -swap POPI:POP2
-</pre>
-
-<p align="center">
-                                   <b>**AT2CG OUTPUT DIRECTORIES**</b>
-</p>
-                                        
-The script will create a output file system as below.
-
-    | --    AT2CG_(timestamp)
-                | --    INPUT
-                                - at_input.gro, conversion_input.pdb, script_inputs.dat
-                | --    FINAL
-                                - Forcefield selected, final conversion
-
-Directories
-
-- INPUT
-  - supplied AT file (pdb,gro,tpr)
-  - AT converted to pdb (conversion_input.pdb)
-  - script inputs, all flags used in the conversion saved for future reference
-- FINAL
-  - FORCEFIELD folder 
-  - final CG structures in pdb format
-  - topology file
-  
-A topology will be provided, however it will require updating with the correct protein information. Places to update are highlighted as "XXX" 
-
-To remake your martini topology of the protein. You will need to rerun martinise.py.
-
-This step was not incorporated as it requires the package DSSP to correctly make the topology.
-
-However the martinise.py script is available with the scripts directory. The initial section of the martinise command to run will be printed at the end of the conversion. 
