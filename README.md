@@ -13,9 +13,9 @@ DOI: 10.5281/zenodo.3890163
                                    <b>**CG2AT SCRIPT OVERVIEW**</b>
 </p>
 
-The script is a fragment based conversion of  coarse grain systems such as martini to atomistic. This method generates a selection of outputs for further refinement and analysis via atomistic simulations. 
+CG2AT2 is a fragment based conversion of coarse grain systems (e.g. martini) to atomistic. CG2AT2 generates a selection of outputs for allowing further refinements and analysis via atomistic simulations. 
 
-CG2AT2 has been designed for ease of use, where for the majority of users only only need to supply the coordinate file of the coarsegrain system and the original atomisitc file. CG2AT2 will provide all the files required to run the further atomistic simulation. 
+CG2AT2 has been designed for ease of use, where for the majority of users need only supply the coordinate file of the coarsegrain system and the original atomisitc file. CG2AT2 will then provide all the files required to run the further atomistic simulation. 
 
 <p align="center">
                                    <b>**REQUIREMENTS**</b>
@@ -100,7 +100,6 @@ OPTIONAL
   <img width="500" src="database/script_files/images/Fragment.png">
 </p>
 
-
 This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
 
 This script roughly follows the following workflow.
@@ -131,6 +130,11 @@ To run a basic conversion of your system, all that is required is the coarsegrai
 
 However, the quality of the conversion is improved if you can provide the starting atomistic structure used to create the initial CG model.
 
+e.g.
+<pre>
+    python cg2at.py -c cg_input.gro -a atomistic_input.gro
+</pre>
+
 The atomistic segments are then aligned to the coarsegrain initially by sequence. The atomistic foles can be supplied in a single or multiple files 
 
 If only partial structures are supplied, then the script will build in the missing residues from the de novo build. 
@@ -139,28 +143,10 @@ For example if you have a signal peptide linked via a flexible linker to the mai
 
 You can just supply the atomistic coordinates for the signal peptide and main protein and the script will build in the linker from the de novo method.
 
-the script will rigid body fit the helix and cytosolic protein separately and fill in the linker from the de novo construct. 
+<p align="center">
+  <img width="500" src="database/script_files/images/hybrid.png">
+</p>
 
-<pre>
-                              CG                        AT from user
-    input            helix --------- protein           helix, protein 
-                               |                             |
-                               V                             |
-    conversion       helix --------- protein                 |
-     (de novo)                 |                             |
-                               V                             V
-          de novo: linker  ---------            user:   helix, protein
-                                    \                  /
-                                     \________________/
-                                             |
-                                             V
-    final hybrid system            helix --------- protein
-</pre>
-
-e.g.
-<pre>
-    python cg2at.py -c cg_input.gro -a atomistic_input.gro
-</pre>
 
 <p align="center">
                                    <b>**Advanced Usage**</b>
@@ -210,14 +196,14 @@ Default:
 <b>individual atomistic chains are fitted to CG structure</b>
 
 Fit by coarse grain chain:
-<b>- -group chain </b>
+<b>-group chain </b>
 
 Fit entire atomistic structure rigidly:
-<b>- -group all </b>
+<b>-group all </b>
 
 Fit atomistic chains in specific groups:
 Treat chains 0, 2 and 1, 3 as individual groups. Each group is separated by a space.
-<b>- -group 0,2 1,3   </b>
+<b>-group 0,2 1,3   </b>
 </pre>
 
 <p align="center">
@@ -229,7 +215,7 @@ Due to the modular nature of CG representation, you can switch residues during t
 
 If the residue you are swapping to has the same number or fewer CG beads you can use the following flag to change the residue.
 
-<b>- -swap </b> 
+<b>-swap </b> 
 
 Usage
 
@@ -421,7 +407,7 @@ New forcefields and fragments can be added very easily by creating a new folder 
 You can prevent the script from reading any file or folder by prefixing the name with a underscore.
 
 <p align="center">
-                                   <b>**Fragments**</b>
+                                   <b>**Adding fragments to the database**</b>
 </p>
 
 The fragment database is separated into three parts (protein, non-protein and other).
@@ -490,8 +476,10 @@ The optional topology file contains the information about grouping and connectiv
 # bead_1 atom_1 bead_2 direction
    BB      N      BB       -1
    BB      C      BB        1
+
 [ GROUPS ]
 SC1 SC2 SC3
+
 [ CHIRAL ]
 # column must be in the order:
 # central atom, atom to move, atom_1, atom_2, atom_3
@@ -500,8 +488,9 @@ CA HA CB N C
 
 </pre>
 
-For non protein residues you can create a position restraint file which is applied during the creation of the aligned and steered systems.
-A script exists within the scripts directory called make_fragments_posre.py this can either create the correct posre files for every residue in the system or for a single residue.
+For non protein residues you can create a position restraint file which is applied during the creation of the aligned.
+
+A script exists within the scripts directory called make_fragments_posre.py this can either create the correct posre files for every residue in the system or for individual residues.
 
 To apply to every folder in directory in non_protein:
 <pre>
