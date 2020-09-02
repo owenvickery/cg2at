@@ -31,7 +31,7 @@ For a detailed description of the script workflow please read the file in
 database/script_files/workflow.pdf
 </b>
 
-![Alt text](./database/script_files/images/Fragments.png)
+![Alt text](database/script_files/images/Fragment.png)
 ![Alt text abs](https://github.com/owenvickery/cg2at/blob/master/database/script_files/images/Fragment.png)
 
 <pre>
