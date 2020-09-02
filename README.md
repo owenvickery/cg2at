@@ -32,7 +32,7 @@ database/script_files/workflow.pdf
 </b>
 
 ![Alt text](./database/script_files/images/Fragments.png)
-
+![Alt text abs](https://github.com/owenvickery/cg2at/blob/master/database/script_files/images/Fragment.png)
 
 <pre>
            CG beads         Fragments           COM aligned fragments           Aligned fragments                 Atomistic
