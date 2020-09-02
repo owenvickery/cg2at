@@ -3,7 +3,7 @@
    BB      N      BB       -1
    BB      C      BB        1
 [ GROUPS ]
-SC2 SC3
+SC1 SC2 SC3
 [ CHIRAL ]
 # column must be in the order:
 # central atom, atom to move, atom_1, atom_2, atom_3
