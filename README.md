@@ -325,6 +325,7 @@ Usage
              From        :              To           :    range
       resname,bead,bead  :     resname,bead,bead     :  0-10,30-40
 
+
 Examples: 
 
 <p align="center">If the beads are the same:</p>
@@ -367,6 +368,35 @@ The following switches all POPE to POPG and all POPG to POPE:
 The following will skip all NA+ between resid 4000 and 4100:
 
 <b>-swap NA+:skip:4000-4100</b>
+
+<p align="center"><b>Correcting residue name truncation</b></p>
+
+Please note that currently the maximum residue name length is four characters in both pdb and gro files. 
+
+This causes a lot of issues with highly similar residues such as Phosphatidylinositol (POPI) lipids, for example there are three versions of the PI headgroup (PI-3-P, PI-4-P, PI-5-P). All three of these residues are truncated to POPI, removing the phosphate position from the residue name.
+
+Within CG2AT2 the residue names do not need to be four characters in length. For example, PI-3-P, PI-4-P, PI-5-P are called POPI1_3, POPI1_4 and POPI1_5 respectively.
+
+By using the swap function, the POPI lipid can be switched with POPI1_4.
+
+<pre>
+<b>-swap POPI:POPI1_4</b>  
+</pre>
+
+the PIP2 lipid in martini has a -5 charge, however this can be switched to a range of possible phosphat positions and protonation states.
+
+<pre>
+lipid, number of PO4, PO4 position and PO4 protonation
+e.g. Phosphatidylinositol 3,5-bisphosphate = POPI2_3-5
+
+e.g. Different versions of phosphatidylinositol bisphosphate lipids 
+POPI2_3-4_3   
+POPI2_3-4_4
+POPI2_3-5_3
+POPI2_3-5_5
+POPI2_3-5     
+POPI2_4-5_4
+POPI2_4-5_5
 
 <p align="center">
                                    <b>Virtual sites</b>
