@@ -5,12 +5,12 @@
 <p align="center">
                                    <b>**CG2AT v2 README**</b>
 </p>
-If you are using this script please acknowledge me (Dr Owen Vickery) and cite the following DOI.
+If you are using CG2AT2 please acknowledge me (Dr Owen Vickery) and cite the following DOI.
 
 DOI: 10.5281/zenodo.3890163
 
 <p align="center">
-                                   <b>**CG2AT SCRIPT OVERVIEW**</b>
+                                   <b>**CG2AT2 OVERVIEW**</b>
 </p>
 
 CG2AT2 is a fragment based conversion of coarse grain systems (e.g. martini) to atomistic. CG2AT2 generates a selection of outputs for allowing further refinements and analysis via atomistic simulations. 
@@ -70,16 +70,14 @@ OPTIONAL
 - -npcus      (int)
 - -mod        (True/False)
 - -sf         (float)(default=0.9)
-- -swap       (str)
 - -cys        (float)
 - -ter        (True/False)
 - -nt         (True/False)
 - -ct         (True/False)
-- -al         (True/False)
 - -vs         (True/False)
-- -swap       (str)(e.g. PIP2,D3A:PIP2,C3A GLU,SC2:ASP,skip)
+- -swap       (str)
 - -box        (int) (Angstrom)(0 is ignored and uses input eg 100 150 100 ) 
-- -w          [tip3p, tip4p, spc and spce] 
+- -w          (str)
 - -ff         (str) 
 - -fg         (str) 
 - -gromacs    (str) 
@@ -102,13 +100,13 @@ OPTIONAL
 
 This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
 
-This script roughly follows the following workflow.
+CG2AT2 roughly follows the following workflow.
 
 - Center fragments based on the center of mass (COM) of heavy atoms.
 - Rotate fragments to find minimum distance between the atoms connecting to other beads.
 - Minimise residue
 - Merge all residues and minimise
-- check for threaded lipids (abnormal bonds used as a marker for lipid through rings)
+- check for threaded lipids
 - Run NVT and NPT
 - Morph protein to rigid body alignment
 
@@ -132,9 +130,9 @@ To correct for accidental threading of lipids tails through aromatic residues, C
                                    <b>**INPUT**</b>
 </p>
 
-The script contains two methods to rebuild the system:
+CG2AT2 contains two methods to rebuild the system:
 
-- de novo method, following the protocol described in the script overview section.
+- de novo method, following the protocol described in the CG2AT2 overview section.
 - flexible fitting of a user supplied atomistic structure (prefereably the one used to make the CG representation).
 
 To run a basic conversion of your system, all that is required is the coarsegrain system in any format readable by "gmx editconf".
@@ -148,52 +146,64 @@ e.g.
 
 The atomistic segments are then aligned to the coarsegrain initially by sequence. The atomistic foles can be supplied in a single or multiple files 
 
-If only partial structures are supplied, then the script will build in the missing residues from the de novo build. 
+If only partial structures are supplied, then CG2AT2 will build in the missing residues from the de novo build. 
 
 For example if you have a signal peptide linked via a flexible linker to the main protein.
 
-You can just supply the atomistic coordinates for the signal peptide and main protein and the script will build in the linker from the de novo method.
+You can just supply the atomistic coordinates for the signal peptide and main protein and CG2AT2 will build in the linker from the de novo method.
 
 <p align="center">
   <img width="500" src="database/script_files/images/hybrid.png">
 </p>
 
-
 <p align="center">
-                                   <b>**Advanced Usage**</b>
-</p>
-
-<p align="center">
-                                   <b>Virtual sites</b>
-</p>
-
-To apply virtual sites to you protein use the flag:
-
-- -vs
-
-
-<p align="center">
-                                   <b>Disulphide Bonds</b>
+                                   <b>**OUTPUT FILE STRUCTURE**</b>
 </p>
                                         
 
-The script currently finds disulphide bonds in the user supplied atomistic structure (S-S < 2.1 A).
+CG2AT2 will create a output file system as below.
 
-As well as searching the CG representation for disulphide bonds (SC1-SC1 < 7 A and more than 4 residues apart).
+    | --    CG2AT_(timestamp)
+                | --    INPUT
+                                - CG_INPUT.pdb, AT_INPUT_X.pdb, script_inputs.dat
+                | --    RESIDUE_TYPE (PROTEIN, POPE)
+                                - converted indivudal residues
+                | --    MERGED
+                                -  merged residue types
+                | --    FINAL
+                                - Forcefield selected, all topology files, final conversions
 
-If the disulphide only exists in the CG, then the script will ask if it is a disuphide. 
+Directories
 
-To silence the question and automatically select disulphides use the flag: 
+- INPUT
+  - supplied cg file (pdb,gro,tpr)
+  - CG converted to pdb (CG_input.pdb)
+  - supplied atomistic file (pdb,gro,tpr)
+  - supplied atomistic file converted to pdb (AT_input_X.pdb)
+  - script inputs, all flags used in the conversion saved for future reference
 
-- -silent
+- RESIDUE_TYPE (e.g POPE, PROTEIN)
+  - individual residues after initial conversion
+  - topology for residues
+  - mdp for minisation
+  - gromacs outputs saved
+  - MIN folder containing minimised residues
+  - merged pdb containing all minimised residues in a single pdb
+- MERGED
+  - topology for all residues 
+  - mdp for minisation
+  - all residue types merged into single pdb 
+  - gromacs outputs saved
+  - MIN folder containing merged minimisation files
+  - NVT folder containing merged NVT files
+  - STEER folder containing merged aligned files
+- FINAL
+  - FORCEFIELD folder 
+  - topology for all residues
+  - final atomistic structures in pdb format
+  - script timings for the conversion
+  - final conversion RMSD between atomistic output and CG
 
-In most cases the script catches the extra long disulphide bonds in martini simulations, however in some cases the disulphide can extend up to 10A.
-
-If you recieve a error that the pdb and topology don't match and the atom number is out by 2. It is most likely a disulpide bond not being treated correctly.
-
-You may be able to fix it by increasing the disulphide bond search radius catch using the flag:
-
-- -cys (default = 7 A)
 
 <p align="center">
 <b>Rigid fitting</b>
@@ -218,13 +228,95 @@ Treat chains 0, 2 and 1, 3 as individual groups. Each group is separated by a sp
 </pre>
 
 <p align="center">
+                                   <b>Output conversions</b>
+</p>
+                                        
+
+CG2AT2 provides 3 types of coarsegrain conversions. 
+
+You can select which of these is supplied using the flag:
+- -o ['all', 'align', 'de_novo', 'none']
+
+<p align="center"><b>none:</b></p>
+
+- The atomistic framgents are fitted to the CG structure and minismised.
+- Threaded lipids are fixed
+- Final output is located FINAL/final_cg2at_de_novo.pdb
+
+<p align="center"><b>de_novo:</b></p>
+
+- The atomistic framgents are fitted to the CG structure and minismised.
+- Threaded lipids are fixed
+- Short 5 ps NVT simulation is run  
+- Final output is located FINAL/final_cg2at_de_novo.pdb
+
+<p align="center"><b>align:</b></p>
+- The atomistic framgents are fitted to the CG structure and minismised.
+- Threaded lipids are fixed
+- Minimised de_novo is morphed by steered MD to the user supplied structure 
+- Final output is located FINAL/final_cg2at_aligned.pdb
+
+<p align="center"><b>all (default):</b></p>
+
+- The atomistic framgents are fitted to the CG structure and minismised.
+- Threaded lipids are fixed
+- Short 5 ps NVT simulation is run  
+- First output is located FINAL/final_cg2at_de_novo.pdb
+- Final frame from NVT is morphed by steered MD to the user supplied structure 
+- second output is located FINAL/final_cg2at_aligned.pdb
+
+
+<p align="center">
+                                   <b>**Automation**</b>
+</p>
+                                        
+If you know in advance which settings you wish to use, these can be supplied by the following flags. 
+
+- w   (str) water model         e.g. tip3p
+- fg  (str) fragment databases  e.g. martini_2-2_charmm36
+- ff  (str) forcefield          e.g. charmm36-jul2017
+
+example input.
+
+<pre>
+    python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update 
+</pre>
+
+<p align="center">
+                                   <b>**OTHER FLAGS**</b>
+</p>
+
+<p align="center">
+                                   <b>Disulphide Bonds</b>
+</p>
+                                        
+
+CG2AT2 currently finds disulphide bonds in the user supplied atomistic structure (S-S < 2.1 A).
+
+As well as searching the CG representation for disulphide bonds (SC1-SC1 < 7 A and more than 4 residues apart).
+
+If the disulphide only exists in the CG, then CG2AT2 will ask if it is a disuphide. 
+
+To silence the question and automatically select disulphides use the flag: 
+
+- -silent
+
+In most cases CG2AT2 catches the extra long disulphide bonds in martini simulations, however in some cases the disulphide can extend up to 10A.
+
+If you recieve a error that the pdb and topology don't match and the atom number is out by 2. It is most likely a disulpide bond not being treated correctly.
+
+You may be able to fix it by increasing the disulphide bond search radius catch using the flag:
+
+- -cys (default = 7 A)
+
+<p align="center">
 <b>Swap residues and beads</b>
 </p>
                                         
 
 Due to the modular nature of CG representation, you can switch beads and residues during the conversion if you wish to make simple mutations.
 
-The swapping procedure is limited to residues with the same number or fewer CG beads, the script cannot add extra beads. If you wish to add extra beads to residues, this can be done in the initial input file. 
+The swapping procedure is limited to residues with the same number or fewer CG beads, CG2AT2 cannot add extra beads. If you wish to add extra beads to residues, this can be done in the initial input file. 
 
 <b>-swap </b> 
 
@@ -276,115 +368,182 @@ The following will skip all NA+ between resid 4000 and 4100:
 
 <b>-swap NA+:skip:4000-4100</b>
 
+<p align="center">
+                                   <b>Virtual sites</b>
+</p>
+
+To apply virtual sites to you protein use the flag:
+
+- -vs
 
 <p align="center">
-                                   <b>**OUTPUT**</b>
+                                   <b>Duplication</b>
 </p>
-                                        
 
-The script will create a output file system as below.
+If you are converting a homodimer, you only need to supply a single atomistic structure. With the duplication flag you can copy atomistic protein chains.
 
-    | --    CG2AT_(timestamp)
-                | --    INPUT
-                                - CG_INPUT.pdb, AT_INPUT_X.pdb, script_inputs.dat
-                | --    RESIDUE_TYPE (PROTEIN, POPE)
-                                - converted indivudal residues
-                | --    MERGED
-                                -  merged residue types
-                | --    FINAL
-                                - Forcefield selected, all topology files, final conversions
+To duplicate chain 0 to create a total of 2 chains the following input can be used.  
 
-Directories
-
-- INPUT
-  - supplied cg file (pdb,gro,tpr)
-  - CG converted to pdb (CG_input.pdb)
-  - supplied atomistic file (pdb,gro,tpr)
-  - supplied atomistic file converted to pdb (AT_input_X.pdb)
-  - script inputs, all flags used in the conversion saved for future reference
-
-- RESIDUE_TYPE (e.g POPE, PROTEIN)
-  - individual residues after initial conversion
-  - topology for residues
-  - mdp for minisation
-  - gromacs outputs saved
-  - MIN folder containing minimised residues
-  - merged pdb containing all minimised residues in a single pdb
-- MERGED
-  - topology for all residues 
-  - mdp for minisation
-  - all residue types merged into single pdb 
-  - gromacs outputs saved
-  - MIN folder containing merged minimisation files
-  - NVT folder containing merged NVT files
-  - STEER folder containing merged aligned files
-- FINAL
-  - FORCEFIELD folder 
-  - topology for all residues
-  - final atomistic structures in pdb format
-  - script timings for the conversion
-  - final conversion RMSD between atomistic output and CG
+e.g.
+<pre>
+<b>-d 0:2</b>
+</pre>
 
 <p align="center">
-                                   <b>Output conversions</b>
+                                   <b>location</b>
 </p>
-                                        
 
-The script provides 3 types of coarsegrain conversions. 
+CG2AT2 will by default create a new directory each time it is run (CG2AT_timestamp) this can be overridden with the loc flag. 
 
-You can select which of these is supplied using the flag:
-- -o ['all', 'align', 'de_novo', 'none']
+If CG2AT2 fails a somepoint you can fix the offending error in the structure and you can rerun CG2AT2, which will pick up from where it left off.  
 
-<p align="center"><b>none:</b></p>
-
-- The atomistic framgents are fitted to the CG structure and minismised.
-- Threaded lipids are fixed
-- Final output is located FINAL/final_cg2at_de_novo.pdb
-
-<p align="center"><b>de_novo:</b></p>
-
-- The atomistic framgents are fitted to the CG structure and minismised.
-- Threaded lipids are fixed
-- Short 5 ps NVT simulation is run  
-- Final output is located FINAL/final_cg2at_de_novo.pdb
-
-<p align="center"><b>align:</b></p>
-- The atomistic framgents are fitted to the CG structure and minismised.
-- Threaded lipids are fixed
-- Minimised de_novo is morphed by steered MD to the user supplied structure 
-- Final output is located FINAL/final_cg2at_aligned.pdb
-
-<p align="center"><b>all (default):</b></p>
-
-- The atomistic framgents are fitted to the CG structure and minismised.
-- Threaded lipids are fixed
-- Short 5 ps NVT simulation is run  
-- First output is located FINAL/final_cg2at_de_novo.pdb
-- Final frame from NVT is morphed by steered MD to the user supplied structure 
-- second output is located FINAL/final_cg2at_aligned.pdb
-
+e.g.
+<pre>
+<b>-loc CG2AT</b>
+</pre>
 
 <p align="center">
-                                   <b>**Automation**</b>
+                                   <b>Number of CPUS</b>
 </p>
-                                        
-If you know in advance which settings you wish to use, these can be supplied by the following flags. 
 
-- w   (str) water model         e.g. tip3p
-- fg  (str) fragment databases  e.g. martini_2-2_charmm36
-- ff  (str) forcefield          e.g. charmm36-jul2017
+CG2AT by default will attempt to parallise everything over 8 cores, this can be overridden with the ncpus flag.
 
-example input.
+e.g.
+<pre>
+<b>-ncpus 4</b>
+</pre>
+
+<p align="center">
+                                   <b>Modular vs group</b>
+</p>
+
+The individual fragments for a residue can be treated as a group (specified within the topology file), this lowers the risk of a failed conversion and improves the quality of the conversion. This is enabled by default.
+
+Grouping can be switched off using the flag:
+<pre>
+<b>-mod</b>
+</pre>
+
+The grouping is especially useful for converting sugar groups in which the hydrogen geometry should be retained as much as possible.
+
+<p align="center">
+  <img width="500" src="database/script_files/images/group_vs_mod.png">
+</p>
+
+<p align="center">
+                                   <b>Scale factor</b>
+</p>
+
+CG2AT2 by default shrinks the fragments to 90 % of the original size, this decreases the possibility of overlapping atoms. If the system has issues minimising the system, you can shrink the fragments further.
+
+e.g. 80%
+<pre>
+<b>-sf 0.8</b>
+</pre>
+
+<p align="center">
+                                   <b>Terminal residues</b>
+</p>
+
+By default CG2AT2 uses charged termini on the protein chains, this due to some forcefield files being unable to add neutral termini. 
+
+If the termini for the residue isn't supplied within the residue topology, then you can specify the termini type you require.
+
 
 <pre>
-    python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update 
+All N-termini neutral
+<b>-nt</b>
+
+All C-termini neutral
+<b>-ct</b>
+
+Interactively choose termini
+<b>-ter</b>
+</pre>
+
+<p align="center">
+                                   <b>PBC box resizing</b>
+</p>
+
+For the moment CG2AT2 only allows PBC box resizing for cubic boxs. The box flag controls the final box size and is measured in Angstroms. If you wish to shrink the box on selected axises replace the box vector with 0.
+
+<pre>
+Change box size to 100, 100, 100
+<b>-box 100 100 100</b>
+To shrink box on the z-axis only to 100 A
+<b>-box 0 0 100</b>
+
+<p align="center">
+                                   <b>Specifing GROMACS version</b>
+</p>
+
+CG2AT2 will automatically try and find the installed version of GROMACS, however you can specify the specific install to use.
+
+This is useful if you have two versions of GROMACS installed e.g. gmx and gmx_mod
+
+<pre>
+to use gmx_mod
+<b>-gromacs gmx_mod</b>
+</pre>
+
+<p align="center">
+                                   <b>Cleaning</b>
+</p>
+
+CG2AT2 will by default clean as many temporary files from the conversion as possible, whilst leaving enough to rerun the script quickly.
+
+To prevent the cleanup and retain all the temporary files use the messy flag.
+<pre>
+<b>-messy</b>
+</pre>
+
+<p align="center">
+                                   <b>Distance restraint matrix</b>
+</p>
+
+If you supply a atomistic file to CG2AT2, a distance restraint matrix will be generated for the protein backbone hydrogen bond network. This network is overlay on the de_novo conversion during the NVT simulation. This generally has minimal effect on the structure however improves the orientation of the backbone atoms.
+
+This can be switched off using the disre flag.
+<pre>
+<b>-disre</b>
+</pre>
+
+<p align="center">
+                                   <b>Atom overlap checker</b>
+</p>
+
+CG2AT2 by default prevents atoms from overlapping within 0.3 Angstrom, any closer than this and minimisation is likely to fail. If you still generate minimisation errors increasing the overlap cutoff may fix it.
+
+This can be controlled using the ov flag.
+e.g. 0.5 Angstrom overlap
+<pre>
+<b>-ov 0.5</b>
+</pre>
+
+<p align="center">
+                                   <b>Further information</b>
+</p>
+
+If you require further information on CG2AT2 there are multiple flags that can be used.
+
+<pre>
+Help menu for flags
+<b>-h</b>
+Current version of CG2AT2
+<b>-version</b>
+Information on CG2AT including contact details, list of available fragments and forcefields.
+<b>-info</b>
+To find available residue fragments in a specific fragment database, you can use the fg in conjuction with the info flag.
+<b>-info -fg martini_2-2_charmm36</b>
+To change the verbosity of CG2AT2 the 'v' can be used, by increasing the number of flags, the verbosity can be modulated.
+<b>-v -v or -vv</b>
 </pre>
 
 <p align="center">
                                    <b>**Database**</b>
 </p>                                        
 
-The database has the following file structure and is checked everytime the script is run.
+The database has the following file structure and is checked everytime CG2AT2 is run.
 
 New forcefields and fragments can be added very easily by creating a new folder within the directory structure below. 
 
@@ -446,17 +605,7 @@ Whilst the modified protein and non protein fragments retain all their hydrogens
 
 This is due to problematic adding of every residue to the gromacs hydrogen database. 
 
-multiple fragments can be treated as a group (specified within the topology file), this lowers the risk of a failed conversion and improves the quality of the conversion. 
 
-This default grouping can be switched off using the flag:
-
-- -mod
-
-The grouping is especially useful for converting sugar groups in which the hydrogen geometry should be retained as much as possible.
-
-<p align="center">
-  <img width="500" src="database/script_files/images/group_vs_mod.png">
-</p>
 
 An example of a normal amino acid fragment files:
 
