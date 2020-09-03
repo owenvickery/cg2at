@@ -236,7 +236,7 @@ CG2AT2 provides 3 types of coarsegrain conversions.
 
 You can select which of these is supplied using the flag:
 - -o ['all', 'align', 'de_novo', 'none']
-
+<pre>
 <p align="center"><b>none:</b></p>
 
 - The atomistic framgents are fitted to the CG structure and minismised.
@@ -264,7 +264,7 @@ You can select which of these is supplied using the flag:
 - First output is located FINAL/final_cg2at_de_novo.pdb
 - Final frame from NVT is morphed by steered MD to the user supplied structure 
 - second output is located FINAL/final_cg2at_aligned.pdb
-
+</pre>
 
 <p align="center">
                                    <b>**Automation**</b>
@@ -472,6 +472,8 @@ Change box size to 100, 100, 100
 <b>-box 100 100 100</b>
 To shrink box on the z-axis only to 100 A
 <b>-box 0 0 100</b>
+</pre>
+
 
 <p align="center">
                                    <b>Specifing GROMACS version</b>
@@ -536,7 +538,7 @@ Information on CG2AT including contact details, list of available fragments and 
 To find available residue fragments in a specific fragment database, you can use the fg in conjuction with the info flag.
 <b>-info -fg martini_2-2_charmm36</b>
 To change the verbosity of CG2AT2 the 'v' can be used, by increasing the number of flags, the verbosity can be modulated.
-<b>-v -v or -vv</b>
+<b>-v -v or -v</b>
 </pre>
 
 <p align="center">
