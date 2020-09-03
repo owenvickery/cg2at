@@ -108,14 +108,25 @@ This script roughly follows the following workflow.
 - Rotate fragments to find minimum distance between the atoms connecting to other beads.
 - Minimise residue
 - Merge all residues and minimise
-- check for abnormal bonds (marker for lipid through rings)
+- check for threaded lipids (abnormal bonds used as a marker for lipid through rings)
 - Run NVT and NPT
-- Morph protein to either rigid body alignment
+- Morph protein to rigid body alignment
 
 
 <p align="center">
   <img width="500" src="database/script_files/images/workflow.png">
 </p>
+
+<p align="center">
+                                   <b>**threaded lipids**</b>
+</p>
+
+To correct for accidental threading of lipids tails through aromatic residues, CG2AT2 analyses the length of all bonds within the minimised system. If any bonds are greater than 0.2 nm the lipid is considered threaded. The atoms closest to the aromatic residue are then corrected and the system is minimised again.
+
+<p align="center">
+  <img width="500" src="database/script_files/images/threaded.png">
+</p>
+
 
 <p align="center">
                                    <b>**INPUT**</b>
@@ -189,7 +200,7 @@ You may be able to fix it by increasing the disulphide bond search radius catch 
 </p>
                                         
 
-If you are converting a multimeric protein, such as a potassium channel. You can fit the atomistic structure in several ways:
+If you are converting a multimeric protein, such as a potassium channel, the atomistic structure can be fitted in several ways:
 <pre>
 
 Default:
@@ -211,9 +222,9 @@ Treat chains 0, 2 and 1, 3 as individual groups. Each group is separated by a sp
 </p>
                                         
 
-Due to the modular nature of CG representation, you can switch residues during the conversion if you wish to make simple mutations.
+Due to the modular nature of CG representation, you can switch beads and residues during the conversion if you wish to make simple mutations.
 
-If the residue you are swapping to has the same number or fewer CG beads you can use the following flag to change the residue.
+The swapping procedure is limited to residues with the same number or fewer CG beads, the script cannot add extra beads. If you wish to add extra beads to residues, this can be done in the initial input file. 
 
 <b>-swap </b> 
 
