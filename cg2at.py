@@ -13,7 +13,7 @@ g_var.tc['i_t']=time.time()
 ### initialise script 
 
 os.environ['GMX_SUPPRESS_DUMP'] = '1'  ## prevent gromacs filling the file system with step files
-
+gen.cg2at_header()
 gen.correct_number_cpus()
 gen.find_gromacs()
 gen.read_database_directories()

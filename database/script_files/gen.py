@@ -15,24 +15,25 @@ import g_var
 
 def forcefield_selection():
     ##### forcefield selection
-    if g_var.ff != None:
-        if os.path.exists(g_var.ff):
-            g_var.forcefield_location, g_var.forcefield = path_leaf(g_var.ff)
-            folder_copy_and_check(g_var.ff, g_var.final_dir+forcefield)
-            print('\nYou have chosen to use your own forcefield: '+g_var.forcefield+' in '+g_var.forcefield_location)
-        elif path_leaf(g_var.ff)[1]+'.ff' in g_var.forcefield_available:
-            forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.ff)[1]+'.ff')
-        elif path_leaf(g_var.ff)[1] in g_var.forcefield_available:
-            forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.ff)[1])
-        else:
-            print('Cannot find forcefield: '+g_var.ff+'  please select one from below\n')   
-    if 'forcefield_number' not in locals() and 'forcefield' not in locals():
-        forcefield_number = database_selection(g_var.forcefield_available, 'forcefields')    
-    if 'forcefield' not in locals():
-        print('\nYou have selected the forcefield: '+g_var.forcefield_available[forcefield_number].split('.')[0])
-        folder_copy_and_check(g_var.database_dir+'/forcefields/'+g_var.forcefield_available[forcefield_number], g_var.final_dir+g_var.forcefield_available[forcefield_number])
-        g_var.forcefield_location, g_var.forcefield=g_var.database_dir+'forcefields/', g_var.forcefield_available[forcefield_number]
-        g_var.opt['ff'] = g_var.forcefield_available[forcefield_number]
+    if not g_var.info:
+        if g_var.ff != None:
+            if os.path.exists(g_var.ff):
+                g_var.forcefield_location, g_var.forcefield = path_leaf(g_var.ff)
+                folder_copy_and_check(g_var.ff, g_var.final_dir+forcefield)
+                print('\nYou have chosen to use your own forcefield: '+g_var.forcefield+' in '+g_var.forcefield_location)
+            elif path_leaf(g_var.ff)[1]+'.ff' in g_var.forcefield_available:
+                forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.ff)[1]+'.ff')
+            elif path_leaf(g_var.ff)[1] in g_var.forcefield_available:
+                forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.ff)[1])
+            else:
+                print('Cannot find forcefield: '+g_var.ff+'  please select one from below\n')   
+        if 'forcefield_number' not in locals() and 'forcefield' not in locals():
+            forcefield_number = database_selection(g_var.forcefield_available, 'forcefields')    
+        if 'forcefield' not in locals():
+            print('\nYou have selected the forcefield: '+g_var.forcefield_available[forcefield_number].split('.')[0])
+            folder_copy_and_check(g_var.database_dir+'/forcefields/'+g_var.forcefield_available[forcefield_number], g_var.final_dir+g_var.forcefield_available[forcefield_number])
+            g_var.forcefield_location, g_var.forcefield=g_var.database_dir+'forcefields/', g_var.forcefield_available[forcefield_number]
+            g_var.opt['ff'] = g_var.forcefield_available[forcefield_number]
 
 def fragment_selection():
     ##### fragment selection
@@ -532,7 +533,6 @@ def read_database_directories():
     for directory_type in ['forcefields', 'fragments']:
         if os.path.exists(g_var.database_dir+directory_type):
             for root, dirs, files in os.walk(g_var.database_dir+directory_type):
-                # available_provided=sorted(dirs)
                 available_provided = [x for x in sorted(dirs) if not x.startswith('_')]
                 break
         else:
@@ -580,7 +580,7 @@ def fetch_frag_number(fragments_available):
         for frag in g_var.fg:
             if frag in fragments_available:
                 fragment_number.append(fragments_available.index(frag))
-            else:
+            elif not g_var.info:
                 print('Cannot find fragment library: '+frag+' please select library from below\n')
                 fragment_number += database_selection(fragments_available, 'fragments').tolist()
     else:
@@ -588,6 +588,8 @@ def fetch_frag_number(fragments_available):
     if len(fragment_number) > 0:
         return fragment_number 
     else:
+        if g_var.info:
+            return []
         sys.exit('no fragment databases selected')
 
 def add_to_list(root, dirs, list_to_add, residues):
@@ -788,61 +790,63 @@ def print_script_timings():
                 print(line)
         print('\nAll script timings have been saved in: \n'+g_var.final_dir+'script_timings.dat\n')
 
-def database_information():
-
-    print('{0:30}'.format('\nThis script is a fragment based conversion of the coarsegrain representation to atomistic.\n'))
+def cg2at_header():
+    print('{0:30}'.format('\nCG2AT2 is a fragment based conversion of coarsegrain to atomistic.\n'))
     print('{0:^90}\n'.format('CG2AT2 version: '+str(g_var.version)))
     print('{0:^90}'.format('CG2AT2 is written by Owen Vickery'))
     print('{0:^90}'.format('Project leader Phillip Stansfeld'))
     print('\n{0:^90}\n{1:^90}'.format('Contact email address:','owen.vickery@warwick.ox.ac.uk'))
     print('\n{0:^90}\n{1:^90}\n{2:^90}\n{3:-<90}'.format('Address:','School of Life Sciences, University of Warwick,','Gibbet Hill Road, Coventry, CV4 7AL, UK', ''))
-    # print('\n{0}\n{1}'.format('If you are using this script please acknowledge me (Dr Owen Vickery) and cite the following DOI.','DOI: 10.5281/zenodo.3890163'))
-    print('\n{0:^90}\n{1:-<90}\n'.format('The available forcefields within your database are (flag -ff):', ''))
+    print('\n{0:^90}\n{1:^90}'.format('If you are using this script please acknowledge me (Dr Owen Vickery)','and cite the following DOI: 10.5281/zenodo.3890163'))    
+    print('\n{0:^90}'.format('Executable: '+g_var.opt['input'].split()[0]))
+    print('{0:^90}'.format('Database locations: '+g_var.database_dir))
+    print('{0:^90}\n\n{1:-<90}'.format('Script locations: '+g_var.scripts_dir, ''))
 
+def database_information():
+    
+    print('\n{0:^90}\n{1:-<90}\n'.format('The available forcefields within your database are (flag -ff):', ''))
     for forcefields in g_var.forcefield_available:
         print('{0:^90}'.format(forcefields))
     print('\n\n{0:^90}\n{1:-<90}\n'.format('The available fragment libraries within your database are (flag -fg):', ''))
     for fragments in g_var.fragments_available:
         print('{0:^90}'.format(fragments))    
-    if g_var.fg != None:
+    if g_var.fg != None :
         fragments_in_use()
-
-    print('\n{0:^90}'.format('Executable: '+g_var.opt['input'].split()[0]))
-    print('{0:^90}'.format('Database locations: '+g_var.database_dir))
-    print('{0:^90}'.format('Script locations: '+g_var.scripts_dir))
     sys.exit('\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
 
 def fragments_in_use():
-    for database_val, database in enumerate(sorted(g_var.fg)):
-        if len(g_var.p_directories) > 0:
-            protein_directories = [sublist for sublist in g_var.p_directories if path_leaf(sublist[0])[1] != 'MOD']
-        print('\n\n{0:^90}\n{1:-<90}\n'.format('The following residues are available in the database: '+database,''))
-        res_type_name = ['Non protein residues', 'Protein residues', 'Modified protein residues', 'Other linked residues', 'Water residues']
-        for res_val, residue in enumerate([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
-            try:
-                res_type = sorted(residue[database_val][1:])
-                print('\n{0:^90}\n{1:^90}'.format(res_type_name[res_val], '-'*len(res_type_name[res_val])))
-                if len(', '.join(map(str, res_type))) <= 80:
-                    print('{0:^90}'.format(', '.join(map(str, res_type))))
-                else:
-                    start, end = 0, 1                       
-                    while end < len(res_type):
-                        line = ', '.join(map(str, res_type[start:end]))
-                        while len(line) <= 80:
-                            if end < len(res_type):
-                                end+=1
-                                line = ', '.join(map(str, res_type[start:end]))
-                                if len(line) > 80:
-                                    end-=1
+    protein_directories=[]
+    if np.any([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
+        for database_val, database in enumerate(sorted(g_var.fg)):
+            if len(g_var.p_directories) > 0:
+                protein_directories = [sublist for sublist in g_var.p_directories if path_leaf(sublist[0])[1] != 'MOD']
+            print('\n\n{0:^90}\n{1:-<90}\n'.format('The following residues are available in the database: '+database,''))
+            res_type_name = ['Non protein residues', 'Protein residues', 'Modified protein residues', 'Other linked residues', 'Water residues']
+            for res_val, residue in enumerate([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
+                try:
+                    res_type = sorted(residue[database_val][1:])
+                    print('\n{0:^90}\n{1:^90}'.format(res_type_name[res_val], '-'*len(res_type_name[res_val])))
+                    if len(', '.join(map(str, res_type))) <= 80:
+                        print('{0:^90}'.format(', '.join(map(str, res_type))))
+                    else:
+                        start, end = 0, 1                       
+                        while end < len(res_type):
+                            line = ', '.join(map(str, res_type[start:end]))
+                            while len(line) <= 80:
+                                if end < len(res_type):
+                                    end+=1
                                     line = ', '.join(map(str, res_type[start:end]))
+                                    if len(line) > 80:
+                                        end-=1
+                                        line = ', '.join(map(str, res_type[start:end]))
+                                        break
+                                else:
                                     break
-                            else:
-                                break
-                        print('{0:^90}'.format(line))
-                        start = end
-            except:
-                pass
-    print('\n{0:-<90}\n'.format(''))
+                            print('{0:^90}'.format(line))
+                            start = end
+                except:
+                    pass
+        print('\n{0:-<90}\n'.format(''))
 
 def write_system_components():
     print('\n{:-<100}'.format(''))

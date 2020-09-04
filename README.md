@@ -405,7 +405,9 @@ POPI2_4-5_5
 
 To apply virtual sites to you protein use the flag:
 
-- -vs
+<pre>
+<b>-vs</b>
+</pre>
 
 <p align="center">
                                    <b>Duplication</b>

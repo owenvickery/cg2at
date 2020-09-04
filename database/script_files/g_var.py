@@ -5,14 +5,14 @@ from time import gmtime, strftime
 import argparse
 from pathlib import Path
 
-parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', prog='CG2AT', epilog='Enjoy the program and best of luck!\n')
+parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', prog='CG2AT2', epilog='Enjoy the program and best of luck!\n')
 group_req = parser.add_mutually_exclusive_group()
 group_req.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
 parser.add_argument('-version', action='version', version='%(prog)s 0.2')
 group_req.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)
 parser.add_argument('-a', help='atomistic coordinates (Optional)',metavar='pdb/gro/tpr',type=str, nargs='*')
-parser.add_argument('-d', help='duplicate atomistic chains. (0:3 1:3 means 3 copies each of chain 0 and 1)',type=str, nargs='*', default=[])
-parser.add_argument('-group', help='treat user supplied atomistic chains, as rigid bodies. (0,1 2,3 or all or chain)',type=str, nargs='*')
+parser.add_argument('-d', help='duplicate atomistic chains. (0:3 1:3 means 3 copies each of chain 0 and 1)',type=str, nargs='*', default=[], metavar='0:1')
+parser.add_argument('-group', help='treat user supplied atomistic chains, as rigid bodies. (0,1 2,3 or all or chain)',type=str, nargs='*', metavar='0,1')
 parser.add_argument('-loc', help='output folder name, (default = CG2AT_timestamp)',metavar='CG2AT',type=str)
 parser.add_argument('-o', help='Final output supplied (default = all)', default='all', type=str, choices= ['all', 'align', 'de_novo', 'none'])
 parser.add_argument('-w', help='choose your solvent, common choices are: tip3p, tip4p, spc and spce. This is optional',metavar='tip3p',type=str)
@@ -32,12 +32,10 @@ parser.add_argument('-cys', help='cutoff for disulphide bonds, sometimes CYS are
 parser.add_argument('-silent', help='silent cysteines question', action='store_true')
 parser.add_argument('-box', help='box size in Angstrom (0 = use input file) (Optional)',metavar='100',type=float, nargs=3)
 parser.add_argument('-vs', help='use virtual sites', action='store_true')
-parser.add_argument('-al', help='switches off alchembed (WARNING may cause issues with lipids and rings)', action='store_false')
 parser.add_argument('-sf', help='scale factor for fragments, shrinks fragments before fitting to CG',metavar='0.9',type=float, default=0.9)
-
 parser.add_argument('-ncpus', help='maximum number of cores to use (default = all)', type=int)
 parser.add_argument('-disre', help='switches off the distance restraint matrix for the backbone', action='store_false')
-parser.add_argument('-ov', help='amount of overlap allowed between atoms', type=float, default=0.3)
+parser.add_argument('-ov', help='amount of overlap allowed between atoms', type=float, default=0.3, metavar='0.3')
 
 args = parser.parse_args()
 opt = vars(args)
