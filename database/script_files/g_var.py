@@ -70,7 +70,6 @@ disre = args.disre
 ter = args.ter
 nt = args.nt
 ct = args.ct
-alchembed = args.al
 ncpus = args.ncpus
 gmx = args.gromacs
 box = args.box
