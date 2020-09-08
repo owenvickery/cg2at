@@ -9,6 +9,7 @@ import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
 
 # Nothing in the script should need changing by the user
 if __name__ == '__main__':
+    mp.freeze_support()
     g_var.tc['i_t']=time.time()
     ### initialise script 
 
