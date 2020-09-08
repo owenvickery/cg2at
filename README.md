@@ -571,7 +571,7 @@ Information on CG2AT including contact details, list of available fragments and 
 To find available residue fragments in a specific fragment database, you can use the fg in conjuction with the info flag.
 <b>-info -fg martini_2-2_charmm36</b>
 To change the verbosity of CG2AT2 the 'v' can be used, by increasing the number of flags, the verbosity can be modulated.
-<b>-v -v or -v</b>
+<b>-v -v or -vv</b>
 </pre>
 
 <p align="center">

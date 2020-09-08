@@ -20,6 +20,7 @@ gen.read_database_directories()
 gen.forcefield_selection()
 gen.fragment_selection()
 gen.check_water_molecules()
+
 if g_var.info:
     gen.database_information()
 if g_var.v >= 2:
@@ -53,9 +54,7 @@ g_var.tc['r_i_t']=time.time()
 if 'PROTEIN' in g_var.cg_residues:          
     g_var.coord_atomistic = at_mod_p.build_multi_residue_atomistic_system(g_var.cg_residues, 'PROTEIN') ## converts protein to atomistic
     if not g_var.user_at_input and g_var.v >= 1:  ## prints protein sequences 
-        print('coarse grain protein sequence:\n')
-        for index in g_var.seq_cg['PROTEIN']:
-            print('chain:', index,g_var.seq_cg['PROTEIN'][index], '\n') 
+        gen.print_sequnce_info('PROTEIN')
     ## reads in user chain, runs a sequence alignment and finds existing disulphide bonds
     g_var.tc['p_d_n_t']=time.time()
     if g_var.user_at_input:
@@ -90,7 +89,9 @@ if 'PROTEIN' in g_var.cg_residues:
 ### converts other linked residues  
 g_var.tc['f_p_t']=time.time()
 if 'OTHER' in g_var.cg_residues:  
-    g_var.other_atomistic = at_mod_p.build_multi_residue_atomistic_system(g_var.cg_residues, 'OTHER')      
+    g_var.other_atomistic = at_mod_p.build_multi_residue_atomistic_system(g_var.cg_residues, 'OTHER')   
+    if g_var.v >= 1:  ## prints protein sequences 
+        gen.print_sequnce_info('OTHER')   
     fin_at_NP_linked_de_novo = at_mod_p.finalise_novo_atomistic(g_var.other_atomistic, 'OTHER')
     gro.run_parallel_pdb2gmx_min('OTHER', g_var.ter_res['OTHER'])
     if not os.path.exists(g_var.working_dir+'OTHER/OTHER_de_novo_merged.pdb'):
@@ -112,7 +113,7 @@ if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTE
         if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
             print('Minimising merged: '+residue_type+'\n') 
             error = gro.minimise_merged(residue_type, g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb')
-            if error == True:
+            if error == True and residue_type not in ['SOL']:
                 print('Failed to minimise as a group now processing individual residues: '+residue_type)
                 gro.non_protein_minimise_ind(residue_type) ## runs grompp and minimises each residue
                 at_mod_np.merge_minimised(residue_type) ## merges minimised residues

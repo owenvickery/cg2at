@@ -48,16 +48,16 @@ def non_solvent(system, atomistic_fragments, residue_type):
         for resid in atomistic_fragments[residue_type]:
             if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
                 atomistic_fragments[residue_type][resid] = at_mod.check_hydrogens(atomistic_fragments[residue_type][resid])
-                for at_id, atom in enumerate(atomistic_fragments[residue_type][resid]):
-                    if not atomistic_fragments[residue_type][resid][atom]['atom'].startswith('M'):
+                for at_id, atom in enumerate(atomistic_fragments[residue_type][resid], 1):
+                    if not atomistic_fragments[residue_type][resid][at_id]['atom'].startswith('M'):
                         index_conversion[count] = len(coord)
-                        coord.append(atomistic_fragments[residue_type][resid][atom]['coord'])
-                    NP[count] = atomistic_fragments[residue_type][resid][atom]
+                        coord.append(atomistic_fragments[residue_type][resid][at_id]['coord'])
+                    NP[count] = atomistic_fragments[residue_type][resid][at_id]
                     count+=1
-        
+       
         coord=at_mod.check_atom_overlap(coord)
         pdb_output_all = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb')
-        atom_counter = 1
+        atom_counter = 0
         for at_val, atom in enumerate(NP):
             if at_val in index_conversion:
                 x, y, z = gen.trunc_coord(coord[index_conversion[at_val]])
@@ -87,7 +87,7 @@ def solvent_sol(system, atomistic_fragments, residue_type):
                 sol[count] = atomistic_fragments[residue_type][resid][atom]
                 count+=1
         coord=at_mod.check_atom_overlap(coord)
-        atom_counter = 1
+        atom_counter = 0
         for at_val, atom in enumerate(sol):
             if sol[atom]['frag_mass'] > 1:                  
                 system['SOL']+=1

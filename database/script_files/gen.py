@@ -795,9 +795,10 @@ def cg2at_header():
     print('{0:^90}\n'.format('CG2AT2 version: '+str(g_var.version)))
     print('{0:^90}'.format('CG2AT2 is written by Owen Vickery'))
     print('{0:^90}'.format('Project leader Phillip Stansfeld'))
-    print('\n{0:^90}\n{1:^90}'.format('Contact email address:','owen.vickery@warwick.ox.ac.uk'))
+    print('\n{0:^90}\n{1:^90}'.format('Contact email address:','owen.vickery@warwick.ac.uk'))
     print('\n{0:^90}\n{1:^90}\n{2:^90}\n{3:-<90}'.format('Address:','School of Life Sciences, University of Warwick,','Gibbet Hill Road, Coventry, CV4 7AL, UK', ''))
     print('\n{0:^90}\n{1:^90}'.format('If you are using this script please acknowledge me (Dr Owen Vickery)','and cite the following DOI: 10.5281/zenodo.3890163'))    
+    print('\n{0:-<90}\n{1:^90}'.format('', 'File locations'))
     print('\n{0:^90}'.format('Executable: '+g_var.opt['input'].split()[0]))
     print('{0:^90}'.format('Database locations: '+g_var.database_dir))
     print('{0:^90}\n\n{1:-<90}'.format('Script locations: '+g_var.scripts_dir, ''))
@@ -855,3 +856,35 @@ def write_system_components():
     print('{0:^10}{1:^25}'.format('---------','------'))
     for section in g_var.system:
         print('{0:^10}{1:^25}'.format(section, g_var.system[section]))
+
+def print_sequnce_info(sys_type):
+    if g_var.v >=1:
+        print('Summary of '+sys_type+' chains')
+        print('\n{0:^15}{1:^12}'.format('chain number', 'length of chain')) #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
+        print('\n{0:^15}{1:^12}'.format('------------', '---------------'))
+        for chain in g_var.seq_cg[sys_type]:
+            print('{0:^15}{1:^12}'.format(chain, len(g_var.seq_cg[sys_type][chain])))
+        print()
+        print('coarse grain sequences:\n')
+        for index in g_var.seq_cg[sys_type]:
+            print('chain:', index, '\n') 
+            print('{0:9}{1:10}{2:10}{3:10}{4:10}{5:10}{6:10}{7:10}'.format('1','10','20','30','40','50','60','70'))
+            if len(''.join(map(str, g_var.seq_cg[sys_type][index]))) <= 80:
+                print('{0:80}'.format(''.join(map(str, g_var.seq_cg[sys_type][index]))))
+            else:
+                start, end = 0, 1                       
+                while end < len(g_var.seq_cg[sys_type][index]):
+                    line = ''.join(map(str, g_var.seq_cg[sys_type][index][start:end]))
+                    while len(line) <= 80:
+                        if end < len(g_var.seq_cg[sys_type][index]):
+                            end+=1
+                            line = ''.join(map(str, g_var.seq_cg[sys_type][index][start:end]))
+                            if len(line) > 80:
+                                end-=1
+                                line = ''.join(map(str, g_var.seq_cg[sys_type][index][start:end]))
+                                break
+                        else:
+                            break
+                    print('{0:80}'.format(line))
+                    start = end
+            print()

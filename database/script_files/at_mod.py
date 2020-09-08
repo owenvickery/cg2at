@@ -224,7 +224,7 @@ def check_atom_overlap(coordinates):
             if np.round((ndx_val/len(overlapped))*100,2).is_integer() and len(overlapped) > 30:
                 print('fixing '+str(len(overlapped))+' overlapped atoms: '+str(np.round((ndx_val/len(overlapped))*100,2))+' %', end='\r')
             xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
-            while len(tree.query_ball_point(xyz_check, r=0.3)) > 1:
+            while len(tree.query_ball_point(xyz_check, r=g_var.ov)) > 1:
                 xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
             coordinates[ndx[0]]=xyz_check
             tree = cKDTree(coordinates)
@@ -346,7 +346,9 @@ def merge_indivdual_chain_pdbs(file, end, res_type):
         else:
             sys.exit('cannot find chain: '+file+'_'+str(chain)+end)
         if res_type+'_aligned' in file:  
-            count += at_mod_p.write_disres(merge_temp, chain, file, count)
+            if chain == 0:
+                restraint_count = -1
+            count, restraint_count = at_mod_p.write_disres(merge_temp, chain, file, count, restraint_count)
         merge, merge_coords = fix_chirality(merge,merge_temp,merged_coords, res_type)   
     if res_type+'_aligned' not in file:
         merged_coords = check_atom_overlap(merge_coords)

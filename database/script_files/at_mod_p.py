@@ -67,13 +67,6 @@ def build_multi_residue_atomistic_system(cg_residues, sys_type):
             chain_count+=1
 
     print('Completed initial conversion of '+sys_type+'\n')        
-    if g_var.v >=1:
-        print('Length of '+sys_type+' chains')
-        print('\n{0:^15}{1:^12}'.format('chain number', 'length of chain')) #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
-        print('\n{0:^15}{1:^12}'.format('------------', '---------------'))
-        for chain in g_var.seq_cg[sys_type]:
-            print('{0:^15}{1:^12}'.format(chain, len(g_var.seq_cg[sys_type][chain])))
-        print()
     g_var.system[sys_type]=chain_count
     if sys_type == 'PROTEIN':
         for chain in range(chain_count):
@@ -149,10 +142,7 @@ def find_disulphide_bonds_de_novo():
                     query = tree.query_ball_point(cys, r=g_var.cys)
                     if len(query) == 2 and query not in done_query:
                         if cys_resid[query[1]] - cys_resid[query[0]] > 4:
-                            if g_var.silent==True:
-                                disul = True
-                            else:
-                                disul = ask_if_disulphide(chain, cys_resid[query[0]],cys_resid[query[1]])
+                            disul = True if g_var.silent else ask_if_disulphide(chain, cys_resid[query[0]],cys_resid[query[1]])
                             if disul:
                                 g_var.user_cys_bond[chain].append([cys_resid[query[0]],cys_resid[query[1]]])
                         done_query.append(query)
@@ -277,7 +267,10 @@ def fix_carbonyl(residue_id, cg, at, cross_vector):
 
 def add_to_sequence(sequence, residue, chain_count):
     if residue in g_var.o_residues:
-        sequence[chain_count]+=residue
+        if residue in g_var.dna:
+            sequence[chain_count]+=g_var.dna[residue]
+        else:
+            sequence[chain_count]+=residue
     elif residue  not in g_var.mod_residues:
         sequence[chain_count]+=g_var.aas[residue]
     else:
@@ -609,39 +602,40 @@ def correct_amide_h(lines, coords):
             del N, C, O, HN 
     return coords
 
-def write_disres(coord, chain, file, at_start):
+def write_disres(coord, chain, file, at_start, count):
     P_R = np.array([])
     if chain in g_var.atomistic_protein_input_aligned:
         for key in g_var.atomistic_protein_input_aligned[chain].keys():
             P_R = np.append(P_R, np.arange(int(key.split(':')[0]), int(key.split(':')[1])+1))
-
-        if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp'):
-            with open(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'a') as disres_out:
+        header = True if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp') else False
+        with open(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'a') as disres_out:
+            if header:
                 disres_out.write(';backbone hydrogen bonding distance restraints\n\n')
                 disres_out.write('[ intermolecular_interactions ]\n[ distance_restraints ]\n')
                 disres_out.write(';   i     j type label      funct         lo        up1        up2     weight')
-                HN, O = [],[]
-                for atom in coord:
-                    if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == g_var.res_top[atom['residue_name']]['amide_h']:
-                        HN.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
-                    if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == 'O':
-                        O.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
-                HN, O = np.array(HN), np.array(O)
-                tree = cKDTree(HN[:,1:])
-                count=0
-                for carbonyl in O:
-                    ndx = tree.query_ball_point(carbonyl[1:], r=3)
-                    if len(ndx) > 0:
-                        for at in ndx:
-                            if coord[int(HN[ndx[0]][0])-1]['residue_id'] in P_R and coord[int(carbonyl[0])-1]['residue_id'] in P_R:
-                                if coord[int(HN[ndx[0]][0])-1]['residue_id'] < coord[int(carbonyl[0])-1]['residue_id']-1 or coord[int(HN[ndx[0]][0])-1]['residue_id'] > coord[int(carbonyl[0])-1]['residue_id']+1:
+            HN, O = [],[]
+            for atom in coord:
+                if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == g_var.res_top[atom['residue_name']]['amide_h']:
+                    HN.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
+                if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == 'O':
+                    O.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
+            HN, O = np.array(HN), np.array(O)
+            tree = cKDTree(HN[:,1:])
+            for carbonyl in O:
+                ndx = tree.query_ball_point(carbonyl[1:], r=3)
+                if len(ndx) > 0:
+                    for at in ndx:
+                        if coord[int(HN[at][0])-1]['residue_id'] in P_R and coord[int(carbonyl[0])-1]['residue_id'] in P_R:
+                            if coord[int(HN[at][0])-1]['residue_id'] < coord[int(carbonyl[0])-1]['residue_id']-1 or \
+                                coord[int(HN[at][0])-1]['residue_id'] > coord[int(carbonyl[0])-1]['residue_id']+1:
                                     count+=1
                                     xyz1 = [coord[int(carbonyl[0])-1]['x'], coord[int(carbonyl[0])-1]['y'], coord[int(carbonyl[0])-1]['z']]
                                     xyz2 = [coord[int(HN[at][0])-1]['x'], coord[int(HN[at][0])-1]['y'], coord[int(HN[at][0])-1]['z']]
                                     dist = np.round((gen.calculate_distance(xyz1, xyz2)/10)-0.05, 4)
                                     disres_out.write('\n{0:10}{1:10}{2:3}{3:12}{4:12}{5:^12}{6:14}{7:14}{8:5}'.format(str(at_start+int(HN[at][0])), str(at_start+int(carbonyl[0])), 
                                                                                                                     '1', str(count),'1', '0', str(dist), str(dist), '5'))
-    return len(coord) 
+                        # break
+    return len(coord)+at_start, count 
 
 
 
