@@ -9,7 +9,7 @@ A copy of this paper can be found within amber99sb-ildn.ff and amber99sb-ildn_sl
 
 Updated with stockholm lipids
 
-- amber99sb-ildn_slipids.ff         = original parameters
+- amber99sb-ildn_slipids.ff         = original parameters with slipids parameters added
 - amber99sb-ildn_slipids_tip3p.ff   = updated for tip3p water model
 - amber99sb-ildn_slipids_spc.ff     = updated for spc/e water model
 
