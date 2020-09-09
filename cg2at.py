@@ -7,9 +7,30 @@ import multiprocessing as mp
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/database/script_files')
 import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
 
-# Nothing in the script should need changing by the user
+
 if __name__ == '__main__':
     mp.freeze_support()
+    ## hardcoded varibles used by the script
+    ## I've tried to make them as comprehensive as possible but they may need updating occasionally
+    g_var.version = 0.2
+
+    g_var.cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
+
+    g_var.aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'E', 
+       'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
+       'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
+
+    g_var.alt_res_name= {'HSD':'HIS', 'HSE':'HIS', 'HSP':'HIS'}
+
+    g_var.dna = {'DA':'A', 'DG':'G', 'DC':'C', 'DT':'T'}
+
+    g_var.termini_selections = {'charmm':{'N_TERMINAL':{'PRO':{'NH2+':0,'NH':1,'NH3+':2, '5TER':3, 'NONE':4},'NORM':{'NH3+':0,'NH2':1,'5TER':2, 'NONE':3},}, 
+                                          'C_TERMINAL':{'NORM':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4},'PRO':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4}}},
+                                'opls':{'N_TERMINAL':{'PRO':{'NH':2, 'NH3+':3, 'NONE':5},'NORM':{'NH3+':0,'NH2':2, 'NONE':3}}, 
+                                        'C_TERMINAL':{'NORM':{'COO-':0,'COOH':2, 'NONE':3},'PRO':{'COO-':0,'COOH':2, 'NONE':3}}}
+                                }
+
+# Nothing in the script below here should need changing by the user
     g_var.tc['i_t']=time.time()
     ### initialise script 
 
@@ -22,9 +43,9 @@ if __name__ == '__main__':
     gen.fragment_selection()
     gen.check_water_molecules()
 
-    if g_var.info:
+    if g_var.args.info:
         gen.database_information()
-    if g_var.v >= 2:
+    if g_var.args.v >= 1:
         gen.fragments_in_use()
     gen.fetch_fragment()    
     gen.fetch_chain_groups()
@@ -39,8 +60,8 @@ if __name__ == '__main__':
     #### reads in CG file and separates into residue types
     box_vec_initial = read_in.read_initial_cg_pdb()
     #### box size update 
-    if g_var.box != None:
-        g_var.box_vec, box_shift = gen.new_box_vec(box_vec_initial, g_var.box)
+    if g_var.args.box != None:
+        g_var.box_vec, box_shift = gen.new_box_vec(box_vec_initial, g_var.args.box)
     else:
         g_var.box_vec=box_vec_initial
         box_shift=np.array([0,0,0])
@@ -54,12 +75,12 @@ if __name__ == '__main__':
     g_var.tc['r_i_t']=time.time()
     if 'PROTEIN' in g_var.cg_residues:          
         g_var.coord_atomistic = at_mod_p.build_multi_residue_atomistic_system(g_var.cg_residues, 'PROTEIN') ## converts protein to atomistic
-        if not g_var.user_at_input and g_var.v >= 1:  ## prints protein sequences 
+        if not g_var.user_at_input and g_var.args.v >= 1:  ## prints protein sequences 
             gen.print_sequnce_info('PROTEIN')
         ## reads in user chain, runs a sequence alignment and finds existing disulphide bonds
         g_var.tc['p_d_n_t']=time.time()
         if g_var.user_at_input:
-            for file_num, file_name in enumerate(g_var.a):
+            for file_num, file_name in enumerate(g_var.args.a):
                 atomistic_protein_input_raw, g_var.chain_count = read_in.read_in_atomistic(g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb')  ## reads in user structure
                 g_var.atomistic_protein_input_raw.update(atomistic_protein_input_raw)
             read_in.duplicate_chain()  ## duplicates user chcains
@@ -72,7 +93,6 @@ if __name__ == '__main__':
         ## aligns user chains to the CG system
         if g_var.user_at_input:
             at_mod_p.align_user_chains(final_coordinates_atomistic_de_novo)
-
         #### read in minimised de novo protein chains and merges chains
         if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_de_novo_merged.pdb'):
             gro.run_parallel_pdb2gmx_min('PROTEIN', g_var.ter_res['PROTEIN'])### runs pdb2gmx and minimises each protein chain
@@ -82,7 +102,7 @@ if __name__ == '__main__':
         #### read in aligned protein chains and merges chains
         if g_var.user_at_input and not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb'):
             print('Merging aligned protein chains')
-            if g_var.o not in ['none', 'align']:
+            if g_var.args.o not in ['none', 'align']:
                 at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'PROTEIN/MIN/PROTEIN_aligned', '.pdb', 'PROTEIN') ## merge aligned chains
             else:
                 at_mod.merge_indivdual_chain_pdbs(g_var.working_dir+'PROTEIN/PROTEIN_aligned', '_gmx_checked.pdb', 'PROTEIN')
@@ -91,7 +111,7 @@ if __name__ == '__main__':
     g_var.tc['f_p_t']=time.time()
     if 'OTHER' in g_var.cg_residues:  
         g_var.other_atomistic = at_mod_p.build_multi_residue_atomistic_system(g_var.cg_residues, 'OTHER')   
-        if g_var.v >= 1:  ## prints protein sequences 
+        if g_var.args.v >= 1:  ## prints protein sequences 
             gen.print_sequnce_info('OTHER')   
         fin_at_NP_linked_de_novo = at_mod_p.finalise_novo_atomistic(g_var.other_atomistic, 'OTHER')
         gro.run_parallel_pdb2gmx_min('OTHER', g_var.ter_res['OTHER'])
@@ -102,7 +122,7 @@ if __name__ == '__main__':
     #### converts non protein residues into atomistic (runs on all cores)
     if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTEIN', 'OTHER']]) > 0:
         print('\nConverting the following residues concurrently: \n')
-        pool = mp.Pool(g_var.ncpus)
+        pool = mp.Pool(g_var.args.ncpus)
         pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(residue_type, 1) 
                                         for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'OTHER']]]).get() ## fragment fitting done in parrallel  
         pool.close()
@@ -146,20 +166,20 @@ if __name__ == '__main__':
     if not os.path.exists(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb'):
         at_mod.check_ringed_lipids(g_var.merged_directory+'MIN/merged_cg2at_de_novo_minimised.pdb') ## check for abnormal bond lengths 
     ## runs short NVT on de_novo system with disres on if available 
-    if g_var.o not in ['none', 'align']:
+    if g_var.args.o not in ['none', 'align']:
         gro.run_nvt(g_var.merged_directory+'checked_ringed_lipid_de_novo') ## run npt on system 
     else:
         gen.file_copy_and_check(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')
     g_var.tc['eq_t']=time.time()
     ## creates aligned system 
 
-    if g_var.user_at_input and 'PROTEIN' in g_var.cg_residues and g_var.o in ['all', 'align']:   
+    if g_var.user_at_input and 'PROTEIN' in g_var.cg_residues and g_var.args.o in ['all', 'align']:   
         g_var.tc['a_s']=time.time()
         gro.create_aligned()
         g_var.tc['a_e']=time.time()
 
     ## removes temp file from script
-    if not g_var.messy:
+    if not g_var.args.messy:
         gen.clean() 
 
     ## prints out system information

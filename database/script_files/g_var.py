@@ -21,13 +21,11 @@ parser.add_argument('-fg', help='choose your fragment library. (Optional)',metav
 parser.add_argument('-mod', help='treat fragments individually', action='store_true')
 parser.add_argument('-swap', help='creates a swap dictionary supply residues as PIP2,D3A:PVCL2,C3A (Optional)',metavar='PIP2,D3A:PVCL2,C3A',type=str, nargs='*')
 parser.add_argument('-v', action="count", default=0, help="increase output verbosity (eg -vv, 3 levels) (Optional)")
-group_C = parser.add_mutually_exclusive_group()
-group_N = parser.add_mutually_exclusive_group()
 parser.add_argument('-ter', help='interactively choose terminal species (Optional)', action='store_true')
-group_N.add_argument('-nt', help='choose neutral N terminal state', action='store_true')
-group_C.add_argument('-ct', help='choose neutral C terminal state', action='store_true')
+parser.add_argument('-nt', help='choose neutral N terminal state', action='store_true')
+parser.add_argument('-ct', help='choose neutral C terminal state', action='store_true')
 parser.add_argument('-messy', help='do not remove part files CG2AT', action='store_true')
-parser.add_argument('-gromacs', help='gromacs executable name (Optional)',metavar='gmx_avx',type=str)
+parser.add_argument('-gmx', help='gromacs executable name (Optional)',metavar='gmx_avx',type=str)
 parser.add_argument('-cys', help='cutoff for disulphide bonds, sometimes CYS are too far apart (Optional)',metavar='7',type=float, default=7)
 parser.add_argument('-silent', help='silent cysteines question', action='store_true')
 parser.add_argument('-box', help='box size in Angstrom (0 = use input file) (Optional)',metavar='100',type=float, nargs=3)
@@ -46,37 +44,6 @@ if not args.info and args.c is None:
     help_output = parser.print_help(sys.stderr)
     sys.exit('\nError: the following arguments are required: -c\n')
 
-# convert argparser into global variables to be read by the other files
-
-# input/output files  
-c = args.c
-a = args.a
-o = args.o
-
-# forcfield and fragment inputs
-w = args.w
-ff = args.ff
-fg = args.fg
-mod = args.mod
-
-# modifiers
-ov = args.ov
-cys = args.cys
-silent = args.silent
-swap = args.swap
-group = args.group
-duplicate = args.d
-disre = args.disre
-ter = args.ter
-nt = args.nt
-ct = args.ct
-ncpus = args.ncpus
-gmx = args.gromacs
-box = args.box
-v = args.v
-messy  = args.messy
-info = args.info
-
 #### virtual site information
 if args.vs:
     vs = '-vsite h'
@@ -93,19 +60,6 @@ box_line="CRYST1 %8.3f %8.3f %8.3f %8.2f %8.2f %8.2f P 1           1\n"
 
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
 
-cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
-
-aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'E', 
-       'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
-       'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
-
-dna = {'DA':'A', 'DG':'G', 'DC':'C', 'DT':'T'}
-
-termini_selections = {'charmm':{'N_TERMINAL':{'PRO':{'NH2+':0,'NH':1,'NH3+':2, '5TER':3, 'NONE':4},'NORM':{'NH3+':0,'NH2':1,'5TER':2, 'NONE':3},}, 
-                                'C_TERMINAL':{'NORM':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4},'PRO':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4}}},
-                     'opls':{'N_TERMINAL':{'PRO':{'NH':2, 'NH3+':3, 'NONE':5},'NORM':{'NH3+':0,'NH2':2, 'NONE':3}}, 
-                                'C_TERMINAL':{'NORM':{'COO-':0,'COOH':2, 'NONE':3},'PRO':{'COO-':0,'COOH':2, 'NONE':3}}}
-}
 ### CG2AT folder locations
 
 timestamp =  strftime("%Y-%m-%d_%H-%M-%S", gmtime())
@@ -114,9 +68,6 @@ if args.loc != None:
     working_dir_name = args.loc
 else:
     working_dir_name =  'CG2AT_'+timestamp
-
-version = 0.2
-
 
 start_dir       = os.getcwd()+'/'  ### initial working directory
 working_dir     = os.getcwd()+'/'+working_dir_name+'/'   ### working directory 

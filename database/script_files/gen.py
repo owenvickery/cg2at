@@ -15,18 +15,18 @@ import g_var
 
 def forcefield_selection():
     ##### forcefield selection
-    if not g_var.info:
-        if g_var.ff != None:
-            if os.path.exists(g_var.ff):
-                g_var.forcefield_location, g_var.forcefield = path_leaf(g_var.ff)
-                folder_copy_and_check(g_var.ff, g_var.final_dir+forcefield)
+    if not g_var.args.info:
+        if g_var.args.ff != None:
+            if os.path.exists(g_var.args.ff):
+                g_var.forcefield_location, g_var.forcefield = path_leaf(g_var.args.ff)
+                folder_copy_and_check(g_var.args.ff, g_var.final_dir+forcefield)
                 print('\nYou have chosen to use your own forcefield: '+g_var.forcefield+' in '+g_var.forcefield_location)
-            elif path_leaf(g_var.ff)[1]+'.ff' in g_var.forcefield_available:
-                forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.ff)[1]+'.ff')
-            elif path_leaf(g_var.ff)[1] in g_var.forcefield_available:
-                forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.ff)[1])
+            elif path_leaf(g_var.args.ff)[1]+'.ff' in g_var.forcefield_available:
+                forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.args.ff)[1]+'.ff')
+            elif path_leaf(g_var.args.ff)[1] in g_var.forcefield_available:
+                forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.args.ff)[1])
             else:
-                print('Cannot find forcefield: '+g_var.ff+'  please select one from below\n')   
+                print('Cannot find forcefield: '+g_var.args.ff+'  please select one from below\n')   
         if 'forcefield_number' not in locals() and 'forcefield' not in locals():
             forcefield_number = database_selection(g_var.forcefield_available, 'forcefields')    
         if 'forcefield' not in locals():
@@ -38,8 +38,8 @@ def forcefield_selection():
 def fragment_selection():
     ##### fragment selection
     frag_location, fragment_number, fragments_available_other = [],[],[]
-    if g_var.fg != None:
-        for frag_val, frag_path in enumerate(g_var.fg):
+    if g_var.args.fg != None:
+        for frag_val, frag_path in enumerate(g_var.args.fg):
             if os.path.exists(frag_path):
                 frag_loc, fragments = path_leaf(frag_path)
                 frag_location.append(os.path.abspath(frag_loc)+'/')
@@ -48,7 +48,7 @@ def fragment_selection():
     if len(fragment_number) == 0:
         fragment_number = fetch_frag_number(g_var.fragments_available)
         frag_location = [g_var.database_dir+'fragments/']*len(g_var.fragments_available)
-        if g_var.fg is None:
+        if g_var.args.fg is None:
             g_var.opt['fg'] = ''
             for database in fragment_number:
                 g_var.opt['fg'] += g_var.fragments_available[database]+' '
@@ -57,17 +57,17 @@ def fragment_selection():
     fetch_residues(frag_location, g_var.fragments_available, fragment_number)
 
 def correct_number_cpus():
-    if g_var.ncpus != None:
-        if g_var.ncpus > mp.cpu_count():
-            print('you have selected to use more CPU cores than are available: '+str(g_var.ncpus))
+    if g_var.args.ncpus != None:
+        if g_var.args.ncpus > mp.cpu_count():
+            print('you have selected to use more CPU cores than are available: '+str(g_var.args.ncpus))
             print('defaulting to the maximum number of cores: '+str(mp.cpu_count()))
-            g_var.ncpus = mp.cpu_count()
+            g_var.args.ncpus = mp.cpu_count()
     else:
         if mp.cpu_count() >= 8:
-            g_var.ncpus = 8
+            g_var.args.ncpus = 8
         else:
-            g_var.ncpus = mp.cpu_count()
-    g_var.opt['ncpus'] = g_var.ncpus
+            g_var.args.ncpus = mp.cpu_count()
+    g_var.opt['ncpus'] = g_var.args.ncpus
 
 def path_leaf(path):
     head, tail = ntpath.split(path)
@@ -78,24 +78,24 @@ def path_leaf(path):
 
 ### finds gromacs installation
 def find_gromacs():
-    if g_var.gmx != None:
-        g_var.gmx=distutils.spawn.find_executable(g_var.gmx)
+    if g_var.args.gmx != None:
+        g_var.args.gmx=distutils.spawn.find_executable(g_var.args.gmx)
     else:
-        g_var.gmx=distutils.spawn.find_executable('gmx')
-    if g_var.gmx is None or type(g_var.gmx) != str:
+        g_var.args.gmx=distutils.spawn.find_executable('gmx')
+    if g_var.args.gmx is None or type(g_var.args.gmx) != str:
         if os.environ.get("GMXBIN") != None:
             for root, dirs, files in os.walk(os.environ.get("GMXBIN")):
                 for file_name in files:
                     if file_name.startswith('gmx') and file_name.islower() and '.' not in file_name:
-                        g_var.gmx=distutils.spawn.find_executable(file_name)
-                        if type(g_var.gmx) == str and g_var.gmx != None :
+                        g_var.args.gmx=distutils.spawn.find_executable(file_name)
+                        if type(g_var.args.gmx) == str and g_var.args.gmx != None :
                             break
                         else:
-                            g_var.gmx=None
+                            g_var.args.gmx=None
                 break
-        if g_var.gmx is None:
+        if g_var.args.gmx is None:
             sys.exit('Cannot find gromacs installation')
-    g_var.opt['gromacs'] = g_var.gmx
+    g_var.opt['gromacs'] = g_var.args.gmx
 
 def trunc_coord(xyz):
     xyz_new = []
@@ -138,13 +138,13 @@ def is_hydrogen(atom):
         return True
 
 def fetch_chain_groups():
-    if g_var.group != None:
-        if g_var.group[0] not in ['all','chain']:
-            for group_val, group in enumerate(g_var.group):
+    if g_var.args.group != None:
+        if g_var.args.group[0] not in ['all','chain']:
+            for group_val, group in enumerate(g_var.args.group):
                 for chain in group.split(','):
                     g_var.group_chains[int(chain)]=group_val 
         else:
-            g_var.group_chains =  g_var.group[0]   
+            g_var.group_chains =  g_var.args.group[0]   
 
 def split_swap(swap):
     try:
@@ -162,8 +162,8 @@ def split_swap(swap):
         return 'ALL', 'ALL'
 
 def sort_swap_group():
-    if g_var.swap != None:
-        for swap in g_var.swap:
+    if g_var.args.swap != None:
+        for swap in g_var.args.swap:
             res_s = re.split(':', swap)[0].split(',')
             if re.split(':', swap)[1].split(',') is not type(int):
                 res_e = re.split(':', swap)[1].split(',')
@@ -259,7 +259,7 @@ def sep_fragments_topology(location):
                             line_sep = line.split()
                             if len(line_sep) > 0:
                                 if topology_function == 'GROUPS':
-                                    if not g_var.mod:
+                                    if not g_var.args.mod:
                                         for bead in line_sep:
                                             topology[topology_function][bead] = group
                                         group += 1
@@ -574,11 +574,11 @@ def ask_database(provided, selection_type):
 
 def fetch_frag_number(fragments_available):
     fragment_number = []
-    if g_var.fg != None and len(g_var.fg) > 0 :
-        for frag in g_var.fg:
+    if g_var.args.fg != None and len(g_var.args.fg) > 0 :
+        for frag in g_var.args.fg:
             if frag in fragments_available:
                 fragment_number.append(fragments_available.index(frag))
-            elif not g_var.info:
+            elif not g_var.args.info:
                 print('Cannot find fragment library: '+frag+' please select library from below\n')
                 fragment_number += database_selection(fragments_available, 'fragments').tolist()
     else:
@@ -586,7 +586,7 @@ def fetch_frag_number(fragments_available):
     if len(fragment_number) > 0:
         return fragment_number 
     else:
-        if g_var.info:
+        if g_var.args.info:
             return []
         sys.exit('no fragment databases selected')
 
@@ -604,7 +604,7 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
 #### list of directories and water types  [[root, folders...],[root, folders...]]
 #### run through selected fragments
     for database in fragment_number:
-        if not g_var.info:
+        if not g_var.args.info:
             if g_var.database_dir in frag_dir[database]:
                 print('\nYou have selected the fragment library: '+fragments_available_prov[database])
             else:
@@ -633,8 +633,8 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
     
 
 def print_water_selection(water, directory):
-    if g_var.w != None:
-        print('\nThe water type '+g_var.w+' doesn\'t exist')
+    if g_var.args.w != None:
+        print('\nThe water type '+g_var.args.w+' doesn\'t exist')
     if len(water) == 0:
         sys.exit('\nCannot find any water models in: \n\n'+directory[0]+'SOL/'+'\n')
     print('\nPlease select a water molecule from below:\n')
@@ -666,14 +666,14 @@ def check_water_molecules():
                         if line.startswith('['):
                             water.append(strip_header(line))
                             g_var.water_info[-1].append(strip_header(line))
-        if not g_var.info:
-            if g_var.w in water:
-                print('\nYou have selected the water model: '+g_var.w)
-                g_var.water_dir, g_var.water = directory[0]+'SOL/', g_var.w
+        if not g_var.args.info:
+            if g_var.args.w in water:
+                print('\nYou have selected the water model: '+g_var.args.w)
+                g_var.water_dir, g_var.water = directory[0]+'SOL/', g_var.args.w
             else:
                 print_water_selection(water, directory)
                 g_var.water_dir, g_var.water = ask_for_water_model(directory, water)
-            if g_var.w is None:
+            if g_var.args.w is None:
                 g_var.opt['w'] = water
 
 ############################################################################################## fragment rotation #################################################################################
@@ -775,14 +775,14 @@ def print_script_timings():
     to_print.append('{0:47}{1}'.format('Build non protein system: ',fix_time(g_var.tc['n_p_t'],g_var.tc['f_o_t'])))
     to_print.append('{0:47}{1}'.format('merge and minimise de novo: ',fix_time(g_var.tc['m_t'],g_var.tc['n_p_t'])))
     to_print.append('{0:47}{1}'.format('NVT on de novo: ',fix_time(g_var.tc['eq_t'],g_var.tc['m_t'])))
-    if g_var.o in ['all', 'align'] and g_var.a != None and g_var.user_at_input:
+    if g_var.args.o in ['all', 'align'] and g_var.user_at_input:
         to_print.append('{0:47}{1}'.format('Creating aligned system: ',fix_time(g_var.tc['a_e'],g_var.tc['a_s'])))
     to_print.append('{:-<69}'.format(''))
     to_print.append('{0:47}{1}'.format('Total run time: ',fix_time(g_var.tc['f_t'],g_var.tc['i_t'])))
     with open(g_var.final_dir+'script_timings.dat', 'w') as time_out:  
         for line in to_print:
             time_out.write(line+'\n')
-            if g_var.v >= 1:
+            if g_var.args.v >= 1:
                 print(line)
         print('\nAll script timings have been saved in: \n'+g_var.final_dir+'script_timings.dat\n')
 
@@ -807,14 +807,14 @@ def database_information():
     print('\n\n{0:^90}\n{1:-<90}\n'.format('The available fragment libraries within your database are (flag -fg):', ''))
     for fragments in g_var.fragments_available:
         print('{0:^90}'.format(fragments))    
-    if g_var.fg != None :
+    if g_var.args.fg != None :
         fragments_in_use()
     sys.exit('\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
 
 def fragments_in_use():
     protein_directories=[]
     if np.any([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
-        for database_val, database in enumerate(sorted(g_var.fg)):
+        for database_val, database in enumerate(sorted(g_var.args.fg)):
             print('\n\n{0:^90}\n{1:-<90}\n'.format('The following residues are available in the database: '+database,''))
             res_type_name = ['Non protein residues', 'Protein residues', 'Modified protein residues', 'Other linked residues', 'Water residues']
             for res_val, residue in enumerate([g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
@@ -852,30 +852,36 @@ def write_system_components():
         print('{0:^10}{1:^25}'.format(section, g_var.system[section]))
 
 def print_sequnce_info(sys_type):
-    if g_var.v >=1:
-        print('Summary of '+sys_type+' chains')
+    for rep_val, rep in enumerate([g_var.seq_cg[sys_type], g_var.seq_at[sys_type]]):
+        if rep_val == 0:
+            print('Summary of coarsegrain '+sys_type+' chains')
+        else:
+            print('Summary of atomistic '+sys_type+' chains')
+        if len(rep) == 0:
+            break
+        
         print('\n{0:^15}{1:^12}'.format('chain number', 'length of chain')) #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
         print('\n{0:^15}{1:^12}'.format('------------', '---------------'))
-        for chain in g_var.seq_cg[sys_type]:
-            print('{0:^15}{1:^12}'.format(chain, len(g_var.seq_cg[sys_type][chain])))
+        for chain in rep:
+            print('{0:^15}{1:^12}'.format(chain, len(rep[chain])))
         print()
-        print('coarse grain sequences:\n')
-        for index in g_var.seq_cg[sys_type]:
+        print('Sequences:\n')
+        for index in rep:
             print('chain:', index, '\n') 
             print('{0:9}{1:10}{2:10}{3:10}{4:10}{5:10}{6:10}{7:10}'.format('1','10','20','30','40','50','60','70'))
-            if len(''.join(map(str, g_var.seq_cg[sys_type][index]))) <= 80:
-                print('{0:80}'.format(''.join(map(str, g_var.seq_cg[sys_type][index]))))
+            if len(''.join(map(str, rep[index]))) <= 80:
+                print('{0:80}'.format(''.join(map(str, rep[index]))))
             else:
                 start, end = 0, 1                       
-                while end < len(g_var.seq_cg[sys_type][index]):
-                    line = ''.join(map(str, g_var.seq_cg[sys_type][index][start:end]))
+                while end < len(rep[index]):
+                    line = ''.join(map(str, rep[index][start:end]))
                     while len(line) <= 80:
-                        if end < len(g_var.seq_cg[sys_type][index]):
+                        if end < len(rep[index]):
                             end+=1
-                            line = ''.join(map(str, g_var.seq_cg[sys_type][index][start:end]))
+                            line = ''.join(map(str, rep[index][start:end]))
                             if len(line) > 80:
                                 end-=1
-                                line = ''.join(map(str, g_var.seq_cg[sys_type][index][start:end]))
+                                line = ''.join(map(str, rep[index][start:end]))
                                 break
                         else:
                             break

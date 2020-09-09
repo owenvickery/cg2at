@@ -139,10 +139,10 @@ def find_disulphide_bonds_de_novo():
                 tree = cKDTree(cysteines)
                 done_query=[]
                 for cys_index, cys in enumerate(cysteines):
-                    query = tree.query_ball_point(cys, r=g_var.cys)
+                    query = tree.query_ball_point(cys, r=g_var.args.cys)
                     if len(query) == 2 and query not in done_query:
                         if cys_resid[query[1]] - cys_resid[query[0]] > 4:
-                            disul = True if g_var.silent else ask_if_disulphide(chain, cys_resid[query[0]],cys_resid[query[1]])
+                            disul = True if g_var.args.silent else ask_if_disulphide(chain, cys_resid[query[0]],cys_resid[query[1]])
                             if disul:
                                 g_var.user_cys_bond[chain].append([cys_resid[query[0]],cys_resid[query[1]]])
                         done_query.append(query)
@@ -278,42 +278,38 @@ def add_to_sequence(sequence, residue, chain_count):
     return sequence
 
 def check_sequence():
+    g_var.seq_at['PROTEIN'] = {}
     for chain in range(len(g_var.atomistic_protein_input_raw)):
-        g_var.seq_at[chain]=[]
+        g_var.seq_at['PROTEIN'][chain]=[]
         for resid in g_var.atomistic_protein_input_raw[chain]:
             for atom in g_var.atomistic_protein_input_raw[chain][resid]:
-                g_var.seq_at = add_to_sequence(g_var.seq_at, g_var.atomistic_protein_input_raw[chain][resid][atom]['res_type'], chain)
+                g_var.seq_at['PROTEIN'] = add_to_sequence(g_var.seq_at['PROTEIN'], g_var.atomistic_protein_input_raw[chain][resid][atom]['res_type'], chain)
                 break
 
 def align_chain_sequence(sys_type):
-    if g_var.v >= 2:
-        print('coarse grain protein sequence:\n')
-        for index in g_var.seq_cg[sys_type]:
-            print('chain:', index,g_var.seq_cg[sys_type][index], '\n')
-        print('\nuser supplied structure:\n')
-        for index in g_var.seq_at:
-            print('chain:', index, g_var.seq_at[index], '\n')        
+    if g_var.args.v >= 2:
+        gen.print_sequnce_info('PROTEIN')     
     at={}
     test_chain={}
     for chain_at in range(len(g_var.atomistic_protein_input_raw)):
         skip_sequence=False
         chain_cg=0
-        s = difflib.SequenceMatcher(None, g_var.seq_at[chain_at], g_var.seq_cg[sys_type][chain_cg], autojunk=False)
+        s = difflib.SequenceMatcher(None, g_var.seq_at[sys_type][chain_at], g_var.seq_cg[sys_type][chain_cg], autojunk=False)
         seq_info = s.get_matching_blocks()
-        while seq_info[0][2] != len(g_var.seq_at[chain_at]):
+        while seq_info[0][2] != len(g_var.seq_at[sys_type][chain_at]):
             if chain_cg >= len(g_var.seq_cg[sys_type])-1:
                 print('\nCannot find a match for user supplied chain: '+str(chain_at))#+'\n\nAtomistic chain:\n'+str(seq_user[chain_at]),'\n\nIn CG:\n'+str(sequence))
                 skip_sequence = True
                 break
             if not skip_sequence:
                 chain_cg+=1
-                s = difflib.SequenceMatcher(None, g_var.seq_at[chain_at], g_var.seq_cg[sys_type][chain_cg], autojunk=False)
+                s = difflib.SequenceMatcher(None, g_var.seq_at[sys_type][chain_at], g_var.seq_cg[sys_type][chain_cg], autojunk=False)
                 seq_info = s.get_matching_blocks()
         if not skip_sequence:
             temp={}
             if chain_cg not in at:
                 at[chain_cg]={}
-            if seq_info[0][2] == len(g_var.seq_at[chain_at]):
+            if seq_info[0][2] == len(g_var.seq_at[sys_type][chain_at]):
                 for resid,  residue in enumerate(g_var.atomistic_protein_input_raw[chain_at]):
                     temp[resid + seq_info[0][1]] = g_var.atomistic_protein_input_raw[chain_at][residue]
                 at[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
@@ -357,7 +353,7 @@ def align_user_chains(final_coordinates_atomistic):
     atomistic_protein_rotated = apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, 
                                                                 at_com_group,cg_com_group,cg_com) ## apply rotation matrix to atoms and build in missing residues
     final_user_supplied_coord = correct_disulphide_bonds(atomistic_protein_rotated) ## fixes sulphur distances in user structure
-    pool = mp.Pool(g_var.ncpus)
+    pool = mp.Pool(g_var.args.ncpus)
     pool.starmap_async(write_user_chains_to_pdb, [(final_user_supplied_coord[chain], chain) ## write structure to pdb
                                         for chain in final_user_supplied_coord]).get()
     pool.close()
@@ -653,7 +649,7 @@ def write_RMSD():
     RMSD['de novo '] = RMSD_measure(de_novo_atoms) ## gets rmsd of de novo
 
     if g_var.user_at_input and 'PROTEIN' in g_var.cg_residues: 
-        if g_var.o in ['all', 'align']: 
+        if g_var.args.o in ['all', 'align']: 
             at_input_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_aligned.pdb')
             RMSD['at aligned'] = RMSD_measure(at_input_atoms)   
     with open(g_var.final_dir+'structure_quality.dat', 'w') as qual_out:   

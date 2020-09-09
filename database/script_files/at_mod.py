@@ -208,7 +208,7 @@ def rigid_fit(group, frag_mass, resid, cg):
 ## overlap checker
 
 def overlapping_atoms(tree):
-    overlapped_ndx = tree.query_ball_tree(tree, r=g_var.ov)
+    overlapped_ndx = tree.query_ball_tree(tree, r=g_var.args.ov)
     overlapped_cut = [ndx for ndx in overlapped_ndx if len(ndx) >1]      
     overlapped_cut.sort()
     overlapped=list(overlapped_cut for overlapped_cut,_ in itertools.groupby(overlapped_cut))
@@ -224,7 +224,7 @@ def check_atom_overlap(coordinates):
             if np.round((ndx_val/len(overlapped))*100,2).is_integer() and len(overlapped) > 30:
                 print('fixing '+str(len(overlapped))+' overlapped atoms: '+str(np.round((ndx_val/len(overlapped))*100,2))+' %', end='\r')
             xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
-            while len(tree.query_ball_point(xyz_check, r=g_var.ov)) > 1:
+            while len(tree.query_ball_point(xyz_check, r=g_var.args.ov)) > 1:
                 xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
             coordinates[ndx[0]]=xyz_check
             tree = cKDTree(coordinates)

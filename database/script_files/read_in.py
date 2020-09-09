@@ -111,7 +111,7 @@ def add_residue_to_dictionary(line_sep):
 
 def check_new_box(coord,box, new_box):
     for xyz_val, xyz in enumerate(new_box):
-        if g_var.box[xyz_val] != 0:
+        if g_var.args.box[xyz_val] != 0:
             lower, upper = (float(box[xyz_val])/2)-(float(xyz)/2), (float(box[xyz_val])/2)+(float(xyz)/2)
             if  lower >= coord[xyz_val] or coord[xyz_val] >= upper: 
                 return True
@@ -158,7 +158,7 @@ def fix_pbc(box_vec, new_box, box_shift):
                 print('Fixing PBC of residue type '+residue_type+': ',np.round((res_val/len(g_var.cg_residues[residue_type]))*100,2),'%', end='\r')
             for bead_val, bead in enumerate(g_var.cg_residues[residue_type][residue]):
                 bead_info = g_var.cg_residues[residue_type][residue][bead]
-                if g_var.box != None and residue_type not in ['PROTEIN', 'OTHER']:
+                if g_var.args.box != None and residue_type not in ['PROTEIN', 'OTHER']:
                     cut = check_new_box(g_var.cg_residues[residue_type][residue][bead]['coord'],box_vec.split()[1:4], new_box)
                     if cut:
                         cut_keys.append(residue)
@@ -178,7 +178,7 @@ def fix_pbc(box_vec, new_box, box_shift):
                     g_var.cg_residues[residue_type][residue][bead]['coord'] = brute_mic(g_var.cg_residues[residue_type][residue][bead_prev]['coord'],
                                                                                     g_var.cg_residues[residue_type][residue][bead]['coord'], r_b_vec)
                 bead_prev=bead
-                if g_var.box != None:
+                if g_var.args.box != None:
                     g_var.cg_residues[residue_type][residue][bead]['coord'] = g_var.cg_residues[residue_type][residue][bead]['coord']-box_shift
         for key in cut_keys:
             g_var.cg_residues[residue_type].pop(key)
@@ -223,18 +223,13 @@ def read_in_atomistic(protein):
     with open(protein, 'r') as pdb_input:
         atomistic_protein_input[chain_count]={}
         for line_nr, line in enumerate(pdb_input.readlines()):
-            #### separate line 
-            run=False ## turns to true is line is a bead/atom
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line)
-                if not gen.is_hydrogen(line_sep['atom_name']):
-                    run=True
-                if line_sep['residue_name'] in g_var.mod_residues:
-                    run=True
-            if run:
-                if line_sep['residue_name'] in g_var.p_residues:
-                    if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in g_var.mod_residues:  
-                    #### sorts out wrong atoms in terminal residues
+                if line_sep['residue_name'] in g_var.alt_res_name:
+                    line_sep['residue_name'] = g_var.alt_res_name[line_sep['residue_name']]
+                if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in g_var.mod_residues:
+                    if line_sep['residue_name'] in g_var.p_residues:
+                        #### sorts out wrong atoms in terminal residues
                         if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
                             line_sep['atom_name']='O'
                     #### makes C_terminal connecting atom variable  
@@ -270,10 +265,10 @@ def read_in_atomistic(protein):
     return atomistic_protein_input, chain_count+1    
 
 def duplicate_chain():
-    if len(g_var.duplicate) != 0:
+    if len(g_var.args.d) != 0:
         print('{:<100}'.format(''), end='\r')
         print('Now duplicating the supplied chains')
-        for ch_d in g_var.duplicate:
+        for ch_d in g_var.args.d:
             duplicate = [int(x) for x in ch_d.split(':')]
             if len(duplicate) == 2 and duplicate[0] in g_var.atomistic_protein_input_raw:
                 print('Using '+str(duplicate[1])+' copies of the atomistic chain '+str(duplicate[0]))

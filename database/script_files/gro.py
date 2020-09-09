@@ -11,29 +11,29 @@ import gen, g_var, at_mod, read_in, at_mod_p
 
 #### collects input structures and creates initial folders
 def collect_input():
-    if not os.path.exists(g_var.c):
-        sys.exit('Cannot find CG input file: '+g_var.c)
+    if not os.path.exists(g_var.args.c):
+        sys.exit('Cannot find CG input file: '+g_var.args.c)
     gen.mkdir_directory(g_var.working_dir)
     gen.mkdir_directory(g_var.final_dir)
     gen.mkdir_directory(g_var.input_directory)
     gen.mkdir_directory(g_var.merged_directory)
 #### collates all input files in input directory
-    if g_var.a != None:
-        for file_num, file_name in enumerate(g_var.a):
+    if g_var.args.a != None:
+        for file_num, file_name in enumerate(g_var.args.a):
             if not os.path.exists(file_name):
                 sys.exit('cannot find atomistic input file: '+file_name)
             gen.file_copy_and_check(file_name, g_var.input_directory+gen.path_leaf(file_name)[1])
             os.chdir(g_var.input_directory)
-            gromacs([g_var.gmx+' editconf -f '+gen.path_leaf(file_name)[1]+' -resnr 0 -o '+g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb', g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb'])
+            gromacs([g_var.args.gmx+' editconf -f '+gen.path_leaf(file_name)[1]+' -resnr 0 -o '+g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb', g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb'])
             if not os.path.exists(g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb'):
                 sys.exit('\nFailed to process atomistic input file')
             else:
                 g_var.user_at_input = True
             os.chdir(g_var.start_dir)
 
-    gen.file_copy_and_check(g_var.c, g_var.input_directory+gen.path_leaf(g_var.c)[1])
+    gen.file_copy_and_check(g_var.args.c, g_var.input_directory+gen.path_leaf(g_var.args.c)[1])
     os.chdir(g_var.input_directory)
-    gromacs([g_var.gmx+' editconf -f '+gen.path_leaf(g_var.c)[1]+' -resnr 0 -c -o '+g_var.input_directory+'CG_INPUT.pdb', g_var.input_directory+'CG_INPUT.pdb'])
+    gromacs([g_var.args.gmx+' editconf -f '+gen.path_leaf(g_var.args.c)[1]+' -resnr 0 -c -o '+g_var.input_directory+'CG_INPUT.pdb', g_var.input_directory+'CG_INPUT.pdb'])
     if not os.path.exists(g_var.input_directory+'CG_INPUT.pdb'):
         sys.exit('\nFailed to process coarsegrain input file')      
 
@@ -47,12 +47,14 @@ def gromacs(gro):
         pass
     else:
     #### if the flag gromacs is used every gromacs command will be printed to the terminal 
-        if g_var.v >= 3:
+        if g_var.args.v >= 3:
             print('\nrunning gromacs: \n '+cmd+'\n')
         output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # output.wait()
         err, out = output.communicate()
         out=out.decode("utf-8")
+        if not hasattr(g_var, 'gmx_version'):
+            check_gromacs_version(out)
     #### all gromacs outputs will be saved into gromacs_outputs within the folder it is run
         with open('gromacs_outputs', 'a') as checks:
             checks.write(out)
@@ -66,7 +68,7 @@ def gromacs(gro):
             if 'number of atoms in the topology (' in out:
                 print('\n'+out+'\n\n')
                 print('{0:^90}\n\n{1:^90}\n'.format('***NOTE***','If it is only out by multiples of two, check cysteine distances and increase -cys cutoff'))
-                print('{0:^90}\n\n'.format('A lot of Martini v2-2 disulphide bonds can be up to 10 A (current search cutoff is '+str(g_var.cys)+' A)')) 
+                print('{0:^90}\n\n'.format('A lot of Martini v2-2 disulphide bonds can be up to 10 A (current search cutoff is '+str(g_var.args.cys)+' A)')) 
                 error = True
             if  'Warning: pressure scaling more than 1%' in out:
                 print('pressure coupling failed trying Berendsen instead')
@@ -75,6 +77,16 @@ def gromacs(gro):
         gro[3].put(gro[2])
         return gro[2], error 
     return 0, error
+
+def check_gromacs_version(output):
+    for line in output.split('\n') :
+        if line.startswith('GROMACS') and 'version' in line:
+            if float(line.split()[-1]) > 6:
+                g_var.gmx_version = True
+            else:
+                g_var.gmx_version = False
+                print('GROMACS version < 2016 detected therefore distance restraints will not be applied')
+
 
 def make_min(residue):#, fragments):
 #### makes minimisation folder
@@ -158,8 +170,8 @@ def ask_terminal(sys_info, residue_type):
                 conv_type = 'PRO'
             termini = g_var.res_top[ter_residue][ter_name[ter_val]].upper()
             if len(termini) == 0 or termini == 'DEFAULT':
-                if not g_var.ter:
-                    if g_var.nt and ter_val==0:
+                if not g_var.args.ter:
+                    if g_var.args.nt and ter_val==0:
                         if conv_type == 'PRO':
                             default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH'])
                         else:
@@ -169,7 +181,7 @@ def ask_terminal(sys_info, residue_type):
                             default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH2+'])
                         else:
                             default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH3+'])
-                    if g_var.ct and ter_val==1:
+                    if g_var.args.ct and ter_val==1:
                         default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COOH'])
                     elif ter_val==1:
                         default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COO-'])
@@ -177,13 +189,13 @@ def ask_terminal(sys_info, residue_type):
                     default_ter.append(ask_ter_question(termini, ter_conv[ter_name[ter_val]][conv_type], chain))
             else:
                 default_ter.append(ter_conv[ter_name[ter_val]][conv_type][termini])
-                if g_var.ter:
+                if g_var.args.ter:
                     print('\n The '+ter_name[ter_val]+' of residue '+ter_residue+' is non adjustable')
         system_ter.append(default_ter)
     return system_ter
 
 def run_parallel_pdb2gmx_min(res_type, sys_info):
-    pool = mp.Pool(g_var.ncpus)
+    pool = mp.Pool(g_var.args.ncpus)
     m = mp.Manager()
     q = m.Queue()
     os.chdir(g_var.working_dir+res_type)
@@ -201,7 +213,7 @@ def run_parallel_pdb2gmx_min(res_type, sys_info):
 
 def pdb2gmx_chain(chain, input,res_type, pdb2gmx_selections):
 #### pdb2gmx on on protein chain, creates the topologies    
-    gromacs([g_var.gmx+' pdb2gmx -f '+res_type+'_'+input+str(chain)+'.pdb -o '+res_type+'_'+input+str(chain)+'_gmx.pdb -water none \
+    gromacs([g_var.args.gmx+' pdb2gmx -f '+res_type+'_'+input+str(chain)+'.pdb -o '+res_type+'_'+input+str(chain)+'_gmx.pdb -water none \
     -p '+res_type+'_'+input+str(chain)+'.top  -i '+res_type+'_'+str(chain)+'_posre.itp '+g_var.vs+' -ter '+pdb2gmx_selections+'\nEOF', ''+res_type+'_'+input+str(chain)+'_gmx.pdb']) #### single chains
 #### converts the topology file and processes it into a itp file
     convert_topology(res_type+'_'+input, chain, res_type)
@@ -213,7 +225,7 @@ def pdb2gmx_chain(chain, input,res_type, pdb2gmx_selections):
 
 def minimise_protein_chain(chain, input, res_type):
     #### grompps each protein chain
-    gromacs([g_var.gmx+' grompp '+
+    gromacs([g_var.args.gmx+' grompp '+
                 '-f em_'+res_type+'.mdp '+
                 '-p topol_'+res_type+'_'+input+str(chain)+'.top '+
                 '-c '+res_type+'_'+input+str(chain)+'_gmx_checked.pdb '+
@@ -221,7 +233,7 @@ def minimise_protein_chain(chain, input, res_type):
                 '-maxwarn 1 ', 'MIN/'+res_type+'_'+input+str(chain)+'.tpr'])
 #### minimises chain
     os.chdir('MIN')
-    gromacs([g_var.gmx+' mdrun -v -nt 1 -deffnm '+res_type+'_'+input+str(chain)+' -c '+res_type+'_'+input+str(chain)+'.pdb', ''+res_type+'_'+input+str(chain)+'.pdb'])
+    gromacs([g_var.args.gmx+' mdrun -v -nt 1 -deffnm '+res_type+'_'+input+str(chain)+' -c '+res_type+'_'+input+str(chain)+'.pdb', ''+res_type+'_'+input+str(chain)+'.pdb'])
     os.chdir('..')  
 
 
@@ -340,10 +352,10 @@ def non_protein_minimise_ind(residue_type):
     write_topol(residue_type, individual, '')
     make_min(residue_type)#, fragment_names)
 #### spin up multiprocessing for grompp 
-    pool = mp.Pool(g_var.ncpus)
+    pool = mp.Pool(g_var.args.ncpus)
     m = mp.Manager()
     q = m.Queue()
-    pool_process = pool.map_async(gromacs, [(g_var.gmx+' grompp '+
+    pool_process = pool.map_async(gromacs, [(g_var.args.gmx+' grompp '+
                                   '-po md_out-'+residue_type+'_temp_'+str(rid)+' '+
                                   '-f em_'+residue_type+'.mdp '+
                                   '-p topol_'+residue_type+'.top '+
@@ -359,8 +371,8 @@ def non_protein_minimise_ind(residue_type):
     os.chdir('MIN')
     m = mp.Manager()
     q = m.Queue()
-    pool = mp.Pool(g_var.ncpus)
-    pool_process = pool.map_async(gromacs, [(g_var.gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb', 
+    pool = mp.Pool(g_var.args.ncpus)
+    pool_process = pool.map_async(gromacs, [(g_var.args.gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb', 
                                   residue_type+'_'+str(rid)+'.pdb',rid, q) for rid in range(0, resid)])          ## minimisation grompp parallised  
     while not pool_process.ready():
         report_complete('Minimisation', q.qsize(), resid)
@@ -380,7 +392,7 @@ def minimise_merged(residue_type, input_file):
     make_min(residue_type)
     write_topol(residue_type, g_var.system[residue_type], '')
 #### grompp with merged system
-    gromacs([g_var.gmx+' grompp '+
+    gromacs([g_var.args.gmx+' grompp '+
             '-po md_out-'+residue_type+' '+
             '-f em_'+residue_type+'.mdp '+
             '-p topol_'+residue_type+'.top '+
@@ -388,7 +400,7 @@ def minimise_merged(residue_type, input_file):
             '-o '+g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged_min -maxwarn 1', g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged_min.tpr'])
 #### change to min directory and minimise
     os.chdir('MIN') 
-    complete, success = gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb', '../'+residue_type+'_merged.pdb'])
+    complete, success = gromacs([g_var.args.gmx+' mdrun -v -nt '+str(g_var.args.ncpus)+' -pin on -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb', '../'+residue_type+'_merged.pdb'])
     os.chdir(g_var.working_dir)
     return success
 
@@ -491,7 +503,7 @@ def minimise_merged_pdbs(protein):
     print('\nMinimising merged atomistic files : '+protein[1:])
     os.chdir(g_var.working_dir+'MERGED')
 #### grompps final merged systems
-    gromacs([g_var.gmx+' grompp '+
+    gromacs([g_var.args.gmx+' grompp '+
             '-po md_out-merged_cg2at '+
             '-f em_merged_cg2at.mdp '+
             '-p topol_final.top '+
@@ -501,7 +513,7 @@ def minimise_merged_pdbs(protein):
             '-maxwarn 1', 'MIN/merged_cg2at'+protein+'_minimised.tpr'])
     os.chdir('MIN')
 #### runs minimises final systems
-    gromacs([g_var.gmx+' mdrun -nt '+str(g_var.ncpus)+' -v -pin on -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb', 'merged_cg2at'+protein+'_minimised.pdb'])
+    gromacs([g_var.args.gmx+' mdrun -nt '+str(g_var.args.ncpus)+' -v -pin on -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb', 'merged_cg2at'+protein+'_minimised.pdb'])
 
    
 def write_steered_mdp(loc, posres, time, timestep):
@@ -518,7 +530,7 @@ def steer_to_aligned(protein_type, fc, input_file ):
     print('Applying '+fc.replace('_',' ')+' position restraints', end='\r')
     os.chdir(g_var.merged_directory)
     write_steered_mdp(g_var.merged_directory+fc+'_posres-nvt.mdp', '-D'+fc.upper()+'POSRES -DNP', 2000, 0.001)  
-    gromacs([g_var.gmx+' grompp '+
+    gromacs([g_var.args.gmx+' grompp '+
             ' -po md_out-merged_cg2at_steer_'+fc+
             ' -f '+fc+'_posres-nvt.mdp '+
             ' -p topol_final.top '+
@@ -527,7 +539,7 @@ def steer_to_aligned(protein_type, fc, input_file ):
             ' -o STEER/merged_cg2at_'+protein_type+'_steer_'+fc+' '+
             ' -maxwarn '+str(2), 'STEER/merged_cg2at_'+protein_type+'_steer_'+fc+'.tpr'])  
     os.chdir('STEER')
-    complete, equil = gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_steer_'+fc+
+    complete, equil = gromacs([g_var.args.gmx+' mdrun -v -nt '+str(g_var.args.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_steer_'+fc+
                                  ' -c merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb -cpo merged_cg2at_'+protein_type+'_steer_'+fc+'.cpt'
                                  ,'merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb'])
     print('{:<100}'.format(''), end='\r')
@@ -538,11 +550,11 @@ def run_nvt(input_file):
     print('\nRunning NVT on de novo system', end='\r')
     os.chdir(g_var.merged_directory)   
     gen.mkdir_directory(g_var.merged_directory+'NVT')
-    if g_var.user_at_input and g_var.disre:
+    if g_var.user_at_input and g_var.args.disre and g_var.gmx_version:
         write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DDISRES -DPOSRESCA', 5000, 0.001)
     else:
         write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DPOSRESCA', 5000, 0.001)
-    gromacs([g_var.gmx+' grompp'+
+    gromacs([g_var.args.gmx+' grompp'+
             ' -po md_out-merged_cg2at_nvt'+
             ' -f nvt.mdp'+
             ' -p topol_final.top'+
@@ -551,7 +563,7 @@ def run_nvt(input_file):
             ' -o NVT/merged_cg2at_de_novo_nvt'+
             ' -maxwarn '+str(2), 'NVT/merged_cg2at_de_novo_nvt.tpr'])   
     os.chdir(g_var.merged_directory+'NVT')
-    gromacs([g_var.gmx+' mdrun -v -nt '+str(g_var.ncpus)+' -pin on -deffnm merged_cg2at_de_novo_nvt'+
+    gromacs([g_var.args.gmx+' mdrun -v -nt '+str(g_var.args.ncpus)+' -pin on -deffnm merged_cg2at_de_novo_nvt'+
             ' -c merged_cg2at_de_novo_nvt.pdb -cpo merged_cg2at_de_novo_nvt.cpt'
             , 'merged_cg2at_de_novo_nvt.pdb'])  
     gen.file_copy_and_check('merged_cg2at_de_novo_nvt.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')    
@@ -572,6 +584,7 @@ def create_aligned():
             print('\n{0:^25}{1:^10}'.format('chain','RMSD ('+chr(197)+')'))
             print('{0:^25}{1:^10}'.format('-----','---------'))
             for key, rmsd_val in rmsd.items(): print('{0:^25}{1:^10}'.format(str(key), float(rmsd_val)))
+            print()
             steer = ['very_low', 'low', 'mid', 'high', 'very_high', 'ultra']
             break
         else:
