@@ -264,8 +264,6 @@ def sep_fragments_topology(location):
                                             topology[topology_function][bead] = group
                                         group += 1
                                     topology[topology_function]['group_max'] = group
-                                elif topology_function in ['STEER']:
-                                    topology[topology_function] += line_sep
                                 elif topology_function in ['N_TERMINAL', 'C_TERMINAL']:
                                     topology[topology_function] = ''.join(line_sep)
                                 elif topology_function == 'CHIRAL':
@@ -348,7 +346,7 @@ def fetch_fragment():
 #### fetches the Backbone heavy atoms and the connectivity with pre/proceeding residues 
     amino_acid_itp = fetch_amino_rtp_file_location(g_var.forcefield_location+g_var.forcefield) 
     g_var.at_mass = fetch_atom_masses(g_var.forcefield_location+g_var.forcefield)
-    for residue_type in [g_var.p_directories, g_var.o_directories]:
+    for residue_type in [g_var.p_directories, g_var.o_directories, g_var.mod_directories]:
         for directory in range(len(residue_type)):
             for residue in residue_type[directory][1:]:    
                 if residue not in g_var.res_top:
@@ -448,7 +446,7 @@ def fetch_bond_info(residue, rtp, at_mass,location):
                         if line_sep[0] == '[':
                             atoms, bonds = atom_bond_check(line_sep)
                         elif atoms:
-                            if residue in g_var.p_residues or residue in g_var.o_residues:
+                            if residue in g_var.p_residues + g_var.o_residues:
                                 if residue not in residue_list:
                                     residue_list.append(residue)
                                 atom_conversion[line_sep[0]]=int(line_sep[3])+1
@@ -614,26 +612,24 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
     #### separate selection between provided and user
         location = frag_dir[database]+ fragments_available_prov[database]
     #### runs through protein and non protein
-        for directory_type in ['/non_protein/', '/protein/', '/other/']:
-    #### adds non protein residues locations to np_directories
+        for directory_type in ['/non_protein/', '/protein/', '/other/', '/protein_modified/']:
             if os.path.exists(location+directory_type):
                 for root, dirs, files in os.walk(location+directory_type):
+                    #### adds non protein residues locations to np_directories
                     if directory_type =='/non_protein/':
                         add_to_list(root, dirs, g_var.np_directories, g_var.np_residues)
+                    #### adds other mutli residue locations to o_directories
                     elif directory_type =='/other/':
                         add_to_list(root, dirs, g_var.o_directories, g_var.o_residues)
                     #### adds protein residues locations to p_directories
                     elif directory_type =='/protein/':
                         add_to_list(root, dirs, g_var.p_directories, g_var.p_residues)
-                    #### adds modified residues to mod directories and removes MOD from p_directories
-                        if os.path.exists(location+directory_type+'MOD/'):
-                            g_var.p_directories[-1].remove('MOD')
-                            g_var.p_residues.remove('MOD')
-                            for root_mod, dirs_mod, files_mod in os.walk(location+directory_type+'MOD/'):
-                                add_to_list(root_mod, dirs_mod, g_var.p_directories, g_var.p_residues)
-                                add_to_list(root_mod, dirs_mod, g_var.mod_directories, g_var.mod_residues)
-                                break
+                    elif directory_type =='/protein_modified/':
+                        add_to_list(root, dirs, g_var.mod_directories, g_var.mod_residues)
+                        g_var.p_residues+=g_var.mod_residues
+                        # add_to_list(root, dirs, g_var.p_directories, g_var.p_residues)
                     break
+    # print(g_var.p_residues, g_var.p_directories)
     
 
 def print_water_selection(water, directory):
@@ -819,11 +815,9 @@ def fragments_in_use():
     protein_directories=[]
     if np.any([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
         for database_val, database in enumerate(sorted(g_var.fg)):
-            if len(g_var.p_directories) > 0:
-                protein_directories = [sublist for sublist in g_var.p_directories if path_leaf(sublist[0])[1] != 'MOD']
             print('\n\n{0:^90}\n{1:-<90}\n'.format('The following residues are available in the database: '+database,''))
             res_type_name = ['Non protein residues', 'Protein residues', 'Modified protein residues', 'Other linked residues', 'Water residues']
-            for res_val, residue in enumerate([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
+            for res_val, residue in enumerate([g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
                 try:
                     res_type = sorted(residue[database_val][1:])
                     print('\n{0:^90}\n{1:^90}'.format(res_type_name[res_val], '-'*len(res_type_name[res_val])))

@@ -1,0 +1,12 @@
+; Include forcefield parameters
+#include "/home/owen/Documents/scripts/cg2at/tutorials/lspa_tutorial/CG2AT_2020-09-09_12-18-04/FINAL/charmm36-mar2019-updated.ff/forcefield.itp"
+#include "/home/owen/Documents/scripts/cg2at/database/fragments/martini_2-0_charmm36/non_protein/POPG/POPG.itp"
+
+
+[ system ]
+; Name
+Something clever....
+
+[ molecules ]
+; Compound        #mols
+POPG    74

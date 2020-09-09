@@ -157,7 +157,7 @@ def ask_terminal(sys_info, residue_type):
             if ter_residue == 'PRO' and ter_val == 0:
                 conv_type = 'PRO'
             termini = g_var.res_top[ter_residue][ter_name[ter_val]].upper()
-            if len(termini) == 0:
+            if len(termini) == 0 or termini == 'DEFAULT':
                 if not g_var.ter:
                     if g_var.nt and ter_val==0:
                         if conv_type == 'PRO':
@@ -248,7 +248,7 @@ def write_posres(chain):
                 at_counter+=1
             #### if atom is in the restraint list for that residue add to position restraint file
                 if line_sep['atom_name'] == 'CA':
-                    ca_posres.write(str(at_counter)+'     1  100  100  100\n')
+                    ca_posres.write(str(at_counter)+'     1  1000  1000  1000\n')
                 if not gen.is_hydrogen(line_sep['atom_name']):
                     very_low_posres.write(str(at_counter)+'     1  200  200  200\n')
                     low_posres.write(str(at_counter)+'     1  750  750  750\n')

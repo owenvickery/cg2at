@@ -1,0 +1,109 @@
+[ CNO ]
+ATOM      1  N   DLPS    1      14.148  18.036  58.320  1.00  0.00      MEMB
+ATOM      2  HN1 DLPS    1      13.942  18.187  57.314  1.00  0.00      MEMB
+ATOM      3  HN2 DLPS    1      13.339  17.601  58.807  1.00  0.00      MEMB
+ATOM      4  HN3 DLPS    1      14.443  18.887  58.844  1.00  0.00      MEMB
+ATOM      5  C12 DLPS    1      15.336  17.126  58.441  1.00  0.00      MEMB
+ATOM      6 H12A DLPS    1      16.127  17.533  57.830  1.00  0.00      MEMB
+ATOM      7  C13 DLPS    1      15.850  17.075  59.885  1.00  0.00      MEMB
+ATOM      8 O13A DLPS    1      15.249  17.758  60.763  1.00  0.00      MEMB
+ATOM      9 O13B DLPS    1      16.837  16.338  60.116  1.00  0.00      MEMB
+ATOM     10  C11 DLPS    1      15.009  15.699  57.943  1.00  0.00      MEMB
+ATOM     11 H11A DLPS    1      14.323  15.179  58.650  1.00  0.00      MEMB
+ATOM     12 H11B DLPS    1      15.963  15.110  57.933  1.00  0.00      MEMB
+[ PO4 ]
+ATOM     13  P   DLPS    1      15.005  15.140  55.363  1.00  0.00      MEMB
+ATOM     14  O13 DLPS    1      16.099  16.014  54.900  1.00  0.00      MEMB
+ATOM     15  O14 DLPS    1      13.866  14.939  54.473  1.00  0.00      MEMB
+ATOM     16  O12 DLPS    1      14.389  15.793  56.666  1.00  0.00      MEMB
+ATOM     17  O11 DLPS    1      15.567  13.764  55.896  1.00  0.00      MEMB
+[ GL1 ]
+ATOM     18  C1  DLPS    1      14.888  12.529  55.613  1.00  0.00      MEMB
+ATOM     19  HA  DLPS    1      13.780  12.650  55.634  1.00  0.00      MEMB
+ATOM     20  HB  DLPS    1      15.134  11.807  56.425  1.00  0.00      MEMB
+ATOM     21  C2  DLPS    1      15.303  11.839  54.259  1.00  0.00      MEMB
+ATOM     22  HS  DLPS    1      15.718  10.833  54.508  1.00  0.00      MEMB
+ATOM     23  O21 DLPS    1      16.278  12.617  53.539  1.00  0.00      MEMB
+ATOM     24  C21 DLPS    1      17.507  12.597  54.071  1.00  0.00      MEMB
+ATOM     25  O22 DLPS    1      17.881  11.813  54.919  1.00  0.00      MEMB
+ATOM     26  C22 DLPS    1      18.362  13.612  53.296  1.00  0.00      MEMB
+ATOM     27  H2R DLPS    1      19.429  13.344  53.429  1.00  0.00      MEMB
+ATOM     28  H2S DLPS    1      18.195  14.605  53.766  1.00  0.00      MEMB
+[ GL2 ]
+ATOM     29  C3  DLPS    1      14.088  11.572  53.308  1.00  0.00      MEMB
+ATOM     30  HX  DLPS    1      13.445  10.790  53.764  1.00  0.00      MEMB
+ATOM     31  HY  DLPS    1      14.498  11.193  52.345  1.00  0.00      MEMB
+ATOM     32  O31 DLPS    1      13.333  12.766  53.089  1.00  0.00      MEMB
+ATOM     33  C31 DLPS    1      12.337  12.756  52.234  1.00  0.00      MEMB
+ATOM     34  O32 DLPS    1      11.956  11.792  51.590  1.00  0.00      MEMB
+ATOM     35  C32 DLPS    1      11.872  14.194  52.023  1.00  0.00      MEMB
+ATOM     36  H2X DLPS    1      10.782  14.162  51.864  1.00  0.00      MEMB
+ATOM     37  H2Y DLPS    1      12.026  14.760  52.965  1.00  0.00      MEMB
+[ C1A ]
+ATOM     38  C23 DLPS    1      18.005  13.673  51.786  1.00  0.00      MEMB
+ATOM     39  H3R DLPS    1      18.640  14.453  51.317  1.00  0.00      MEMB
+ATOM     40  H3S DLPS    1      16.946  13.987  51.638  1.00  0.00      MEMB
+ATOM     41  C24 DLPS    1      18.282  12.364  51.036  1.00  0.00      MEMB
+ATOM     42  H4R DLPS    1      17.455  11.649  51.239  1.00  0.00      MEMB
+ATOM     43  H4S DLPS    1      19.209  11.887  51.427  1.00  0.00      MEMB
+ATOM     44  C25 DLPS    1      18.469  12.620  49.534  1.00  0.00      MEMB
+ATOM     45  H5R DLPS    1      18.810  11.675  49.051  1.00  0.00      MEMB
+ATOM     46  H5S DLPS    1      19.268  13.383  49.402  1.00  0.00      MEMB
+[ C2A ]
+ATOM     47  C26 DLPS    1      17.197  13.105  48.831  1.00  0.00      MEMB
+ATOM     48  H6R DLPS    1      17.434  13.348  47.768  1.00  0.00      MEMB
+ATOM     49  H6S DLPS    1      16.797  14.031  49.298  1.00  0.00      MEMB
+ATOM     50  C27 DLPS    1      16.156  11.996  48.853  1.00  0.00      MEMB
+ATOM     51  H7R DLPS    1      15.911  11.678  49.888  1.00  0.00      MEMB
+ATOM     52  H7S DLPS    1      16.617  11.123  48.332  1.00  0.00      MEMB
+ATOM     53  C28 DLPS    1      14.852  12.336  48.148  1.00  0.00      MEMB
+ATOM     54  H8R DLPS    1      15.048  12.999  47.278  1.00  0.00      MEMB
+ATOM     55  H8S DLPS    1      14.167  12.875  48.839  1.00  0.00      MEMB
+ATOM     56  C29 DLPS    1      14.232  11.019  47.691  1.00  0.00      MEMB
+ATOM     57  H9R DLPS    1      14.046  10.384  48.589  1.00  0.00      MEMB
+ATOM     58  H9S DLPS    1      14.974  10.489  47.051  1.00  0.00      MEMB
+[ C3A ]
+ATOM     59 C210 DLPS    1      12.948  11.193  46.897  1.00  0.00      MEMB
+ATOM     60 H10R DLPS    1      12.208  11.735  47.523  1.00  0.00      MEMB
+ATOM     61 H10S DLPS    1      12.532  10.181  46.696  1.00  0.00      MEMB
+ATOM     62 C211 DLPS    1      13.184  11.883  45.548  1.00  0.00      MEMB
+ATOM     63 H11R DLPS    1      14.027  11.381  45.028  1.00  0.00      MEMB
+ATOM     64 H11S DLPS    1      13.497  12.942  45.708  1.00  0.00      MEMB
+ATOM     65 C212 DLPS    1      11.961  11.807  44.633  1.00  0.00      MEMB
+ATOM     66 H12R DLPS    1      11.094  12.294  45.092  1.00  0.00      MEMB
+ATOM     67 H12S DLPS    1      11.626  10.763  44.483  1.00  0.00      MEMB
+ATOM     68 H12T DLPS    1      12.156  12.305  43.662  1.00  0.00      MEMB
+[ C1B ]
+ATOM     69  C33 DLPS    1      12.697  14.826  50.868  1.00  0.00      MEMB
+ATOM     70  H3X DLPS    1      12.138  15.205  50.003  1.00  0.00      MEMB
+ATOM     71  H3Y DLPS    1      13.401  14.091  50.429  1.00  0.00      MEMB
+ATOM     72  C34 DLPS    1      13.461  16.071  51.260  1.00  0.00      MEMB
+ATOM     73  H4X DLPS    1      14.084  15.856  52.154  1.00  0.00      MEMB
+ATOM     74  H4Y DLPS    1      12.733  16.868  51.524  1.00  0.00      MEMB
+ATOM     75  C35 DLPS    1      14.371  16.487  50.109  1.00  0.00      MEMB
+ATOM     76  H5X DLPS    1      14.920  15.592  49.730  1.00  0.00      MEMB
+ATOM     77  H5Y DLPS    1      15.122  17.214  50.488  1.00  0.00      MEMB
+[ C2B ]
+ATOM     78  C36 DLPS    1      13.686  17.115  48.907  1.00  0.00      MEMB
+ATOM     79  H6X DLPS    1      12.989  17.935  49.157  1.00  0.00      MEMB
+ATOM     80  H6Y DLPS    1      13.058  16.357  48.380  1.00  0.00      MEMB
+ATOM     81  C37 DLPS    1      14.811  17.669  48.035  1.00  0.00      MEMB
+ATOM     82  H7X DLPS    1      15.312  16.766  47.631  1.00  0.00      MEMB
+ATOM     83  H7Y DLPS    1      15.579  18.258  48.558  1.00  0.00      MEMB
+ATOM     84  C38 DLPS    1      14.302  18.546  46.952  1.00  0.00      MEMB
+ATOM     85  H8X DLPS    1      15.081  19.072  46.381  1.00  0.00      MEMB
+ATOM     86  H8Y DLPS    1      13.590  19.337  47.296  1.00  0.00      MEMB
+ATOM     87  C39 DLPS    1      13.562  17.582  46.112  1.00  0.00      MEMB
+ATOM     88  H9X DLPS    1      13.267  18.161  45.268  1.00  0.00      MEMB
+ATOM     89  H9Y DLPS    1      12.614  17.439  46.677  1.00  0.00      MEMB
+[ C3B ]
+ATOM     90 C310 DLPS    1      14.142  16.201  45.651  1.00  0.00      MEMB
+ATOM     91 H10X DLPS    1      13.845  15.953  44.607  1.00  0.00      MEMB
+ATOM     92 H10Y DLPS    1      13.729  15.371  46.238  1.00  0.00      MEMB
+ATOM     93 C311 DLPS    1      15.558  16.124  45.210  1.00  0.00      MEMB
+ATOM     94 H11X DLPS    1      15.666  15.247  44.503  1.00  0.00      MEMB
+ATOM     95 H11Y DLPS    1      16.308  16.134  46.003  1.00  0.00      MEMB
+ATOM     96 C312 DLPS    1      15.722  17.299  44.355  1.00  0.00      MEMB
+ATOM     97 H12X DLPS    1      15.676  18.319  44.751  1.00  0.00      MEMB
+ATOM     98 H12Y DLPS    1      14.783  17.276  43.767  1.00  0.00      MEMB
+ATOM     99 H12Z DLPS    1      16.637  17.138  43.762  1.00  0.00      MEMB

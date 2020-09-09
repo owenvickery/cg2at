@@ -1,0 +1,24 @@
+; Include forcefield parameters
+#include "/home/owen/Documents/scripts/cg2at/tutorials/lspa_tutorial/CG2AT_2020-09-09_12-18-04/FINAL/charmm36-mar2019-updated.ff/forcefield.itp"
+#include "tip3p.itp"
+#include "/home/owen/Documents/scripts/cg2at/tutorials/lspa_tutorial/CG2AT_2020-09-09_12-18-04/FINAL/charmm36-mar2019-updated.ff/ions.itp"
+
+#include "PROTEIN_0.itp"
+#include "POPG.itp"
+#include "POPE.itp"
+[ system ]
+; Name
+Something clever....
+
+[ molecules ]
+; Compound        #mols
+PROTEIN_0    1
+POPG    74
+POPE    290
+SOL    31360
+NA    258
+CL    183
+
+#ifdef DISRES
+#include "PROTEIN_disres.itp"
+#endif

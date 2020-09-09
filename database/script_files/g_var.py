@@ -87,7 +87,7 @@ else:
 
 ### hardcoded variables for use elsewhere in the script
 
-topology = {'C_TERMINAL':'', 'N_TERMINAL':'', 'STEER':[], 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}, 'CONNECT':{'atoms':{}}}
+topology = {'C_TERMINAL':'default', 'N_TERMINAL':'default', 'STEER':[], 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}, 'CONNECT':{'atoms':{}}}
 
 box_line="CRYST1 %8.3f %8.3f %8.3f %8.2f %8.2f %8.2f P 1           1\n"
 

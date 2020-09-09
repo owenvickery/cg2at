@@ -1,0 +1,115 @@
+                      :-) GROMACS - gmx mdrun, 2020.2 (-:
+
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
+    Par Bjelkmar      Christian Blau   Viacheslav Bolnykh     Kevin Boyd    
+ Aldert van Buuren   Rudi van Drunen     Anton Feenstra       Alan Gray     
+  Gerrit Groenhof     Anca Hamuraru    Vincent Hindriksen  M. Eric Irrgang  
+  Aleksei Iupinov   Christoph Junghans     Joe Jordan     Dimitrios Karkoulis
+    Peter Kasson        Jiri Kraus      Carsten Kutzner      Per Larsson    
+  Justin A. Lemkul    Viveca Lindahl    Magnus Lundborg     Erik Marklund   
+    Pascal Merz     Pieter Meulenhoff    Teemu Murtola       Szilard Pall   
+    Sander Pronk      Roland Schulz      Michael Shirts    Alexey Shvetsov  
+   Alfons Sijbers     Peter Tieleman      Jon Vincent      Teemu Virolainen 
+ Christian Wennberg    Maarten Wolf      Artem Zhmurov   
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2019, The GROMACS development team at
+Uppsala University, Stockholm University and
+the Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:      gmx mdrun, version 2020.2
+Executable:   /home/owen/bin/gmx-2020_2/bin/gmx
+Data prefix:  /home/owen/bin/gmx-2020_2
+Working dir:  /home/owen/Documents/scripts/cg2at/tutorials/lspa_tutorial/CG2AT_2020-09-09_12-18-04/SOL/MIN
+Command line:
+  gmx mdrun -v -nt 8 -pin on -deffnm SOL_merged_min -c ../SOL_merged.pdb
+
+Reading file SOL_merged_min.tpr, VERSION 2020.2 (single precision)
+1 GPU selected for this run.
+Mapping of GPU IDs to the 1 GPU task in the 1 rank on this node:
+  PP:0
+PP tasks will do (non-perturbed) short-ranged interactions on the GPU
+PP task will update and constrain coordinates on the CPU
+Using 1 MPI thread
+Using 8 OpenMP threads 
+
+
+Overriding thread affinity set outside gmx mdrun
+
+Steepest Descents:
+   Tolerance (Fmax)   =  7.50000e+02
+   Number of steps    =        20000
+Step=    0, Dmax= 1.0e-03 nm, Epot=  2.06014e+06 Fmax= 2.81856e+05, atom= 14425
+Step=    1, Dmax= 1.0e-03 nm, Epot=  2.05474e+06 Fmax= 2.48297e+05, atom= 14425
+Step=    2, Dmax= 1.2e-03 nm, Epot=  2.04801e+06 Fmax= 2.13795e+05, atom= 14425
+Step=    3, Dmax= 1.4e-03 nm, Epot=  2.03933e+06 Fmax= 1.79074e+05, atom= 14425
+Step=    4, Dmax= 1.7e-03 nm, Epot=  2.02778e+06 Fmax= 1.45055e+05, atom= 14425
+Step=    5, Dmax= 2.1e-03 nm, Epot=  2.01181e+06 Fmax= 1.12763e+05, atom= 14425
+Step=    6, Dmax= 2.5e-03 nm, Epot=  1.98874e+06 Fmax= 8.27516e+04, atom= 14425
+Step=    7, Dmax= 3.0e-03 nm, Epot=  1.95345e+06 Fmax= 5.58015e+04, atom= 14425
+Step=    8, Dmax= 3.6e-03 nm, Epot=  1.89513e+06 Fmax= 3.37979e+04, atom= 46849
+Step=    9, Dmax= 4.3e-03 nm, Epot=  1.79013e+06 Fmax= 1.95535e+04, atom= 86779
+Step=   10, Dmax= 5.2e-03 nm, Epot=  1.60187e+06 Fmax= 1.06475e+04, atom= 63412
+Step=   11, Dmax= 6.2e-03 nm, Epot=  1.27845e+06 Fmax= 6.53477e+03, atom= 63412
+Step=   12, Dmax= 7.4e-03 nm, Epot=  8.64185e+05 Fmax= 4.79460e+03, atom= 86779
+Step=   13, Dmax= 8.9e-03 nm, Epot=  4.84470e+05 Fmax= 4.79547e+03, atom= 3523
+Step=   14, Dmax= 1.1e-02 nm, Epot=  2.28351e+05 Fmax= 5.38883e+03, atom= 5221
+Step=   15, Dmax= 1.3e-02 nm, Epot=  4.98369e+04 Fmax= 6.56234e+03, atom= 5221
+Step=   16, Dmax= 1.5e-02 nm, Epot= -7.85736e+04 Fmax= 8.64346e+03, atom= 5221
+Step=   17, Dmax= 1.8e-02 nm, Epot= -1.71013e+05 Fmax= 5.74316e+03, atom= 5221
+Step=   18, Dmax= 2.2e-02 nm, Epot= -3.05187e+05 Fmax= 1.16349e+04, atom= 70600
+Step=   19, Dmax= 2.7e-02 nm, Epot= -3.66878e+05 Fmax= 7.35645e+03, atom= 54337
+Step=   20, Dmax= 3.2e-02 nm, Epot= -4.64912e+05 Fmax= 2.44363e+04, atom= 70600
+Step=   21, Dmax= 3.8e-02 nm, Epot= -4.94233e+05 Fmax= 5.57326e+03, atom= 70600
+Step=   22, Dmax= 4.6e-02 nm, Epot= -6.23264e+05 Fmax= 3.83442e+04, atom= 70600
+Step=   23, Dmax= 5.5e-02 nm, Epot= -6.40473e+05 Fmax= 8.56944e+03, atom= 54337
+
+step 24: One or more water molecules can not be settled.
+Check for bad contacts and/or reduce the timestep if appropriate.
+Step=   24, Dmax= 6.6e-02 nm, Epot=          inf Fmax= 3.83442e+04, atom= 70600Step=   25, Dmax= 3.3e-02 nm, Epot= -6.82198e+05 Fmax= 1.68291e+03, atom= 54346
+Step=   26, Dmax= 4.0e-02 nm, Epot= -8.64681e+05 Fmax= 1.72991e+04, atom= 54337
+Step=   27, Dmax= 4.8e-02 nm, Epot= -8.78028e+05 Fmax= 3.15586e+03, atom= 54337
+
+step 28: One or more water molecules can not be settled.
+Check for bad contacts and/or reduce the timestep if appropriate.
+Step=   28, Dmax= 5.7e-02 nm, Epot=          inf Fmax= 1.72991e+04, atom= 54337Step=   29, Dmax= 2.9e-02 nm, Epot= -9.16131e+05 Fmax= 2.76352e+03, atom= 70600
+Step=   30, Dmax= 3.4e-02 nm, Epot= -9.59187e+05 Fmax= 1.90898e+03, atom= 70600
+Step=   31, Dmax= 4.1e-02 nm, Epot= -1.01718e+06 Fmax= 5.71072e+03, atom= 54337
+Step=   32, Dmax= 4.9e-02 nm, Epot= -1.03791e+06 Fmax= 4.22158e+03, atom= 46021
+
+step 33: One or more water molecules can not be settled.
+Check for bad contacts and/or reduce the timestep if appropriate.
+Step=   33, Dmax= 5.9e-02 nm, Epot=          inf Fmax= 5.71072e+03, atom= 54337Step=   34, Dmax= 3.0e-02 nm, Epot= -1.05290e+06 Fmax= 2.60377e+03, atom= 46021
+Step=   35, Dmax= 3.6e-02 nm, Epot= -1.07825e+06 Fmax= 5.36218e+03, atom= 46021
+Step=   36, Dmax= 4.3e-02 nm, Epot= -1.09221e+06 Fmax= 3.72142e+03, atom= 46021
+Step=   37, Dmax= 5.1e-02 nm, Epot= -1.11319e+06 Fmax= 7.71675e+03, atom= 46021
+
+step 38: One or more water molecules can not be settled.
+Check for bad contacts and/or reduce the timestep if appropriate.
+Step=   38, Dmax= 6.2e-02 nm, Epot=          inf Fmax= 3.72142e+03, atom= 46021Step=   39, Dmax= 3.1e-02 nm, Epot= -1.11975e+06 Fmax= 7.62283e+02, atom= 54814
+Step=   40, Dmax= 3.7e-02 nm, Epot= -1.17275e+06 Fmax= 1.40561e+04, atom= 46021
+Step=   41, Dmax= 4.4e-02 nm, Epot= -1.17917e+06 Fmax= 3.22481e+03, atom= 46021
+Step=   42, Dmax= 5.3e-02 nm, Epot= -1.19771e+06 Fmax= 5.99469e+03, atom= 46021
+
+step 43: One or more water molecules can not be settled.
+Check for bad contacts and/or reduce the timestep if appropriate.
+Step=   43, Dmax= 6.4e-02 nm, Epot=          inf Fmax= 3.22481e+03, atom= 46021Step=   44, Dmax= 3.2e-02 nm, Epot= -1.20417e+06 Fmax= 7.48739e+02, atom= 46030
+
+writing lowest energy coordinates.
+
+Steepest Descents converged to Fmax < 750 in 45 steps
+Potential Energy  = -1.2041654e+06
+Maximum force     =  7.4873859e+02 on atom 46030
+Norm of force     =  1.0533510e+02
+
+GROMACS reminds you: "Bad As This Shit Is, This Shit Ain't As Bad As You Think It Is." (Jackie Brown)
+
