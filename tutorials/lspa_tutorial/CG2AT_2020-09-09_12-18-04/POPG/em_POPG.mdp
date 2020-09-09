@@ -1,6 +1,0 @@
-define = 
- integrator = steep
-nsteps = 20000
-emtol = 750
-emstep = 0.001
-cutoff-scheme = Verlet
