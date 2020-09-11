@@ -814,7 +814,7 @@ def database_information():
 def fragments_in_use():
     protein_directories=[]
     if np.any([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
-        for database_val, database in enumerate(sorted(g_var.args.fg)):
+        for database_val, database in enumerate(sorted(g_var.args.fg.split())):
             print('\n\n{0:^90}\n{1:-<90}\n'.format('The following residues are available in the database: '+database,''))
             res_type_name = ['Non protein residues', 'Protein residues', 'Modified protein residues', 'Other linked residues', 'Water residues']
             for res_val, residue in enumerate([g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
