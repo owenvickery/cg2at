@@ -3,8 +3,7 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/..')
 import unittest
 import numpy as np
-# from gen import fix_time
-import gen, g_var, at_mod_p
+import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
 
 
 class TestSum(unittest.TestCase):
