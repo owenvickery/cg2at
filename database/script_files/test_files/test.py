@@ -100,7 +100,8 @@ class TestSum(unittest.TestCase):
         g_var.np_directories=[[run_dir+'files_test/']]
         self.assertEqual(gen.fragment_location('PHE'), run_dir+'files_test/PHE/PHE.pdb')
 
-    # def test_fetch_bond_info(self):
+    def test_fetch_bond_info(self):
+        pass
     #     residue = PHE
     #     amino_acid_itp = ['/home/owen/Documents/scripts/cg2at/database/forcefields/charmm36-mar2019-updated.ff/merged.rtp']
     #     location = '/home/owen/Documents/scripts/cg2at/database/fragments/martini_2-2_charmm36/protein/PHE/PHE.pdb'
