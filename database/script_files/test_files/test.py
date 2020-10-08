@@ -61,13 +61,13 @@ class TestSum(unittest.TestCase):
             self.assertEqual(gen.strip_header(header), out[header_val])
 
     def test_sep_fragments_topology(self):
-        results = gen.sep_fragments_topology('files_test/PHE/PHE')
+        results = gen.sep_fragments_topology(run_dir+'files_test/PHE/PHE')
         out = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'group_max': 2, 'SC1': 1, 'SC2': 1, 'SC3': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}}
         self.assertEqual(results, out)
 
     def test_empty_sep_fragments_topology(self):
         empty = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': []}, 'GROUPS': {'group_max': 1}, 'CONNECT': {'atoms': {}}}
-        results = gen.sep_fragments_topology('files_test/PHE/missing')
+        results = gen.sep_fragments_topology(run_dir+'files_test/PHE/missing')
         self.assertEqual(results, empty)
 
     def test_get_fragment_topology(self):
