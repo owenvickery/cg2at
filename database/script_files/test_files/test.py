@@ -5,7 +5,7 @@ import unittest
 import numpy as np
 import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
 
-
+run_dir = os.path.dirname(os.path.realpath(__file__))+'/'
 class TestSum(unittest.TestCase):
     def test_time(self):
         t1 = 1602152289.7587886
@@ -91,14 +91,14 @@ class TestSum(unittest.TestCase):
             self.assertEqual(result2, out[header_val][1])
 
     def test_fetch_amino_rtp_file_location(self):
-        self.assertEqual(gen.fetch_amino_rtp_file_location('files_test/charmm36-mar2019-updated.ff'), ['files_test/charmm36-mar2019-updated.ff/merged.rtp'])
+        self.assertEqual(gen.fetch_amino_rtp_file_location(run_dir+'files_test/charmm36-mar2019-updated.ff'), [run_dir+'files_test/charmm36-mar2019-updated.ff/merged.rtp'])
 
     def test_fetch_atom_masses(self):
         self.assertEqual(gen.fetch_atom_masses('files_test'), {'AG': '107.86820', 'AL': '26.98154'})
 
     def test_fragment_location(self):
-        g_var.np_directories=[['files_test/']]
-        self.assertEqual(gen.fragment_location('PHE'), 'files_test/PHE/PHE.pdb')
+        g_var.np_directories=[[run_dir+'files_test/']]
+        self.assertEqual(gen.fragment_location('PHE'), run_dir+'files_test/PHE/PHE.pdb')
 
     # def test_fetch_bond_info(self):
     #     residue = PHE
