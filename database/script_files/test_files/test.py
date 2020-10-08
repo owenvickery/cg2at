@@ -71,7 +71,7 @@ class TestSum(unittest.TestCase):
         self.assertEqual(results, empty)
 
     def test_get_fragment_topology(self):
-        results = gen.get_fragment_topology('PHE', 'files_test/PHE/PHE.pdb')
+        results = gen.get_fragment_topology('PHE', run_dir+'files_test/PHE/PHE.pdb')
         grouped_atoms = {2: {'BB': [1, 2, 10, 11]}, 1: {'SC1': [3, 4, 5], 'SC2': [8, 9], 'SC3': [6, 7]}}
         res_top_out={'PHE': {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'BB': 2, 'SC1': 1, 'SC2': 1, 'SC3': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, 'ATOMS': ['N', 'CA', 'C', 'O']}}
         self.assertEqual(g_var.res_top, res_top_out)
