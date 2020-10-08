@@ -6,10 +6,10 @@ import argparse
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', prog='CG2AT2', epilog='Enjoy the program and best of luck!\n')
-group_req = parser.add_mutually_exclusive_group()
-group_req.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
+# group_req = parser.add_mutually_exclusive_group()
+parser.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
 parser.add_argument('-version', action='version', version='%(prog)s 0.2')
-group_req.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)
+parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)
 parser.add_argument('-a', help='atomistic coordinates (Optional)',metavar='pdb/gro/tpr',type=str, nargs='*')
 parser.add_argument('-d', help='duplicate atomistic chains. (0:3 1:3 means 3 copies each of chain 0 and 1)',type=str, nargs='*', default=[], metavar='0:1')
 parser.add_argument('-group', help='treat user supplied atomistic chains, as rigid bodies. (0,1 2,3 or all or chain)',type=str, nargs='*', metavar='0,1')
@@ -39,11 +39,6 @@ args = parser.parse_args()
 opt = vars(args)
 opt['input']=os.path.abspath(sys.argv[0])+' '+''.join([ i+' ' for i in sys.argv[1:]])+'\n'
 
-#### if missing structure file print help and quit
-if not args.info and args.c is None:
-    help_output = parser.print_help(sys.stderr)
-    sys.exit('\nError: the following arguments are required: -c\n')
-
 #### virtual site information
 if args.vs:
     vs = '-vsite h'
@@ -54,11 +49,13 @@ else:
 
 ### hardcoded variables for use elsewhere in the script
 
-topology = {'C_TERMINAL':'default', 'N_TERMINAL':'default', 'STEER':[], 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}, 'CONNECT':{'atoms':{}}}
+topology = {'C_TERMINAL':'default', 'N_TERMINAL':'default', 'CHIRAL':{'atoms':[]}, 'GROUPS':{'group_max':1}, 'CONNECT':{'atoms':{}}}
 
 box_line="CRYST1 %8.3f %8.3f %8.3f %8.2f %8.2f %8.2f P 1           1\n"
 
 pdbline = "ATOM  %5d %4s %4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f"
+
+os.environ['GMX_SUPPRESS_DUMP'] = '1'  ## prevent gromacs filling the file system with step files
 
 ### CG2AT folder locations
 

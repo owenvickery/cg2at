@@ -20,7 +20,7 @@ if __name__ == '__main__':
        'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
        'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
 
-    g_var.alt_res_name= {'HSD':'HIS', 'HSE':'HIS', 'HSP':'HIS'}
+    g_var.alt_res_name= {'HSD':'HIS', 'HSE':'HIS', 'HSP':'HIS', 'HIE':'HIS'}
 
     g_var.dna = {'DA':'A', 'DG':'G', 'DC':'C', 'DT':'T'}
 
@@ -31,11 +31,11 @@ if __name__ == '__main__':
                                 }
 
 # Nothing in the script below here should need changing by the user
+    
     g_var.tc['i_t']=time.time()
     ### initialise script 
-
-    os.environ['GMX_SUPPRESS_DUMP'] = '1'  ## prevent gromacs filling the file system with step files
     gen.cg2at_header()
+    gen.check_input_flag() #### if missing structure file print help and quit
     gen.correct_number_cpus()
     gen.find_gromacs()
     gen.read_database_directories()
@@ -50,6 +50,7 @@ if __name__ == '__main__':
     gen.fetch_fragment()    
     gen.fetch_chain_groups()
     gen.sort_swap_group()
+    gen.print_swap_residues()
     ###
     #### collects initial structures into INPUT folder
     gro.collect_input()
@@ -61,6 +62,7 @@ if __name__ == '__main__':
     box_vec_initial = read_in.read_initial_cg_pdb()
     #### box size update 
     if g_var.args.box != None:
+        print('box cutting only works for cubic boxes currently')
         g_var.box_vec, box_shift = gen.new_box_vec(box_vec_initial, g_var.args.box)
     else:
         g_var.box_vec=box_vec_initial

@@ -576,10 +576,10 @@ def check_ringed_lipids(protein):
                                     dist = gen.calculate_distance(merge_coords[at_val], merge_coords[at_bond+offset])
                                     if 2 < dist < 6:
                                         lipid_atoms.append([at_val, at_bond+offset, (np.array(merge_coords[at_val])+np.array(merge_coords[at_bond+offset]))/2])
-                                        ring_ouput.write('{0:10}{1:6}{2:6}{3:5}{4:8}{5:8}{6:5}{7:5}{8:5}\n'.format(
+                                        ring_ouput.write('{0:10}{1:6}{2:6}{3:5}{4:5}{5:5}{6:5}{7:5}{8:5}{9:5}{10:5}{11:5}\n'.format(
                                                             'distance: ',str(np.round(dist,2)),'residue: ', merge[at_val]['residue_name'], merge[at_val]['residue_id'],
                                                             'atom_1: ', merge[at_val]['atom_name'],
-                                                            'atom_2: ', merge[at_bond+offset]['atom_name']))
+                                                            'atom_2: ', merge[at_bond+offset]['atom_name'], 'rough line num: ', at_val, at_bond+offset))
                                         ringed = True
         if ringed or os.path.exists(g_var.merged_directory+'merged_cg2at_threaded.pdb'):
             print('Found '+str(len(lipid_atoms))+' abnormal bonds, now attempting to fix.')

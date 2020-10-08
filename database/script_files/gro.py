@@ -33,6 +33,7 @@ def collect_input():
 
     gen.file_copy_and_check(g_var.args.c, g_var.input_directory+gen.path_leaf(g_var.args.c)[1])
     os.chdir(g_var.input_directory)
+    gromacs([g_var.args.gmx+' -version', 'version.txt'])
     gromacs([g_var.args.gmx+' editconf -f '+gen.path_leaf(g_var.args.c)[1]+' -resnr 0 -c -o '+g_var.input_directory+'CG_INPUT.pdb', g_var.input_directory+'CG_INPUT.pdb'])
     if not os.path.exists(g_var.input_directory+'CG_INPUT.pdb'):
         sys.exit('\nFailed to process coarsegrain input file')      
@@ -54,7 +55,7 @@ def gromacs(gro):
         err, out = output.communicate()
         out=out.decode("utf-8")
         if not hasattr(g_var, 'gmx_version'):
-            check_gromacs_version(out)
+            check_gromacs_version(out, err)
     #### all gromacs outputs will be saved into gromacs_outputs within the folder it is run
         with open('gromacs_outputs', 'a') as checks:
             checks.write(out)
@@ -78,8 +79,9 @@ def gromacs(gro):
         return gro[2], error 
     return 0, error
 
-def check_gromacs_version(output):
-    for line in output.split('\n') :
+def check_gromacs_version(output, err):
+    err = err.decode("utf-8")
+    for line in err.split('\n') :
         if line.startswith('GROMACS') and 'version' in line:
             if float(line.split()[-1]) > 6:
                 g_var.gmx_version = True
@@ -206,10 +208,14 @@ def run_parallel_pdb2gmx_min(res_type, sys_info):
     pool_process = pool.starmap_async(pdb2gmx_minimise, [(chain, pdb2gmx_selections,res_type, q) for chain in range(0, g_var.system[res_type])])
     while not pool_process.ready(): 
         report_complete('pdb2gmx/minimisation', q.qsize(), g_var.system[res_type])
-    print('{:<130}'.format(''), end='\r')
-    print('\npdb2gmx/minimisation completed on residue type: '+res_type+'\n')     
     pool.close()
-    pool.join()
+    pool.join()     
+    for chain in range(0, g_var.system[res_type]):
+        if not os.path.exists(res_type+'_de_novo_'+str(chain)+'_gmx.pdb') or not os.path.exists(g_var.working_dir+res_type+'/MIN/'+res_type+'_de_novo_'+str(chain)+'.pdb'):
+            print('For some reason parallisation of pdb2gmx failed on chain '+str(chain)+', now rerunning.')
+            pdb2gmx_minimise(chain, pdb2gmx_selections,res_type, q)
+    print('{:<130}'.format(''), end='\r')
+    print('\npdb2gmx/minimisation completed on residue type: '+res_type+'\n')
 
 def pdb2gmx_chain(chain, input,res_type, pdb2gmx_selections):
 #### pdb2gmx on on protein chain, creates the topologies    
@@ -233,7 +239,7 @@ def minimise_protein_chain(chain, input, res_type):
                 '-maxwarn 1 ', 'MIN/'+res_type+'_'+input+str(chain)+'.tpr'])
 #### minimises chain
     os.chdir('MIN')
-    gromacs([g_var.args.gmx+' mdrun -v -nt 1 -deffnm '+res_type+'_'+input+str(chain)+' -c '+res_type+'_'+input+str(chain)+'.pdb', ''+res_type+'_'+input+str(chain)+'.pdb'])
+    gromacs([g_var.args.gmx+' mdrun -v -nt 1 -deffnm '+res_type+'_'+input+str(chain)+' -c '+res_type+'_'+input+str(chain)+'.pdb', res_type+'_'+input+str(chain)+'.pdb'])
     os.chdir('..')  
 
 

@@ -13,6 +13,8 @@ import copy
 import ntpath
 import g_var
 
+
+
 def forcefield_selection():
     ##### forcefield selection
     if not g_var.args.info:
@@ -69,6 +71,11 @@ def correct_number_cpus():
             g_var.args.ncpus = mp.cpu_count()
     g_var.opt['ncpus'] = g_var.args.ncpus
 
+def check_input_flag():
+    if not g_var.args.info and g_var.args.c is None:
+        g_var.parser.print_help(sys.stderr)
+        sys.exit('\nError: the following arguments are required: -c\n')
+
 def path_leaf(path):
     head, tail = ntpath.split(path)
     if not tail:
@@ -95,7 +102,7 @@ def find_gromacs():
                 break
         if g_var.args.gmx is None:
             sys.exit('Cannot find gromacs installation')
-    g_var.opt['gromacs'] = g_var.args.gmx
+    g_var.opt['gmx'] = g_var.args.gmx
 
 def trunc_coord(xyz):
     xyz_new = []
@@ -184,7 +191,7 @@ def sort_swap_group():
                 g_var.swap_dict[res_s[0]][res_s[0]+':'+res_e[0]]['range']=res_range
             else:
                 sys.exit('The length of your swap groups do not match')
-        print_swap_residues()
+        
 
 
 def create_ion_list(ion_pdb):
@@ -197,29 +204,29 @@ def create_ion_list(ion_pdb):
 
 
 def print_swap_residues():
-    print('\nYou have chosen to swap the following residues\n')
-    print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format('residue', 'bead', '     ', 'residue', 'bead', 'range'))
-    print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format('-------', '----', '     ', '-------', '----', '-----'))
-    for residue in g_var.swap_dict:
-        for swap in g_var.swap_dict[residue]:
-            bead_s, bead_e='', ''
-            for bead in g_var.swap_dict[residue][swap]:
-                if bead not in ['resid', 'range']:
-                    bead_s+=bead+' '
-                    bead_e+=g_var.swap_dict[residue][swap][bead]+' '
-                elif bead == 'range':
-                    if g_var.swap_dict[residue][swap]['range'] != 'ALL':
-                        ran=''
-                        for resid_section in g_var.swap_dict[residue][swap]['range']:
-                            ran += resid_section+', '
-                        ran = ran[:-2]
-                    else:
-                        ran = g_var.swap_dict[residue][swap]['range']
-            print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format(swap.split(':')[0], bead_s, ' --> ', swap.split(':')[1], bead_e, ran))
+    if g_var.args.swap != None:
+        print('\nYou have chosen to swap the following residues\n')
+        print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format('residue', 'bead', '     ', 'residue', 'bead', 'range'))
+        print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format('-------', '----', '     ', '-------', '----', '-----'))
+        for residue in g_var.swap_dict:
+            for swap in g_var.swap_dict[residue]:
+                bead_s, bead_e='', ''
+                for bead in g_var.swap_dict[residue][swap]:
+                    if bead not in ['resid', 'range']:
+                        bead_s+=bead+' '
+                        bead_e+=g_var.swap_dict[residue][swap][bead]+' '
+                    elif bead == 'range':
+                        if g_var.swap_dict[residue][swap]['range'] != 'ALL':
+                            ran=''
+                            for resid_section in g_var.swap_dict[residue][swap]['range']:
+                                ran += resid_section+', '
+                            ran = ran[:-2]
+                        else:
+                            ran = g_var.swap_dict[residue][swap]['range']
+                print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format(swap.split(':')[0], bead_s, ' --> ', swap.split(':')[1], bead_e, ran))
     
 
 def new_box_vec(box_vec, box):
-    print('box cutting only works for cubic boxes currently')
     box_vec_split = box_vec.split()[1:]
     box_vec_values, box_shift = [], []
     for xyz_val, xyz in enumerate(box):
@@ -229,7 +236,7 @@ def new_box_vec(box_vec, box):
         else:
             box_shift.append(0)
             box_vec_values.append(float(box_vec_split[xyz_val]))
-    box_vec = g_var.box_line%(box_vec_values[0], box_vec_values[1], box_vec_values[2], box_vec_split[3],box_vec_split[4],box_vec_split[5])
+    box_vec = g_var.box_line%(float(box_vec_values[0]), float(box_vec_values[1]), float(box_vec_values[2]), float(box_vec_split[3]), float(box_vec_split[4]),float(box_vec_split[5]))
     return box_vec, np.array(box_shift)
 
 def strip_header(line):
@@ -288,7 +295,7 @@ def sep_fragments_topology(location):
 def get_fragment_topology(residue, location):
     topology = sep_fragments_topology(location[:-4])
     g_var.res_top[residue] = {'C_TERMINAL':topology['C_TERMINAL'], 'N_TERMINAL':topology['N_TERMINAL'], \
-                            'STEER':topology['STEER'], 'CHIRAL':topology['CHIRAL'], 'GROUPS':{}, 'CONNECT':topology['CONNECT']}
+                             'CHIRAL':topology['CHIRAL'], 'GROUPS':{}, 'CONNECT':topology['CONNECT']}
     with open(location, 'r') as pdb_input:
         group=topology['GROUPS']['group_max']
         atom_list=[]
@@ -317,15 +324,7 @@ def get_fragment_topology(residue, location):
                     if not is_hydrogen(line_sep['atom_name']):
                         atom_list.append(line_sep['atom_name'])    ### list of backbone heavy atoms
                 g_var.res_top[residue]['ATOMS']=atom_list
-    return grouped_atoms
-
-def switch_num_name(dictionary, input_val, num_to_letter):
-    if num_to_letter:
-        dictionary = {v: k for k, v in dictionary.items()}
-    if input_val in dictionary:
-        return dictionary[input_val]
-    else:
-        return input_val        
+    return grouped_atoms   
 
 def sort_connectivity(atom_dict, heavy_bond):
     cut_group = {}
@@ -351,6 +350,10 @@ def fetch_fragment():
             for residue in residue_type[directory][1:]:    
                 if residue not in g_var.res_top:
                     location = fragment_location(residue)
+                    # if residue == 'PHE':
+                    #     print(residue)
+                    #     print(amino_acid_itp)
+                    #     print(location)
                     g_var.hydrogen[residue], g_var.heavy_bond[residue], residue_list, at_mass, amide_h = fetch_bond_info(residue, amino_acid_itp, g_var.at_mass, location)
                     grouped_atoms = get_fragment_topology(residue, location)
                     g_var.sorted_connect[residue]  = sort_connectivity(grouped_atoms, g_var.heavy_bond[residue])
@@ -383,14 +386,14 @@ def atom_bond_check(line_sep):
     if line_sep[1] == 'atoms':
         return True, False
     elif line_sep[1] == 'bonds':
-        return False,True
+        return False, True
     else:
         return False, False
 
 def fetch_amino_rtp_file_location(forcefield_loc):
     rtp=[]
     for file in os.listdir(forcefield_loc):
-        if file.endswith('.rtp'):#['aminoacids.rtp', 'merged.rtp']:
+        if file.endswith('.rtp'):
             rtp.append(forcefield_loc+'/'+file)
     return rtp
 
@@ -415,8 +418,6 @@ def fetch_atoms_water(forcefield_loc, at_mass_p):
                     line_sep = line.split()
                     if len(line_sep) >= 3:
                         if line[0] not in [';', '#']:
-                            line_sep = line.split()
-
                             if line_sep[0] == '[' and line_sep[1] != 'atoms':
                                 strip_atoms = False
                             if strip_atoms:
@@ -440,29 +441,13 @@ def fetch_bond_info(residue, rtp, at_mass,location):
                     line_sep = line.split()
                     if line_sep[1] == residue:
                         residue_present = True
-                    elif line_sep[1] in ['HSE', 'HIE'] and residue == 'HIS': 
+                    elif line_sep[1] in g_var.alt_res_name and residue == 'HIS': 
                         residue_present = True
                     elif residue_present or residue not in g_var.p_residues+g_var.o_residues:
                         if line_sep[0] == '[':
                             atoms, bonds = atom_bond_check(line_sep)
                         elif atoms:
-                            if residue in g_var.p_residues + g_var.o_residues:
-                                if residue not in residue_list:
-                                    residue_list.append(residue)
-                                atom_conversion[line_sep[0]]=int(line_sep[3])+1
-                                if is_hydrogen(line_sep[0]):
-                                    H_dict.append(line_sep[0])
-                                else:
-                                    res_at_mass[line_sep[0]] = float(at_mass[line_sep[1]])
-                                    heavy_dict.append(line_sep[0])
-                            else:
-                                if line_sep[3] not in residue_list:
-                                    residue_list.append(line_sep[3])
-                                if is_hydrogen(line_sep[4]):
-                                    H_dict.append(int(line_sep[0]))
-                                else:
-                                    res_at_mass[line_sep[4]] = float(line_sep[7])
-                                    heavy_dict.append(int(line_sep[0]))
+                            residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = fetch_bond_info_atoms(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict, at_mass)
                         elif bonds:
                             try:
                                 bond_dict.append([int(line_sep[0]),int(line_sep[1])])
@@ -472,6 +457,7 @@ def fetch_bond_info(residue, rtp, at_mass,location):
                             break
         if len(heavy_dict) > 0:
             break
+
     bond_dict=np.array(bond_dict)
     hydrogen = {}
     heavy_bond = {}
@@ -487,6 +473,27 @@ def fetch_bond_info(residue, rtp, at_mass,location):
         return hydrogen, heavy_bond, residue_list, res_at_mass, amide_hydrogen
     else:
         return hydrogen, heavy_bond, residue_list, res_at_mass, None
+
+def fetch_bond_info_atoms(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict, at_mass):
+    if residue in g_var.p_residues + g_var.o_residues:
+        if residue not in residue_list:
+            residue_list.append(residue)
+        atom_conversion[line_sep[0]]=int(line_sep[3])+1
+        if is_hydrogen(line_sep[0]):
+            H_dict.append(line_sep[0])
+        else:
+            res_at_mass[line_sep[0]] = float(at_mass[line_sep[1]])
+            heavy_dict.append(line_sep[0])
+    else:
+        if line_sep[3] not in residue_list:
+            residue_list.append(line_sep[3])
+        if is_hydrogen(line_sep[4]):
+            H_dict.append(int(line_sep[0]))
+        else:
+            res_at_mass[line_sep[4]] = float(line_sep[7])
+            heavy_dict.append(int(line_sep[0]))
+    return residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict
+
 
 def get_atomistic(frag_location):
 #### read in atomistic fragments into dictionary    
@@ -515,10 +522,8 @@ def add_to_topology_list(bond_1, bond_2, top_list, dict1, dict2, conversion, res
     return top_list, amide_hydrogen
 
 def fragment_location(residue):  
-    # print(database_dir)
 #### runs through dirctories looking for the atomistic fragments returns the correct location
     for res_type in [g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories]:
-        # print(g_var.database_locations)
         for directory in range(len(res_type)):
             if os.path.exists(res_type[directory][0]+residue+'/'+residue+'.pdb'):
                 return res_type[directory][0]+residue+'/'+residue+'.pdb'            
@@ -674,7 +679,7 @@ def check_water_molecules():
                 print_water_selection(water, directory)
                 g_var.water_dir, g_var.water = ask_for_water_model(directory, water)
             if g_var.args.w is None:
-                g_var.opt['w'] = water
+                g_var.opt['w'] = g_var.water
 
 ############################################################################################## fragment rotation #################################################################################
 
