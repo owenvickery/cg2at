@@ -94,7 +94,7 @@ class TestSum(unittest.TestCase):
         self.assertEqual(gen.fetch_amino_rtp_file_location(run_dir+'files_test/charmm36-mar2019-updated.ff'), [run_dir+'files_test/charmm36-mar2019-updated.ff/merged.rtp'])
 
     def test_fetch_atom_masses(self):
-        self.assertEqual(gen.fetch_atom_masses('files_test'), {'AG': '107.86820', 'AL': '26.98154'})
+        self.assertEqual(gen.fetch_atom_masses(run_dir+'files_test'), {'AG': '107.86820', 'AL': '26.98154'})
 
     def test_fragment_location(self):
         g_var.np_directories=[[run_dir+'files_test/']]
