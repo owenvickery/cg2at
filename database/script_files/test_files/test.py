@@ -163,6 +163,7 @@ class TestSum(unittest.TestCase):
         loc = run_dir+'files_test/database_test/forcefields/empty.ff'
         test = run_dir+'files_test/database_test/forcefields/_empty.ff'
         self.assertEqual(os.path.exists(test), False)
+        self.assertEqual(os.path.exists(loc), True)
         gen.folder_copy_and_check(loc, test)
         self.assertEqual(os.path.exists(test), True)
         os.system('rm -r '+test)
