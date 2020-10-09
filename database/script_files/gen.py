@@ -15,29 +15,32 @@ import g_var
 
 
 
-def forcefield_selection():
+def forcefield_selection(test=False):
     ##### forcefield selection
     if not g_var.args.info:
         if g_var.args.ff != None:
             if os.path.exists(g_var.args.ff):
                 g_var.forcefield_location, g_var.forcefield = path_leaf(g_var.args.ff)
-                folder_copy_and_check(g_var.args.ff, g_var.final_dir+forcefield)
-                print('\nYou have chosen to use your own forcefield: '+g_var.forcefield+' in '+g_var.forcefield_location)
+                folder_copy_and_check(g_var.args.ff, g_var.final_dir+g_var.forcefield)
+                g_var.opt['ff'] = g_var.forcefield
+                if not test:
+                    print('\nYou have chosen to use your own forcefield: '+g_var.forcefield+' in '+g_var.forcefield_location)
             elif path_leaf(g_var.args.ff)[1]+'.ff' in g_var.forcefield_available:
                 forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.args.ff)[1]+'.ff')
             elif path_leaf(g_var.args.ff)[1] in g_var.forcefield_available:
                 forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.args.ff)[1])
             else:
                 print('Cannot find forcefield: '+g_var.args.ff+'  please select one from below\n')   
-        if 'forcefield_number' not in locals() and 'forcefield' not in locals():
-            forcefield_number = database_selection(g_var.forcefield_available, 'forcefields')    
-        if 'forcefield' not in locals():
-            print('\nYou have selected the forcefield: '+g_var.forcefield_available[forcefield_number].split('.')[0])
+        if 'forcefield_number' not in locals() and g_var.forcefield == '':
+            forcefield_number = database_selection(g_var.forcefield_available, 'forcefields', test)    
+        if g_var.forcefield == '':
+            if not test:
+                print('\nYou have selected the forcefield: '+g_var.forcefield_available[forcefield_number].split('.')[0])
             folder_copy_and_check(g_var.database_dir+'/forcefields/'+g_var.forcefield_available[forcefield_number], g_var.final_dir+g_var.forcefield_available[forcefield_number])
             g_var.forcefield_location, g_var.forcefield=g_var.database_dir+'forcefields/', g_var.forcefield_available[forcefield_number]
             g_var.opt['ff'] = g_var.forcefield_available[forcefield_number]
 
-def fragment_selection():
+def fragment_selection(test=False):
     ##### fragment selection
     frag_location, fragment_number, fragments_available_other = [],[],[]
     if g_var.args.fg != None:
@@ -48,15 +51,15 @@ def fragment_selection():
                 fragment_number.append(frag_val)
                 fragments_available_other.append(fragments)
     if len(fragment_number) == 0:
-        fragment_number = fetch_frag_number(g_var.fragments_available)
+        fragment_number = fetch_frag_number(g_var.fragments_available, test)
         frag_location = [g_var.database_dir+'fragments/']*len(g_var.fragments_available)
         if g_var.args.fg is None:
-            g_var.opt['fg'] = ''
+            g_var.opt['fg'] = []
             for database in fragment_number:
-                g_var.opt['fg'] += g_var.fragments_available[database]+' '
+                g_var.opt['fg'].append(g_var.fragments_available[database])
     else:
         g_var.fragments_available = fragments_available_other
-    fetch_residues(frag_location, g_var.fragments_available, fragment_number)
+    fetch_residues(frag_location, g_var.fragments_available, fragment_number, test)
 
 def correct_number_cpus():
     if g_var.args.ncpus != None:
@@ -350,10 +353,6 @@ def fetch_fragment():
             for residue in residue_type[directory][1:]:    
                 if residue not in g_var.res_top:
                     location = fragment_location(residue)
-                    # if residue == 'PHE':
-                    #     print(residue)
-                    #     print(amino_acid_itp)
-                    #     print(location)
                     g_var.hydrogen[residue], g_var.heavy_bond[residue], residue_list, at_mass, amide_h = fetch_bond_info(residue, amino_acid_itp, g_var.at_mass, location)
                     grouped_atoms = get_fragment_topology(residue, location)
                     g_var.sorted_connect[residue]  = sort_connectivity(grouped_atoms, g_var.heavy_bond[residue])
@@ -457,7 +456,6 @@ def fetch_bond_info(residue, rtp, at_mass,location):
                             break
         if len(heavy_dict) > 0:
             break
-
     bond_dict=np.array(bond_dict)
     hydrogen = {}
     heavy_bond = {}
@@ -545,39 +543,46 @@ def read_database_directories():
     g_var.forcefield_available, g_var.fragments_available = available_provided_database[0], available_provided_database[1]
 
 
-def database_selection(provided, selection_type):
+def database_selection(provided, selection_type, test=False):
 #### print out selection of forcefields
-    print('\n\n{0:^45}\n'.format('Provided '+selection_type))
-    print('{0:^20}{1:^30}'.format('Selection',selection_type))
-    print('{0:^20}{1:^30}'.format('---------','----------'))
-    for force_num_prov, line in enumerate(provided):
-        print('{0:^20}{1:^30}'.format(force_num_prov,line.split('.')[0]))
+    if not test:
+        print('\n\n{0:^45}\n'.format('Provided '+selection_type))
+        print('{0:^20}{1:^30}'.format('Selection',selection_type))
+        print('{0:^20}{1:^30}'.format('---------','----------'))
+        for force_num_prov, line in enumerate(provided):
+            print('{0:^20}{1:^30}'.format(force_num_prov,line.split('.')[0]))
     return ask_database(provided,  selection_type)
 
-def ask_database(provided, selection_type):
+def ask_database(provided, selection_type, test=False):
 #### ask which database to use
     while True:
         try:
             if len(provided)==1:
                 print('\nOnly 1 '+selection_type[:-1]+' database is currently available, therefore you have no choice but to accept the following choice.')
-                return 0
+                return number
         #### if asking about fragments accept a list of libraries 
             if selection_type=='fragments': 
                 number = np.array(input('\nplease select fragment libraries (in order of importance: eg. "1 0" then ENTER): ').split())
                 number=number.astype(int)
                 if len(number[np.where(number >= len(provided))]) == 0:
                     return number
+                elif test:
+                    return True
         #### if forcefield only accept one selection
             else:
                 number = int(input('\nplease select a forcefield: '))
                 if number < len(provided):
                     return number
+                elif test:
+                    return True
         except KeyboardInterrupt:
             sys.exit('\nInterrupted')
         except BaseException:
+            if test:
+                return True
             print("Oops!  That was a invalid choice")
 
-def fetch_frag_number(fragments_available):
+def fetch_frag_number(fragments_available, test=False):
     fragment_number = []
     if g_var.args.fg != None and len(g_var.args.fg) > 0 :
         for frag in g_var.args.fg:
@@ -585,9 +590,9 @@ def fetch_frag_number(fragments_available):
                 fragment_number.append(fragments_available.index(frag))
             elif not g_var.args.info:
                 print('Cannot find fragment library: '+frag+' please select library from below\n')
-                fragment_number += database_selection(fragments_available, 'fragments').tolist()
+                fragment_number += database_selection(fragments_available, 'fragments', test).tolist()
     else:
-        fragment_number = database_selection(fragments_available, 'fragments')
+        fragment_number = database_selection(fragments_available, 'fragments', test)
     if len(fragment_number) > 0:
         return fragment_number 
     else:
@@ -605,11 +610,11 @@ def add_to_list(root, dirs, list_to_add, residues):
     residues += list_to_add[-1][1:]
     residues.sort()    
 
-def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
+def fetch_residues(frag_dir, fragments_available_prov, fragment_number, test=False):
 #### list of directories and water types  [[root, folders...],[root, folders...]]
 #### run through selected fragments
     for database in fragment_number:
-        if not g_var.args.info:
+        if not g_var.args.info and not test:
             if g_var.database_dir in frag_dir[database]:
                 print('\nYou have selected the fragment library: '+fragments_available_prov[database])
             else:
@@ -632,12 +637,10 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number):
                     elif directory_type =='/protein_modified/':
                         add_to_list(root, dirs, g_var.mod_directories, g_var.mod_residues)
                         g_var.p_residues+=g_var.mod_residues
-                        # add_to_list(root, dirs, g_var.p_directories, g_var.p_residues)
                     break
-    # print(g_var.p_residues, g_var.p_directories)
     
 
-def print_water_selection(water, directory):
+def print_water_selection(water, directory, test=False):
     if g_var.args.w != None:
         print('\nThe water type '+g_var.args.w+' doesn\'t exist')
     if len(water) == 0:
@@ -660,7 +663,7 @@ def ask_for_water_model(directory, water):
         except BaseException:
             print("Oops!  That was a invalid choice")
 
-def check_water_molecules():
+def check_water_molecules(test=False):
     if any('SOL' in sublist for sublist in g_var.np_directories): 
         water=[]
         for directory in g_var.np_directories:
@@ -673,10 +676,12 @@ def check_water_molecules():
                             g_var.water_info[-1].append(strip_header(line))
         if not g_var.args.info:
             if g_var.args.w in water:
-                print('\nYou have selected the water model: '+g_var.args.w)
+                if not test:
+                    print('\nYou have selected the water model: '+g_var.args.w)
                 g_var.water_dir, g_var.water = directory[0]+'SOL/', g_var.args.w
             else:
-                print_water_selection(water, directory)
+                if not test:
+                    print_water_selection(water, directory, test)
                 g_var.water_dir, g_var.water = ask_for_water_model(directory, water)
             if g_var.args.w is None:
                 g_var.opt['w'] = g_var.water

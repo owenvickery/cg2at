@@ -99,3 +99,4 @@ res_top, sorted_connect, hydrogen, heavy_bond, ions, at_mass = {},{},{},{},[],{}
 group_chains = None
 np_blocks = {}
 skip_disul = {}  ## contains info on whether user supplied complete chain information   
+alt_res_name = {} ## alternative residue names
