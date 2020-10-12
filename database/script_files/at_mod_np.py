@@ -165,8 +165,11 @@ def atomistic_non_protein_solvent(cg_residue_type,cg_residues):
         atomistic_fragments[cg_resid]={}
         frag_location=gen.fragment_location(cg_residue_type) ### get fragment location from database
         residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
+        # print(residue_type_mass[cg_residue_type])
+        print(residue_type[cg_residue_type])
         if os.path.exists(g_var.working_dir+'SOL'+'/SOL_all.pdb') and cg_residue_type == 'SOL':
             sol_p_bead = 0
+            # print(residue_type_mass[cg_residue_type][g_var.water])
             for atom in residue_type_mass[cg_residue_type][g_var.water]:
                 if atom[3] > 1:
                     sol_p_bead+=1

@@ -1,7 +1,0 @@
-TITLE     Martini system t= 260000.00000 step= 13000000
-REMARK    THIS IS A SIMULATION BOX
-CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1
-ATOM     14  BB  PHE A   7      38.055  64.236  31.538  1.00  0.00           B
-ATOM     15  SC1 PHE A   7      36.049  62.252  32.530  1.00  0.00           S
-ATOM     16  SC2 PHE A   7      33.541  61.254  32.522  1.00  0.00           S
-ATOM     17  SC3 PHE A   7      35.637  59.633  33.042  1.00  0.00           S

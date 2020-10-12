@@ -365,7 +365,7 @@ def fetch_fragment():
             if residue not in g_var.res_top:
                 location = fragment_location(residue)
                 if residue in ['SOL','ION']: 
-                    at_mass = fetch_atoms_water(g_var.np_directories[directory][0]+residue+'/', g_var.at_mass)
+                    at_mass = fetch_atoms_water_ion(g_var.np_directories[directory][0]+residue+'/', g_var.at_mass)
                     if residue == 'ION':
                         create_ion_list(location[:-4]+'.pdb')
                     g_var.hydrogen[residue], g_var.heavy_bond[residue] = {},{}
@@ -408,7 +408,7 @@ def fetch_atom_masses(forcefield_loc):
         sys.exit('cannot find atomtypes.dat in the forcefield: '+forcefield_loc)
     return at_mass
 
-def fetch_atoms_water(forcefield_loc, at_mass_p):
+def fetch_atoms_water_ion(forcefield_loc, at_mass_p):
     at_mass = {}
     for file in os.listdir(forcefield_loc):
         if file.endswith('itp'):
@@ -445,12 +445,14 @@ def fetch_bond_info(residue, rtp, at_mass,location):
                     elif residue_present or residue not in g_var.p_residues+g_var.o_residues:
                         if line_sep[0] == '[':
                             atoms, bonds = atom_bond_check(line_sep)
+                        elif atoms and residue in g_var.p_residues + g_var.o_residues:
+                            residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = fetch_bond_info_atoms_linked(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict, at_mass)
                         elif atoms:
-                            residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = fetch_bond_info_atoms(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict, at_mass)
+                            residue_list, H_dict, res_at_mass, heavy_dict = fetch_bond_info_atoms_NP(residue, line_sep, residue_list, H_dict, res_at_mass, heavy_dict)
                         elif bonds:
                             try:
                                 bond_dict.append([int(line_sep[0]),int(line_sep[1])])
-                            except BaseException:
+                            except:
                                 bond_dict.append([line_sep[0],line_sep[1]])
                         elif not atoms and not bonds and residue in g_var.p_residues+g_var.o_residues:
                             break
@@ -466,31 +468,31 @@ def fetch_bond_info(residue, rtp, at_mass,location):
         if residue in g_var.p_residues and amide_h != None:
             amide_hydrogen = amide_h
         heavy_bond, amide_h= add_to_topology_list(bond[0], bond[1], heavy_bond, heavy_dict, heavy_dict, atom_conversion, residue, g_var.p_residues+g_var.o_residues)
-
     if 'amide_hydrogen' in locals():
         return hydrogen, heavy_bond, residue_list, res_at_mass, amide_hydrogen
     else:
         return hydrogen, heavy_bond, residue_list, res_at_mass, None
 
-def fetch_bond_info_atoms(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict, at_mass):
-    if residue in g_var.p_residues + g_var.o_residues:
-        if residue not in residue_list:
-            residue_list.append(residue)
-        atom_conversion[line_sep[0]]=int(line_sep[3])+1
-        if is_hydrogen(line_sep[0]):
-            H_dict.append(line_sep[0])
-        else:
-            res_at_mass[line_sep[0]] = float(at_mass[line_sep[1]])
-            heavy_dict.append(line_sep[0])
+def fetch_bond_info_atoms_linked(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict, at_mass):
+    if residue not in residue_list:
+        residue_list.append(residue)
+    atom_conversion[line_sep[0]]=int(line_sep[3])+1
+    if is_hydrogen(line_sep[0]):
+        H_dict.append(line_sep[0])
     else:
-        if line_sep[3] not in residue_list:
-            residue_list.append(line_sep[3])
-        if is_hydrogen(line_sep[4]):
-            H_dict.append(int(line_sep[0]))
-        else:
-            res_at_mass[line_sep[4]] = float(line_sep[7])
-            heavy_dict.append(int(line_sep[0]))
+        res_at_mass[line_sep[0]] = float(at_mass[line_sep[1]])
+        heavy_dict.append(line_sep[0])
     return residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict
+
+def fetch_bond_info_atoms_NP(residue, line_sep, residue_list, H_dict, res_at_mass, heavy_dict):
+    if line_sep[3] not in residue_list:
+        residue_list.append(line_sep[3])
+    if is_hydrogen(line_sep[4]):
+        H_dict.append(int(line_sep[0]))
+    else:
+        res_at_mass[line_sep[4]] = float(line_sep[7])
+        heavy_dict.append(int(line_sep[0]))
+    return residue_list, H_dict, res_at_mass, heavy_dict
 
 
 def get_atomistic(frag_location):
@@ -504,12 +506,11 @@ def get_atomistic(frag_location):
     return residue
 
 
-def add_to_topology_list(bond_1, bond_2, top_list, dict1, dict2, conversion, residue, p_residues):
+def add_to_topology_list(bond_1, bond_2, top_list, dict1, dict2, conversion, residue, linked_residues):
     amide_hydrogen = None
-
     for bond in [[bond_1, bond_2], [bond_2, bond_1]]:
         if bond[0] in dict1 and bond[1] in dict2:
-            if residue in p_residues:
+            if residue in linked_residues:
                 if bond[0] == 'N' and is_hydrogen(bond[1]):
                     amide_hydrogen = bond[1]
                 if bond[0] in conversion and bond[1] in conversion:
