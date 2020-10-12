@@ -51,6 +51,15 @@ class TestSum(unittest.TestCase):
             self.assertEqual(g_var.swap_dict, out[swap_val])
             g_var.swap_dict={}
 
+    # @patch('builtins.print')
+    # def test_print_swap_residues(self, mock_print):
+    #     g_var.args.swap = {'NA+': {'NA+:skip': {'ALL': 'ALL', 'resid': [4000, 4001, 4002], 'range': ['4000-4002']}}} 
+    #     gen.print_swap_residues()       
+    #     # sys.stdout.write(str( mock_print.call_args_list ) + '\n')
+    #     print(str( mock_print.getvalue() ) + '\n') 
+    #     print(len(mock_print.call_args_list))
+    #     # mock_print.assert_called_with(
+
     def test_new_box_vec(self):
         box_vec, box = 'CRYST1   100   100   100  90.00  90.00  90.00 P 1           1', [[50, 50, 50],[50, 0, 50]]
         out = [['CRYST1   50.000   50.000   50.000    90.00    90.00    90.00 P 1           1\n', [25., 25., 25.]], ['CRYST1   50.000  100.000   50.000    90.00    90.00    90.00 P 1           1\n', [25.,  0., 25.]]]
@@ -445,8 +454,37 @@ class TestSum(unittest.TestCase):
             self.assertEqual(g_var.group_chains, out[scene_val])
             g_var.group_chains = None
 
+    def test_AnglesToRotMat(self):
+        R = gen.AnglesToRotMat(np.array([1.2, 1.2, 1.2]))
+        out = np.array([[ 0.13130314, -0.02295255,  0.99107652],[ 0.33773159,  0.94096257, -0.02295255], [-0.93203909,  0.33773159,  0.13130314]])
+        for i in range(3):
+            np.testing.assert_array_almost_equal(R, out)
 
+    def test_angle_clockwise(self):
+        A = np.array([-1.43688546, -0.27613562] ) 
+        B = np.array([ 0.90246221, -1.1875225 ])
+        angle_result = gen.angle_clockwise(A, B)
+        np.testing.assert_array_almost_equal(angle_result, 243.64512301056095)
 
+    def test_print_sequence_info(self):
+        correct = 'Summary of coarsegrain PROTEIN chains\n\n chain number  length of chain\n\n ------------  ---------------\n       0            3      \nSequences:\n\nchain: 0\n1        10        20        30        40        50        60        70        \nAAA                                                                             \n\nSummary of atomistic PROTEIN chains\n\n chain number  length of chain\n\n ------------  ---------------\n       0            3      \nSequences:\n\nchain: 0\n1        10        20        30        40        50        60        70        \nAAA                                                                             \n'
+        g_var.seq_cg['PROTEIN'], g_var.seq_at['PROTEIN']= {0:'AAA'}, {0:'AAA'}
+        to_print = gen.print_sequnce_info('PROTEIN')
+        self.assertEqual(to_print,correct)
+
+    def test_write_system_components(self):
+        correct = '\n----------------------------------------------------------------------------------------------------\n                               Script has completed, time for a beer                                \n\nmolecules          number          \n---------          ------          \n PROTEIN              1            \n'
+        g_var.system = {'PROTEIN':1}
+        to_write = gen.write_system_components()
+        self.assertEqual(to_write,correct)
+
+    def test_database_information(self):
+        output = '\n              The available forcefields within your database are (flag -ff):              \n------------------------------------------------------------------------------------------\n\n                                 charmm36-mar2019-updated                                 \n\n\n          The available fragment libraries within your database are (flag -fg):           \n------------------------------------------------------------------------------------------\n\n                                          test_1                                          \n\n"If all else fails, immortality can always be assured by spectacular error." (John Kenneth Galbraith)\n'
+        g_var.forcefield_available =['charmm36-mar2019-updated']
+        g_var.fragments_available = ['test_1']
+        with self.assertRaises(SystemExit) as cm:
+            gen.database_information()
+        self.assertEqual(cm.exception.code, output)
 
 
 

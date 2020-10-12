@@ -20,7 +20,7 @@ if __name__ == '__main__':
        'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
        'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
 
-    g_var.alt_res_name= {'HSD':'HIS', 'HSE':'HIS', 'HSP':'HIS', 'HIE':'HIS'}
+    g_var.alt_res_name = {'HSD':'HIS', 'HSE':'HIS', 'HSP':'HIS', 'HIE':'HIS'}
 
     g_var.dna = {'DA':'A', 'DG':'G', 'DC':'C', 'DT':'T'}
 
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     if 'PROTEIN' in g_var.cg_residues:          
         g_var.coord_atomistic = at_mod_p.build_multi_residue_atomistic_system(g_var.cg_residues, 'PROTEIN') ## converts protein to atomistic
         if not g_var.user_at_input and g_var.args.v >= 1:  ## prints protein sequences 
-            gen.print_sequnce_info('PROTEIN')
+            print(gen.print_sequnce_info('PROTEIN'))
         ## reads in user chain, runs a sequence alignment and finds existing disulphide bonds
         g_var.tc['p_d_n_t']=time.time()
         if g_var.user_at_input:
@@ -114,7 +114,7 @@ if __name__ == '__main__':
     if 'OTHER' in g_var.cg_residues:  
         g_var.other_atomistic = at_mod_p.build_multi_residue_atomistic_system(g_var.cg_residues, 'OTHER')   
         if g_var.args.v >= 1:  ## prints protein sequences 
-            gen.print_sequnce_info('OTHER')   
+            print(gen.print_sequnce_info('OTHER'))   
         fin_at_NP_linked_de_novo = at_mod_p.finalise_novo_atomistic(g_var.other_atomistic, 'OTHER')
         gro.run_parallel_pdb2gmx_min('OTHER', g_var.ter_res['OTHER'])
         if not os.path.exists(g_var.working_dir+'OTHER/OTHER_de_novo_merged.pdb'):
@@ -185,7 +185,7 @@ if __name__ == '__main__':
         gen.clean() 
 
     ## prints out system information
-    gen.write_system_components()
+    print(gen.write_system_components())
 
     ## prints out RMSD of converted proteins
     if 'PROTEIN' in g_var.cg_residues:

@@ -812,28 +812,29 @@ def cg2at_header():
 
 def database_information():
     
-    print('\n{0:^90}\n{1:-<90}\n'.format('The available forcefields within your database are (flag -ff):', ''))
+    to_print = '\n{0:^90}\n{1:-<90}\n\n'.format('The available forcefields within your database are (flag -ff):', '')
     for forcefields in g_var.forcefield_available:
-        print('{0:^90}'.format(forcefields))
-    print('\n\n{0:^90}\n{1:-<90}\n'.format('The available fragment libraries within your database are (flag -fg):', ''))
+        to_print += '{0:^90}\n'.format(forcefields)
+    to_print += '\n\n{0:^90}\n{1:-<90}\n\n'.format('The available fragment libraries within your database are (flag -fg):', '')
     for fragments in g_var.fragments_available:
-        print('{0:^90}'.format(fragments))    
+        to_print += '{0:^90}\n'.format(fragments)   
     if g_var.args.fg != None :
-        fragments_in_use()
-    sys.exit('\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
+        to_print = fragments_in_use(to_print)
+    # return to_print+'\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n'
+    sys.exit(to_print+'\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
 
-def fragments_in_use():
+def fragments_in_use(to_print):
     protein_directories=[]
     if np.any([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
-        for database_val, database in enumerate(sorted(g_var.args.fg.split())):
-            print('\n\n{0:^90}\n{1:-<90}\n'.format('The following residues are available in the database: '+database,''))
+        for database_val, database in enumerate(sorted(g_var.args.fg)):
+            to_print += '\n\n{0:^90}\n{1:-<90}\n\n'.format('The following residues are available in the database: '+database,'')
             res_type_name = ['Non protein residues', 'Protein residues', 'Modified protein residues', 'Other linked residues', 'Water residues']
             for res_val, residue in enumerate([g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
                 try:
                     res_type = sorted(residue[database_val][1:])
-                    print('\n{0:^90}\n{1:^90}'.format(res_type_name[res_val], '-'*len(res_type_name[res_val])))
+                    to_print += '\n{0:^90}\n{1:^90}\n'.format(res_type_name[res_val], '-'*len(res_type_name[res_val]))
                     if len(', '.join(map(str, res_type))) <= 80:
-                        print('{0:^90}'.format(', '.join(map(str, res_type))))
+                        to_print += '{0:^90}\n'.format(', '.join(map(str, res_type)))
                     else:
                         start, end = 0, 1                       
                         while end < len(res_type):
@@ -848,40 +849,42 @@ def fragments_in_use():
                                         break
                                 else:
                                     break
-                            print('{0:^90}'.format(line))
+                            to_print += '{0:^90}\n'.format(line)
                             start = end
                 except:
                     pass
-        print('\n{0:-<90}\n'.format(''))
+        to_print += '\n{0:-<90}\n\n'.format('')
+    return to_print
 
 def write_system_components():
-    print('\n{:-<100}'.format(''))
-    print('{0:^100}'.format('Script has completed, time for a beer'))
-    print('\n{0:^10}{1:^25}'.format('molecules','number'))
-    print('{0:^10}{1:^25}'.format('---------','------'))
+    to_write = '\n{:-<100}\n'.format('')
+    to_write += '{0:^100}\n'.format('Script has completed, time for a beer')
+    to_write += '\n{0:^10}{1:^25}\n'.format('molecules','number')
+    to_write += '{0:^10}{1:^25}\n'.format('---------','------')
     for section in g_var.system:
-        print('{0:^10}{1:^25}'.format(section, g_var.system[section]))
+        to_write += '{0:^10}{1:^25}\n'.format(section, g_var.system[section])
+    return to_write
 
 def print_sequnce_info(sys_type):
+    to_print = ''
     for rep_val, rep in enumerate([g_var.seq_cg[sys_type], g_var.seq_at[sys_type]]):
         if rep_val == 0:
-            print('Summary of coarsegrain '+sys_type+' chains')
+            to_print += 'Summary of coarsegrain '+sys_type+' chains\n'
         else:
-            print('Summary of atomistic '+sys_type+' chains')
+            to_print += '\nSummary of atomistic '+sys_type+' chains\n'
         if len(rep) == 0:
             break
         
-        print('\n{0:^15}{1:^12}'.format('chain number', 'length of chain')) #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
-        print('\n{0:^15}{1:^12}'.format('------------', '---------------'))
+        to_print += '\n{0:^15}{1:^12}\n'.format('chain number', 'length of chain') #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
+        to_print += '\n{0:^15}{1:^12}\n'.format('------------', '---------------')
         for chain in rep:
-            print('{0:^15}{1:^12}'.format(chain, len(rep[chain])))
-        print()
-        print('Sequences:\n')
+            to_print += '{0:^15}{1:^12}'.format(chain, len(rep[chain]))
+        to_print += '\nSequences:\n'
         for index in rep:
-            print('chain:', index, '\n') 
-            print('{0:9}{1:10}{2:10}{3:10}{4:10}{5:10}{6:10}{7:10}'.format('1','10','20','30','40','50','60','70'))
+            to_print += '\nchain: '+str(index)+'\n'
+            to_print += '{0:9}{1:10}{2:10}{3:10}{4:10}{5:10}{6:10}{7:10}\n'.format('1','10','20','30','40','50','60','70')
             if len(''.join(map(str, rep[index]))) <= 80:
-                print('{0:80}'.format(''.join(map(str, rep[index]))))
+                to_print += '{0:80}\n'.format(''.join(map(str, rep[index])))
             else:
                 start, end = 0, 1                       
                 while end < len(rep[index]):
@@ -896,6 +899,6 @@ def print_sequnce_info(sys_type):
                                 break
                         else:
                             break
-                    print('{0:80}'.format(line))
+                    to_print += '{0:80}\n'.format(line)
                     start = end
-            print()
+    return to_print
