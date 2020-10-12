@@ -509,7 +509,7 @@ class TestSum(unittest.TestCase):
               {'NA+': {'NA+:skip': {'ALL': 'ALL', 'resid': [4000, 4001, 4002], 'range': ['4000-4002']}}},\
               {'NA+': {'NA+:skip': {'ALL': 'ALL', 'resid': [4000, 4001, 4002], 'range': ['4000-4002']}}}]
         test_suite = [['NH3', 'POPE', 50],['C1A', 'POPE', 50],['NH3', 'POPE', 50],['NA+', 'NA+', 4000],['NA+', 'NA+',30]  ]
-        test_out = [['GL0', 'POPG'],['C1A', 'POPG'],['SKIP', 'POPG'],['NA+', 'SKIP'],['NA+', 'ION'] ]
+        test_out = [['GL0', 'POPG'],['C1A', 'POPG'],['SKIP', 'POPG'],['ION', 'SKIP'],['ION', 'ION'] ]
         for test_val, test in enumerate(test_suite):
             g_var.swap_dict = swap[test_val]
             atom, resname = read_in.swap(test[0], test[1], test[2])
