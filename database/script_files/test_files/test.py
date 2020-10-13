@@ -565,6 +565,9 @@ class TestSum(unittest.TestCase):
         for l_val, l in enumerate(line_test):
             read_in.add_residue_to_dictionary(l)
         self.assertEqual(g_var.cg_residues, {'CHOL': {}, 'PROTEIN': {}, 'ION': {}, 'SOL': {}, 'NA': {}, 'OTHER': {}})
+        with self.assertRaises(SystemExit) as cm:
+            read_in.add_residue_to_dictionary({'residue_name':'AAA'})
+        self.assertEqual(cm.exception.code, '\nAAA is not in the fragment database!')
 
     def test_add_to_cg_database(self):
         g_var.cg_residues = {'ION':{}, 'CHOL':{}, 'W':{}, 'SOL':{}, 'DNA':{}, 'PROTEIN':{}, 'OTHER':{}, 'NA':{}}
@@ -645,8 +648,13 @@ class TestSum(unittest.TestCase):
         self.assertEqual(box_vec, 'CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1\n')
         self.assertCountEqual(g_var.cg_residues, cg_residues_correct)
 
-    # def test_fix_pbc(self):
-    #     pass
+    def test_fix_pbc(self):
+        g_var.cg_residues = {'PROTEIN': {0: {'BB': {'residue_name': 'ALA', 'coord': np.array([41.938, 58.822, 52.274])}}, 1: {'BB': {'residue_name': 'ALA', 'coord': np.array([75.016, 60.271, 50.624])}}, 2: {'BB': {'residue_name': 'ALA', 'coord': np.array([77.956, 62.112, 52.127])}}, 3: {'BB': {'residue_name': 'ALA', 'coord': np.array([ 1.118, 63.4  , 50.505])}}, 4: {'BB': {'residue_name': 'ALA', 'coord': np.array([ 3.974, 65.397, 51.969])}}}}
+        box_vec, new_box, box_shift = 'CRYST1   80.000  124.000  103.000  90.00  90.00  90.00 P 1           1', 'CRYST1   80.000  124.000  103.000  90.00  90.00  90.00 P 1           1', [0, 0, 0]
+        g_var.res_top['ALA']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'BB': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, 'ATOMS': ['N', 'CA', 'CB', 'C', 'O'], 'RESIDUE': ['ALA'], 'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
+        correct = {'PROTEIN': {0: {'BB': {'residue_name': 'ALA', 'coord': np.array([41.938, 58.822, 52.274])}}, 1: {'BB': {'residue_name': 'ALA', 'coord': np.array([75.016, 60.271, 50.624])}}, 2: {'BB': {'residue_name': 'ALA', 'coord': np.array([77.956, 62.112, 52.127])}}, 3: {'BB': {'residue_name': 'ALA', 'coord': np.array([81.118, 63.4  , 50.505])}}, 4: {'BB': {'residue_name': 'ALA', 'coord': np.array([83.974, 65.397, 51.969])}}}}
+        read_in.fix_pbc(box_vec, new_box, box_shift)
+        self.assertCountEqual(g_var.cg_residues, correct)
 
     def test_read_in_atomistic(self):
         g_var.box_vec = 'CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1\n'
