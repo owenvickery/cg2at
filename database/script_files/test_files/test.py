@@ -668,6 +668,7 @@ class TestSum(unittest.TestCase):
         self.assertCountEqual(atomistic_protein_input,atomistic_protein_input_correct_long)
 
 ####### test at_mod_p
+
     def test_shrink_coordinates(self):
         p1, p2 = np.array([58.274,66.912,12.038]), np.array([59.360,66.216,14.859])
         p1a, p2a = np.array([58.450475 , 66.7989   , 12.4964125]), np.array([59.183525 , 66.3291   , 14.4005875])
