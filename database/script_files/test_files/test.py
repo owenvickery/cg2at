@@ -533,18 +533,48 @@ class TestSum(unittest.TestCase):
             result = gen.print_water_selection([], directory)
         self.assertEqual(cm.exception.code, '\nCannot find any water models in: \n\n'+directory[0]+'SOL/'+'\n')
 
+    # def test_trunc_coord(self):
+    #     pass
 
+    # def test_find_gromacs(self):
+    #     pass
 
+    # def test_correct_number_cpus(self):
+    #     pass
 
+    # def test_flags_used(self):
+    #     pass
+
+    # def test_print_swap_residues(self):
+    #     pass  
+
+    # def test_pdbatom(self):
+    #     pass
+
+    # def test_print_script_timings(self):
+    #     pass
+
+    # def test_cg2at_header(self):
+    #     pass
 
 ######## read_in file
     def test_add_residue_to_dictionary(self):
-        g_var.p_residues, g_var.np_residues = ['PHE'], ['CHOL', 'NA', 'W']
+        g_var.p_residues, g_var.np_residues, g_var.o_residues = ['PHE'], ['CHOL', 'NA', 'W', 'ION'], ['DNA']
         g_var.cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
-        line_test = [{'residue_name':'CHOL'}, {'residue_name':'PHE'}, {'residue_name':'NA'}, {'residue_name':'W'}]
+        line_test = [{'residue_name':'CHOL'}, {'residue_name':'PHE'}, {'residue_name':'ION'}, {'residue_name':'NA'}, {'residue_name':'W'}, {'residue_name':'DNA'}, {'residue_name':'SKIP'}]
         for l_val, l in enumerate(line_test):
             read_in.add_residue_to_dictionary(l)
-        self.assertEqual(g_var.cg_residues, {'CHOL': {}, 'PROTEIN': {}, 'NA': {}, 'SOL': {}})
+        self.assertEqual(g_var.cg_residues, {'CHOL': {}, 'PROTEIN': {}, 'ION': {}, 'SOL': {}, 'NA': {}, 'OTHER': {}})
+
+    def test_add_to_cg_database(self):
+        g_var.cg_residues = {'ION':{}, 'CHOL':{}, 'W':{}, 'SOL':{}, 'DNA':{}, 'PROTEIN':{}, 'OTHER':{}, 'NA':{}}
+        g_var.p_residues, g_var.np_residues, g_var.o_residues = ['PHE'], ['CHOL', 'NA', 'W', 'ION'], ['DNA']
+        g_var.water = 'tip3p'
+        line_test = [{'residue_name':'CHOL', 'atom_name':'test_chol'}, {'residue_name':'PHE', 'atom_name':'test_phe'}, {'residue_name':'ION', 'atom_name':'test_ion'}, {'residue_name':'NA', 'atom_name':'test_na'}, {'residue_name':'W', 'atom_name':'test_w'}, {'residue_name':'DNA', 'atom_name':'test_dna'}]
+        output = {'ION': {10: {'test_ion': {}}}, 'CHOL': {10: {'test_ion': {}}}, 'W': {10: {'test_ion': {}}}, 'SOL': {10: {'tip3p': {'residue_name': 'SOL'}}}, 'DNA': {}, 'PROTEIN': {10: {'test_ion': {}}}, 'OTHER': {10: {'test_ion': {}}}, 'NA': {10: {'test_ion': {}}}}
+        for l_val, l in enumerate(line_test):
+            read_in.add_to_cg_database(l, 10, {'test_ion':{}})   
+        self.assertEqual(g_var.cg_residues, output)
 
     def test_check_new_box(self):
         box = [100,100,100] 
@@ -567,15 +597,67 @@ class TestSum(unittest.TestCase):
             self.assertEqual(atom, test_out[test_val][0])
             self.assertEqual(resname, test_out[test_val][1])
 
+    def test_real_box_vectors(self):
+        box_vec = 'CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1'
+        correct1 = np.array([[1.59804000e+02, 7.61773172e-15, 6.33160765e-15], [0.00000000e+00, 1.24407000e+02, 6.33160765e-15], [0.00000000e+00, 0.00000000e+00, 1.03403000e+02]])
+        correct2 = np.array([[ 6.25766564e-03,  0.00000000e+00,  0.00000000e+00], [-3.83171510e-19,  8.03813290e-03,  0.00000000e+00], [-3.83171510e-19, -4.92193687e-19,  9.67089930e-03]])
+        r_b_vec, r_b_inv = read_in.real_box_vectors(box_vec)
+        np.testing.assert_array_almost_equal(r_b_vec, correct1)
+        np.testing.assert_array_almost_equal(r_b_inv, correct2)
 
+    def test_brute_mic(self):
+        r_b_vec = np.array([[1.59804000e+02, 7.61773172e-15, 6.33160765e-15], [0.00000000e+00, 1.24407000e+02, 6.33160765e-15], [0.00000000e+00, 0.00000000e+00, 1.03403000e+02]])
+        p1, p2= np.array([155, 50, 50]), np.array([[5, 50, 50], [160, 50, 50], [50, 50, 50]])
+        correct = [[164.804,  50.,     50.   ], [160,  50,  50], [50, 50, 50]]
+        for i in range(3):
+            result = read_in.brute_mic(p1, p2[i], r_b_vec)
+            self.assertIsNone(np.testing.assert_array_equal(result, correct[i]))
 
-    def test_add_to_cg_database(self):
-        pass
+    def test_duplicate_chain(self):
+        g_var.args.d = ['0:2', '3:45']
+        g_var.chain_count = 2
+        g_var.atomistic_protein_input_raw = {0:1, 1:2}
+        with self.assertRaises(SystemExit) as cm:
+            read_in.duplicate_chain(True)
+        self.assertEqual(g_var.chain_count, 3)
+        self.assertEqual(g_var.atomistic_protein_input_raw, {0: 1, 1: 2, 2: 1})      
+        self.assertEqual(cm.exception.code, 'your atomistic chain duplication input is incorrrect')
+
+    def test_filter_input(self):
+        input_no_atom = ['CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1\n', 'MODEL        1\n', '\n']
+        with self.assertRaises(SystemExit) as no_atom:
+            read_in.filter_input(input_no_atom)
+        self.assertEqual(no_atom.exception.code, 'input coarsegrain structure seems to contain no beads')
+        input_no_box =['MODEL        1\n', 'ATOM  17534  W     W   676      54.070   9.145   7.973  1.00  0.00           W\n', '\n']
+        g_var.input_directory = run_dir+'/test_inputs/CG/no_box/'
+        with self.assertRaises(SystemExit) as no_box:
+            read_in.filter_input(input_no_box)
+        self.assertEqual(no_box.exception.code, 'The input file is missing the Box vectors')
 
     def test_read_initial_cg_pdb(self):
-        pass
+        g_var.p_residues, g_var.np_residues = ['PHE'], ['CHOL', 'NA', 'W', 'ION']
+        g_var.cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
+        g_var.water = 'tip3p'
+        g_var.cg_residues = {}
+        cg_residues_correct = {'SOL': {0: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([54.07 ,  9.145,  7.973])}}, 1: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([108.503,  91.79 ,  90.375])}}, 2: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([60.503, 61.79 , 60.375])}}, 3: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([70.503, 71.79 , 70.375])}}}, 'ION': {1: {'CL-': {'residue_name': 'ION', 'coord': np.array([108.503,  91.79 ,  90.375])}}, 2: {'CL-': {'residue_name': 'ION', 'coord': np.array([60.503, 61.79 , 60.375])}}, 3: {'NA+': {'residue_name': 'ION', 'coord': np.array([70.503, 71.79 , 70.375])}}}}
+        g_var.input_directory = run_dir+'/test_inputs/CG/'
+        box_vec = read_in.read_initial_cg_pdb(True)
+        self.assertEqual(box_vec, 'CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1\n')
+        self.assertCountEqual(g_var.cg_residues, cg_residues_correct)
 
+    # def test_fix_pbc(self):
+    #     pass
 
+    def test_read_in_atomistic(self):
+        g_var.box_vec = 'CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1\n'
+        g_var.p_residues, g_var.np_residues = ['ALA'], ['CHOL', 'NA', 'W', 'ION']
+        g_var.cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
+        g_var.water = 'tip3p'
+        g_var.res_top['ALA']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'BB': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, 'ATOMS': ['N', 'CA', 'CB', 'C', 'O'], 'RESIDUE': ['ALA'], 'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
+        atomistic_protein_input_correct_long = {0: {0: {1: {'coord': np.array([65.317, 54.293, 52.349]), 'atom': 'N', 'res_type': 'ALA', 'frag_mass': 14.007, 'resid': 0}, 2: {'coord': np.array([65.999, 55.581, 52.443]), 'atom': 'CA', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 0}, 3: {'coord': np.array([67.496, 55.408, 52.345]), 'atom': 'C', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 0}, 4: {'coord': np.array([68.097, 54.526, 52.969]), 'atom': 'O', 'res_type': 'ALA', 'frag_mass': 15.999, 'resid': 0}, 5: {'coord': np.array([65.561, 56.245, 53.76 ]), 'atom': 'CB', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 0}}, 1: {11: {'coord': np.array([68.168, 56.207, 51.587]), 'atom': 'N', 'res_type': 'ALA', 'frag_mass': 14.007, 'resid': 1}, 12: {'coord': np.array([69.616, 56.04 , 51.492]), 'atom': 'CA', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 1}, 13: {'coord': np.array([70.315, 57.378, 51.492]), 'atom': 'C', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 1}, 14: {'coord': np.array([69.917, 58.326, 50.804]), 'atom': 'O', 'res_type': 'ALA', 'frag_mass': 15.999, 'resid': 1}, 15: {'coord': np.array([69.908, 55.215, 50.227]), 'atom': 'CB', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 1}}}, 1: {3: {31: {'coord': np.array([74.248, 59.378, 51.435]), 'atom': 'N', 'res_type': 'ALA', 'frag_mass': 14.007, 'resid': 3}, 32: {'coord': np.array([75.698, 59.21 , 51.435]), 'atom': 'CA', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 3}, 33: {'coord': np.array([76.397, 60.545, 51.336]), 'atom': 'C', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 3}, 34: {'coord': np.array([76.038, 61.416, 50.536]), 'atom': 'O', 'res_type': 'ALA', 'frag_mass': 15.999, 'resid': 3}, 35: {'coord': np.array([76.058, 58.262, 50.278]), 'atom': 'CB', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 3}}}}
+        atomistic_protein_input, chain_count = read_in.read_in_atomistic(run_dir+'test_inputs/AT/AT_INPUT_long.pdb')
+        self.assertEqual(chain_count, 2)
+        self.assertCountEqual(atomistic_protein_input,atomistic_protein_input_correct_long)
 
 ####### test at_mod_p
     def test_shrink_coordinates(self):

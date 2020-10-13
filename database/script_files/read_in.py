@@ -9,23 +9,16 @@ import gen, g_var
 
 
 
-def read_initial_cg_pdb():
-    print('\nThis script is now hopefully doing the following (Good luck):\n')
+def read_initial_cg_pdb(test=False):
+    if not test:
+        print('\nThis script is now hopefully doing the following (Good luck):\n')
     residue_list={} ## a dictionary of bead in each residue eg residue_list[bead name(BB)][residue_name(PO4)/coordinates(coord)]
     count=0  ### residue counter initialisation
     with open(g_var.input_directory+'CG_INPUT.pdb', 'r') as pdb_input:
-        pdb_lines_raw = pdb_input.readlines()
-        pdb_lines_atoms = [j for j in pdb_lines_raw if j.startswith('ATOM ')]
-        if len(pdb_lines_atoms) == 0:
-            sys.exit('input coarsegrain structure seems to contain no beads')
-        box_vec =  [j for j in pdb_lines_raw if j.startswith('CRYST')]
-        if len(box_vec) == 0:
-            sys.exit('The input file is missing the Box vectors')
-
-        for line_val, line in enumerate(pdb_lines_atoms):
-            if np.round((line_val/len(pdb_lines_atoms))*100,2).is_integer():
+        pdb_lines_atoms, box_vec = filter_input(pdb_input.readlines())
+        for line_val, line_sep in enumerate(pdb_lines_atoms):
+            if np.round((line_val/len(pdb_lines_atoms))*100,2).is_integer() and not test:
                 print('Reading in your CG representation: ',np.round((line_val/len(pdb_lines_atoms))*100,2),'%', end='\r')
-            line_sep = gen.pdbatom(line)
             line_sep['atom_name'], line_sep['residue_name'] = swap(line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id']) ## implements swap group
             if 'SKIP' not in [line_sep['atom_name'].upper(), line_sep['residue_name'].upper()]:
 #### set up resnames in dictionaries
@@ -52,6 +45,18 @@ def read_initial_cg_pdb():
         if len(g_var.cg_residues[key]) == 0:
             sys.exit('there is a issue with the residue type: '+key)
     return box_vec[0]
+
+def filter_input(pdb_lines_raw, CG=True):
+    pdb_lines_atoms = [gen.pdbatom(j) for j in pdb_lines_raw if j.startswith('ATOM ')] 
+    if len(pdb_lines_atoms) == 0:
+        sys.exit('input coarsegrain structure seems to contain no beads')
+    if CG:
+        box_vec =  [j for j in pdb_lines_raw if j.startswith('CRYST')]
+        if len(box_vec) == 0:
+            sys.exit('The input file is missing the Box vectors')
+        return pdb_lines_atoms, box_vec
+    return pdb_lines_atoms
+
 
 def add_to_cg_database(line_sep_prev, count, residue_list):
     if line_sep_prev['residue_name'] not in g_var.p_residues+g_var.o_residues :
@@ -206,57 +211,58 @@ def read_in_atomistic(protein):
     ter_residues=[]
     r_b_vec, r_b_inv = real_box_vectors(g_var.box_vec)
     with open(protein, 'r') as pdb_input:
-        pdb_lines_atoms = [j for j in pdb_input.readlines() if j.startswith('ATOM ')]
+        pdb_lines_atoms = filter_input(pdb_input.readlines(), False)
         atomistic_protein_input[chain_count]={}
-        for line_nr, line in enumerate(pdb_lines_atoms):
-                line_sep = gen.pdbatom(line)
-                if line_sep['residue_name'] in g_var.alt_res_name:
-                    line_sep['residue_name'] = g_var.alt_res_name[line_sep['residue_name']]
-                if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in g_var.mod_residues:
-                    if line_sep['residue_name'] in g_var.p_residues:
-                        #### sorts out wrong atoms in terminal residues
-                        if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
-                            line_sep['atom_name']='O'
-                    #### makes C_terminal connecting atom variable  
-                        if 'prev_atom_coord' in locals():
-                            line_sep['x'],line_sep['y'],line_sep['z'] = brute_mic(prev_atom_coord, [line_sep['x'],line_sep['y'],line_sep['z']], r_b_vec)
-                        if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']:
+        for line_nr, line_sep in enumerate(pdb_lines_atoms):
+            if line_sep['residue_name'] in g_var.alt_res_name:
+                line_sep['residue_name'] = g_var.alt_res_name[line_sep['residue_name']]
+            if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in g_var.mod_residues:
+                if line_sep['residue_name'] in g_var.p_residues:
+                    #### sorts out wrong atoms in terminal residues
+                    if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
+                        line_sep['atom_name']='O'
+                #### makes C_terminal connecting atom variable  
+                    if 'prev_atom_coord' in locals():
+                        line_sep['x'],line_sep['y'],line_sep['z'] = brute_mic(prev_atom_coord, [line_sep['x'],line_sep['y'],line_sep['z']], r_b_vec)
+                    if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']:
 
-                            if g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms'][line_sep['atom_name']] > 0:
-                                if 'C_ter' in locals() and len(g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']) <=1:
-                                    ter_residues.append(line_sep['residue_id'])
-                                    chain_count+=1
-                                    atomistic_protein_input[chain_count]={}
-                                C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
-                                C_resid=line_sep['residue_id']
-                            elif 'C_ter' in locals():
-                                N_resid=line_sep['residue_id']
-                                N_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
-                                dist=gen.calculate_distance(N_ter, C_ter)
-                                if C_resid != N_resid and dist > 3.5:
-                                    del N_ter, C_ter
-                                    ter_residues.append(line_sep['residue_id'])
-                                    chain_count+=1
-                                    atomistic_protein_input[chain_count]={} ### new chain key
-                        prev_atom_coord = [line_sep['x'],line_sep['y'],line_sep['z']]
-                        if line_sep['residue_id'] not in atomistic_protein_input[chain_count]:  ## if protein does not exist add to dict
-                            atomistic_protein_input[chain_count][line_sep['residue_id']]={}
-                    #### adds atom to dictionary, every atom is given a initial mass of zero 
-                        atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'frag_mass':0, 'resid':line_sep['residue_id']}
-                    #### if atom is in the backbone list then its mass is updated to the correct one
-                        if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['ATOMS']:
-                            if line_sep['atom_name'] in line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['atom_masses']:
-                                atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=g_var.res_top[line_sep['residue_name']]['atom_masses'][line_sep['atom_name']]    
+                        if g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms'][line_sep['atom_name']] > 0:
+                            if 'C_ter' in locals() and len(g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']) <=1:
+                                ter_residues.append(line_sep['residue_id'])
+                                chain_count+=1
+                                atomistic_protein_input[chain_count]={}
+                            C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
+                            C_resid=line_sep['residue_id']
+                        elif 'C_ter' in locals():
+                            N_resid=line_sep['residue_id']
+                            N_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
+                            dist=gen.calculate_distance(N_ter, C_ter)
+                            if C_resid != N_resid and dist > 3.5:
+                                del N_ter, C_ter
+                                ter_residues.append(line_sep['residue_id'])
+                                chain_count+=1
+                                atomistic_protein_input[chain_count]={} ### new chain key
+                    prev_atom_coord = [line_sep['x'],line_sep['y'],line_sep['z']]
+                    if line_sep['residue_id'] not in atomistic_protein_input[chain_count]:  ## if protein does not exist add to dict
+                        atomistic_protein_input[chain_count][line_sep['residue_id']]={}
+                #### adds atom to dictionary, every atom is given a initial mass of zero 
+                    atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'frag_mass':0, 'resid':line_sep['residue_id']}
+                #### if atom is in the backbone list then its mass is updated to the correct one
+                    if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['ATOMS']:
+                        if line_sep['atom_name'] in line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['atom_masses']:
+                            atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=g_var.res_top[line_sep['residue_name']]['atom_masses'][line_sep['atom_name']]    
     return atomistic_protein_input, chain_count+1    
 
-def duplicate_chain():
+def duplicate_chain(test=False):
     if len(g_var.args.d) != 0:
-        print('{:<100}'.format(''), end='\r')
-        print('Now duplicating the supplied chains')
+        if not test:
+            print('{:<100}'.format(''), end='\r')
+            print('Now duplicating the supplied chains')
         for ch_d in g_var.args.d:
             duplicate = [int(x) for x in ch_d.split(':')]
             if len(duplicate) == 2 and duplicate[0] in g_var.atomistic_protein_input_raw:
-                print('Using '+str(duplicate[1])+' copies of the atomistic chain '+str(duplicate[0]))
+                if not test:
+                    print('Using '+str(duplicate[1])+' copies of the atomistic chain '+str(duplicate[0]))
                 for chain_duplication in range(duplicate[1]-1):
                     g_var.atomistic_protein_input_raw[g_var.chain_count]=copy.deepcopy(g_var.atomistic_protein_input_raw[duplicate[0]])
                     g_var.chain_count+=1
