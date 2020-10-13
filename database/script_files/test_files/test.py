@@ -4,6 +4,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/..')
 import unittest
 from unittest.mock import patch
 import mock
+import filecmp
 import numpy as np
 import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
 
@@ -485,6 +486,58 @@ class TestSum(unittest.TestCase):
         with self.assertRaises(SystemExit) as cm:
             gen.database_information()
         self.assertEqual(cm.exception.code, output)
+
+    def test_fragments_in_use(self):
+        output = '\n\n               The following residues are available in the database: test_1               \n------------------------------------------------------------------------------------------\n\n\n                                   Non protein residues                                   \n                                   --------------------                                   \n                                      CHOL, ION, SOL                                      \n\n                                     Protein residues                                     \n                                     ----------------                                     \n                                           PHE                                            \n\n                                Modified protein residues                                 \n                                -------------------------                                 \n                                                                                          \n\n                                  Other linked residues                                   \n                                  ---------------------                                   \n                                                                                          \n\n                                      Water residues                                      \n                                      --------------                                      \n                                 spc, spce, tip3p, tip4p                                  \n\n------------------------------------------------------------------------------------------\n\n'
+        g_var.forcefield_available =['charmm36-mar2019-updated']
+        g_var.fragments_available = ['test_1']
+        g_var.args.fg=['test_1']
+        to_print = gen.fragments_in_use('')
+        self.assertEqual(to_print, output)
+
+    def test_create_pdb(self):
+        g_var.box_vec = 'test box vec '
+        self.assertEqual(os.path.exists(run_dir+'database_test/test.pdb'), False)
+        pdb_input = gen.create_pdb(run_dir+'database_test/test.pdb')
+        pdb_input.close()
+        self.assertEqual(os.path.exists(run_dir+'database_test/test.pdb'), True)
+        self.assertTrue(filecmp.cmp(run_dir+'database_test/test.pdb', run_dir+'database_test/test_correct.pdb', shallow=False), msg='test pdb file header incorrect')
+        os.remove(run_dir+'database_test/test.pdb')
+
+    def test_mkdir_directory(self):
+        self.assertEqual(os.path.exists(run_dir+'database_test/test_dir'), False)
+        gen.mkdir_directory(run_dir+'database_test/test_dir')
+        self.assertEqual(os.path.exists(run_dir+'database_test/test_dir'), True)
+        os.system('rm -r '+run_dir+'database_test/test_dir')
+
+    def test_clean(self):
+        g_var.working_dir=run_dir+'database_test/'
+        g_var.cg_residues= {'test_clean':1}
+        for file_name in ['test_temp.pdb', 'test_tem.pdb', 'test_tem.tpr', 'test_temp.tpr']:
+            self.assertEqual(os.path.exists(run_dir+'database_test/test_clean/'+file_name), True)
+        gen.clean(True)
+        result = [False, True, True, True]
+        for file_val, file_name in enumerate(['test_temp.pdb', 'test_tem.pdb', 'test_tem.tpr', 'test_temp.tpr']):
+            self.assertEqual(os.path.exists(run_dir+'database_test/test_clean/'+file_name), result[file_val])
+            open(run_dir+'database_test/test_clean/'+file_name, 'w').close()
+
+    def test_print_water_selection(self):
+        g_var.args.w = 'test'
+        water = ['tip3p', 'tip4p', 'spc', 'spce']
+        directory = [run_dir+'database_test/fragments/test_1/non_protein/']
+        correct  = "\nThe water type test doesn't exist\n\nPlease select a water molecule from below:\n\n     Selection              water_molecule        \n     ---------                ----------          \n         0                      tip3p             \n         1                      tip4p             \n         2                       spc              \n         3                       spce             \n"
+
+        # with self.assertRaises(SystemExit) as cm:
+        result = gen.print_water_selection(water, directory)
+        self.assertEqual(result, correct)
+        g_var.args.w = None
+        with self.assertRaises(SystemExit) as cm:
+            result = gen.print_water_selection([], directory)
+        self.assertEqual(cm.exception.code, '\nCannot find any water models in: \n\n'+directory[0]+'SOL/'+'\n')
+
+
+
+
 
 ######## read_in file
     def test_add_residue_to_dictionary(self):

@@ -642,16 +642,17 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number, test=Fal
     
 
 def print_water_selection(water, directory, test=False):
+    to_print =''
     if g_var.args.w != None:
-        print('\nThe water type '+g_var.args.w+' doesn\'t exist')
+        to_print +='\nThe water type '+g_var.args.w+' doesn\'t exist\n'
     if len(water) == 0:
         sys.exit('\nCannot find any water models in: \n\n'+directory[0]+'SOL/'+'\n')
-    print('\nPlease select a water molecule from below:\n')
-    print('{0:^20}{1:^30}'.format('Selection','water_molecule'))
-    print('{0:^20}{1:^30}'.format('---------','----------'))
+    to_print +='\nPlease select a water molecule from below:\n\n'
+    to_print +='{0:^20}{1:^30}\n'.format('Selection','water_molecule')
+    to_print +='{0:^20}{1:^30}\n'.format('---------','----------')
     for selection, water_model in enumerate(water):
-        print('{0:^20}{1:^30}'.format(selection,water_model))
-
+        to_print +='{0:^20}{1:^30}\n'.format(selection,water_model)
+    return to_print
 
 def ask_for_water_model(directory, water):
     while True:
@@ -682,7 +683,7 @@ def check_water_molecules(test=False):
                 g_var.water_dir, g_var.water = directory[0]+'SOL/', g_var.args.w
             else:
                 if not test:
-                    print_water_selection(water, directory, test)
+                    print(print_water_selection(water, directory, test))
                 g_var.water_dir, g_var.water = ask_for_water_model(directory, water)
             if g_var.args.w is None:
                 g_var.opt['w'] = g_var.water
@@ -745,12 +746,14 @@ def mkdir_directory(directory):
     if not os.path.exists(directory):
         os.mkdir(directory)
 
-def clean():
+def clean(test=False):
 #### cleans temp files from residue_types
-    print()
+    if not test:
+        print()
     for residue_type in g_var.cg_residues:
         if residue_type not in ['SOL', 'ION']:
-            print('Cleaning temp files from : '+residue_type)
+            if not test:
+                print('Cleaning temp files from : '+residue_type)
             os.chdir(g_var.working_dir+residue_type)
             file_list = glob.glob('*temp*', recursive=True)
             file_list += glob.glob(residue_type+'*pdb', recursive=True)
@@ -820,7 +823,6 @@ def database_information():
         to_print += '{0:^90}\n'.format(fragments)   
     if g_var.args.fg != None :
         to_print = fragments_in_use(to_print)
-    # return to_print+'\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n'
     sys.exit(to_print+'\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
 
 def fragments_in_use(to_print):
