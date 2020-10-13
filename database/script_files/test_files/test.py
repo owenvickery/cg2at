@@ -526,8 +526,6 @@ class TestSum(unittest.TestCase):
         water = ['tip3p', 'tip4p', 'spc', 'spce']
         directory = [run_dir+'database_test/fragments/test_1/non_protein/']
         correct  = "\nThe water type test doesn't exist\n\nPlease select a water molecule from below:\n\n     Selection              water_molecule        \n     ---------                ----------          \n         0                      tip3p             \n         1                      tip4p             \n         2                       spc              \n         3                       spce             \n"
-
-        # with self.assertRaises(SystemExit) as cm:
         result = gen.print_water_selection(water, directory)
         self.assertEqual(result, correct)
         g_var.args.w = None
