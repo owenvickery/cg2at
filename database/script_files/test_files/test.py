@@ -48,18 +48,17 @@ class TestSum(unittest.TestCase):
              {'GLU': {'GLU:ASP': {'SC2': 'skip', 'resid': 'ALL', 'range': 'ALL'}}}]
         for swap_val, swap_types in enumerate([['POPE,NH3:POPG,GL0'], ['POPG:POPE'], ['NA+:skip:4000-4002'], ['POPG:skip'], ['GLU,SC2:ASP,skip']]):
             g_var.args.swap = swap_types
+            g_var.swap_dict={}
             gen.sort_swap_group()
             self.assertEqual(g_var.swap_dict, out[swap_val])
             g_var.swap_dict={}
 
-    # @patch('builtins.print')
-    # def test_print_swap_residues(self, mock_print):
-    #     g_var.args.swap = {'NA+': {'NA+:skip': {'ALL': 'ALL', 'resid': [4000, 4001, 4002], 'range': ['4000-4002']}}} 
-    #     gen.print_swap_residues()       
-    #     # sys.stdout.write(str( mock_print.call_args_list ) + '\n')
-    #     print(str( mock_print.getvalue() ) + '\n') 
-    #     print(len(mock_print.call_args_list))
-    #     # mock_print.assert_called_with(
+    def test_print_swap_residues(self):
+        g_var.args.swap=True
+        g_var.swap_dict = {'NA+': {'NA+:skip': {'ALL': 'ALL', 'resid': [4000, 4001, 4002], 'range': ['4000-4002']}}} 
+        correct = '\nYou have chosen to swap the following residues\n\n residue  bead              residue     bead       range   \n -------  ----              -------     ----       -----   \n   NA+    ALL      -->       skip       ALL      4000-4002 \n'
+        to_print = gen.print_swap_residues()       
+        self.assertEqual(to_print, correct)
 
     def test_new_box_vec(self):
         box_vec, box = 'CRYST1   100   100   100  90.00  90.00  90.00 P 1           1', [[50, 50, 50],[50, 0, 50]]
@@ -70,10 +69,12 @@ class TestSum(unittest.TestCase):
             self.assertIsNone(np.testing.assert_array_equal(result2, np.array(out[check_val][1])))
 
     def test_strip_header(self):
-        header_types = [ '[BB]', ' [BB]', '[ BB]', '[ BB ]']
+        header_types = [ '[BB]', ' [BB]', '[ BB]', '[ BB ]', '[ BB AA ]']
         out = ['BB','BB','BB','BB']
-        for header_val, header in enumerate(header_types):
-            self.assertEqual(gen.strip_header(header), out[header_val])
+        with self.assertRaises(SystemExit) as cm:
+            for header_val, header in enumerate(header_types):
+                self.assertEqual(gen.strip_header(header), out[header_val])
+        self.assertEqual(cm.exception.code, 'There is a issue in one of the fragment headers: \n[ BB AA ]')
 
     def test_sep_fragments_topology(self):
         results = gen.sep_fragments_topology(run_dir+'database_test/fragments/test_1/protein/PHE/PHE')
@@ -323,7 +324,7 @@ class TestSum(unittest.TestCase):
     def test_get_atomistic_P(self):
         location = run_dir+'database_test/fragments/test_1/protein/PHE/PHE.pdb'
         atom_conversion = gen.get_atomistic(location)
-        self.assertEqual(atom_conversion,{'N': 1, 'CA': 2, 'C': 10, 'O': 11, 'CB': 3, 'CG': 4, 'CD1': 5, 'CD2': 8, 'CE2': 9, 'CE1': 6, 'CZ': 7})
+        self.assertEqual(atom_conversion, {'N': 1, 'CA': 2, 'C': 10, 'O': 11, 'CB': 3, 'CG': 4, 'CD1': 5, 'CD2': 8, 'CE2': 9, 'CE1': 6, 'CZ': 7})
 
     def test_get_atomistic_NP(self):
         correct={'C3': 1, 'H3': 2, 'O3': 3, "H3'": 4, 'C4': 5, 'H4A': 6, 'H4B': 7, 'C5': 8, 'C10': 39, 'C19': 40, 'H19A': 41, 'H19B': 42, 'H19C': 43,\
@@ -533,8 +534,20 @@ class TestSum(unittest.TestCase):
             result = gen.print_water_selection([], directory)
         self.assertEqual(cm.exception.code, '\nCannot find any water models in: \n\n'+directory[0]+'SOL/'+'\n')
 
-    # def test_trunc_coord(self):
-    #     pass
+    def test_trunc_coord(self):
+        xyz = [83.97299999999998, 44.467999999999996, 28.028000000000002]
+        correct = [83.973, 44.468, 28.028]
+        x, y, z = gen.trunc_coord(xyz)
+        self.assertEqual([x, y, z], correct)
+
+    def test_pdbatom(self):
+        line = 'ATOM     31  N   ALA     3      74.248  59.378  51.435  1.00  0.00           N'
+        line_sep = gen.pdbatom(line)
+        self.assertEqual(line_sep, {'atom_number': 31, 'atom_name': 'N', 'residue_name': 'ALA', 'chain': ' ', 'residue_id': 3, 'x': 74.248, 'y': 59.378, 'z': 51.435})
+        with self.assertRaises(SystemExit) as cm:
+            line = 'ATOM     31  N   ALA     3      74.248  59.37833  51.435  1.00  0.00           N'
+            line_sep = gen.pdbatom(line)
+        self.assertEqual(cm.exception.code, '\npdb line is wrong:\t'+line)
 
     # def test_find_gromacs(self):
     #     pass
@@ -543,12 +556,6 @@ class TestSum(unittest.TestCase):
     #     pass
 
     # def test_flags_used(self):
-    #     pass
-
-    # def test_print_swap_residues(self):
-    #     pass  
-
-    # def test_pdbatom(self):
     #     pass
 
     # def test_print_script_timings(self):
@@ -666,8 +673,11 @@ class TestSum(unittest.TestCase):
         atomistic_protein_input, chain_count = read_in.read_in_atomistic(run_dir+'test_inputs/AT/AT_INPUT_long.pdb')
         self.assertEqual(chain_count, 2)
         self.assertCountEqual(atomistic_protein_input,atomistic_protein_input_correct_long)
+        with self.assertRaises(SystemExit) as cm:
+            atomistic_protein_input, chain_count = read_in.read_in_atomistic(run_dir+'test_inputs/AT/AT_INPUT_long.pdbhh')
+        self.assertEqual(cm.exception.code, 'cannot find atomistic protein : '+run_dir+'test_inputs/AT/AT_INPUT_long.pdbhh')
 
-####### test at_mod_p
+#### test at_mod_p
 
     def test_shrink_coordinates(self):
         p1, p2 = np.array([58.274,66.912,12.038]), np.array([59.360,66.216,14.859])
@@ -675,6 +685,204 @@ class TestSum(unittest.TestCase):
         p1s, p2s = at_mod_p.shrink_coordinates(p1, p2)
         self.assertIsNone(np.testing.assert_array_equal(p1s, p1a))
         self.assertIsNone(np.testing.assert_array_equal(p2s, p2a))
+
+#### test at_mod_np
+    
+    # def test_build_atomistic_system(self):
+        # at_mod_np.build_atomistic_system(residue_type, a)
+
+#### test at_mod
+
+    def test_sanity_check_fragments(self):
+        g_var.res_top['PHE']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', \
+        'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, \
+        'GROUPS': {'BB': 2, 'SC1': 1, 'SC2': 1, 'SC3': 1}, \
+        'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, \
+        'ATOMS': ['N', 'CA', 'C', 'O'], \
+        'RESIDUE': ['PHE'], \
+        'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'CG': 12.011, 'CD1': 12.011, 'CE1': 12.011, 'CZ': 12.011, \
+                        'CD2': 12.011, 'CE2': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
+        res = 'PHE'
+        cg = {'BB': {'residue_name': 'PHE', 'coord': np.array([84.312, 45.09 , 28.573])}, 'SC1': {'residue_name': 'PHE', 'coord': np.array([82.306, 43.106, 29.565])}, 'SC2': {'residue_name': 'PHE', 'coord': np.array([79.798, 42.108, 29.557])}, 'SC3': {'residue_name': 'PHE', 'coord': np.array([81.894, 40.487, 30.077])}}
+        sin_bead = False
+        bead_list, atom_list = at_mod.sanity_check_fragments(res, cg, sin_bead)
+        self.assertEqual(bead_list, ['BB', 'SC1', 'SC2', 'SC3'])
+        self.assertEqual(atom_list, [1, 2, 10, 11, 3, 4, 5, 8, 9, 6, 7])
+
+    def test_get_atomistic(self):
+        residue_correct = {2: {'BB': {1: {'coord': np.array([37.827, 15.084,  9.828]), 'atom': 'N', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 14.007}, 2: {'coord': np.array([38.493, 16.128, 10.269]), 'atom': 'CA', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 10: {'coord': np.array([39.816, 15.84 , 10.395]), 'atom': 'C', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 11: {'coord': np.array([40.176, 14.877, 10.872]), 'atom': 'O', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 15.999}}}, 1: {'SC1': {3: {'coord': np.array([37.998, 16.524, 11.52 ]), 'atom': 'CB', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 4: {'coord': np.array([36.657, 16.857, 11.574]), 'atom': 'CG', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 5: {'coord': np.array([35.802, 15.957, 11.799]), 'atom': 'CD1', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}}, 'SC2': {8: {'coord': np.array([36.27 , 18.027, 11.34 ]), 'atom': 'CD2', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 9: {'coord': np.array([35.046, 18.306, 11.331]), 'atom': 'CE2', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}}, 'SC3': {6: {'coord': np.array([34.578, 16.227, 11.781]), 'atom': 'CE1', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 7: {'coord': np.array([34.2  , 17.397, 11.547]), 'atom': 'CZ', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}}}}
+        frag_mass_correct = {'BB': [[37.827000000000005, 15.084000000000001, 9.828, 14.007], [38.493, 16.128000000000004, 10.269, 12.011], [39.816, 15.840000000000002, 10.395000000000001, 12.011], [40.176, 14.877, 10.872, 15.999]], 'SC1': [[37.998, 16.524, 11.520000000000001, 12.011], [36.657, 16.857, 11.574, 12.011], [35.802, 15.957, 11.799, 12.011]], 'SC2': [[36.269999999999996, 18.027, 11.34, 12.011], [35.046, 18.306, 11.331, 12.011]], 'SC3': [[34.578, 16.227, 11.781, 12.011], [34.2, 17.397, 11.547, 12.011]]}
+        residue, fragment_mass = at_mod.get_atomistic(run_dir+'database_test/fragments/test_1/protein/PHE/PHE.pdb')
+        self.assertCountEqual(residue, residue_correct)
+        self.assertCountEqual(fragment_mass, frag_mass_correct)
+
+
+    def test_sanity_check_atoms(self):
+        raised = False
+        try:
+            at_mod.sanity_check_atoms([1, 2, 3, 4, 5], 'ALA')
+        except:
+            raised = True
+        self.assertFalse(raised, 'Exception raised')    
+
+        with self.assertRaises(SystemExit) as cm:
+            at_mod.sanity_check_atoms([1, 2, 3, 4, 6], 'ALA')
+        self.assertEqual(cm.exception.code, 'atom number '+str(5)+' is missing from fragment library: ALA\n')
+
+    def test_sanity_check_beads(self):
+        bead_list = ['BB', 'SC1', 'SC2', 'SC3']
+        cg = {'BB': {'residue_name': 'PHE', 'coord': np.array([84.312, 45.09 , 28.573])}, 'SC1': {'residue_name': 'PHE', 'coord': np.array([82.306, 43.106, 29.565])}, 'SC2': {'residue_name': 'PHE', 'coord': np.array([79.798, 42.108, 29.557])}, 'SC3': {'residue_name': 'PHE', 'coord': np.array([81.894, 40.487, 30.077])}}
+        res = 'PHE' 
+        bead_list_cg = at_mod.sanity_check_beads(bead_list, cg, res)
+        self.assertEqual(bead_list_cg, ['BB', 'SC1', 'SC2', 'SC3'])
+        cgf = {'FF': {'residue_name': 'PHE', 'coord': np.array([84.312, 45.09 , 28.573])}, 'SC1': {'residue_name': 'PHE', 'coord': np.array([82.306, 43.106, 29.565])}, 'SC2': {'residue_name': 'PHE', 'coord': np.array([79.798, 42.108, 29.557])}, 'SC3': {'residue_name': 'PHE', 'coord': np.array([81.894, 40.487, 30.077])}}
+        with self.assertRaises(SystemExit) as cm:
+            bead_list_cg = at_mod.sanity_check_beads(bead_list, cgf, res)
+        self.assertEqual(cm.exception.code, 'The bead FF is missing from the fragment library: PHE\n')
+
+    def test_sanity_check_protein_other(self):
+        g_var.res_top['PHE']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', \
+        'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, \
+        'GROUPS': {'BB': 2, 'SC1': 1, 'SC2': 1, 'SC3': 1}, \
+        'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, \
+        'ATOMS': ['N', 'CA', 'C', 'O'], \
+        'RESIDUE': ['PHE'], \
+        'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'CG': 12.011, 'CD1': 12.011, 'CE1': 12.011, 'CZ': 12.011, \
+                        'CD2': 12.011, 'CE2': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
+        g_var.cg_residues = {'PROTEIN': {0: {'BB': {'residue_name': 'PHE', 'coord': np.array([84.312, 45.09 , 28.573])}, 'SC1': {'residue_name': 'PHE', 'coord': np.array([82.306, 43.106, 29.565])}, 'SC2': {'residue_name': 'PHE', 'coord': np.array([79.798, 42.108, 29.557])}, 'SC3': {'residue_name': 'PHE', 'coord': np.array([81.894, 40.487, 30.077])}}}}        
+        raised = False
+        try:
+            at_mod.sanity_check_protein_other('PROTEIN')
+        except:
+            raised = True
+        self.assertFalse(raised, 'Exception raised')    
+
+    def test_sanity_check_protein_other_wrong_bead(self):
+        g_var.res_top['PHE']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', \
+        'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, \
+        'GROUPS': {'BB': 2, 'SC1': 1, 'SC2': 1, 'SC3': 1}, \
+        'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, \
+        'ATOMS': ['N', 'CA', 'C', 'O'], \
+        'RESIDUE': ['PHE'], \
+        'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'CG': 12.011, 'CD1': 12.011, 'CE1': 12.011, 'CZ': 12.011, \
+                        'CD2': 12.011, 'CE2': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
+        g_var.cg_residues = {'PROTEIN': {0: { 'SC1': {'residue_name': 'PHE', 'coord': np.array([82.306, 43.106, 29.565])}, 'SC2': {'residue_name': 'PHE', 'coord': np.array([79.798, 42.108, 29.557])}, 'SC3': {'residue_name': 'PHE', 'coord': np.array([81.894, 40.487, 30.077])}}}}        
+        with self.assertRaises(SystemExit) as cm:
+            at_mod.sanity_check_protein_other('PROTEIN', True)
+        self.assertEqual(cm.exception.code, 'number of atomistic fragments: 4 does not equal number of CG beads: 3')    
+        
+    def test_sanity_check(self):
+        g_var.res_top['PHE']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', \
+        'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, \
+        'GROUPS': {'BB': 2, 'SC1': 1, 'SC2': 1, 'SC3': 1}, \
+        'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, \
+        'ATOMS': ['N', 'CA', 'C', 'O'], \
+        'RESIDUE': ['PHE'], \
+        'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'CG': 12.011, 'CD1': 12.011, 'CE1': 12.011, 'CZ': 12.011, \
+                        'CD2': 12.011, 'CE2': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
+        g_var.cg_residues = {'PROTEIN': {0: {'BB': {'residue_name': 'PHE', 'coord': np.array([84.312, 45.09 , 28.573])}, 'SC1': {'residue_name': 'PHE', 'coord': np.array([82.306, 43.106, 29.565])}, 'SC2': {'residue_name': 'PHE', 'coord': np.array([79.798, 42.108, 29.557])}, 'SC3': {'residue_name': 'PHE', 'coord': np.array([81.894, 40.487, 30.077])}}}}        
+        raised = False
+        try:
+            at_mod.sanity_check()
+        except:
+            raised = True
+        self.assertFalse(raised, 'Exception raised')         
+
+    def test_sanity_check_solvent(self):
+        g_var.res_top['SOL'] = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': []}, 'GROUPS': {'tip3p': 1, 'tip4p': 2, 'spc': 3, 'spce': 4}, 'CONNECT': {'atoms': {}}, 'RESIDUE': ['SOL'], 'atom_masses': {'OW': 15.9994, 'HW1': 1.008, 'HW2': 1.008, 'MW': 0.0}}
+        g_var.cg_residues = {'SOL': {0: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}}}}
+        raised = False
+        try:
+            at_mod.sanity_check_solvent('SOL')
+        except:
+            raised = True
+        self.assertFalse(raised, 'Exception raised')         
+
+    def test_sanity_check_non_protein(self):
+        g_var.res_top['CHOL'] = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': []}, 'GROUPS': {'ROH': 1, 'R1': 1, 'R2': 1, 'R3': 2, 'R4': 2, 'R5': 2, 'C1': 3, 'C2': 4}, 'CONNECT': {'atoms': {}}, 'RESIDUE': ['CHOL'], 'atom_masses': {'C3': 12.011, 'O3': 15.9994, 'C4': 12.011, 'C5': 12.011, 'C6': 12.011, 'C7': 12.011, 'C8': 12.011, 'C14': 12.011, 'C15': 12.011, 'C16': 12.011, 'C17': 12.011, 'C13': 12.011, 'C18': 12.011, 'C12': 12.011, 'C11': 12.011, 'C9': 12.011, 'C10': 12.011, 'C19': 12.011, 'C1': 12.011, 'C2': 12.011, 'C20': 12.011, 'C21': 12.011, 'C22': 12.011, 'C23': 12.011, 'C24': 12.011, 'C25': 12.011, 'C26': 12.011, 'C27': 12.011}}
+        g_var.cg_residues = {'CHOL': {0: {'ROH': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R1': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R2': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R3': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R4': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R5': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'C1': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'C2': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}}}}
+        raised = False
+        try:
+            at_mod.sanity_check_non_protein('CHOL')
+        except:
+            raised = True
+        self.assertFalse(raised, 'Exception raised') 
+
+    def test_fix_atom_wrap(self):
+        correct = {'PROTEIN': {0: {'BB': {'residue_name': 'PHE', 'coord': np.array([84.312, 45.09 , 28.573])}, 'SC1': {'residue_name': 'PHE', 'coord': np.array([82.306, 43.106, 29.565])}, 'SC2': {'residue_name': 'PHE', 'coord': np.array([79.798, 42.108, 29.557])}, 'SC3': {'residue_name': 'PHE', 'coord': np.array([81.894, 40.487, 30.077])}}}}        
+
+        g_var.cg_residues = {'PROTEIN': {0: {'BB': {'residue_name': 'PHE', 'coord': np.array([84.312, 45.09 , 28.573])}, '1SC': {'residue_name': 'PHE', 'coord': np.array([82.306, 43.106, 29.565])}, 'SC2': {'residue_name': 'PHE', 'coord': np.array([79.798, 42.108, 29.557])}, 'SC3': {'residue_name': 'PHE', 'coord': np.array([81.894, 40.487, 30.077])}}}}        
+
+        bead_list, bead_list_cg, res_type, residue= ['BB', 'SC1', 'SC2', 'SC3'], ['BB', '1SC', 'SC2', 'SC3'], 'PROTEIN', 0
+        at_mod.fix_atom_wrap(bead_list, bead_list_cg, res_type, residue)
+        self.assertCountEqual(g_var.cg_residues, correct)
+
+    def test_rotate_atom(self):
+        coord_test, center_test,xyz_rot_apply_test = np.array([78.09324928, 73.84975034, 66.00837494]), np.array([77.01,  75.365, 64.802]), np.array([[-0.13784372,  0.95043581,  0.27869495], [-0.92459301, -0.02258486, -0.38028633], [-0.35514346, -0.31009948,  0.88187949]])
+        correct = [77.83323396, 76.05468437, 66.74400215]
+        coord = at_mod.rotate_atom(coord_test, center_test,xyz_rot_apply_test)
+        np.testing.assert_array_almost_equal(coord,correct)
+
+    def test_kabsch_rotate(self):
+        at, cg = np.array([[-0.82883763,  0.86100236,  0.16477411], [ 0.54816237, -0.86699764, -0.57322589]]), np.array([[ 4.109,   0.132,   2.326 ], [ 0.813,   1.628,  -0.0295]])
+        correct = np.array([[-0.40049698, -0.30353545, -0.86456254], [ 0.79299884, -0.58754593, -0.16106715], [-0.45908061, -0.750104,    0.47601363]])
+        result = at_mod.kabsch_rotate(at,cg)
+        np.testing.assert_array_almost_equal(result, correct)
+
+    def test_find_cross_vector(self):
+        ca = [np.array([66.297, 54.97 , 52.774]), np.array([69.286, 56.581, 51.125]), np.array([72.312, 58.261, 52.646])]
+        correct = [ 0.48016321, -0.87707549,  0.01348649]
+        result = at_mod.find_cross_vector(ca)
+        np.testing.assert_array_almost_equal(result, correct)
+
+    def test_noramlised_vector(self):
+        c1, c2 = np.array([94.5448748,  70.14307068, 51.5138988 ]), np.array([94.52699527, 69.12609437, 51.06636723])
+        correct = np.array([0.01608978, 0.91517598, 0.40273322])
+        result = at_mod.noramlised_vector(c1, c2)
+        np.testing.assert_array_almost_equal(result, correct)
+
+    def test_align_to_vector(self):
+        v1,v2 = np.array([0.01608978, 0.91517598, 0.40273322]), np.array([-0.4341557,   0.81322425, -0.38752439])
+        correct = np.array([[ 0.87549255,  0.48315775, -0.00844915], [-0.33766917,  0.5991694,  -0.72593082], [-0.34567663,  0.63840004,  0.68771582]])
+        result = at_mod.align_to_vector(v1, v2)
+        np.testing.assert_array_almost_equal(result, correct)
+
+
+    def test_align_at_frag_to_CG_frag(self):
+        at, cg, group = np.array([45.0827361,  45.18484289, 45.58242755]), np.array([93.604, 69.2,   50.814]), {'BB': {1: {'coord': np.array([43.8669, 44.4825, 45.6372]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 2: {'coord': np.array([45.1359, 44.5455, 45.2862]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 3: {'coord': np.array([45.1899, 45.0225, 43.9902]), 'atom': 'CB', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 4: {'coord': np.array([45.8379, 45.3195, 46.1592]), 'atom': 'C', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 5: {'coord': np.array([45.4599, 46.3005, 46.5192]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}}}
+        correct1 = {'BB': {1: {'coord': np.array([92.3881639 , 68.49765711, 50.86877245]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 2: {'coord': np.array([93.6571639 , 68.56065711, 50.51777245]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 3: {'coord': np.array([93.7111639 , 69.03765711, 49.22177245]), 'atom': 'CB', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 4: {'coord': np.array([94.3591639 , 69.33465711, 51.39077245]), 'atom': 'C', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 5: {'coord': np.array([93.9811639 , 70.31565711, 51.75077245]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}}} 
+        correct2 = np.array([-48.5212639,  -24.01515711,  -5.23157245])
+        result1, result2 = at_mod.align_at_frag_to_CG_frag(at, cg, group)
+        self.assertCountEqual(result1,correct1)
+        np.testing.assert_array_almost_equal(result2, correct2)
+
+    def test_COM(self):
+        mass = np.array([[43.8669, 44.4825, 45.6372, 14.007], [45.13590000000001, 44.5455, 45.2862, 12.011], [45.1899, 45.0225, 43.9902, 12.011], [45.8379, 45.3195, 46.1592, 12.011], [45.459900000000005, 46.3005, 46.519200000000005, 15.999]] )
+        fragment = {'BB': {1: {'coord': np.array([43.8669, 44.4825, 45.6372]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 2: {'coord': np.array([45.1359, 44.5455, 45.2862]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 3: {'coord': np.array([45.1899, 45.0225, 43.9902]), 'atom': 'CB', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 4: {'coord': np.array([45.8379, 45.3195, 46.1592]), 'atom': 'C', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 5: {'coord': np.array([45.4599, 46.3005, 46.5192]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}}}
+        com_correct = np.array([45.0827361,  45.18484289, 45.58242755])
+        result = at_mod.COM(mass, fragment)
+        np.testing.assert_array_almost_equal(result,com_correct)
+
+    def test_COM_error(self):
+        mass = np.array([[43.8669, 44.4825, 45.6372, 14.007], [45.13590000000001, 44.5455, 45.2862]])
+        fragment = {'BB': {1: {'coord': np.array([43.8669, 44.4825, 45.6372]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 2: {'coord': np.array([45.1359, 44.5455, 45.2862]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}}}
+        with self.assertRaises(SystemExit) as cm:
+            result = at_mod.COM(mass, fragment)
+        self.assertEqual(cm.exception.code,  'missing the mass one of the atoms in ALA')  
+
+    def test_rigid_fit(self):
+        group = {'BB': {1: {'coord': np.array([43.8669, 44.4825, 45.6372]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 2: {'coord': np.array([45.1359, 44.5455, 45.2862]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 3: {'coord': np.array([45.1899, 45.0225, 43.9902]), 'atom': 'CB', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 4: {'coord': np.array([45.8379, 45.3195, 46.1592]), 'atom': 'C', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 5: {'coord': np.array([45.4599, 46.3005, 46.5192]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}}} 
+        frag_mass = {'BB': [[43.8669, 44.4825, 45.6372, 14.007], [45.13590000000001, 44.5455, 45.2862, 12.011], [45.1899, 45.0225, 43.9902, 12.011], [45.8379, 45.3195, 46.1592, 12.011], [45.459900000000005, 46.3005, 46.519200000000005, 15.999]]} 
+        resid, cg = 9, {'BB': {'residue_name': 'ALA', 'coord': np.array([93.604, 69.2  , 50.814])}}
+        
+        rigid_mass_cg_cor, at_frag_centers_cor, cg_frag_centers_cor= np.array([93.604, 69.2,  50.814]), {'BB': np.array([93.604, 69.2  , 50.814])}, {'BB': np.array([93.604, 69.2  , 50.814])}
+        group_cor={'BB': {1: {'coord': np.array([92.3881639 , 68.49765711, 50.86877245]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 2: {'coord': np.array([93.6571639 , 68.56065711, 50.51777245]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 3: {'coord': np.array([93.7111639 , 69.03765711, 49.22177245]), 'atom': 'CB', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 4: {'coord': np.array([94.3591639 , 69.33465711, 51.39077245]), 'atom': 'C', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 5: {'coord': np.array([93.9811639 , 70.31565711, 51.75077245]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}}}
+
+        rigid_mass_cg, at_frag_centers, cg_frag_centers, group = at_mod.rigid_fit(group, frag_mass, resid, cg)
+        np.testing.assert_array_almost_equal(rigid_mass_cg, rigid_mass_cg_cor)
+        self.assertCountEqual(at_frag_centers, at_frag_centers_cor)
+        self.assertCountEqual(cg_frag_centers, cg_frag_centers_cor)
+        self.assertCountEqual(group, group_cor)
 
 
 

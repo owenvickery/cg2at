@@ -114,6 +114,7 @@ def trunc_coord(xyz):
             if '.' in str(coord):
                 xyz_new.append(np.round(coord, 7-len(str(int(coord)))))
             else:
+                # print(np.round(coord, 1), coord, 9-len(str(int(coord))))
                 xyz_new.append(np.round(coord, 8-len(str(int(coord)))))
         else:
             xyz_new.append(coord)
@@ -208,9 +209,9 @@ def create_ion_list(ion_pdb):
 
 def print_swap_residues():
     if g_var.args.swap != None:
-        print('\nYou have chosen to swap the following residues\n')
-        print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format('residue', 'bead', '     ', 'residue', 'bead', 'range'))
-        print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format('-------', '----', '     ', '-------', '----', '-----'))
+        to_print = '\nYou have chosen to swap the following residues\n\n'
+        to_print += '{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}\n'.format('residue', 'bead', '     ', 'residue', 'bead', 'range')
+        to_print += '{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}\n'.format('-------', '----', '     ', '-------', '----', '-----')
         for residue in g_var.swap_dict:
             for swap in g_var.swap_dict[residue]:
                 bead_s, bead_e='', ''
@@ -226,7 +227,10 @@ def print_swap_residues():
                             ran = ran[:-2]
                         else:
                             ran = g_var.swap_dict[residue][swap]['range']
-                print('{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}'.format(swap.split(':')[0], bead_s, ' --> ', swap.split(':')[1], bead_e, ran))
+                to_print += '{0:^10}{1:^5}{2:^11}{3:^11}{4:^11}{5:^11}\n'.format(swap.split(':')[0], bead_s, ' --> ', swap.split(':')[1], bead_e, ran)
+        return to_print
+    else:
+        return ''
     
 
 def new_box_vec(box_vec, box):
@@ -243,11 +247,11 @@ def new_box_vec(box_vec, box):
     return box_vec, np.array(box_shift)
 
 def strip_header(line):
-    line = line.replace('[','')
-    line = line.replace(']','')
-    if len(line.split())>1:
-        sys.exit('There is a issue in one of the fragment headers: \n', line)
-    return line.strip()
+    line_new = line.replace('[','')
+    line_new = line_new.replace(']','')
+    if len(line_new.split())>1 or len(line_new.split())==0:
+        sys.exit('There is a issue in one of the fragment headers: \n'+line)
+    return line_new.strip()
 
 def sep_fragments_topology(location):
     topology={}
@@ -732,7 +736,6 @@ def pdbatom(line):
         return dict([('atom_number',int(line[7:11].replace(" ", ""))),('atom_name',str(line[12:16]).replace(" ", "")),('residue_name',str(line[16:21]).replace(" ", "")),\
             ('chain',line[21]),('residue_id',int(line[22:26])), ('x',float(line[30:38])),('y',float(line[38:46])),('z',float(line[46:54]))])
     except BaseException:
-        print(line[30:38],line[38:46],line[46:54])
         sys.exit('\npdb line is wrong:\t'+line) 
 
 def create_pdb(file_name):
