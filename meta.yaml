@@ -12,24 +12,7 @@ requirements:
   run:
     - scipy
     - numpy
-    - argparse
-    - copy
-    - datetime
-    - difflib
-    - distutils
-    - glob
-    - itertools
-    - math
-    - multiprocessing
-    - ntpath
-    - os
     - pathlib
-    - re
-    - shutil
-    - string
-    - sys
-    - subprocess
-    - time
 
 build:
   script_env:
