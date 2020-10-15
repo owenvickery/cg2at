@@ -11,8 +11,8 @@ source:
 #requirements:
 build:
   script_env:
-  - VERSION
-  - CONDA_BLD_PATH
+    - VERSION
+    - CONDA_BLD_PATH
 run:
   - scipy
   - numpy
