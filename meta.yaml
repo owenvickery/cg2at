@@ -1,0 +1,19 @@
+{% set name = "cg2at" %}
+
+package:
+  name: {{ name|lower }}
+  version: {{ environ['VERSION'] }}
+
+source:
+  # git_rev: "v0.2"
+  git_url: https://github.com/owenvickery/cg2at
+
+# requirements:
+build:
+
+  script_env:
+   - VERSION
+   - CONDA_BLD_PATH
+run:
+  - python
+
