@@ -1,6 +1,6 @@
 # Only need to change these two variables
 PKG_NAME=cg2at
-USER=owenvickery
+USER=stansfeld_rg
 
 OS=linux-64
 mkdir ~/conda-bld
