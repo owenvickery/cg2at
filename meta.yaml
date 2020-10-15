@@ -8,12 +8,32 @@ source:
   # git_rev: "v0.2"
   git_url: https://github.com/owenvickery/cg2at
 
-# requirements:
+#requirements:
 build:
-
   script_env:
-   - VERSION
-   - CONDA_BLD_PATH
+  - VERSION
+  - CONDA_BLD_PATH
 run:
+  - scipy
+  - numpy
   - python
+  - argparse
+  - copy
+  - datetime
+  - difflib
+  - distutils
+  - glob
+  - itertools
+  - math
+  - multiprocessing
+  - ntpath
+  - os
+  - pathlib
+  - re
+  - shutil
+  - string
+  - sys
+  - subprocess
+  - time
+
 
