@@ -293,7 +293,7 @@ def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
     if len(at_frag_centers)  > 1:         
         for bead in at_frag_centers:
             cg_connection.append(cg_frag_centers[bead])
-            at_connection.append(at_frag_centers[bead])     
+            at_connection.append(at_frag_centers[bead])   
     return at_connection, cg_connection    
 
 ### end fragment information

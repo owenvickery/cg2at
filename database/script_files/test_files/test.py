@@ -431,6 +431,7 @@ class TestSum(unittest.TestCase):
         
 
     def test_fetch_fragment(self):
+        g_var.res_top = {}
         res_top_correct = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', \
         'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, \
         'GROUPS': {'BB': 2, 'SC1': 1, 'SC2': 1, 'SC3': 1}, \
@@ -923,16 +924,99 @@ class TestSum(unittest.TestCase):
         self.assertCountEqual(residue, residue_cor)
         self.assertCountEqual(fragment_mass, fragment_cor)
 
-    # def test_connectivity(self):
-    #     pass
+    def test_connectivity(self):
+        g_var.sorted_connect['PHE'] = {2: {2: ['SC1']}, 1: {3: ['BB']}}
+        cg = {'BB': {'residue_name': 'PHE', 'coord':  np.array([84.312, 45.09 , 28.573])}, 
+            'SC1': {'residue_name': 'PHE', 'coord':  np.array([82.306, 43.106, 29.565])}, 
+            'SC2': {'residue_name': 'PHE', 'coord':  np.array([79.798, 42.108, 29.557])}, 
+            'SC3': {'residue_name': 'PHE', 'coord':  np.array([81.894, 40.487, 30.077])}}
+        at_frag_centers = {'SC1':  np.array([82.35866667, 41.30419048, 29.808]), 'SC2':  np.array([81.19766667, 43.02469048, 29.5125]), 'SC3':  np.array([79.92866667, 41.67019048, 29.841])} 
+        cg_frag_centers = {'SC1':  np.array([82.306, 43.106, 29.565]), 'SC2':  np.array([79.798, 42.108, 29.557]), 'SC3':  np.array([81.894, 40.487, 30.077])}
+        group = {'SC1': {3: {'coord':  np.array([83.53766667, 41.38219048, 29.697     ]), 'atom': 'CB', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011},
+                         4: {'coord':  np.array([82.19666667, 41.71519048, 29.751     ]), 'atom': 'CG', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 
+                        5: {'coord':  np.array([81.34166667, 40.81519048, 29.976     ]), 'atom': 'CD1', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}}, 
+                'SC2': {8: {'coord':  np.array([81.80966667, 42.88519048, 29.517     ]), 'atom': 'CD2', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 
+                        9: {'coord':  np.array([80.58566667, 43.16419048, 29.508     ]), 'atom': 'CE2', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}}, 
+                'SC3': {6: {'coord':  np.array([80.11766667, 41.08519048, 29.958     ]), 'atom': 'CE1', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 
+                        7: {'coord':  np.array([79.73966667, 42.25519048, 29.724     ]), 'atom': 'CZ', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}}}
+        group_number = 1
+        at_connection_cor =   np.array([  np.array([83.53766667, 41.38219048, 29.697 ]),  np.array([82.35866667, 41.30419048, 29.808 ]),  np.array([81.19766667, 43.02469048, 29.5125]),  np.array([79.92866667, 41.67019048, 29.841     ])])
+        cg_connection_cor =   np.array([  np.array([84.312, 45.09 , 28.573]),  np.array([82.306, 43.106, 29.565]),  np.array([79.798, 42.108, 29.557]),  np.array([81.894, 40.487, 30.077])])
+        at_connection, cg_connection = at_mod.connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number)
+        np.testing.assert_array_almost_equal(at_connection, at_connection_cor)
+        np.testing.assert_array_almost_equal(cg_connection, cg_connection_cor)
 
-    # def test_BB_connectivity(self):
-    #     pass
+    def test_BB_connectivity_1st_res(self):
+        g_var.res_top['ALA']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'BB': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, 'ATOMS': ['N', 'CA', 'CB', 'C', 'O'], 'RESIDUE': ['ALA'], 'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
+
+        at_connections,cg_connections = [], []
+        cg_residues =  {0: {'BB': {'residue_name': 'ALA', 'coord': np.array([66.297, 54.97 , 52.774])}}, 
+                        1: {'BB': {'residue_name': 'ALA', 'coord': np.array([69.286, 56.581, 51.125])}}} 
+        at_residues = {1: {'coord': np.array([65.0811639 , 54.26765711, 52.82877245]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 
+                       2: {'coord': np.array([66.3501639 , 54.33065711, 52.47777245]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 
+                       3: {'coord': np.array([66.4041639 , 54.80765711, 51.18177245]), 'atom': 'CB', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 
+                       4: {'coord': np.array([67.0521639 , 55.10465711, 53.35077245]), 'atom': 'C', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 
+                       5: {'coord': np.array([66.6741639 , 56.08565711, 53.71077245]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}} 
+        residue_number, BB_bead = 0, 'BB'
+        at_connections_cor,cg_connections_cor = np.array([np.array([67.0521639 , 55.10465711, 53.35077245])]), np.array([np.array([69.286, 56.581, 51.125])])
+        at_connections,cg_connections, new_chain = at_mod.BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead)
+        np.testing.assert_array_almost_equal(at_connections,at_connections_cor)
+        np.testing.assert_array_almost_equal(cg_connections,cg_connections_cor)
+        self.assertFalse(new_chain, 'Exception raised')
+
+    def test_BB_connectivity_middle_res(self):
+        g_var.res_top['ALA']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'BB': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, 'ATOMS': ['N', 'CA', 'CB', 'C', 'O'], 'RESIDUE': ['ALA'], 'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
+
+        at_connections,cg_connections = [], []
+        cg_residues =  {0: {'BB': {'residue_name': 'ALA', 'coord': np.array([72.878, 57.293, 50.09 ])}}, 
+                        1: {'BB': {'residue_name': 'ALA', 'coord': np.array([75.867, 58.904, 48.441])}}, 
+                        2: {'BB': {'residue_name': 'ALA', 'coord': np.array([78.893, 60.584, 49.962])}}, 
+                        3: {'BB': {'residue_name': 'ALA', 'coord': np.array([91.971, 72.032, 58.312])}}}
+        at_residues = {1: {'coord': np.array([74.6511639 , 58.20165711, 48.49577245]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 
+                       2: {'coord': np.array([75.9201639 , 58.26465711, 48.14477245]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 
+                       3: {'coord': np.array([75.9741639 , 58.74165711, 46.84877245]), 'atom': 'CB', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 
+                       4: {'coord': np.array([76.6221639 , 59.03865711, 49.01777245]), 'atom': 'C', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 
+                       5: {'coord': np.array([76.2441639 , 60.01965711, 49.37777245]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}} 
+        residue_number, BB_bead = 1, 'BB'
+        at_connections_cor,cg_connections_cor = np.array([ np.array([74.6511639 , 58.20165711, 48.49577245]), np.array([76.6221639 , 59.03865711, 49.01777245])]), np.array([ np.array([72.878, 57.293, 50.09 ]), np.array([78.893, 60.584, 49.962])])
+        at_connections,cg_connections, new_chain = at_mod.BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead)
+        np.testing.assert_array_almost_equal(at_connections,at_connections_cor)
+        np.testing.assert_array_almost_equal(cg_connections,cg_connections_cor)
+        self.assertFalse(new_chain, 'Exception raised') 
+
+    def test_BB_connectivity_end_res(self):
+        g_var.res_top['ALA']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'BB': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, 'ATOMS': ['N', 'CA', 'CB', 'C', 'O'], 'RESIDUE': ['ALA'], 'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
+
+        at_connections,cg_connections = [], []
+        cg_residues =  {0: {'BB': {'residue_name': 'ALA', 'coord': np.array([72.878, 57.293, 50.09 ])}}, 
+                        1: {'BB': {'residue_name': 'ALA', 'coord': np.array([75.867, 58.904, 48.441])}}, 
+                        2: {'BB': {'residue_name': 'ALA', 'coord': np.array([78.893, 60.584, 49.962])}}, 
+                        3: {'BB': {'residue_name': 'ALA', 'coord': np.array([91.971, 72.032, 58.312])}}}
+        at_residues = {1: {'coord': np.array([77.6771639 , 59.88165711, 50.01677245]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 
+                       2: {'coord': np.array([78.9461639 , 59.94465711, 49.66577245]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 
+                       3: {'coord': np.array([79.0001639 , 60.42165711, 48.36977245]), 'atom': 'CB', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 
+                       4: {'coord': np.array([79.6481639 , 60.71865711, 50.53877245]), 'atom': 'C', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 
+                       5: {'coord': np.array([79.2701639 , 61.69965711, 50.89877245]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}}
+        residue_number, BB_bead = 2, 'BB'
+        at_connections_cor,cg_connections_cor = np.array([np.array([77.6771639 , 59.88165711, 50.01677245])]), np.array([np.array([75.867, 58.904, 48.441])])
+        at_connections,cg_connections, new_chain = at_mod.BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead)
+        np.testing.assert_array_almost_equal(at_connections,at_connections_cor)
+        np.testing.assert_array_almost_equal(cg_connections,cg_connections_cor)
+        self.assertTrue(new_chain, 'Exception raised') 
+
+
 
     # def test_merge_indivdual_chain_pdbs(self):
     #     pass
 
-    # def test_index_conversion_generate(self):
+    def test_index_conversion_generate(self):
+        merge = [{'atom_name':'AB'}, {'atom_name':'ABM'},{'atom_name':'MAB'}, {'atom_name':'1AB'},{'atom_name':'MAB'}]
+        merge_coords = [[0, 1, 2],[1, 1, 2],[2, 1, 2],[3, 1, 2],[4, 1, 2],[5, 1, 2]]
+        coords_cor = [[0, 1, 2], [1, 1, 2], [3, 1, 2]]
+        index_cor = {0: 0, 1: 1, 3: 2}
+        coords, index_conversion = at_mod.index_conversion_generate(merge, merge_coords)
+        self.assertEqual(coords, coords_cor)
+        self.assertEqual(index_conversion, index_cor)
     #     pass
 
     # def test_write_pdb(self):
