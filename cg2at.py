@@ -50,7 +50,7 @@ if __name__ == '__main__':
     gen.fetch_fragment()    
     gen.fetch_chain_groups()
     gen.sort_swap_group()
-    gen.print_swap_residues()
+    print(gen.print_swap_residues())
     ###
     #### collects initial structures into INPUT folder
     gro.collect_input()

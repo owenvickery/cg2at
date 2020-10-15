@@ -6,6 +6,7 @@ from unittest.mock import patch
 import mock
 import filecmp
 import numpy as np
+from scipy.spatial import cKDTree
 import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
 
 
@@ -874,7 +875,7 @@ class TestSum(unittest.TestCase):
         group = {'BB': {1: {'coord': np.array([43.8669, 44.4825, 45.6372]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 2: {'coord': np.array([45.1359, 44.5455, 45.2862]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 3: {'coord': np.array([45.1899, 45.0225, 43.9902]), 'atom': 'CB', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 4: {'coord': np.array([45.8379, 45.3195, 46.1592]), 'atom': 'C', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 5: {'coord': np.array([45.4599, 46.3005, 46.5192]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}}} 
         frag_mass = {'BB': [[43.8669, 44.4825, 45.6372, 14.007], [45.13590000000001, 44.5455, 45.2862, 12.011], [45.1899, 45.0225, 43.9902, 12.011], [45.8379, 45.3195, 46.1592, 12.011], [45.459900000000005, 46.3005, 46.519200000000005, 15.999]]} 
         resid, cg = 9, {'BB': {'residue_name': 'ALA', 'coord': np.array([93.604, 69.2  , 50.814])}}
-        
+
         rigid_mass_cg_cor, at_frag_centers_cor, cg_frag_centers_cor= np.array([93.604, 69.2,  50.814]), {'BB': np.array([93.604, 69.2  , 50.814])}, {'BB': np.array([93.604, 69.2  , 50.814])}
         group_cor={'BB': {1: {'coord': np.array([92.3881639 , 68.49765711, 50.86877245]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 2: {'coord': np.array([93.6571639 , 68.56065711, 50.51777245]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 3: {'coord': np.array([93.7111639 , 69.03765711, 49.22177245]), 'atom': 'CB', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 4: {'coord': np.array([94.3591639 , 69.33465711, 51.39077245]), 'atom': 'C', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 5: {'coord': np.array([93.9811639 , 70.31565711, 51.75077245]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}}}
 
@@ -884,6 +885,106 @@ class TestSum(unittest.TestCase):
         self.assertCountEqual(cg_frag_centers, cg_frag_centers_cor)
         self.assertCountEqual(group, group_cor)
 
+    def test_overlapping_atoms(self):
+        coordinates = [[0, 1, 0 ], [1,2,1], [0,1.1,0]]
+        correct = [[0, 2]]
+        tree = cKDTree(coordinates)
+        overlapped = at_mod.overlapping_atoms(tree)
+        self.assertEqual(overlapped, correct)
+
+    def test_check_atom_overlap(self):
+        coordinates = [[0, 1, 0 ], [1,2,1], [0,1.1,0]]
+        result = at_mod.check_atom_overlap(coordinates)
+        tree = cKDTree(result)
+        overlapped = at_mod.overlapping_atoms(tree)
+        self.assertEqual(len(overlapped), 0)
+
+    def test_split_fragment_names(self):
+        res_cor, group_cor, bead_cor = {1: {'BB': {}}}, 1, 'BB'
+        line, residue, resname = '[ BB ]', {}, 'ALA'
+        residue, group, bead = at_mod.split_fragment_names(line, residue, resname)
+        self.assertCountEqual(residue,res_cor) 
+        self.assertEqual(group, group_cor)
+        self.assertEqual(bead, bead_cor )
+
+    def test_get_atomistic(self):
+        g_var.res_top['PHE'] = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', \
+        'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, \
+        'GROUPS': {'BB': 2, 'SC1': 1, 'SC2': 1, 'SC3': 1}, \
+        'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, \
+        'ATOMS': ['N', 'CA', 'C', 'O'], \
+        'RESIDUE': ['PHE'], \
+        'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'CG': 12.011, 'CD1': 12.011, 'CE1': 12.011, 'CZ': 12.011, \
+                        'CD2': 12.011, 'CE2': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
+
+        residue_cor = {2: {'BB': {1: {'coord': np.array([37.827, 15.084,  9.828]), 'atom': 'N', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 14.007}, 2: {'coord': np.array([38.493, 16.128, 10.269]), 'atom': 'CA', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 10: {'coord': np.array([39.816, 15.84 , 10.395]), 'atom': 'C', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 11: {'coord': np.array([40.176, 14.877, 10.872]), 'atom': 'O', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 15.999}}}, 1: {'SC1': {3: {'coord': np.array([37.998, 16.524, 11.52 ]), 'atom': 'CB', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 4: {'coord': np.array([36.657, 16.857, 11.574]), 'atom': 'CG', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 5: {'coord': np.array([35.802, 15.957, 11.799]), 'atom': 'CD1', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}}, 'SC2': {8: {'coord': np.array([36.27 , 18.027, 11.34 ]), 'atom': 'CD2', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 9: {'coord': np.array([35.046, 18.306, 11.331]), 'atom': 'CE2', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}}, 'SC3': {6: {'coord': np.array([34.578, 16.227, 11.781]), 'atom': 'CE1', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}, 7: {'coord': np.array([34.2  , 17.397, 11.547]), 'atom': 'CZ', 'resid': 1, 'res_type': 'PHE', 'frag_mass': 12.011}}}}
+        fragment_cor = {'BB': [[37.827000000000005, 15.084000000000001, 9.828, 14.007], [38.493, 16.128000000000004, 10.269, 12.011], [39.816, 15.840000000000002, 10.395000000000001, 12.011], [40.176, 14.877, 10.872, 15.999]], 'SC1': [[37.998, 16.524, 11.520000000000001, 12.011], [36.657, 16.857, 11.574, 12.011], [35.802, 15.957, 11.799, 12.011]], 'SC2': [[36.269999999999996, 18.027, 11.34, 12.011], [35.046, 18.306, 11.331, 12.011]], 'SC3': [[34.578, 16.227, 11.781, 12.011], [34.2, 17.397, 11.547, 12.011]]}
+        residue, fragment_mass = at_mod.get_atomistic(run_dir+'database_test/fragments/test_1/protein/PHE/PHE.pdb')
+        self.assertCountEqual(residue, residue_cor)
+        self.assertCountEqual(fragment_mass, fragment_cor)
+
+    # def test_connectivity(self):
+    #     pass
+
+    # def test_BB_connectivity(self):
+    #     pass
+
+    # def test_merge_indivdual_chain_pdbs(self):
+    #     pass
+
+    # def test_index_conversion_generate(self):
+    #     pass
+
+    # def test_write_pdb(self):
+    #     pass
+
+    # def test_merge_system_pdbs(self):
+    #     pass
+
+    # def test_read_in_merged_pdbs(self):
+    #     pass
+
+    # def test_check_overlap_chain(self):
+    #     pass
+
+    # def test_fetch_chiral_coord(self):
+    #     pass
+
+    # def test_fix_chirality(self):
+    #     pass
+
+    # def test_check_hydrogens(self):
+    #     pass
+
+    # def test_check_ringed_lipids(self):
+    #     pass
+
+    # def test_fetch_start_of_residue(self):
+    #     pass
+
+    # def test_get_np_resname(self):
+    #     pass
+
+    # def test_fix_threaded_lipids(self):
+    #     pass
+
+    # def test_(self):
+    #     pass
+
+    # def test_(self):
+    #     pass
+
+    # def test_(self):
+    #     pass
+
+    # def test_(self):
+    #     pass
+
+    # def test_(self):
+    #     pass
+
+    # def test_(self):
+    #     pass
 
 
 
