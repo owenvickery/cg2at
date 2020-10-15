@@ -3,7 +3,7 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/..')
 import unittest
 from unittest.mock import patch
-import mock
+from unittest import mock
 import filecmp
 import numpy as np
 from scipy.spatial import cKDTree
@@ -132,41 +132,41 @@ class TestSum(unittest.TestCase):
         self.assertEqual(g_var.forcefield_available, ['charmm36-mar2019-updated.ff', 'empty.ff'])
         self.assertEqual(g_var.fragments_available, ['test_1', 'test_2'])
 
-    @mock.patch('builtins.input', return_value='0 1')
+    @patch('builtins.input', return_value='0 1')
     def test_ask_database_forcefield_list(self, input):
         forcefields = ['charmm36-mar2019-updated.ff', 'empty.ff']
         self.assertEqual(gen.ask_database(forcefields, 'forcefields', True), True)
 
-    @mock.patch('builtins.input', return_value='3')
+    @patch('builtins.input', return_value='3')
     def test_ask_database_forcefield_over(self, input):
         forcefields = ['charmm36-mar2019-updated.ff', 'empty.ff']
         self.assertEqual(gen.ask_database(forcefields, 'forcefields', True), True)
 
-    @mock.patch('builtins.input', return_value='3')
+    @patch('builtins.input', return_value='3')
     def test_ask_database_forcefield_over(self, input):
         forcefields = ['charmm36-mar2019-updated.ff', 'empty.ff']
         self.assertEqual(gen.ask_database(forcefields, 'forcefields', True), True)
-    @mock.patch('builtins.input', return_value='a')
+    @patch('builtins.input', return_value='a')
     def test_ask_database_forcefield_str(self, input):
         forcefields = ['charmm36-mar2019-updated.ff', 'empty.ff']
         self.assertEqual(gen.ask_database(forcefields, 'forcefields', True), True)
-    @mock.patch('builtins.input', return_value='0')
+    @patch('builtins.input', return_value='0')
     def test_ask_database_forcefield_correct(self, input):
         forcefields = ['charmm36-mar2019-updated.ff', 'empty.ff']
         self.assertEqual(gen.ask_database(forcefields, 'forcefields', True), 0)
-    @mock.patch('builtins.input', return_value='0 1')
+    @patch('builtins.input', return_value='0 1')
     def test_ask_database_fragments_list(self, input):
         fragments = ['test_1', 'test_2']
         self.assertIsNone(np.testing.assert_array_equal(gen.ask_database(fragments, 'fragments', True), [0, 1]))
-    @mock.patch('builtins.input', return_value='3')
+    @patch('builtins.input', return_value='3')
     def test_ask_database_fragments_over(self, input):
         fragments = ['test_1', 'test_2']
         self.assertEqual(gen.ask_database(fragments, 'fragments', True), True)
-    @mock.patch('builtins.input', return_value='a')
+    @patch('builtins.input', return_value='a')
     def test_ask_database_fragments_str(self, input):
         fragments = ['test_1', 'test_2']
         self.assertEqual(gen.ask_database(fragments, 'fragments', True), True)
-    @mock.patch('builtins.input', return_value='0 1')
+    @patch('builtins.input', return_value='0 1')
     def test_database_selection(self, input):
         fragments = ['test_1', 'test_2']
         self.assertIsNone(np.testing.assert_array_equal(gen.ask_database(fragments, 'fragments', True), [0, 1]))
@@ -199,7 +199,7 @@ class TestSum(unittest.TestCase):
         self.assertEqual(g_var.forcefield, 'empty.ff')
         self.assertEqual(g_var.opt['ff'], 'empty.ff')
 
-    @mock.patch('builtins.input', return_value='1')
+    @patch('builtins.input', return_value='1')
     def test_forcefield_selection_number(self, input):
         g_var.forcefield_location, g_var.forcefield = '',''
         g_var.final_dir = run_dir+'database_test/'
@@ -251,7 +251,7 @@ class TestSum(unittest.TestCase):
         self.assertIsNone(np.testing.assert_array_equal(g_var.o_directories, [[run_dir+'database_test/fragments/test_1/other/']]))
         self.assertIsNone(np.testing.assert_array_equal(g_var.opt['fg'], ['test_1']))
 
-    @mock.patch('builtins.input', return_value='0')
+    @patch('builtins.input', return_value='0')
     def test_fragment_selection(self, input):
         g_var.np_residues, g_var.p_residues, g_var.mod_residues, g_var.o_residues, g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories = [],[],[],[],[],[],[],[]
         g_var.opt['fg'] = ''
@@ -269,7 +269,7 @@ class TestSum(unittest.TestCase):
         self.assertIsNone(np.testing.assert_array_equal(g_var.o_directories, [[run_dir+'database_test/fragments/test_1/other/']]))
         self.assertIsNone(np.testing.assert_array_equal(g_var.opt['fg'], ['test_1']))
 
-    @mock.patch('builtins.input', return_value='0')
+    @patch('builtins.input', return_value='0')
     def test_ask_for_water_model(self, input):
         water = ['tip3p', 'tip4p', 'spc', 'spce']
         directory = [run_dir+'database_test/fragments/test_1/non_protein/']
@@ -277,7 +277,7 @@ class TestSum(unittest.TestCase):
         self.assertEqual(result1, run_dir+'database_test/fragments/test_1/non_protein/SOL/')
         self.assertEqual(result2, 'tip3p')
 
-    @mock.patch('builtins.input', return_value='0')
+    @patch('builtins.input', return_value='0')
     def test_check_water_molecules(self, input):
         g_var.np_directories = [[run_dir+'database_test/fragments/test_1/non_protein/', 'SOL']]
         gen.check_water_molecules(True)
@@ -1017,7 +1017,6 @@ class TestSum(unittest.TestCase):
         coords, index_conversion = at_mod.index_conversion_generate(merge, merge_coords)
         self.assertEqual(coords, coords_cor)
         self.assertEqual(index_conversion, index_cor)
-    #     pass
 
     # def test_write_pdb(self):
     #     pass
