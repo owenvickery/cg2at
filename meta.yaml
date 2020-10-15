@@ -14,26 +14,7 @@ build:
     - VERSION
     - CONDA_BLD_PATH
 run:
-  - scipy
-  - numpy
   - python
-  - argparse
-  - copy
-  - datetime
-  - difflib
-  - distutils
-  - glob
-  - itertools
-  - math
-  - multiprocessing
-  - ntpath
-  - os
-  - pathlib
-  - re
-  - shutil
-  - string
-  - sys
-  - subprocess
-  - time
+
 
 
