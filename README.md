@@ -3,6 +3,9 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/owenvickery/cg2at.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/owenvickery/cg2at/context:python)
 [![codecov](https://codecov.io/gh/owenvickery/cg2at/branch/master/graph/badge.svg)](https://codecov.io/gh/owenvickery/cg2at)
 [![Github Releases](https://img.shields.io/github/v/release/owenvickery/cg2at)](https://github.com/owenvickery/cg2at/releases)
+[![Anaconda-Server Badge](https://anaconda.org/stansfeld_rg/cg2at/badges/latest_release_date.svg)](https://anaconda.org/stansfeld_rg/cg2at)
+[![Anaconda-Server Badge](https://anaconda.org/stansfeld_rg/cg2at/badges/installer/conda.svg)](https://conda.anaconda.org/stansfeld_rg)
+
 <p align="center">
                                    <b>**CG2AT v2 README**</b>
 </p>
