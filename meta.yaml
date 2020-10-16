@@ -9,19 +9,23 @@ source:
   git_url: https://github.com/owenvickery/cg2at
 
 requirements:
+  # build:
+  #   binary_has_prefix_files:
+  #     - CG2AT
   run:
     - scipy
     - numpy
     - pathlib
-    
+
 build:
-  binary_has_prefix_files:
-    - CG2AT
   script_env:
     - VERSION
     - CONDA_BLD_PATH
 run:
   - python
 
+extra:
+  maintainers:
+    - Owen Vickery
 
 
