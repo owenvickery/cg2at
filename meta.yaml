@@ -13,8 +13,10 @@ requirements:
     - scipy
     - numpy
     - pathlib
-
+    
 build:
+  binary_has_prefix_files:
+    - CG2AT
   script_env:
     - VERSION
     - CONDA_BLD_PATH
