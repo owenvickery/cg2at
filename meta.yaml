@@ -15,6 +15,7 @@ requirements:
     - pathlib
 
 build:
+  number: 1
   script_env:
     - VERSION
     - CONDA_BLD_PATH
