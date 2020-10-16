@@ -1,4 +1,3 @@
-# Only need to change these two variables
 PKG_NAME=cg2at
 USER=stansfeld_rg
 
