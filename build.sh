@@ -1,2 +1,1 @@
-ln -s $PREFIX/info/recipe/CG2AT $CONDA_PREFIX/bin/CG2AT
-#if [ -z ${CONDA_PREFIX} ]; then ln -n $PREFIX/info/recipe/CG2AT $CONDA_PREFIX/bin/CG2AT; else echo "bugger" ;fi
+if [[ ! -z "${CONDA_PREFIX}" ]]; then ln -fs $PREFIX/database/script_files/cg2at.py $CONDA_PREFIX/bin/CG2AT;fi
