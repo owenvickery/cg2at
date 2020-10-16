@@ -6,4 +6,4 @@
 #  		ln -fs $PREFIX/info/recipe/database/script_files/cg2at.py $CONDA_PREFIX/bin/CG2AT
 #  	fi
 # fi
-LD_RUN_PATH = $ORIGIN
+export LD_RUN_PATH = $ORIGIN
