@@ -1,1 +1,1 @@
-echo $PREFIX
+touch $PREFIX/test.dat
