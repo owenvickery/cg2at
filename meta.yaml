@@ -2,7 +2,7 @@
 
 package:
   name: {{ name|lower }}
-  version: '{{ environ.get("GIT_DESCRIBE_TAG", "0.0.0") }}.git'
+  version: {{ environ['VERSION'] }}
 
 source:
   git_rev: "v0.2"
