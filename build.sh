@@ -7,4 +7,7 @@
 #  	fi
 # fi
 echo $CONDA_PREFIX/bin/CG2AT > $CONDA_PREFIX/test_cg2at.txt
+printenv >> $CONDA_PREFIX/test_cg2at.txt
+$PATH >> $CONDA_PREFIX/test_cg2at.txt
+# echo $PREFIX/pre >> $CONDA_PREFIX/test_cg2at.txt
 # export LD_RUN_PATH = $ORIGIN
