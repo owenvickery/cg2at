@@ -6,7 +6,9 @@
 #  		ln -fs $PREFIX/info/recipe/database/script_files/cg2at.py $CONDA_PREFIX/bin/CG2AT
 #  	fi
 # fi
-ln -fs $CONDA_PREFIX/bin/$package/cg2at $CONDA_PREFIX/bin/cg2at
+if [[ ${CONDA_PREFIX} != "/home/travis/"* ]]; then
+	ln -fs $CONDA_PREFIX/bin/$package/cg2at $CONDA_PREFIX/bin/cg2at
+fi
 # echo $CONDA_PREFIX/bin/CG2AT > $CONDA_PREFIX/test_cg2at.txt
 # printenv > $CONDA_PREFIX/test_cg2at.txt
 # $PATH >> $CONDA_PREFIX/test_cg2at.txt
