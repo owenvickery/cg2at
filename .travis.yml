@@ -21,7 +21,7 @@ install:
 
 # Run the unit test
 script:
-  - coverage run database/script_files/test_files/test.py 
+  - coverage run database/bin/test_files/test.py 
 
 # Push the results back to codecov and upload to conda
 after_success:
