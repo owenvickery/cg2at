@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
+l#!/usr/bin/env python3
 
 import sys, os
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/..')
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/../database/bin/')
 import unittest
 from unittest.mock import patch
 from unittest import mock
@@ -642,7 +642,7 @@ class TestSum(unittest.TestCase):
             read_in.filter_input(input_no_atom)
         self.assertEqual(no_atom.exception.code, 'input coarsegrain structure seems to contain no beads')
         input_no_box =['MODEL        1\n', 'ATOM  17534  W     W   676      54.070   9.145   7.973  1.00  0.00           W\n', '\n']
-        g_var.input_directory = run_dir+'/test_inputs/CG/no_box/'
+        g_var.input_directory = run_dir+'/inputs/CG/no_box/'
         with self.assertRaises(SystemExit) as no_box:
             read_in.filter_input(input_no_box)
         self.assertEqual(no_box.exception.code, 'The input file is missing the Box vectors')
@@ -653,7 +653,7 @@ class TestSum(unittest.TestCase):
         g_var.water = 'tip3p'
         g_var.cg_residues = {}
         cg_residues_correct = {'SOL': {0: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([54.07 ,  9.145,  7.973])}}, 1: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([108.503,  91.79 ,  90.375])}}, 2: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([60.503, 61.79 , 60.375])}}, 3: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([70.503, 71.79 , 70.375])}}}, 'ION': {1: {'CL-': {'residue_name': 'ION', 'coord': np.array([108.503,  91.79 ,  90.375])}}, 2: {'CL-': {'residue_name': 'ION', 'coord': np.array([60.503, 61.79 , 60.375])}}, 3: {'NA+': {'residue_name': 'ION', 'coord': np.array([70.503, 71.79 , 70.375])}}}}
-        g_var.input_directory = run_dir+'/test_inputs/CG/'
+        g_var.input_directory = run_dir+'/inputs/CG/'
         box_vec = read_in.read_initial_cg_pdb(True)
         self.assertEqual(box_vec, 'CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1\n')
         self.assertCountEqual(g_var.cg_residues, cg_residues_correct)
@@ -673,12 +673,12 @@ class TestSum(unittest.TestCase):
         g_var.water = 'tip3p'
         g_var.res_top['ALA']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'BB': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, 'ATOMS': ['N', 'CA', 'CB', 'C', 'O'], 'RESIDUE': ['ALA'], 'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
         atomistic_protein_input_correct_long = {0: {0: {1: {'coord': np.array([65.317, 54.293, 52.349]), 'atom': 'N', 'res_type': 'ALA', 'frag_mass': 14.007, 'resid': 0}, 2: {'coord': np.array([65.999, 55.581, 52.443]), 'atom': 'CA', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 0}, 3: {'coord': np.array([67.496, 55.408, 52.345]), 'atom': 'C', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 0}, 4: {'coord': np.array([68.097, 54.526, 52.969]), 'atom': 'O', 'res_type': 'ALA', 'frag_mass': 15.999, 'resid': 0}, 5: {'coord': np.array([65.561, 56.245, 53.76 ]), 'atom': 'CB', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 0}}, 1: {11: {'coord': np.array([68.168, 56.207, 51.587]), 'atom': 'N', 'res_type': 'ALA', 'frag_mass': 14.007, 'resid': 1}, 12: {'coord': np.array([69.616, 56.04 , 51.492]), 'atom': 'CA', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 1}, 13: {'coord': np.array([70.315, 57.378, 51.492]), 'atom': 'C', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 1}, 14: {'coord': np.array([69.917, 58.326, 50.804]), 'atom': 'O', 'res_type': 'ALA', 'frag_mass': 15.999, 'resid': 1}, 15: {'coord': np.array([69.908, 55.215, 50.227]), 'atom': 'CB', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 1}}}, 1: {3: {31: {'coord': np.array([74.248, 59.378, 51.435]), 'atom': 'N', 'res_type': 'ALA', 'frag_mass': 14.007, 'resid': 3}, 32: {'coord': np.array([75.698, 59.21 , 51.435]), 'atom': 'CA', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 3}, 33: {'coord': np.array([76.397, 60.545, 51.336]), 'atom': 'C', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 3}, 34: {'coord': np.array([76.038, 61.416, 50.536]), 'atom': 'O', 'res_type': 'ALA', 'frag_mass': 15.999, 'resid': 3}, 35: {'coord': np.array([76.058, 58.262, 50.278]), 'atom': 'CB', 'res_type': 'ALA', 'frag_mass': 12.011, 'resid': 3}}}}
-        atomistic_protein_input, chain_count = read_in.read_in_atomistic(run_dir+'test_inputs/AT/AT_INPUT_long.pdb')
+        atomistic_protein_input, chain_count = read_in.read_in_atomistic(run_dir+'inputs/AT/AT_INPUT_long.pdb')
         self.assertEqual(chain_count, 2)
         self.assertCountEqual(atomistic_protein_input,atomistic_protein_input_correct_long)
         with self.assertRaises(SystemExit) as cm:
-            atomistic_protein_input, chain_count = read_in.read_in_atomistic(run_dir+'test_inputs/AT/AT_INPUT_long.pdbhh')
-        self.assertEqual(cm.exception.code, 'cannot find atomistic protein : '+run_dir+'test_inputs/AT/AT_INPUT_long.pdbhh')
+            atomistic_protein_input, chain_count = read_in.read_in_atomistic(run_dir+'inputs/AT/AT_INPUT_long.pdbhh')
+        self.assertEqual(cm.exception.code, 'cannot find atomistic protein : '+run_dir+'inputs/AT/AT_INPUT_long.pdbhh')
 
 #### test at_mod_p
 
