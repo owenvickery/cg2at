@@ -2,7 +2,7 @@
 
 package:
   name: {{ name|lower }}
-  version: {{ environ['VERSION'] }}
+  version: '{{ environ.get("GIT_DESCRIBE_TAG", "0.0.0") }}.git'
 
 source:
   git_rev: "v0.2"
@@ -19,7 +19,7 @@ requirements:
     - pathlib
 
 build:
-  # number: 0
+  number: '{{ environ.get("GIT_DESCRIBE_NUMBER", 0) }}'
   script_env:
     # - VERSION
     - CONDA_BLD_PATH
