@@ -4,7 +4,7 @@ import os, sys
 import numpy as np
 import time
 import multiprocessing as mp
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/database/script_files')
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/database/bin')
 import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
 
 
