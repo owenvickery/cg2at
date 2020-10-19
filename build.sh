@@ -16,4 +16,4 @@ printenv > $CONDA_PREFIX/test_cg2at_env.txt
 # 	echo "ln -fs $CONDA_PREFIX/bin/$package/cg2at $CONDA_PREFIX/bin/cg2at  wrong" > $CONDA_PREFIX/test_cg2at.txt
 # fi
 
-{ ln -fs $CONDA_PREFIX/bin/$package/cg2at $CONDA_PREFIX/bin/cg2at && } || { echo "ln -fs $CONDA_PREFIX/bin/$package/cg2at $CONDA_PREFIX/bin/cg2at  wrong" > $CONDA_PREFIX/test_cg2at.txt }
+ln -fs $CONDA_PREFIX/pkgs$package/cg2at $CONDA_PREFIX/bin/cg2at ||  echo "ln -fs $CONDA_PREFIX/bin/$package/cg2at $CONDA_PREFIX/bin/cg2at  wrong" > $CONDA_PREFIX/test_cg2at.txt
