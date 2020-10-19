@@ -867,7 +867,7 @@ class TestSum(unittest.TestCase):
         np.testing.assert_array_almost_equal(result,com_correct)
 
     def test_COM_error(self):
-        mass = np.array([[43.8669, 44.4825, 45.6372, 14.007], [45.13590000000001, 44.5455, 45.2862]])
+        mass = np.array([[43.8669, 44.4825, 45.6372, 14.007], [45.13590000000001, 44.5455, 45.2862]], dtype=object)
         fragment = {'BB': {1: {'coord': np.array([43.8669, 44.4825, 45.6372]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 2: {'coord': np.array([45.1359, 44.5455, 45.2862]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}}}
         with self.assertRaises(SystemExit) as cm:
             result = at_mod.COM(mass, fragment)
