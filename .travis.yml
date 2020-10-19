@@ -26,4 +26,4 @@ script:
 # Push the results back to codecov and upload to conda
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-  - test $TRAVIS_BRANCH = "master" && conda install conda-build && conda install anaconda-client && bash conda/conda_upload.sh
+  - test $TRAVIS_BRANCH = "master" && conda install conda-build && conda install conda-verify && conda install anaconda-client && bash conda/conda_upload.sh
