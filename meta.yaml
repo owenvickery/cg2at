@@ -10,6 +10,7 @@ source:
 
 requirements:
   # build:
+  #   script_env: 
   #   binary_has_prefix_files:
   #     - CG2AT
   run:
