@@ -169,7 +169,7 @@ def split_swap(swap):
             else:
                 res_id.append(int(resid_section))
         return res_range, res_id
-    except BaseException:
+    except:
         return 'ALL', 'ALL'
 
 def sort_swap_group():

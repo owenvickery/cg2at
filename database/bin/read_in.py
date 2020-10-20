@@ -4,7 +4,6 @@ import sys, os
 import numpy as np
 import math
 import copy
-import time
 import gen, g_var
 
 

@@ -423,7 +423,6 @@ def read_in_merged_pdbs(merge, merge_coords, location):
         sys.exit('cannot find minimised residue: \n'+ location) 
 
 def check_overlap_chain(chain, input,res_type):
-    checked=[]
     if not os.path.exists(g_var.working_dir+res_type+'/'+res_type+'_'+input+str(chain)+'_gmx_checked.pdb'):
         lines, coords = read_in_merged_pdbs([], [], res_type+'_'+input+str(chain)+'_gmx.pdb')
         if res_type == 'PROTEIN':
