@@ -22,6 +22,22 @@ CG2AT2 is a fragment based conversion of coarse grain systems (e.g. martini) to 
 CG2AT2 has been designed for ease of use, where for the majority of users need only supply the coordinate file of the coarsegrain system and the original atomisitc file. CG2AT2 will then provide all the files required to run the further atomistic simulation. 
 
 <p align="center">
+                                   <b>**INSTALL**</b>
+</p>
+
+The best method to get a copy of CG2AT2 is via CONDA which will install the latest version of CG2AT2 as this will add any missing packages already not installed. 
+
+conda install -c stansfeld_rg cg2at
+
+However, CG2AT2 does not require any real install and can be downloaded ready to run from either github or zenodo,
+
+The addition of CG2AT to the system PATH is advisable for ease of use.
+
+This following line can be added to the .profile or .bashrc file.
+
+export PATH="path_to_CG2AT2:$PATH"
+
+<p align="center">
                                    <b>**REQUIREMENTS**</b>
 </p>
                                      
@@ -29,6 +45,7 @@ Software:
 
 - Python v3 or higher
 - GROMACS > v5
+
 
 Non standard python modules:
 
