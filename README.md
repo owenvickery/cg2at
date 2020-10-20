@@ -25,7 +25,7 @@ CG2AT2 has been designed for ease of use, where for the majority of users need o
                                    <b>**INSTALL**</b>
 </p>
 
-The best method to get a copy of CG2AT2 is via CONDA which will install the latest version of CG2AT2 as this will add any missing packages already not installed. 
+The best method to get a copy of CG2AT2 is via CONDA which will install the latest version of CG2AT2 including any missing packages already not installed. 
 
 conda install -c stansfeld_rg cg2at
 
