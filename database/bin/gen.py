@@ -158,18 +158,22 @@ def fetch_chain_groups():
             g_var.group_chains =  g_var.args.group[0]   
 
 def split_swap(swap):
-    try:
+
+    if len(re.split(':', swap)) > 2:
         res_range = re.split(':', swap)[2].split(',')
         res_id = []
         for resid_section in res_range:
-            if '-' in resid_section:
-                spt = resid_section.split('-')
-                for res in range(int(spt[0]), int(spt[1])+1):
-                    res_id.append(res)
+            if 'ALL' in resid_section.upper():
+                return 'ALL', 'ALL'
             else:
-                res_id.append(int(resid_section))
+                if '-' in resid_section:
+                    spt = resid_section.split('-')
+                    for res in range(int(spt[0]), int(spt[1])+1):
+                        res_id.append(res)
+                else:
+                    res_id.append(int(resid_section))
         return res_range, res_id
-    except:
+    else:
         return 'ALL', 'ALL'
 
 def sort_swap_group():
