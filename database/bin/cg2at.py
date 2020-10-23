@@ -46,7 +46,7 @@ if __name__ == '__main__':
     if g_var.args.info:
         gen.database_information()
     if g_var.args.v >= 1:
-        gen.fragments_in_use()
+        print(gen.fragments_in_use())
     gen.fetch_fragment()    
     gen.fetch_chain_groups()
     gen.sort_swap_group()

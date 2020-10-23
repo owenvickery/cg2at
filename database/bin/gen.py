@@ -832,7 +832,7 @@ def database_information():
         to_print = fragments_in_use(to_print)
     sys.exit(to_print+'\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
 
-def fragments_in_use(to_print):
+def fragments_in_use(to_print=''):
     protein_directories=[]
     if np.any([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
         for database_val, database in enumerate(sorted(g_var.args.fg)):
