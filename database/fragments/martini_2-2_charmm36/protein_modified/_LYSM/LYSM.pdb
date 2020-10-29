@@ -1,0 +1,68 @@
+[ BB ]
+ATOM      1  N   LYSM    1       6.599   5.553  40.803  1.00  0.00      PROA N
+ATOM      2  HN  LYSM    1       6.265   6.334  40.285  1.00  0.00      PROA H
+ATOM      3  CA  LYSM    1       8.029   5.289  40.671  1.00  0.00      PROA C
+ATOM      4  HA  LYSM    1       8.409   4.890  41.587  1.00  0.00      PROA H
+ATOM      5  C   LYSM    1       8.920   6.668  40.412  1.00  0.00      PROA C
+ATOM      6  O   LYSM    1       8.831   7.327  39.435  1.00  0.00      PROA O
+[ SC1 ]
+ATOM      7  CB  LYSM    1       8.102   3.938  39.794  1.00  0.00      PROA C
+ATOM      8  HB1 LYSM    1       9.062   3.521  39.490  1.00  0.00      PROA H
+ATOM      9  HB2 LYSM    1       7.736   3.083  40.398  1.00  0.00      PROA H
+ATOM     10  CG  LYSM    1       7.417   3.954  38.427  1.00  0.00      PROA C
+ATOM     11  HG1 LYSM    1       7.611   2.944  37.976  1.00  0.00      PROA H
+ATOM     12  HG2 LYSM    1       6.326   4.092  38.493  1.00  0.00      PROA H
+ATOM     13  CD  LYSM    1       8.190   4.966  37.591  1.00  0.00      PROA C
+ATOM     14  HD1 LYSM    1       8.811   5.456  38.317  1.00  0.00      PROA H
+ATOM     15  HD2 LYSM    1       8.808   4.431  36.893  1.00  0.00      PROA H
+[ SC2 ]
+ATOM     16  CE  LYSM    1       7.636   6.069  36.727  1.00  0.00      PROA C
+ATOM     17  HE1 LYSM    1       7.101   5.478  35.954  1.00  0.00      PROA H
+ATOM     18  HE2 LYSM    1       6.801   6.434  37.360  1.00  0.00      PROA H
+ATOM     19  NZ  LYSM    1       8.709   7.049  36.187  1.00  0.00      PROA N
+ATOM     20  HZ1 LYSM    1       9.620   6.717  36.380  1.00  0.00      PROA H
+[ C1A ]
+ATOM     21  C1  LYSM    1       8.699   8.301  35.514  1.00  0.00      PROA C
+ATOM     22  O1  LYSM    1       7.751   9.014  35.359  1.00  0.00      PROA O
+ATOM     23  C2  LYSM    1       9.467   8.923  34.477  1.00  0.00      PROA C
+ATOM     24  H2A LYSM    1       8.820   9.021  33.561  1.00  0.00      PROA H
+ATOM     25  H2B LYSM    1      10.422   8.478  34.194  1.00  0.00      PROA H
+ATOM     26  C3  LYSM    1       9.487  10.419  34.962  1.00  0.00      PROA C
+ATOM     27  H3A LYSM    1      10.061  10.530  35.906  1.00  0.00      PROA H
+ATOM     28  H3B LYSM    1       8.520  10.971  35.143  1.00  0.00      PROA H
+ATOM     29  C4  LYSM    1      10.043  11.200  33.837  1.00  0.00      PROA C
+ATOM     30  H4A LYSM    1       9.312  11.256  32.992  1.00  0.00      PROA H
+ATOM     31  H4B LYSM    1      10.944  10.645  33.492  1.00  0.00      PROA H
+ATOM     32  C5  LYSM    1      10.438  12.575  34.280  1.00  0.00      PROA C
+ATOM     33  H5A LYSM    1      10.828  12.588  35.324  1.00  0.00      PROA H
+ATOM     34  H5B LYSM    1       9.536  13.217  34.264  1.00  0.00      PROA H
+ATOM     35  C6  LYSM    1      11.534  12.939  33.298  1.00  0.00      PROA C
+ATOM     36  H6A LYSM    1      11.176  12.673  32.273  1.00  0.00      PROA H
+ATOM     37  H6B LYSM    1      12.425  12.312  33.527  1.00  0.00      PROA H
+[ C2A ]
+ATOM     38  C7  LYSM    1      11.866  14.402  33.289  1.00  0.00      PROA C
+ATOM     39  H7A LYSM    1      11.955  14.807  34.324  1.00  0.00      PROA H
+ATOM     40  H7B LYSM    1      11.077  14.873  32.686  1.00  0.00      PROA H
+ATOM     41  C8  LYSM    1      13.037  14.770  32.435  1.00  0.00      PROA C
+ATOM     42  H8A LYSM    1      12.918  14.356  31.411  1.00  0.00      PROA H
+ATOM     43  H8B LYSM    1      13.860  14.255  32.897  1.00  0.00      PROA H
+ATOM     44  C9  LYSM    1      13.285  16.272  32.399  1.00  0.00      PROA C
+ATOM     45  H9A LYSM    1      13.367  16.679  33.433  1.00  0.00      PROA H
+ATOM     46  H9B LYSM    1      12.408  16.749  31.907  1.00  0.00      PROA H
+ATOM     47  C10 LYSM    1      14.557  16.579  31.618  1.00  0.00      PROA C
+ATOM     48 H10A LYSM    1      14.509  16.036  30.646  1.00  0.00      PROA H
+ATOM     49 H10B LYSM    1      15.440  16.210  32.186  1.00  0.00      PROA H
+[ C3A ]
+ATOM     50  C11 LYSM    1      14.760  18.055  31.325  1.00  0.00      PROA C
+ATOM     51 H11A LYSM    1      14.840  18.610  32.282  1.00  0.00      PROA H
+ATOM     52 H11B LYSM    1      13.887  18.449  30.755  1.00  0.00      PROA H
+ATOM     53  C12 LYSM    1      16.031  18.266  30.508  1.00  0.00      PROA C
+ATOM     54 H12A LYSM    1      15.986  17.644  29.584  1.00  0.00      PROA H
+ATOM     55 H12B LYSM    1      16.920  17.929  31.090  1.00  0.00      PROA H
+ATOM     56  C13 LYSM    1      16.198  19.725  30.108  1.00  0.00      PROA C
+ATOM     57 H13A LYSM    1      16.238  20.348  31.030  1.00  0.00      PROA H
+ATOM     58 H13B LYSM    1      15.303  20.050  29.529  1.00  0.00      PROA H
+ATOM     59  C14 LYSM    1      17.453  19.953  29.271  1.00  0.00      PROA C
+ATOM     60 H14A LYSM    1      18.364  19.707  29.864  1.00  0.00      PROA H
+ATOM     61 H14B LYSM    1      17.469  19.335  28.352  1.00  0.00      PROA H
+ATOM     62 H14C LYSM    1      17.488  21.019  28.979  1.00  0.00      PROA 

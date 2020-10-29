@@ -1,0 +1,15 @@
+* place dummy atoms at the center of each rings
+*
+
+set ncycles = 0
+
+read sequence POL @NCYCLES
+generate DUM warn
+
+
+
+scalar wmain set 0
+
+
+return
+

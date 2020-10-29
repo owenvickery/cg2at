@@ -54473,6 +54473,128 @@ C    CA    +N     O
 	    N    C1    CA    HN
 	    C    CA    +N     O
 
+[ GLYP ]
+  [ atoms ]
+	    N   NH1   -0.470  0
+	   HN     H    0.310  1
+	   CA   CT2   -0.020  2
+	  HA1   HB2    0.090  3
+	  HA2   HB2    0.090  4
+	    C     C    0.510  5
+	    O     O   -0.510  6
+	   C1     C    0.550  7
+	   O1     O   -0.600  8
+	   C2  CTL2   -0.070  9
+	  H2A  HAL2    0.060 10
+	  H2B  HAL2    0.060 11
+	   C3  CTL2   -0.180 12
+	  H3A  HAL2    0.090 13
+	  H3B  HAL2    0.090 14
+	   C4  CTL2   -0.180 15
+	  H4A  HAL2    0.090 16
+	  H4B  HAL2    0.090 17
+	   C5  CTL2   -0.180 18
+	  H5A  HAL2    0.090 19
+	  H5B  HAL2    0.090 20
+	   C6  CTL2   -0.180 21
+	  H6A  HAL2    0.090 22
+	  H6B  HAL2    0.090 23
+	   C7  CTL2   -0.180 24
+	  H7A  HAL2    0.090 25
+	  H7B  HAL2    0.090 26
+	   C8  CTL2   -0.180 27
+	  H8A  HAL2    0.090 28
+	  H8B  HAL2    0.090 29
+	   C9  CTL2   -0.180 30
+	  H9A  HAL2    0.090 31
+	  H9B  HAL2    0.090 32
+	  C10  CTL2   -0.180 33
+	 H10A  HAL2    0.090 34
+	 H10B  HAL2    0.090 35
+	  C11  CTL2   -0.180 36
+	 H11A  HAL2    0.090 37
+	 H11B  HAL2    0.090 38
+	  C12  CTL2   -0.180 39
+	 H12A  HAL2    0.090 40
+	 H12B  HAL2    0.090 41
+	  C13  CTL2   -0.180 42
+	 H13A  HAL2    0.090 43
+	 H13B  HAL2    0.090 44
+	  C14  CTL2   -0.180 45
+	 H14A  HAL2    0.090 46
+	 H14B  HAL2    0.090 47
+	  C15  CTL2   -0.180 48
+     H15A  HAL2    0.090 49
+     H15B  HAL2    0.090 50
+     C16   CTL3   -0.270 51
+     H16A  HAL3    0.090 52
+     H16B  HAL3    0.090 53
+     H16C  HAL3    0.090 54
+
+  [ bonds ]
+	    N    HN
+	    N    CA
+	    C    CA
+	    C    +N
+	   CA   HA1
+	   CA   HA2
+	    N    C1
+	   C1    C2
+	   C2   H2A
+	   C2   H2B
+	   C2    C3
+	   C3   H3A
+	   C3   H3B
+	   C3    C4
+	   C4   H4A
+	   C4   H4B
+	   C4    C5
+	   C5   H5A
+	   C5   H5B
+	   C5    C6
+	   C6   H6A
+	   C6   H6B
+	   C6    C7
+	   C7   H7A
+	   C7   H7B
+	   C7    C8
+	   C8   H8A
+	   C8   H8B
+	   C8    C9
+	   C9   H9A
+	   C9   H9B
+	   C9   C10
+	  C10  H10A
+	  C10  H10B
+	  C10   C11
+	  C11  H11A
+	  C11  H11B
+	  C11   C12
+	  C12  H12A
+	  C12  H12B
+	  C12   C13
+	  C13  H13A
+	  C13  H13B
+	  C13   C14
+	  C14  H14A
+	  C14  H14B
+	  C14   C15
+	  C15  H15A
+	  C15  H15B
+	  C15   C16
+	  C16  H16A
+	  C16  H16B
+	  C16  H16C
+	    O     C
+	   C1    O1
+  [ impropers ]
+	   C1    O1     N    C2
+	    N    C1    CA    HN
+	    C    CA    +N     O
+
+
+
+
 [ GLYN ]
   [ atoms ]
 	    N NG321   -0.960  0
@@ -127765,3 +127887,140 @@ NB2	C51	CB2	HNB2
 NA2	C11	CA2	HNA2
 C51	C52	NB2	O51
 C11	C12	NA2	O11
+
+
+[ LYSM ]
+  [ atoms ]
+N		NH1	-0.470000	13	;	qtot	0.530
+HN		H	0.310000	14	;	qtot	0.840
+CA		CT1	0.070000	15	;	qtot	0.910
+HA		HB1	0.090000	16	;	qtot	1.000
+CB		CT2	-0.180000	17	;	qtot	0.820
+HB1		HA2	0.090000	18	;	qtot	0.910
+HB2		HA2	0.090000	19	;	qtot	1.000
+CG		CT2	-0.180000	20	;	qtot	0.820
+HG1		HA2	0.090000	21	;	qtot	0.910
+HG2		HA2	0.090000	22	;	qtot	1.000
+CD		CT2	-0.180000	23	;	qtot	0.820
+HD1		HA2	0.090000	24	;	qtot	0.910
+HD2		HA2	0.090000	25	;	qtot	1.000
+CE		CT2	-0.020000	26	;	qtot	0.980
+HE1		HA2	0.090000	27	;	qtot	1.070
+HE2		HA2	0.090000	28	;	qtot	1.160
+NZ		NH1	-0.470000	29	;	qtot	0.690
+HZ1		H	0.310000	30	;	qtot	1.000
+C		C	0.510000	31	;	qtot	1.510
+O		O	-0.510000	32	;	qtot	1.000
+C1		C	0.550000	33	;	qtot	1.550
+O1		O	-0.600000	34	;	qtot	0.950
+C2		CTL2	-0.070000	35	;	qtot	0.880
+H2A		HAL2	0.060000	36	;	qtot	0.940
+H2B		HAL2	0.060000	37	;	qtot	1.000
+C3		CTL2	-0.180000	38	;	qtot	0.820
+H3A		HAL2	0.090000	39	;	qtot	0.910
+H3B		HAL2	0.090000	40	;	qtot	1.000
+C4		CTL2	-0.180000	41	;	qtot	0.820
+H4A		HAL2	0.090000	42	;	qtot	0.910
+H4B		HAL2	0.090000	43	;	qtot	1.000
+C5		CTL2	-0.180000	44	;	qtot	0.820
+H5A		HAL2	0.090000	45	;	qtot	0.910
+H5B		HAL2	0.090000	46	;	qtot	1.000
+C6		CTL2	-0.180000	47	;	qtot	0.820
+H6A		HAL2	0.090000	48	;	qtot	0.910
+H6B		HAL2	0.090000	49	;	qtot	1.000
+C7		CTL2	-0.180000	50	;	qtot	0.820
+H7A		HAL2	0.090000	51	;	qtot	0.910
+H7B		HAL2	0.090000	52	;	qtot	1.000
+C8		CTL2	-0.180000	53	;	qtot	0.820
+H8A		HAL2	0.090000	54	;	qtot	0.910
+H8B		HAL2	0.090000	55	;	qtot	1.000
+C9		CTL2	-0.180000	56	;	qtot	0.820
+H9A		HAL2	0.090000	57	;	qtot	0.910
+H9B		HAL2	0.090000	58	;	qtot	1.000
+C10		CTL2	-0.180000	59	;	qtot	0.820
+H10A		HAL2	0.090000	60	;	qtot	0.910
+H10B		HAL2	0.090000	61	;	qtot	1.000
+C11		CTL2	-0.180000	62	;	qtot	0.820
+H11A		HAL2	0.090000	63	;	qtot	0.910
+H11B		HAL2	0.090000	64	;	qtot	1.000
+C12		CTL2	-0.180000	65	;	qtot	0.820
+H12A		HAL2	0.090000	66	;	qtot	0.910
+H12B		HAL2	0.090000	67	;	qtot	1.000
+C13		CTL2	-0.180000	68	;	qtot	0.820
+H13A		HAL2	0.090000	69	;	qtot	0.910
+H13B		HAL2	0.090000	70	;	qtot	1.000
+C14		CTL3	-0.270000	71	;	qtot	0.730
+H14A		HAL3	0.090000	72	;	qtot	0.820
+H14B		HAL3	0.090000	73	;	qtot	0.910
+H14C		HAL3	0.090000	74	;	qtot	1.000
+  [ bonds ]
+C    +N
+N	HN
+N	CA
+CA	HA
+CA	CB
+CA	C
+CB	HB1
+CB	HB2
+CB	CG
+CG	HG1
+CG	HG2
+CG	CD
+CD	HD1
+CD	HD2
+CD	CE
+CE	HE1
+CE	HE2
+CE	NZ
+NZ	HZ1
+NZ	C1
+C	O
+C1	O1
+C1	C2
+C2	H2A
+C2	H2B
+C2	C3
+C3	H3A
+C3	H3B
+C3	C4
+C4	H4A
+C4	H4B
+C4	C5
+C5	H5A
+C5	H5B
+C5	C6
+C6	H6A
+C6	H6B
+C6	C7
+C7	H7A
+C7	H7B
+C7	C8
+C8	H8A
+C8	H8B
+C8	C9
+C9	H9A
+C9	H9B
+C9	C10
+C10	H10A
+C10	H10B
+C10	C11
+C11	H11A
+C11	H11B
+C11	C12
+C12	H12A
+C12	H12B
+C12	C13
+C13	H13A
+C13	H13B
+C13	C14
+C14	H14A
+C14	H14B
+C14	H14C
+
+[ impropers ]
+	C1	O1	NZ	C2
+	N    -C    CA    HN
+	C    CA    +N     O
+[ cmap ]
+	-C     N    CA     C    +N
+	

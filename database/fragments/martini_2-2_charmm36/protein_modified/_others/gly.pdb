@@ -1,0 +1,11 @@
+TITLE     Great Red Owns Many ACres of Sand 
+MODEL        1
+ATOM      1  N   GLY 1  22      -1.195   0.201  -0.206  1.00  0.00           N
+ATOM      2  CA  GLY 1  22       0.230   0.318  -0.502  1.00  0.00           C
+ATOM      3  C   GLY 1  22       1.059  -0.390   0.542  1.00  0.00           C
+ATOM      4  O   GLY 1  22       0.545  -0.975   1.499  1.00  0.00           O
+ATOM      5  H   GLY 1  22      -1.558  -0.333   0.660  1.00  0.00           H
+ATOM      6  3HA GLY 1  22       0.482   1.337  -0.514  0.00  0.00           H
+ATOM      7  HA  GLY 1  22       0.434  -0.159  -1.479  1.00  0.00           H
+TER
+ENDMDL

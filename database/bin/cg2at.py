@@ -47,6 +47,7 @@ if __name__ == '__main__':
         gen.database_information()
     if g_var.args.v >= 1:
         print(gen.fragments_in_use())
+
     gen.fetch_fragment()    
     gen.fetch_chain_groups()
     gen.sort_swap_group()
@@ -137,10 +138,11 @@ if __name__ == '__main__':
                 print('Minimising merged: '+residue_type+'\n') 
                 error = gro.minimise_merged(residue_type, g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb')
                 if error == True and residue_type not in ['SOL']:
-                    print('Failed to minimise as a group now processing individual residues: '+residue_type)
-                    gro.non_protein_minimise_ind(residue_type) ## runs grompp and minimises each residue
-                    at_mod_np.merge_minimised(residue_type) ## merges minimised residues
-                    gro.minimise_merged(residue_type, g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb') ## minimises merged residues
+                    print('Failed to minimise as a group: '+residue_type)
+                    print('please check your input file as there is likely something wrong')
+                    # gro.non_protein_minimise_ind(residue_type) ## runs grompp and minimises each residue
+                    # at_mod_np.merge_minimised(residue_type) ## merges minimised residues
+                    # gro.minimise_merged(residue_type, g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb') ## minimises merged residues
 
     ### MERGES system
     g_var.tc['n_p_t']=time.time()

@@ -1,0 +1,96 @@
+REMARK  CALC TOPAREA = 0                                                              
+REMARK  CALC BOTAREA = 104.018321                                                     
+REMARK  CALC XMAX = 7.25522967                                                        
+REMARK  CALC XMIN = -6.20967194                                                       
+REMARK  CALC YMAX = 9.77934404                                                        
+REMARK  CALC YMIN = -6.72845878                                                       
+REMARK  CALC ZMAX = 0.727                                                             
+REMARK  CALC ZMIN = -13.0877357                                                       
+REMARK   DATE:    10/23/20      3:58:57      CREATED BY USER: apache                  
+ATOM      1  N   ALA     2      -6.210  -6.728  -0.491  1.00  0.03      PROA
+ATOM      2  HT1 ALA     2      -6.013  -7.223  -1.385  1.00  0.00      PROA
+ATOM      3  HT2 ALA     2      -7.235  -6.584  -0.393  1.00  0.00      PROA
+ATOM      4  HT3 ALA     2      -5.863  -7.301   0.305  1.00  0.04      PROA
+ATOM      5  CA  ALA     2      -5.534  -5.434  -0.491  1.00  0.03      PROA
+ATOM      6  HA  ALA     2      -5.768  -4.924  -1.413  1.00  0.00      PROA
+ATOM      7  CB  ALA     2      -6.042  -4.642   0.727  1.00  0.05      PROA
+ATOM      8  HB1 ALA     2      -5.811  -5.193   1.664  1.00  0.06      PROA
+ATOM      9  HB2 ALA     2      -7.142  -4.506   0.657  1.00  0.05      PROA
+ATOM     10  HB3 ALA     2      -5.544  -3.650   0.767  1.00  0.06      PROA
+ATOM     11  C   ALA     2      -4.034  -5.608  -0.491  1.00  0.03      PROA
+ATOM     12  O   ALA     2      -3.468  -6.420   0.251  1.00  0.04      PROA
+ATOM     13  N   LYSM    3      -3.321  -4.888  -1.288  1.00  0.00      PROA
+ATOM     14  HN  LYSM    3      -3.711  -4.260  -1.956  1.00  0.00      PROA
+ATOM     15  CA  LYSM    3      -1.871  -5.055  -1.289  1.00  0.01      PROA
+ATOM     16  HA  LYSM    3      -1.543  -5.419  -0.323  1.00  0.03      PROA
+ATOM     17  CB  LYSM    3      -1.340  -6.104  -2.306  1.00  0.00      PROA
+ATOM     18  HB1 LYSM    3      -0.231  -6.085  -2.350  1.00  0.00      PROA
+ATOM     19  HB2 LYSM    3      -1.627  -7.098  -1.891  1.00  0.00      PROA
+ATOM     20  CG  LYSM    3      -1.926  -6.055  -3.732  1.00  0.00      PROA
+ATOM     21  HG1 LYSM    3      -1.677  -7.029  -4.215  1.00  0.00      PROA
+ATOM     22  HG2 LYSM    3      -3.033  -5.992  -3.700  1.00  0.00      PROA
+ATOM     23  CD  LYSM    3      -1.352  -4.947  -4.629  1.00  0.00      PROA
+ATOM     24  HD1 LYSM    3      -0.528  -4.429  -4.094  1.00  0.00      PROA
+ATOM     25  HD2 LYSM    3      -0.904  -5.419  -5.533  1.00  0.00      PROA
+ATOM     26  CE  LYSM    3      -2.385  -3.914  -5.103  1.00  0.00      PROA
+ATOM     27  HE1 LYSM    3      -3.144  -4.432  -5.732  1.00  0.00      PROA
+ATOM     28  HE2 LYSM    3      -2.905  -3.479  -4.222  1.00  0.00      PROA
+ATOM     29  NZ  LYSM    3      -1.759  -2.871  -5.864  1.00  0.00      PROA
+ATOM     30  HZ1 LYSM    3      -0.824  -3.068  -6.146  1.00  0.00      PROA
+ATOM     31  C   LYSM    3      -1.172  -3.720  -1.388  1.00  0.00      PROA
+ATOM     32  O   LYSM    3      -1.533  -2.847  -2.190  1.00  0.00      PROA
+ATOM     33  C1  LYSM    3      -2.440  -1.842  -6.413  1.00  0.00      PROA
+ATOM     34  O1  LYSM    3      -3.628  -1.673  -6.149  1.00  0.00      PROA
+ATOM     35  C2  LYSM    3      -1.875  -1.185  -7.635  1.00  0.00      PROA
+ATOM     36  H2A LYSM    3      -2.649  -1.141  -8.432  1.00  0.00      PROA
+ATOM     37  H2B LYSM    3      -1.018  -1.786  -8.012  1.00  0.00      PROA
+ATOM     38  C3  LYSM    3      -1.391   0.239  -7.307  1.00  0.00      PROA
+ATOM     39  H3A LYSM    3      -0.739   0.215  -6.404  1.00  0.00      PROA
+ATOM     40  H3B LYSM    3      -2.262   0.894  -7.086  1.00  0.00      PROA
+ATOM     41  C4  LYSM    3      -0.570   0.843  -8.456  1.00  0.00      PROA
+ATOM     42  H4A LYSM    3      -1.182   0.857  -9.384  1.00  0.00      PROA
+ATOM     43  H4B LYSM    3       0.303   0.175  -8.640  1.00  0.00      PROA
+ATOM     44  C5  LYSM    3      -0.047   2.260  -8.177  1.00  0.00      PROA
+ATOM     45  H5A LYSM    3       0.358   2.307  -7.141  1.00  0.00      PROA
+ATOM     46  H5B LYSM    3      -0.892   2.979  -8.248  1.00  0.00      PROA
+ATOM     47  C6  LYSM    3       1.068   2.667  -9.151  1.00  0.00      PROA
+ATOM     48  H6A LYSM    3       0.733   2.461 -10.192  1.00  0.00      PROA
+ATOM     49  H6B LYSM    3       1.959   2.032  -8.950  1.00  0.00      PROA
+ATOM     50  C7  LYSM    3       1.476   4.144  -9.056  1.00  0.00      PROA
+ATOM     51  H7A LYSM    3       1.699   4.405  -7.998  1.00  0.00      PROA
+ATOM     52  H7B LYSM    3       0.620   4.771  -9.391  1.00  0.00      PROA
+ATOM     53  C8  LYSM    3       2.707   4.461  -9.918  1.00  0.00      PROA
+ATOM     54  H8A LYSM    3       2.549   4.040 -10.936  1.00  0.00      PROA
+ATOM     55  H8B LYSM    3       3.594   3.957  -9.475  1.00  0.00      PROA
+ATOM     56  C9  LYSM    3       2.996   5.962 -10.059  1.00  0.00      PROA
+ATOM     57  H9A LYSM    3       3.106   6.415  -9.049  1.00  0.00      PROA
+ATOM     58  H9B LYSM    3       2.129   6.445 -10.562  1.00  0.00      PROA
+ATOM     59  C10 LYSM    3       4.267   6.238 -10.876  1.00  0.00      PROA
+ATOM     60 H10A LYSM    3       4.195   5.698 -11.846  1.00  0.00      PROA
+ATOM     61 H10B LYSM    3       5.144   5.834 -10.325  1.00  0.00      PROA
+ATOM     62  C11 LYSM    3       4.493   7.729 -11.164  1.00  0.00      PROA
+ATOM     63 H11A LYSM    3       4.540   8.284 -10.202  1.00  0.00      PROA
+ATOM     64 H11B LYSM    3       3.626   8.117 -11.743  1.00  0.00      PROA
+ATOM     65  C12 LYSM    3       5.781   7.996 -11.959  1.00  0.00      PROA
+ATOM     66 H12A LYSM    3       5.753   7.404 -12.901  1.00  0.00      PROA
+ATOM     67 H12B LYSM    3       6.652   7.648 -11.361  1.00  0.00      PROA
+ATOM     68  C13 LYSM    3       5.971   9.479 -12.311  1.00  0.00      PROA
+ATOM     69 H13A LYSM    3       5.974  10.069 -11.368  1.00  0.00      PROA
+ATOM     70 H13B LYSM    3       5.098   9.813 -12.915  1.00  0.00      PROA
+ATOM     71  C14 LYSM    3       7.255   9.779 -13.088  1.00  0.00      PROA
+ATOM     72 H14A LYSM    3       8.146   9.489 -12.491  1.00  0.00      PROA
+ATOM     73 H14B LYSM    3       7.270   9.215 -14.045  1.00  0.00      PROA
+ATOM     74 H14C LYSM    3       7.321  10.864 -13.316  1.00  0.00      PROA
+ATOM     75  N   ALA     4      -0.168  -3.480  -0.613  1.00  0.02      PROA
+ATOM     76  HN  ALA     4       0.179  -4.133   0.056  1.00  0.01      PROA
+ATOM     77  CA  ALA     4       0.507  -2.189  -0.709  1.00  0.02      PROA
+ATOM     78  HA  ALA     4       0.325  -1.773  -1.688  1.00  0.00      PROA
+ATOM     79  CB  ALA     4      -0.065  -1.281   0.392  1.00  0.04      PROA
+ATOM     80  HB1 ALA     4       0.116  -1.733   1.391  1.00  0.06      PROA
+ATOM     81  HB2 ALA     4      -1.160  -1.159   0.250  1.00  0.05      PROA
+ATOM     82  HB3 ALA     4       0.430  -0.287   0.357  1.00  0.05      PROA
+ATOM     83  C   ALA     4       2.005  -2.354  -0.612  1.00  0.03      PROA
+ATOM     84  OT1 ALA     4       2.464  -3.519  -0.468  1.00  0.03      PROA
+ATOM     85  OT2 ALA     4       2.720  -1.319  -0.680  1.00  0.02      PROA
+TER      86      ALA      4
+END

@@ -288,7 +288,7 @@ def check_sequence():
 
 def align_chain_sequence(sys_type):
     if g_var.args.v >= 2:
-        gen.print_sequnce_info('PROTEIN')     
+        print(gen.print_sequnce_info('PROTEIN'))     
     at={}
     test_chain={}
     for chain_at in range(len(g_var.atomistic_protein_input_raw)):

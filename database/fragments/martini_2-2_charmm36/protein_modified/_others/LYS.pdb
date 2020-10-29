@@ -1,0 +1,13 @@
+TITLE     Gallium Rubidium Oxygen Manganese Argon Carbon Silicon
+MODEL        1
+ATOM      1  N   LYS 1   1      35.860  14.270   9.250  2.00  0.00           N
+ATOM      2  CA  LYS 1   1      36.590  15.390   9.830  3.00  1.00           C
+ATOM      3  C   LYS 1   1      38.070  15.100   9.870  2.00  0.00           C
+ATOM      4  O   LYS 1   1      38.520  14.020  10.270  6.00  0.00           O
+ATOM      5  CB  LYS 1   1      36.040  15.700  11.250  1.00  1.00           C
+ATOM      6  CG  LYS 1   1      36.700  16.930  11.920  1.00  0.00           C
+ATOM      7  CD  LYS 1   1      36.230  17.220  13.340  1.00  2.00           C
+ATOM      8  CE  LYS 1   1      37.020  18.410  13.900  1.00  2.00           C
+ATOM      9  NZ  LYS 1   1      36.450  18.800  15.210  3.00  0.00           N
+TER
+ENDMDL

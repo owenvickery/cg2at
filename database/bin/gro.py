@@ -5,6 +5,7 @@ import numpy as np
 import subprocess 
 import multiprocessing as mp
 from pathlib import Path
+from shutil import rmtree
 import time
 import gen, g_var, at_mod, read_in, at_mod_p
 
@@ -51,7 +52,6 @@ def gromacs(gro):
         if g_var.args.v >= 3:
             print('\nrunning gromacs: \n '+cmd+'\n')
         output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        # output.wait()
         err, out = output.communicate()
         out=out.decode("utf-8")
         if not hasattr(g_var, 'gmx_version'):
@@ -62,7 +62,7 @@ def gromacs(gro):
     #### standard catch for failed gromacs commands
             for err in possible_errors:
                 if err in out:
-                    print('\n'+out)
+                    print('\n\nThere was an error with the following command:\n'+cmd+'\nThe exact error can be read in:'+os.getcwd()+'/gromacs_outputs\n')
                     if 'residue naming needs to be fixed' in out and 'PROTEIN_aligned' in out:
                         print('\n\n###  The supplied protein structure contains incorrectly named or missing atoms  ###\n\n')
                     error = True
@@ -584,30 +584,45 @@ def create_aligned():
         initial = g_var.final_dir+'final_cg2at_de_novo'
     else:
         initial = g_var.merged_directory+'checked_ringed_lipid_de_novo'
+
     for chain in rmsd:
         if rmsd[chain] > 3.5:
-            print('Your aligned structure is quite far from the CG, therefore running gentle steering: ')
-            print('\n{0:^25}{1:^10}'.format('chain','RMSD ('+chr(197)+')'))
-            print('{0:^25}{1:^10}'.format('-----','---------'))
-            for key, rmsd_val in rmsd.items(): print('{0:^25}{1:^10}'.format(str(key), float(rmsd_val)))
-            print()
+            print('Your aligned structure is quite far from the CG, therefore running gentle steering\n')
+            print_rmsd(rmsd)
             steer = ['very_low', 'low', 'mid', 'high', 'very_high', 'ultra']
             break
         else:
             steer = ['low', 'high', 'ultra']
 
+    final_file = run_steer(steer, initial)
+    if final_file:
+        gen.file_copy_and_check(final_file, g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
+    else:
+        final_file = run_steer(['very_low', 'low', 'mid', 'high', 'very_high', 'ultra'], initial)
+        gen.file_copy_and_check(final_file, g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
 
+def print_rmsd(rmsd):
+    print('\n{0:^25}{1:^10}'.format('chain','RMSD ('+chr(197)+')'))
+    print('{0:^25}{1:^10}'.format('-----','---------'))
+    for key, rmsd_val in rmsd.items(): print('{0:^25}{1:^10}'.format(str(key), float(rmsd_val)))
+    print()
+
+def run_steer(steer, initial):
     for res_val, restraint in enumerate(steer):
         if not os.path.exists(g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_'+restraint+'pdb'):
-            
             if res_val == 0:
                 equil = steer_to_aligned('aligned', restraint, initial)
             else:
                 equil = steer_to_aligned('aligned', restraint, g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_'+steer[res_val-1])
             if equil:
                 print('Steering to aligned failed at: '+restraint)
-                print('Your aligned structure may be too far from the CG input')
-                print('The closest the script can get is found in the FINAL directory')
-                gen.file_copy_and_check(g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_'+restraint+'pdb', g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
-    gen.file_copy_and_check(g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_'+steer[-1]+'.pdb', g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
-    print()
+                if len(steer) > 5:
+                    print('Your aligned structure may be too far from the CG input')
+                    print('The closest the script can get is found in the FINAL directory')
+                    return g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_'+steer[res_val]+'.pdb'
+                else:
+                    print('Your aligned structure may be quite far from the CG input')
+                    print('Restarting with gentler restraints')
+                    rmtree(g_var.merged_directory+'STEER')
+                    return False 
+    return g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_'+steer[-1]+'.pdb'

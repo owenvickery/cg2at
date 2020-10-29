@@ -1,0 +1,16 @@
+ SET BOXTYPE  = RECT
+ SET XTLTYPE  = TETRAGONAL
+ SET A        = 20.5787672
+ SET B        = 20.5787672
+ SET C        = 85
+ SET ALPHA    = 90.0
+ SET BETA     = 90.0
+ SET GAMMA    = 90.0
+ SET ZCEN     = 0.0
+ SET NLIPTOP  = 7
+ SET NLIPBOT  = 6
+ SET NWATER   = 612
+ SET POSID    = POT
+ SET NEGID    = CLA
+ SET NPOS     = 14
+ SET NNEG     = 1
