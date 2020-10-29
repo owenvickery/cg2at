@@ -5,7 +5,7 @@ ATOM      3  CA  GLYP    1       5.453   3.803  51.062  1.00  0.00      PROA C
 ATOM      4  HA1 GLYP    1       4.520   4.249  51.437  1.00  0.00      PROA H
 ATOM      5  HA2 GLYP    1       6.305   3.835  51.677  1.00  0.00      PROA H
 ATOM      6  C   GLYP    1       4.953   2.422  50.812  1.00  0.00      PROA C
-ATOM     49  O   GLYP    1       4.660   2.105  49.632  1.00  0.00      PROA O
+ATOM     55  O   GLYP    1       4.660   2.105  49.632  1.00  0.00      PROA O
 [ C1C ]
 ATOM      7  C1  GLYP    1       7.131   5.000  49.109  1.00  0.00      PROA C
 ATOM      8  O1  GLYP    1       7.838   5.097  50.219  1.00  0.00      PROA O
