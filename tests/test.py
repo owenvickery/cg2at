@@ -35,8 +35,8 @@ class TestSum(unittest.TestCase):
         self.assertEqual(result, [True, True, True, False, False, False])
 
     def test_split_swap(self):
-        swap = ['POPE,NH3:POPG,GL0', 'POPG:POPE', 'NA+:skip:4000-4002','POPG:skip','GLU,SC2:ASP,skip']
-        swap_out = [['ALL', 'ALL'], ['ALL', 'ALL'], [['4000-4002'], [4000, 4001, 4002]], ['ALL', 'ALL'], ['ALL', 'ALL']] 
+        swap = ['POPE,NH3:POPG,GL0', 'POPG:POPE', 'NA+:skip:4000-4002','NA+:skip:1,2,3', 'NA+:skip:4000-4002,1,2,3', 'POPG:skip','GLU,SC2:ASP,skip']
+        swap_out = [['ALL', 'ALL'], ['ALL', 'ALL'], [['4000-4002'], [4000, 4001, 4002]], [['1', '2', '3'], [1, 2, 3]], [['4000-4002', '1', '2', '3'], [4000, 4001, 4002, 1, 2, 3]], ['ALL', 'ALL'], ['ALL', 'ALL']]
         for swap_val, swap_type in enumerate(swap):
             result1, result2 = gen.split_swap(swap_type)
             self.assertEqual(result1,swap_out[swap_val][0])
@@ -472,9 +472,11 @@ class TestSum(unittest.TestCase):
         np.testing.assert_array_almost_equal(angle_result, 243.64512301056095)
 
     def test_print_sequence_info(self):
-        correct = 'Summary of coarsegrain PROTEIN chains\n\n chain number  length of chain\n\n ------------  ---------------\n       0            3      \nSequences:\n\nchain: 0\n1        10        20        30        40        50        60        70        \nAAA                                                                             \n\nSummary of atomistic PROTEIN chains\n\n chain number  length of chain\n\n ------------  ---------------\n       0            3      \nSequences:\n\nchain: 0\n1        10        20        30        40        50        60        70        \nAAA                                                                             \n'
+        correct = 'Summary of coarsegrain PROTEIN chains\n\n chain number  length of chain\n\n ------------  ---------------\n       0            3      \n\nSequences:\n\nchain: 0\n1        10        20        30        40        50        60        70        \nAAA                                                                             \n\nSummary of atomistic PROTEIN chains\n\n chain number  length of chain\n\n ------------  ---------------\n       0            3      \n\nSequences:\n\nchain: 0\n1        10        20        30        40        50        60        70        \nAAA                                                                             \n'
         g_var.seq_cg['PROTEIN'], g_var.seq_at['PROTEIN']= {0:'AAA'}, {0:'AAA'}
         to_print = gen.print_sequnce_info('PROTEIN')
+        # print([to_print])
+        # print([correct])
         self.assertEqual(to_print,correct)
 
     def test_write_system_components(self):
