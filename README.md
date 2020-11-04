@@ -116,7 +116,7 @@ OPTIONAL
 
 
 <p align="center">
-  <img width="500" src="database/script_files/images/Fragment.png">
+  <img width="500" src="database/bin/images/Fragment.png">
 </p>
 
 This workflow allows each fragment to be treated individually, with no knowledge of what any other bead contains.
@@ -133,7 +133,7 @@ CG2AT2 roughly follows the following workflow.
 
 
 <p align="center">
-  <img width="500" src="database/script_files/images/workflow.png">
+  <img width="500" src="database/bin/images/workflow.png">
 </p>
 
 <p align="center">
@@ -143,7 +143,7 @@ CG2AT2 roughly follows the following workflow.
 To correct for accidental threading of lipids tails through aromatic residues, CG2AT2 analyses the length of all bonds within the minimised system. If any bonds are greater than 0.2 nm the lipid is considered threaded. The atoms closest to the aromatic residue are then corrected and the system is minimised again.
 
 <p align="center">
-  <img width="500" src="database/script_files/images/threaded.png">
+  <img width="500" src="database/bin/images/threaded.png">
 </p>
 
 
@@ -174,7 +174,7 @@ For example if you have a signal peptide linked via a flexible linker to the mai
 You can just supply the atomistic coordinates for the signal peptide and main protein and CG2AT2 will build in the linker from the de novo method.
 
 <p align="center">
-  <img width="500" src="database/script_files/images/hybrid.png">
+  <img width="500" src="database/bin/images/hybrid.png">
 </p>
 
 <p align="center">
@@ -481,7 +481,7 @@ Grouping can be switched off using the flag:
 The grouping is especially useful for converting sugar groups in which the hydrogen geometry should be retained as much as possible.
 
 <p align="center">
-  <img width="500" src="database/script_files/images/group_vs_mod.png">
+  <img width="500" src="database/bin/images/group_vs_mod.png">
 </p>
 
 <p align="center">
