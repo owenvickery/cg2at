@@ -537,12 +537,7 @@ def check_ringed_lipids(protein):
                 for at_val, atom in enumerate(merge): 
                     resname = get_np_resname(at_val)
                     if resname != None:
-                        if atom['residue_id'] != resid_prev:
-                            if 'offset' in locals() and len(g_var.heavy_bond[resname])>0: 
-                                if at_val-offset > int(len(g_var.np_blocks[resname_prev])/g_var.system[resname_prev]): 
-                                    offset=at_val
-                            else:
-                                offset=at_val
+                        offset = fetch_start_of_residue_np(at_val, resname)
                         resid_prev=atom['residue_id']
                         resname_prev = resname
                         if atom['atom_number']-offset in g_var.heavy_bond[resname]:
@@ -575,21 +570,35 @@ def fetch_start_of_residue(at, merge):
         else:
             count-=1
 
+def fetch_start_of_residue_np(atom, resname):
+            prev=g_var.np_blocks[resname][0]
+            range_np_block = g_var.np_blocks[resname][1]-g_var.np_blocks[resname][0]
+            for range_np_block_ind in range(g_var.np_blocks[resname][0],g_var.np_blocks[resname][1]+1, int(range_np_block/g_var.system[resname])):
+                if prev <= atom < range_np_block_ind:
+                    return prev
+                prev = range_np_block_ind
+
 def get_np_resname(atom):
     for res_check in g_var.np_blocks:
         if g_var.np_blocks[res_check][0] <= atom < g_var.np_blocks[res_check][1]:
             return res_check 
 
+
+
 def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
     if not os.path.exists(g_var.merged_directory+'merged_cg2at_threaded.pdb'):
         tree = cKDTree(merge_coords)         
-        for threaded in lipid_atoms:          
+        for threaded in lipid_atoms:  
+            resname = get_np_resname(threaded[0]) 
+            
             atoms = tree.query_ball_point(threaded[2], r=3)
             for at in atoms:
                 if merge[at]['residue_id'] != merge[threaded[0]]['residue_id']:
                     P_count = fetch_start_of_residue(at, merge)
                     break
+
             NP_count = fetch_start_of_residue(threaded[0], merge)
+            NP_count = fetch_start_of_residue_np(threaded[0], resname)
             bb = []
             if 'P_count' not in locals():
                 sys.exit('There is an issue with the bond length detection')
@@ -599,10 +608,8 @@ def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
                 if at['atom_name'] in g_var.res_top[at['residue_name']]['ATOMS']:
                     bb.append([at['x'], at['y'], at['z']])
             bb = np.mean(np.array(bb), axis=0)
-            BB_M3 = (threaded[2]-bb)/np.linalg.norm((threaded[2]-bb))
+            BB_M3 = (threaded[2]-bb)/np.linalg.norm((threaded[2]-bb))      
             
-            resname = get_np_resname(threaded[0])
-
             for heavy_atom in threaded[:2]:
                 merge_coords[heavy_atom] += BB_M3*3 
                 merge[heavy_atom]['x'], merge[heavy_atom]['y'], merge[heavy_atom]['z'] = merge_coords[heavy_atom]
@@ -610,7 +617,7 @@ def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
                     merge_coords[NP_count+hydrogen-1] += BB_M3*3 
                     merge[NP_count+hydrogen-1]['x'], merge[NP_count+hydrogen-1]['y'], merge[NP_count+hydrogen-1]['z'] = merge_coords[NP_count+hydrogen-1]
 
-        coords, index_conversion = index_conversion_generate(merge_coords, coords)
+        coords, index_conversion = index_conversion_generate(merge, merge_coords)
         write_pdb(merge, coords, index_conversion, g_var.merged_directory+'merged_cg2at_threaded.pdb')
 
     if not os.path.exists(g_var.merged_directory+'MIN/merged_cg2at_threaded_minimised.pdb'):

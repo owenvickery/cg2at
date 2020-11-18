@@ -1309,6 +1309,8 @@ OSL        C     1   0.13340000    125520.00
    CTO2   OC301     1  1.415000e-01  3.012480e+05
    PL     OC311     1  0.15800000    198321.60 
  CC3161   OG311     1  0.1415000  30124.80
+CC        C     1   0.15200000    209200.00    ; from Phill 
+
 
 [ constrainttypes ]
 ; this section is copied from OPLS. In theory we could recalculate
@@ -5671,7 +5673,11 @@ OC301    CTO2    HAL2     5  1.0950000e+02  5.0208000e+02  0.0000000e+00  0.0000
  OG311  CC3161   OC3C61 5   1.0700000e+02  3.7656000e+02  0.0000000e+00  0.0000000e+00
  OG311  CC3161   CC3161 5   1.0700000e+02  3.7656000e+02  0.0000000e+00  0.0000000e+00
  OG311  CC3161   HCA1   5   1.0950000e+02  5.0208000e+02  0.0000000e+00  0.0000000e+00
-
+         C       CC       OC     5   121.500000   794.960000   0.00000000         0.00 ;from phill
+        C      CT2       CA     5   107.500000   433.462400   0.00000000         0.00 ;from phill
+      CT2        C       CC     5   116.500000   167.360000   0.00000000         0.00 ;from phill
+        O        C       CC     5   121.500000   794.960000   0.00000000         0.00 ;from phill
+       CC      CT2       CA     5   107.500000   433.462400   0.00000000         0.00 ;from phill
 
 [ dihedraltypes ]
 ;      i        j        k        l  func         phi0         kphi  mult
@@ -16979,9 +16985,8 @@ CC312  CC3163  CC3161   OC311     9  0.000000e+00  8.368000e-01      3
  CC3161 OC3C61 CC3163 HCA1    9     0.000000e+00  8.368000e-01      3  ; Gycosidi
  CC3161 OC3C61 CC3163 CC3161  9     0.000000e+00  8.368000e-01      3; Gycosidic
  CC3161 OC3C61 CC3163 CC321   9     0.000000e+00  8.368000e-01      3;  Gycosidi
-
-
-
+       OC       CC        C      CT2     9  180.0000000     5.857600     2 ; from phill
+       OC       CC        C        O     9  180.0000000     1.255200     2 ; from phill
 
 [ dihedraltypes ]
 ; 'improper' dihedrals 
@@ -17281,3 +17286,7 @@ HN2        X        X     NN2G     2     0.000000     8.368000
 HN2        X        X     NN2U     2     0.000000     8.368000
 HN3        X        X      CN4     2     0.000000   167.360000
 HN3        X        X      CN3     2     0.000000   125.520000
+       CC       OC       OC        C     2     0.000000   803.328000 ; from phill 
+        C       CC      CT2        O     2     0.000000   736.384000 ; from phill
+
+ 

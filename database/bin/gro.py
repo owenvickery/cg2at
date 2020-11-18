@@ -558,8 +558,10 @@ def run_nvt(input_file):
     gen.mkdir_directory(g_var.merged_directory+'NVT')
     if g_var.user_at_input and g_var.args.disre and g_var.gmx_version:
         write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DDISRES -DPOSRESCA', 5000, 0.001)
-    else:
+    elif 'PROTEIN' in g_var.system:
         write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DPOSRESCA', 5000, 0.001)
+    else:
+        write_steered_mdp(g_var.merged_directory+'nvt.mdp', '', 5000, 0.001)
     gromacs([g_var.args.gmx+' grompp'+
             ' -po md_out-merged_cg2at_nvt'+
             ' -f nvt.mdp'+

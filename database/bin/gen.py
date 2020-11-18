@@ -305,7 +305,7 @@ def sep_fragments_topology(location):
 
 def get_fragment_topology(residue, location):
     topology = sep_fragments_topology(location[:-4])
-    g_var.res_top[residue] = {'C_TERMINAL':topology['C_TERMINAL'], 'N_TERMINAL':topology['N_TERMINAL'], \
+    g_var.res_top[residue] = {'ATOMS': [], 'C_TERMINAL':topology['C_TERMINAL'], 'N_TERMINAL':topology['N_TERMINAL'], \
                              'CHIRAL':topology['CHIRAL'], 'GROUPS':{}, 'CONNECT':topology['CONNECT']}
     with open(location, 'r') as pdb_input:
         group=topology['GROUPS']['group_max']
@@ -453,6 +453,8 @@ def fetch_bond_info(residue, rtp, at_mass,location):
                     elif residue_present or residue not in g_var.p_residues+g_var.o_residues:
                         if line_sep[0] == '[':
                             atoms, bonds = atom_bond_check(line_sep)
+                        elif 'atoms' not in locals():
+                            sys.exit('There is a issue with: \n'+rtp_file)
                         elif atoms and residue in g_var.p_residues + g_var.o_residues:
                             residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = fetch_bond_info_atoms_linked(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict, at_mass)
                         elif atoms:
