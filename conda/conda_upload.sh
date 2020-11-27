@@ -9,4 +9,4 @@ export VERSION=`date +%Y.%m.%d`
 export package=$PKG_NAME-`date +%Y.%m.%d`-0
 conda build . 
 
-anaconda -t $CONDA_UPLOAD_TOKEN upload -l main $CONDA_BLD_PATH/$OS/$PKG_NAME-`date +%Y.%m.%d`-0.tar.bz2 --force
+anaconda -t $CONDA_UPLOAD_TOKEN upload -goups $USER -label main -l $CONDA_BLD_PATH/$OS/$PKG_NAME-`date +%Y.%m.%d`-0.tar.bz2 --force
