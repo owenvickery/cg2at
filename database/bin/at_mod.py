@@ -597,7 +597,6 @@ def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
                     P_count = fetch_start_of_residue(at, merge)
                     break
 
-            NP_count = fetch_start_of_residue(threaded[0], merge)
             NP_count = fetch_start_of_residue_np(threaded[0], resname)
             bb = []
             if 'P_count' not in locals():

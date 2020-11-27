@@ -151,6 +151,7 @@ def is_hydrogen(atom):
 def fetch_chain_groups():
     if g_var.args.group != None:
         if g_var.args.group[0] not in ['all','chain']:
+            g_var.group_chains = {}
             for group_val, group in enumerate(g_var.args.group):
                 for chain in group.split(','):
                     g_var.group_chains[int(chain)]=group_val 
@@ -877,8 +878,9 @@ def write_system_components():
     return to_write
 
 def print_sequnce_info(sys_type):
+    sequence_info = [g_var.seq_cg[sys_type], g_var.seq_at[sys_type]] if g_var.user_at_input else [g_var.seq_cg[sys_type]]
     to_print = ''
-    for rep_val, rep in enumerate([g_var.seq_cg[sys_type], g_var.seq_at[sys_type]]):
+    for rep_val, rep in enumerate(sequence_info):
         if rep_val == 0:
             to_print += 'Summary of coarsegrain '+sys_type+' chains\n'
         else:

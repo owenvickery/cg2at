@@ -7,7 +7,6 @@ from pathlib import Path
 
 if __name__ == "g_var":
 	parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', prog='CG2AT2', epilog='Enjoy the program and best of luck!\n')
-	# group_req = parser.add_mutually_exclusive_group()
 	parser.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
 	parser.add_argument('-version', action='version', version='%(prog)s 0.2')
 	parser.add_argument('-c', help='coarse grain coordinates',metavar='pdb/gro/tpr',type=str)

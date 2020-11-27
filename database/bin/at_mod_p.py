@@ -301,7 +301,7 @@ def align_chain_sequence(sys_type):
                 print('\nCannot find a match for user supplied chain: '+str(chain_at))#+'\n\nAtomistic chain:\n'+str(seq_user[chain_at]),'\n\nIn CG:\n'+str(sequence))
                 skip_sequence = True
                 break
-            if not skip_sequence:
+            else:
                 chain_cg+=1
                 s = difflib.SequenceMatcher(None, g_var.seq_at[sys_type][chain_at], g_var.seq_cg[sys_type][chain_cg], autojunk=False)
                 seq_info = s.get_matching_blocks()
@@ -386,7 +386,7 @@ def center_atomistic():
                     if g_var.group_chains[chain] not in protein_mass:
                         protein_mass[g_var.group_chains[chain]]=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], [])
                     else:
-                        protein_mass[g_var.group_chains[chain]]=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], protein_mass[group_chain[chain]])
+                        protein_mass[g_var.group_chains[chain]]=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], protein_mass[g_var.group_chains[chain]])
                     if 'cg_backbone_masses' not in locals():
                         cg_backbone_masses = {}
                     if g_var.group_chains[chain] not in cg_backbone_masses:
@@ -467,7 +467,7 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
                     elif g_var.group_chains is None:
                         at_com_group = return_indivdual_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle)
                     else:
-                        at_com_group, cg_com_group = return_grouped_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle,g_var.group_chains)
+                        at_com_group, cg_com_group = return_grouped_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle)
                 else:
                     sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
                             number of CG residues '+str(len(g_var.backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
