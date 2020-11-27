@@ -472,11 +472,9 @@ class TestSum(unittest.TestCase):
         np.testing.assert_array_almost_equal(angle_result, 243.64512301056095)
 
     def test_print_sequence_info(self):
-        correct = 'Summary of coarsegrain PROTEIN chains\n\n chain number  length of chain\n\n ------------  ---------------\n       0            3      \n\nSequences:\n\nchain: 0\n1        10        20        30        40        50        60        70        \nAAA                                                                             \n\nSummary of atomistic PROTEIN chains\n\n chain number  length of chain\n\n ------------  ---------------\n       0            3      \n\nSequences:\n\nchain: 0\n1        10        20        30        40        50        60        70        \nAAA                                                                             \n'
+        correct = 'Summary of coarsegrain PROTEIN chains\n\n chain number  length of chain\n\n ------------  ---------------\n       0            3      \n\nSequences:\n\nchain: 0\n1        10        20        30        40        50        60        70        \nAAA                                                                             \n'
         g_var.seq_cg['PROTEIN'], g_var.seq_at['PROTEIN']= {0:'AAA'}, {0:'AAA'}
         to_print = gen.print_sequnce_info('PROTEIN')
-        # print([to_print])
-        # print([correct])
         self.assertEqual(to_print,correct)
 
     def test_write_system_components(self):
