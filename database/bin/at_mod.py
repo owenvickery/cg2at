@@ -38,7 +38,11 @@ def sanity_check_beads(bead_list, cg, res):
     bead_list_new=[]
     for bead in cg:
         if bead not in bead_list:
-            sys.exit('The bead '+bead+' is missing from the fragment library: '+res+'\n')   
+            new_bead = bead[1:]+bead[0]
+            if new_bead in bead_list and new_bead not in cg:
+                pass
+            else:
+                sys.exit('The bead '+bead+' is missing from the fragment library: '+res+'\n')   
         bead_list_new.append(bead)
     return bead_list_new
 
