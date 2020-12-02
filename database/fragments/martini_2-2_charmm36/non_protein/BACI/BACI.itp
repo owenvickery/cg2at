@@ -27,7 +27,7 @@ BACI     3
     19        HA3      1    ILE    HD3     19       0.09      1.008 ; 1
     20          C      1    ILE      C     20       0.40     12.011
 ; residue   2 CYS rtp CYS  q  0.0
-    21        NH1      2    CYS      N     22      -0.52    14.007
+    21        NH1      2    CYS      N     22      -0.46     14.007
     22        CT1      2    CYS     CA     24       0.15     12.011
     23        HB1      2    CYS     HA     25       0.09      1.008
     24        CT2      2    CYS     CB     26      -0.18     12.011
