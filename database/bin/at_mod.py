@@ -80,6 +80,7 @@ def sanity_check_non_protein(res_type):
     bead_list, atom_list = {},{}
     if res_type not in bead_list or res_type not in atom_list:
         bead_list[res_type], atom_list[res_type] = sanity_check_fragments(res_type, g_var.cg_residues[res_type], False)
+    sanity_check_atoms(atom_list[res_type], res_type)
     for residue in g_var.cg_residues[res_type]:
         bead_list_cg = sanity_check_beads(bead_list[res_type], g_var.cg_residues[res_type][residue], res_type)
         if bead_list[res_type] != sorted(bead_list_cg):
@@ -368,7 +369,7 @@ def write_pdb(merge, merge_coords, index_conversion, write_file):
 #### creates merged pdb and writes chains to it
     if not os.path.exists(write_file):
         pdb_output=gen.create_pdb(write_file)
-        atom_counter=1
+        atom_counter=0
         for line_val, line in enumerate(merge):
             if line_val in index_conversion:
                 x, y, z = gen.trunc_coord(merge_coords[index_conversion[line_val]])

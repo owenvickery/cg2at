@@ -482,7 +482,7 @@ def write_merged_topol():
                         topologies_to_include.append('#include \"'+residue_type+'_'+str(unit)+'.itp\"\n')
                         gen.file_copy_and_check(g_var.working_dir+residue_type+'/'+residue_type+'_de_novo_'+str(unit)+'.itp', residue_type+'_'+str(unit)+'.itp')
                         if residue_type in ['PROTEIN']:
-                            for posres_type in ['_steered_posre.itp','_very_low_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_very_high_posre.itp','_ultra_posre.itp','_ca_posre.itp','_posre.itp']:
+                            for posres_type in ['_very_low_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_very_high_posre.itp','_ultra_posre.itp','_ca_posre.itp','_posre.itp']:
                                 gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(unit)+posres_type, 'PROTEIN_'+str(unit)+posres_type)
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'PROTEIN_disres.itp')  
         if os.path.exists('extra_atomtypes.itp'):
@@ -529,7 +529,7 @@ def write_steered_mdp(loc, posres, time, timestep):
             steered_md.write('nstxout-compressed = 10\nnstenergy = 10\nconstraints = h-bonds\nnstlist = 25\nrlist = 1.2\nrcoulomb = 1.2\nrvdw = 1.2\ncoulombtype  = PME\n')
             steered_md.write('pme_order = 4\nfourierspacing = 0.135\ntcoupl = v-rescale\ntc-grps = system\ntau_t = 0.1\nref_t = 310\npcoupl = no\n')
             steered_md.write('pbc = xyz\nDispCorr = no\ngen_vel = no\nrefcoord_scaling = all\ncutoff-scheme = Verlet\n')
-            steered_md.write('disre=simple\ndisre-weighting=equal\ndisre-fc=10000\ndisre-tau=1\nnstdisreout=1\n')   
+            steered_md.write('disre=simple\ndisre-weighting=equal\ndisre-fc=1000\ndisre-tau=1\nnstdisreout=1\n')   
 
 def steer_to_aligned(protein_type, fc, input_file ):
     gen.mkdir_directory(g_var.merged_directory+'STEER')

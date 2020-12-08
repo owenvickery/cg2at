@@ -627,9 +627,9 @@ def write_disres(coord, chain, file, at_start, count):
                                     count+=1
                                     xyz1 = [coord[int(carbonyl[0])-1]['x'], coord[int(carbonyl[0])-1]['y'], coord[int(carbonyl[0])-1]['z']]
                                     xyz2 = [coord[int(HN[at][0])-1]['x'], coord[int(HN[at][0])-1]['y'], coord[int(HN[at][0])-1]['z']]
-                                    dist = np.round((gen.calculate_distance(xyz1, xyz2)/10)-0.05, 4)
+                                    dist = (gen.calculate_distance(xyz1, xyz2)/10)-0.05
                                     disres_out.write('\n{0:10}{1:10}{2:3}{3:12}{4:12}{5:^12}{6:14}{7:14}{8:5}'.format(str(at_start+int(HN[at][0])), str(at_start+int(carbonyl[0])), 
-                                                                                                                    '1', str(count),'1', '0', str(dist), str(dist), '5'))
+                                                                                                                    '1', str(count),'2', '0', str(np.round(dist,4)), str(np.round(dist+0.01,4)), '1'))
                         # break
     return len(coord)+at_start, count 
 

@@ -878,7 +878,7 @@ def write_system_components():
     return to_write
 
 def print_sequnce_info(sys_type):
-    sequence_info = [g_var.seq_cg[sys_type], g_var.seq_at[sys_type]] if g_var.user_at_input else [g_var.seq_cg[sys_type]]
+    sequence_info = [g_var.seq_cg[sys_type], g_var.seq_at[sys_type]] if g_var.user_at_input and sys_type == 'PROTEIN' else [g_var.seq_cg[sys_type]]
     to_print = ''
     for rep_val, rep in enumerate(sequence_info):
         if rep_val == 0:
