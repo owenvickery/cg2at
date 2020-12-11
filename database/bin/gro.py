@@ -62,7 +62,7 @@ def gromacs(gro):
     #### standard catch for failed gromacs commands
             for err in possible_errors:
                 if err in out:
-                    print('\n\nThere was an error with the following command:\n'+cmd+'\nThe exact error can be read in:'+os.getcwd()+'/gromacs_outputs\n')
+                    print('\n\nThere was an error with the following command:\n'+cmd+'\nThe exact error can be read in: '+os.getcwd()+'/gromacs_outputs\n')
                     if 'residue naming needs to be fixed' in out and 'PROTEIN_aligned' in out:
                         print('\n\n###  The supplied protein structure contains incorrectly named or missing atoms  ###\n\n')
                     error = True
