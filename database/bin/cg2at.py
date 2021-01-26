@@ -17,12 +17,12 @@ if __name__ == '__main__':
     g_var.cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
 
     g_var.aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'E', 
-       'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
-       'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
+                'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
+                'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
 
     g_var.alt_res_name = {'HSD':'HIS', 'HSE':'HIS', 'HSP':'HIS', 'HIE':'HIS'}
 
-    g_var.dna = {'DA':'A', 'DG':'G', 'DC':'C', 'DT':'T'}
+    g_var.other = {'DA':'A', 'DG':'G', 'DC':'C', 'DT':'T'}
 
     g_var.termini_selections = {'charmm':{'N_TERMINAL':{'PRO':{'NH2+':0,'NH':1,'NH3+':2, '5TER':3, 'NONE':4},'NORM':{'NH3+':0,'NH2':1,'5TER':2, 'NONE':3},}, 
                                           'C_TERMINAL':{'NORM':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4},'PRO':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4}}},
@@ -125,17 +125,16 @@ if __name__ == '__main__':
     #### converts non protein residues into atomistic (runs on all cores)
     if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTEIN', 'OTHER']]) > 0:
         print('\nConverting the following residues concurrently: \n')
-        pool = mp.Pool(g_var.args.ncpus)
-        pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(residue_type, 1) 
+        with mp.Pool(g_var.args.ncpus) as pool:
+            pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(residue_type, 1) 
                                         for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'OTHER']]]).get() ## fragment fitting done in parrallel  
-        pool.close()
         for residue_type in pool_process:
             g_var.system.update(residue_type) ## updates residue counts 
-        #### attempts to minimise all residues at once else falls back to doing individually
+        #### attempts to minimise all residues at once 
         print('\nThis may take some time....(probably time for a coffee)\n')
         for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'ION', 'OTHER']]:
             if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
-                print('Minimising merged: '+residue_type+'\n') 
+                print('Minimising: '+residue_type) 
                 error = gro.minimise_merged(residue_type, g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb')
                 if error == True and residue_type not in ['SOL']:
                     print('Failed to minimise as a group: '+residue_type)
@@ -173,6 +172,7 @@ if __name__ == '__main__':
     if g_var.args.o not in ['none', 'align']:
         gro.run_nvt(g_var.merged_directory+'checked_ringed_lipid_de_novo') ## run npt on system 
     else:
+        print('Completed initial minimisation, please find final de_novo system: \n'+g_var.final_dir+'final_cg2at_de_novo.pdb')
         gen.file_copy_and_check(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')
     g_var.tc['eq_t']=time.time()
     ## creates aligned system 

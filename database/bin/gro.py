@@ -7,6 +7,7 @@ import multiprocessing as mp
 from pathlib import Path
 from shutil import rmtree
 import time
+import logging
 import gen, g_var, at_mod, read_in, at_mod_p
 
 
@@ -70,9 +71,6 @@ def gromacs(gro):
                 print('\n'+out+'\n\n')
                 print('{0:^90}\n\n{1:^90}\n'.format('***NOTE***','If it is only out by multiples of two, check cysteine distances and increase -cys cutoff'))
                 print('{0:^90}\n\n'.format('A lot of Martini v2-2 disulphide bonds can be up to 10 A (current search cutoff is '+str(g_var.args.cys)+' A)')) 
-                error = True
-            if  'Warning: pressure scaling more than 1%' in out:
-                print('pressure coupling failed trying Berendsen instead')
                 error = True
     if len(gro) == 4: 
         gro[3].put(gro[2])
@@ -197,22 +195,20 @@ def ask_terminal(sys_info, residue_type):
     return system_ter
 
 def run_parallel_pdb2gmx_min(res_type, sys_info):
-    pool = mp.Pool(g_var.args.ncpus)
-    m = mp.Manager()
-    q = m.Queue()
-    os.chdir(g_var.working_dir+res_type)
-    make_min(res_type)
-    gen.folder_copy_and_check(g_var.forcefield_location+g_var.forcefield, g_var.working_dir+res_type+'/'+g_var.forcefield+'/.')
-    gen.file_copy_and_check(g_var.forcefield_location+'/residuetypes.dat', g_var.working_dir+res_type+'/residuetypes.dat')
-    pdb2gmx_selections=ask_terminal(sys_info, res_type)
-    pool_process = pool.starmap_async(pdb2gmx_minimise, [(chain, pdb2gmx_selections,res_type, q) for chain in range(0, g_var.system[res_type])])
-    while not pool_process.ready(): 
-        report_complete('pdb2gmx/minimisation', q.qsize(), g_var.system[res_type])
-    pool.close()
-    pool.join()     
+    with mp.Pool(g_var.args.ncpus) as pool:
+        m = mp.Manager()
+        q = m.Queue()
+        os.chdir(g_var.working_dir+res_type)
+        make_min(res_type)
+        gen.folder_copy_and_check(g_var.forcefield_location+g_var.forcefield, g_var.working_dir+res_type+'/'+g_var.forcefield+'/.')
+        gen.file_copy_and_check(g_var.forcefield_location+'/residuetypes.dat', g_var.working_dir+res_type+'/residuetypes.dat')
+        pdb2gmx_selections=ask_terminal(sys_info, res_type)
+        pool_process = pool.starmap_async(pdb2gmx_minimise, [(chain, pdb2gmx_selections,res_type, q) for chain in range(0, g_var.system[res_type])])
+        while not pool_process.ready(): 
+            report_complete('pdb2gmx/minimisation', q.qsize(), g_var.system[res_type])
     for chain in range(0, g_var.system[res_type]):
         if not os.path.exists(res_type+'_de_novo_'+str(chain)+'_gmx.pdb') or not os.path.exists(g_var.working_dir+res_type+'/MIN/'+res_type+'_de_novo_'+str(chain)+'.pdb'):
-            print('For some reason parallisation of pdb2gmx failed on chain '+str(chain)+', now rerunning.')
+            print('For some reason parallisation of pdb2gmx failed on chain '+str(chain)+', now rerunning in serial.')
             pdb2gmx_minimise(chain, pdb2gmx_selections,res_type, q)
     print('{:<130}'.format(''), end='\r')
     print('\npdb2gmx/minimisation completed on residue type: '+res_type+'\n')
@@ -345,51 +341,50 @@ def write_topol(residue_type, residue_number, chain):
 
 #################################################################   Non protein
 
-def non_protein_minimise_ind(residue_type):
-#### in the case of SOL all residues are minimised, whilst in all other cases individual residues are minimised separately
-    if residue_type != 'SOL':
-        individual = 1
-        resid=g_var.system[residue_type]
-    else:
-        individual=g_var.system['SOL']
-        resid=1
-    os.chdir(g_var.working_dir+residue_type)
-### write topology and minimisation parts (min folder and em.mdp)
-    write_topol(residue_type, individual, '')
-    make_min(residue_type)#, fragment_names)
-#### spin up multiprocessing for grompp 
-    pool = mp.Pool(g_var.args.ncpus)
-    m = mp.Manager()
-    q = m.Queue()
-    pool_process = pool.map_async(gromacs, [(g_var.args.gmx+' grompp '+
-                                  '-po md_out-'+residue_type+'_temp_'+str(rid)+' '+
-                                  '-f em_'+residue_type+'.mdp '+
-                                  '-p topol_'+residue_type+'.top '+
-                                  '-c '+residue_type+'_'+str(rid)+'.pdb '+
-                                  '-o MIN/'+residue_type+'_temp_'+str(rid)+' -maxwarn 1', 
-                                  'MIN/'+residue_type+'_temp_'+str(rid)+'.tpr',rid, q) for rid in range(0, resid)])
-    while not pool_process.ready():
-        report_complete('GROMPP', q.qsize(), resid)
-    print('{:<100}'.format(''), end='\r')
-    print('GROMPP completed on residue type: '+residue_type)       
-    pool.close()
-#### close grompp multiprocessing and change to min directory and spin up mdrun multiprocessing
-    os.chdir('MIN')
-    m = mp.Manager()
-    q = m.Queue()
-    pool = mp.Pool(g_var.args.ncpus)
-    pool_process = pool.map_async(gromacs, [(g_var.args.gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb', 
-                                  residue_type+'_'+str(rid)+'.pdb',rid, q) for rid in range(0, resid)])          ## minimisation grompp parallised  
-    while not pool_process.ready():
-        report_complete('Minimisation', q.qsize(), resid)
-    print('{:<100}'.format(''), end='\r')
-    print('Minimisation completed on residue type: '+residue_type)
-    pool.close()
-    os.chdir(g_var.working_dir)
+# def non_protein_minimise_ind(residue_type):
+# #### in the case of SOL all residues are minimised, whilst in all other cases individual residues are minimised separately
+#     if residue_type != 'SOL':
+#         individual = 1
+#         resid=g_var.system[residue_type]
+#     else:
+#         individual=g_var.system['SOL']
+#         resid=1
+#     os.chdir(g_var.working_dir+residue_type)
+# ### write topology and minimisation parts (min folder and em.mdp)
+#     write_topol(residue_type, individual, '')
+#     make_min(residue_type)#, fragment_names)
+# #### spin up multiprocessing for grompp 
+#     with mp.Pool(g_var.args.ncpus) as pool:
+#         m = mp.Manager()
+#         q = m.Queue()
+#         pool_process = pool.map_async(gromacs, [(g_var.args.gmx+' grompp '+
+#                                       '-po md_out-'+residue_type+'_temp_'+str(rid)+' '+
+#                                       '-f em_'+residue_type+'.mdp '+
+#                                       '-p topol_'+residue_type+'.top '+
+#                                       '-c '+residue_type+'_'+str(rid)+'.pdb '+
+#                                       '-o MIN/'+residue_type+'_temp_'+str(rid)+' -maxwarn 1', 
+#                                       'MIN/'+residue_type+'_temp_'+str(rid)+'.tpr',rid, q) for rid in range(0, resid)])
+#         while not pool_process.ready():
+#             report_complete('GROMPP', q.qsize(), resid)
+#         print('{:<100}'.format(''), end='\r')
+#         print('GROMPP completed on residue type: '+residue_type)       
+# #### close grompp multiprocessing and change to min directory and spin up mdrun multiprocessing
+#     os.chdir('MIN')
+#     m = mp.Manager()
+#     q = m.Queue()
+#     pool = mp.Pool(g_var.args.ncpus)
+#     pool_process = pool.map_async(gromacs, [(g_var.args.gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb', 
+#                                   residue_type+'_'+str(rid)+'.pdb',rid, q) for rid in range(0, resid)])          ## minimisation grompp parallised  
+#     while not pool_process.ready():
+#         report_complete('Minimisation', q.qsize(), resid)
+#     print('{:<100}'.format(''), end='\r')
+#     print('Minimisation completed on residue type: '+residue_type)
+#     pool.close()
+#     os.chdir(g_var.working_dir)
 
 def report_complete(func, size, resid):
     if np.round((size/resid)*100,2).is_integer():
-        print('Running '+func+' on '+str(resid)+' residues: percentage complete: ',np.round((size/resid)*100,2),'%', end='\r')
+        print('Running '+func+' on '+str(resid)+' molecules. Percentage complete: ',np.round((size/resid)*100,2),'%', end='\r')
     time.sleep(0.1)
 
 def minimise_merged(residue_type, input_file):
@@ -601,6 +596,7 @@ def create_aligned():
         gen.file_copy_and_check(final_file, g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
     else:
         final_file = run_steer(['very_low', 'low', 'mid', 'high', 'very_high', 'ultra'], initial)
+        print('Completed alignment, please find final aligned system: \n'+g_var.final_dir+'final_cg2at_aligned.pdb')
         gen.file_copy_and_check(final_file, g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
 
 def print_rmsd(rmsd):

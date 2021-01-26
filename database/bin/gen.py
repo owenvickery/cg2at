@@ -797,7 +797,7 @@ def print_script_timings():
     if 'OTHER' in g_var.system:
         to_print.append('{0:47}{1}'.format('Build other systems: ',fix_time(g_var.tc['f_o_t'],g_var.tc['f_p_t'])))        
     to_print.append('{0:47}{1}'.format('Build non protein system: ',fix_time(g_var.tc['n_p_t'],g_var.tc['f_o_t'])))
-    to_print.append('{0:47}{1}'.format('merge and minimise de novo: ',fix_time(g_var.tc['m_t'],g_var.tc['n_p_t'])))
+    to_print.append('{0:47}{1}'.format('Merge and minimise de novo: ',fix_time(g_var.tc['m_t'],g_var.tc['n_p_t'])))
     to_print.append('{0:47}{1}'.format('NVT on de novo: ',fix_time(g_var.tc['eq_t'],g_var.tc['m_t'])))
     if g_var.args.o in ['all', 'align'] and g_var.user_at_input:
         to_print.append('{0:47}{1}'.format('Creating aligned system: ',fix_time(g_var.tc['a_e'],g_var.tc['a_s'])))
@@ -813,6 +813,7 @@ def print_script_timings():
 def cg2at_header():
     print('{0:30}'.format('\nCG2AT2 is a fragment based conversion of coarsegrain to atomistic.\n'))
     print('{0:^90}\n'.format('CG2AT2 version: '+str(g_var.version)))
+    print('{0:^90}\n'.format('Last updated : '+str(g_var.script_update)))
     print('{0:^90}'.format('CG2AT2 is written by Owen Vickery'))
     print('{0:^90}'.format('Project leader Phillip Stansfeld'))
     print('\n{0:^90}\n{1:^90}'.format('Contact email address:','owen.vickery@warwick.ac.uk'))
@@ -894,7 +895,10 @@ def print_sequnce_info(sys_type):
             to_print += '{0:^15}{1:^12}\n'.format(chain, len(rep[chain]))
         to_print += '\nSequences:\n'
         for index in rep:
-            to_print += '\nchain: '+str(index)+'\n'
+            if rep_val == 0:
+                to_print += '\nCG chain: '+str(index)+'\n'
+            else:
+                to_print += '\nAT chain: '+str(index)+' -> Group '+str(g_var.group_chains[index])+'\n'
             to_print += '{0:9}{1:10}{2:10}{3:10}{4:10}{5:10}{6:10}{7:10}\n'.format('1','10','20','30','40','50','60','70')
             if len(''.join(map(str, rep[index]))) <= 80:
                 to_print += '{0:80}\n'.format(''.join(map(str, rep[index])))

@@ -5,6 +5,7 @@ import numpy as np
 import difflib
 from scipy.spatial import cKDTree
 import multiprocessing as mp
+import copy
 import gen, g_var, at_mod, read_in
 
 def build_multi_residue_atomistic_system(cg_residues, sys_type):   
@@ -198,9 +199,9 @@ def finalise_novo_atomistic(coord_atomistic, sys_type):
                 coord_atomistic[chain][residue_id] = at_mod.check_hydrogens(coord_atomistic[chain][residue_id])
             if sys_type == 'PROTEIN':
                 if res_index <= len(coord_atomistic[chain])-3:
-                    coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, g_var.cg_residues['PROTEIN'], coord_atomistic[chain][residue_id], False)
+                    coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl_chiral(residue_id, g_var.cg_residues['PROTEIN'], coord_atomistic[chain][residue_id], False)
                 elif res_index < len(coord_atomistic[chain]) and 'cross_vector' in locals():
-                    coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl(residue_id, g_var.cg_residues['PROTEIN'], coord_atomistic[chain][residue_id], cross_vector)
+                    coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl_chiral(residue_id, g_var.cg_residues['PROTEIN'], coord_atomistic[chain][residue_id], cross_vector)
             order = np.sort(np.array(list(coord_atomistic[chain][residue_id].keys())))
             for at_val, atom in enumerate(order):
                 coord_atomistic[chain][residue_id][atom]['resid'] = res_index
@@ -221,7 +222,22 @@ def finalise_novo_atomistic(coord_atomistic, sys_type):
 
 ########################################### fix carbonyl section 
 
-def fix_carbonyl(residue_id, cg, at, cross_vector):
+def get_crossvector(cg, residue_id):
+    ca=[]
+    res_off = 0
+    for x in range(2):
+        for bead in cg[residue_id+res_off]:
+            resname = cg[residue_id+res_off][next(iter(cg[residue_id+res_off]))]['residue_name']
+            if bead in g_var.res_top[resname]['CONNECT']:
+                if x == 0 :
+                    ca.append(cg[residue_id+res_off][bead]['coord'])
+                for con_val, con_dir in enumerate(g_var.res_top[resname]['CONNECT'][bead]['dir']):
+                    if con_dir > 0:
+                        ca.append(cg[residue_id+con_dir+res_off][g_var.res_top[resname]['CONNECT'][bead]['Con_Bd'][con_val]]['coord'])
+                        res_off = con_dir      
+    return ca
+
+def get_chiral_carbonyl(at):
     chiral = {}
     carbonyl = {}
     for atom in at:
@@ -229,49 +245,47 @@ def fix_carbonyl(residue_id, cg, at, cross_vector):
             carbonyl[at[atom]['atom']] = atom
         if at[atom]['atom'] in g_var.res_top[at[atom]['res_type']]['CHIRAL']['atoms']:
             chiral[at[atom]['atom']] = atom
-    
-    if not np.any(cross_vector):
-        ca=[]
-        res_off = 0
-        for x in range(2):
-            for bead in cg[residue_id+res_off]:
-                resname = cg[residue_id+res_off][next(iter(cg[residue_id+res_off]))]['residue_name']
-                if bead in g_var.res_top[resname]['CONNECT']:
-                    if x == 0 :
-                        ca.append(cg[residue_id+res_off][bead]['coord'])
-                    for con_val, con_dir in enumerate(g_var.res_top[resname]['CONNECT'][bead]['dir']):
-                        if con_dir > 0:
-                            ca.append(cg[residue_id+con_dir+res_off][g_var.res_top[resname]['CONNECT'][bead]['Con_Bd'][con_val]]['coord'])
-                            res_off = con_dir      
-        cross_vector = at_mod.find_cross_vector( ca )
+    return chiral, carbonyl
 
+def correct_carbonyl_alignment(at, cross_vector, carbonyl):
     rotation = at_mod.align_to_vector(at_mod.noramlised_vector(at[carbonyl['O']]['coord'],at[carbonyl['C']]['coord']), cross_vector)
     at[carbonyl['O']]['coord'] = (at[carbonyl['O']]['coord']-at[carbonyl['C']]['coord']).dot(rotation)+at[carbonyl['C']]['coord']
     at[carbonyl['C']]['coord'] = at[carbonyl['C']]['coord'] + cross_vector*0.2
     at[carbonyl['N']]['coord'] = at[carbonyl['N']]['coord'] - cross_vector*0.5
+    return at
+
+def correct_protein_chiral(at, chiral):
+    for chiral_group in g_var.res_top[at[1]['res_type']]['CHIRAL']:
+        if chiral_group != 'atoms':            
+            atom_list = [chiral[chiral_group]]
+            for chiral_atoms in ['c1','c2','c3']:
+                atom_list.append(chiral[g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group][chiral_atoms]])
+            cross_vector_chiral = at_mod.find_cross_vector( [at[atom_list[3]]['coord'], at[atom_list[2]]['coord'], at[atom_list[1]]['coord']])
+            at[atom_list[0]]['coord'] = at[atom_list[0]]['coord'] + cross_vector_chiral*0.5
+            if g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['m'] in chiral:
+                m = chiral[g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['m']]
+                at[m]['coord'] = at[m]['coord'] + cross_vector_chiral*1
+    return at
+
+def fix_carbonyl_chiral(residue_id, cg, at, cross_vector):
+    chiral, carbonyl = get_chiral_carbonyl(at)
+    if not np.any(cross_vector):
+        ca = get_crossvector(cg, residue_id)
+        cross_vector = at_mod.find_cross_vector( ca )
+    at = correct_carbonyl_alignment(at, cross_vector, carbonyl)
     if len(g_var.res_top[at[1]['res_type']]['CHIRAL']) >= 2:
-        for chiral_group in g_var.res_top[at[1]['res_type']]['CHIRAL']:
-            if chiral_group != 'atoms':
-                p1 = chiral[chiral_group]
-                c1 = chiral[g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['c1']]
-                c2 = chiral[g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['c2']]
-                c3 = chiral[g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['c3']]
-                cross_vector_chiral = at_mod.find_cross_vector( [at[c3]['coord'], at[c2]['coord'], at[c1]['coord']])
-                at[p1]['coord'] = at[p1]['coord'] + cross_vector_chiral*0.5
-                if g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['m'] in chiral:
-                    m = chiral[g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['m']]
-                    at[m]['coord'] = at[m]['coord'] + cross_vector_chiral*1
+        at = correct_protein_chiral(at, chiral)
     return at, cross_vector
 
 ### align sequences of user AT structure and CG input
 
 def add_to_sequence(sequence, residue, chain_count):
     if residue in g_var.o_residues:
-        if residue in g_var.dna:
-            sequence[chain_count]+=g_var.dna[residue]
+        if residue in g_var.other:
+            sequence[chain_count]+=g_var.other[residue]
         else:
             sequence[chain_count]+=residue
-    elif residue  not in g_var.mod_residues:
+    elif residue in g_var.aas:
         sequence[chain_count]+=g_var.aas[residue]
     else:
         sequence[chain_count]+='X'    
@@ -287,57 +301,69 @@ def check_sequence():
                 break
 
 def align_chain_sequence(sys_type):
-    if g_var.args.v >= 2:
-        print(gen.print_sequnce_info('PROTEIN'))     
-    at={}
-    test_chain={}
+    cg_sequence = copy.deepcopy(g_var.seq_cg) 
+    cg_chain_group={}
     for chain_at in range(len(g_var.atomistic_protein_input_raw)):
         skip_sequence=False
         chain_cg=0
-        s = difflib.SequenceMatcher(None, g_var.seq_at[sys_type][chain_at], g_var.seq_cg[sys_type][chain_cg], autojunk=False)
+        s = difflib.SequenceMatcher(None, g_var.seq_at[sys_type][chain_at], cg_sequence[sys_type][chain_cg], autojunk=False)
         seq_info = s.get_matching_blocks()
         while seq_info[0][2] != len(g_var.seq_at[sys_type][chain_at]):
-            if chain_cg >= len(g_var.seq_cg[sys_type])-1:
+            if chain_cg >= len(cg_sequence[sys_type])-1:
                 print('\nCannot find a match for user supplied chain: '+str(chain_at))#+'\n\nAtomistic chain:\n'+str(seq_user[chain_at]),'\n\nIn CG:\n'+str(sequence))
                 skip_sequence = True
                 break
             else:
                 chain_cg+=1
-                s = difflib.SequenceMatcher(None, g_var.seq_at[sys_type][chain_at], g_var.seq_cg[sys_type][chain_cg], autojunk=False)
+                s = difflib.SequenceMatcher(None, g_var.seq_at[sys_type][chain_at], cg_sequence[sys_type][chain_cg], autojunk=False)
                 seq_info = s.get_matching_blocks()
         if not skip_sequence:
             temp={}
-            if chain_cg not in at:
-                at[chain_cg]={}
+            if chain_cg not in g_var.atomistic_protein_input_aligned:
+                g_var.atomistic_protein_input_aligned[chain_cg]={}
             if seq_info[0][2] == len(g_var.seq_at[sys_type][chain_at]):
                 for resid,  residue in enumerate(g_var.atomistic_protein_input_raw[chain_at]):
                     temp[resid + seq_info[0][1]] = g_var.atomistic_protein_input_raw[chain_at][residue]
-                at[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
-            g_var.seq_cg[sys_type][chain_cg] = mask_sequence(g_var.seq_cg[sys_type][chain_cg], seq_info[0][1], seq_info[0][1]+seq_info[0][2])
-            test_chain[chain_at]=chain_cg
+                g_var.atomistic_protein_input_aligned[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
+            cg_sequence[sys_type][chain_cg] = mask_sequence(cg_sequence[sys_type][chain_cg], seq_info[0][1], seq_info[0][1]+seq_info[0][2])
+            cg_chain_group[chain_at]=chain_cg
 
-    check_chain_alignment_coverage(at, sys_type)
+    check_chain_alignment_coverage(sys_type)
 
     if len(g_var.atomistic_protein_input_raw) < len(g_var.seq_cg[sys_type]):
         print('### WARNING you have supplied fewer chains than exist in the CG system ###\n')
-    if len(at) > 0:
+    if len(g_var.atomistic_protein_input_aligned) > 0:
         g_var.user_at_input = True
-        g_var.atomistic_protein_input_aligned=at
     else: 
         g_var.user_at_input = False
-    if g_var.group_chains == 'chain':
-        g_var.group_chains = test_chain
+    sort_chains(cg_chain_group, sys_type)
+    if g_var.args.v >= 2:
+        print(gen.print_sequnce_info('PROTEIN'))
 
-def check_chain_alignment_coverage(at, sys_type):
-    for chain in at:
+def sort_chains(cg_chain_group, sys_type):
+    if g_var.group_chains == None:
+        g_var.group_chains = {}
+        for i in range(len(g_var.seq_at[sys_type])):
+            g_var.group_chains[i] = i
+    elif g_var.group_chains == 'chain':
+        g_var.group_chains = cg_chain_group
+    elif g_var.group_chains == 'all':
+        g_var.group_chains = {}
+        for i in range(len(cg_chain_group)):
+            g_var.group_chains[i] = 0
+    else:
+        pass
+
+def check_chain_alignment_coverage(sys_type):
+    for key, chain in g_var.atomistic_protein_input_aligned.items():
         total = 0
-        for fragment in at[chain]:
+        for fragment in chain:
             resid_range = fragment.split(':')
             total+=(int(resid_range[1])-int(resid_range[0]))
-        if total == len(g_var.seq_cg[sys_type][chain]):
-            g_var.skip_disul[chain]=True
+        if total == len(g_var.seq_cg[sys_type][key]):
+            g_var.skip_disul[key]=True
         else:
-            g_var.skip_disul[chain]=False
+            g_var.skip_disul[key]=False
 
 def mask_sequence(sequence, st, end):
     for index, residue in enumerate(sequence):
@@ -365,38 +391,20 @@ def center_atomistic():
         cg_com[chain]=[]
         for part_val, part in enumerate(g_var.atomistic_protein_input_aligned[chain]):
             sls, sle= int(part.split(':')[0]),int(part.split(':')[1])
-            if g_var.group_chains is None:
-                protein_mass=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], [])
-                atomistic_protein_mass = at_mod.COM(protein_mass, 'protein at: '+str(chain)+' '+part)#### add center of mass of CG_proteins
-                cg_com[chain].append(at_mod.COM(g_var.backbone_coords[chain][sls:sle], 'protein cg: '+str(chain)+' '+part))
-                g_var.atomistic_protein_input_aligned[chain][part] = update_part_coordinate(g_var.atomistic_protein_input_aligned[chain][part], atomistic_protein_mass, cg_com[chain][part_val])
-            elif g_var.group_chains=='all':
-                if 'protein_mass' not in locals():
-                    protein_mass=[]
-                protein_mass=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], protein_mass)
+            if 'protein_mass' not in locals():
+                protein_mass={}
+            if chain in g_var.group_chains:
+                if g_var.group_chains[chain] not in protein_mass:
+                    protein_mass[g_var.group_chains[chain]]=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], [])
+                else:
+                    protein_mass[g_var.group_chains[chain]]=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], protein_mass[g_var.group_chains[chain]])
                 if 'cg_backbone_masses' not in locals():
                     cg_backbone_masses = {}
-                    cg_backbone_masses['all'] = g_var.backbone_coords[chain][sls:sle]
+                if g_var.group_chains[chain] not in cg_backbone_masses:
+                    cg_backbone_masses[g_var.group_chains[chain]]= g_var.backbone_coords[chain][sls:sle]
                 else:
-                    cg_backbone_masses['all'] += g_var.backbone_coords[chain][sls:sle]
-            else:
-                if 'protein_mass' not in locals():
-                    protein_mass={}
-                if chain in g_var.group_chains:
-                    if g_var.group_chains[chain] not in protein_mass:
-                        protein_mass[g_var.group_chains[chain]]=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], [])
-                    else:
-                        protein_mass[g_var.group_chains[chain]]=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], protein_mass[g_var.group_chains[chain]])
-                    if 'cg_backbone_masses' not in locals():
-                        cg_backbone_masses = {}
-                    if g_var.group_chains[chain] not in cg_backbone_masses:
-                        cg_backbone_masses[g_var.group_chains[chain]]= g_var.backbone_coords[chain][sls:sle]
-                    else:
-                        cg_backbone_masses[g_var.group_chains[chain]] += g_var.backbone_coords[chain][sls:sle]                  
-    if g_var.group_chains=='all':
-        g_var.atomistic_protein_input_aligned, cg_com = center_at_protein_all_chains(g_var.atomistic_protein_input_aligned, cg_com, protein_mass, cg_backbone_masses)
-    if g_var.group_chains not in ['all',None]:
-        g_var.atomistic_protein_input_aligned, cg_com = center_at_protein_chain_groups(g_var.atomistic_protein_input_aligned, cg_com, protein_mass, cg_backbone_masses)
+                    cg_backbone_masses[g_var.group_chains[chain]] += g_var.backbone_coords[chain][sls:sle]                  
+    g_var.atomistic_protein_input_aligned, cg_com = center_at_protein_chain_groups(g_var.atomistic_protein_input_aligned, cg_com, protein_mass, cg_backbone_masses)
     return g_var.atomistic_protein_input_aligned, cg_com
 
 def center_at_protein_chain_groups(atomistic_protein_input, cg_com, protein_mass, cg_backbone_masses):
@@ -410,15 +418,6 @@ def center_at_protein_chain_groups(atomistic_protein_input, cg_com, protein_mass
                 protein_mass=fetch_backbone_mass(atomistic_protein_input[chain][part], [])
                 atomistic_protein_mass = at_mod.COM(protein_mass, 'protein at: '+str(chain)+' '+part)#### add center of mass of CG_proteins
                 cg_com[chain].append(at_mod.COM(g_var.backbone_coords[chain][sls:sle], 'protein cg: '+str(chain)+' '+part))
-            atomistic_protein_input[chain][part] = update_part_coordinate(atomistic_protein_input[chain][part], atomistic_protein_mass, cg_com[chain][part_val])
-    return atomistic_protein_input, cg_com
-
-
-def center_at_protein_all_chains(atomistic_protein_input, cg_com,  protein_mass, cg_backbone_masses):
-    atomistic_protein_mass = at_mod.COM(protein_mass, 'All AT protein chains')
-    for chain in atomistic_protein_input:
-        for part_val, part in enumerate(atomistic_protein_input[chain]):
-            cg_com[chain].append(at_mod.COM(cg_backbone_masses['all'], 'All CG protein chains'))
             atomistic_protein_input[chain][part] = update_part_coordinate(atomistic_protein_input[chain][part], atomistic_protein_mass, cg_com[chain][part_val])
     return atomistic_protein_input, cg_com
 
@@ -462,49 +461,28 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
                             print(atomistic_protein_centered[chain][part][residue][atom])
                         sys.exit()
                 if len(at_centers) == len(np.array(g_var.backbone_coords[chain])[sls:sle,:3]):
-                    if g_var.group_chains=='all':
-                        at_com_group, cg_com_group = return_all_rotations(chain, at_centers, at_com_group, cg_com_group, sls, sle)
-                    elif g_var.group_chains is None:
-                        at_com_group = return_indivdual_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle)
-                    else:
-                        at_com_group, cg_com_group = return_grouped_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle)
+                    at_com_group, cg_com_group = return_grouped_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle)
                 else:
                     sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
                             number of CG residues '+str(len(g_var.backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
     return at_com_group, cg_com_group
 
 def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, at_com_group,cg_com_group,cg_com):
-    if g_var.group_chains=='all':
-        rotate_all = return_all_rotations_final(at_com_group,cg_com_group,cg_com)
     final_rotations = []
     final_user_supplied_coord={}
     for chain in range(len(final_coordinates_atomistic)):
         rotations=[]
         if chain in atomistic_protein_centered:
-            if g_var.group_chains not in ['all',None]: 
-                if chain in g_var.group_chains:
-                    rotate_chain=at_mod.kabsch_rotate(at_com_group[g_var.group_chains[chain]]-cg_com[g_var.group_chains[chain]][0], cg_com_group[g_var.group_chains[chain]]-cg_com[g_var.group_chains[chain]][0])
+            rotate_chain=at_mod.kabsch_rotate(at_com_group[g_var.group_chains[chain]]-cg_com[g_var.group_chains[chain]][0], cg_com_group[g_var.group_chains[chain]]-cg_com[g_var.group_chains[chain]][0])
             for part_val, part in enumerate(atomistic_protein_centered[chain]):
-                if 'rotate_all' in locals():
-                    rotations.append(rotate_all)
-                elif g_var.group_chains is None:
-                    rotations = at_com_group[chain]
+                if chain in g_var.group_chains:
+                    rotations.append(rotate_chain)
                 else:
-                    if chain in g_var.group_chains:
-                        rotations.append(rotate_chain)
-                    else:
-                        rotations = at_com_group[chain]
+                    rotations = at_com_group[chain]
             final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], atomistic_protein_centered[chain], cg_com[chain], rotations, chain)
         else:
             final_user_supplied_coord[chain] = hybridise_protein_inputs(final_coordinates_atomistic[chain], [], [], [], chain)
     return final_user_supplied_coord
-
-def return_all_rotations_final(at_com_group,cg_com_group,cg_com):
-    if len(at_com_group['all']) == len(cg_com_group['all']):
-        return at_mod.kabsch_rotate(at_com_group['all']-cg_com[0][0], cg_com_group['all']-cg_com[0][0])
-    else:
-        sys.exit('The atomistic input does not match the CG. \n\
-                number of CG residues '+str(len(cg_com_group['all']))+'\nnumber of AT residues '+str(len(at_com_group['all'])))
 
 def return_indivdual_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle):
     if chain not in at_com_group:
@@ -529,15 +507,6 @@ def return_grouped_rotations(chain, part_val, at_centers, cg_com, at_com_group, 
     else:
         at_com_group = return_indivdual_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle)
     return at_com_group, cg_com_group
-
-def return_all_rotations(chain, at_centers, at_com_group, cg_com_group, sls, sle):
-    if 'all' not in at_com_group:
-        at_com_group['all']=np.array(at_centers)
-        cg_com_group['all']=np.array(g_var.backbone_coords[chain])[sls:sle,:3]
-    else:
-        at_com_group['all']=np.append(at_com_group['all'], np.array(at_centers), axis=0)
-        cg_com_group['all']=np.append(cg_com_group['all'], np.array(g_var.backbone_coords[chain])[sls:sle,:3], axis=0) 
-    return at_com_group, cg_com_group   
 
 def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_centered, cg_com, xyz_rot_apply, chain):
     complete_user_at = {}
@@ -630,7 +599,6 @@ def write_disres(coord, chain, file, at_start, count):
                                     dist = (gen.calculate_distance(xyz1, xyz2)/10)-0.05
                                     disres_out.write('\n{0:10}{1:10}{2:3}{3:12}{4:12}{5:^12}{6:14}{7:14}{8:5}'.format(str(at_start+int(HN[at][0])), str(at_start+int(carbonyl[0])), 
                                                                                                                     '1', str(count),'2', '0', str(np.round(dist,4)), str(np.round(dist+0.01,4)), '1'))
-                        # break
     return len(coord)+at_start, count 
 
 

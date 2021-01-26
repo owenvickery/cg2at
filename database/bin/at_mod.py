@@ -15,15 +15,15 @@ def sanity_check_fragments(res, cg, sin_bead):
     residue, fragment_mass = get_atomistic(location)
     atom_list = []
     bead_list = []
-    for group in residue:
-        for bead in residue[group]:
+    for group in residue.values():
+        for bead in group:
             bead_list.append(bead)
             if not sin_bead:
-                for atom in residue[group][bead]:
+                for atom in group[bead]:
                     atom_list.append(atom)
             else:
                 if bead == sin_bead:
-                    for atom in residue[group][bead]:
+                    for atom in group[bead]:
                         atom_list.append(atom)
     return sorted(bead_list), atom_list
 
@@ -454,10 +454,23 @@ def fetch_chiral_coord(merge_temp, residue_type):
         coord.append(np.array([merge_temp[atom]['x'],merge_temp[atom]['y'],merge_temp[atom]['z']]))
     return chiral_atoms, coord
 
+
+def get_atom_move(merge_temp, resname, residue, chiral_group, chiral_atoms):
+    stat = merge_temp[chiral_atoms[residue][chiral_group]].copy()
+    atom_move = {'stat':np.array([stat['x'],stat['y'],stat['z']]), 'm':'', 'c1':'', 'c2':'', 'c3':''}
+    for chir_atom in atom_move:
+        if chir_atom != 'stat':
+            test = merge_temp[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group][chir_atom]]].copy()
+            atom_move[chir_atom]= np.array([test['x'],test['y'],test['z']])
+            if gen.calculate_distance(atom_move['stat'], atom_move[chir_atom]) > 10:
+                atom_move[chir_atom] = np.array(read_in.brute_mic(atom_move['stat'],atom_move[chir_atom], r_b_vec))
+    return atom_move
+
+
 def fix_chirality(merge, merge_temp, merged_coords, residue_type):
 #### fixes chiral groups
     r_b_vec, r_b_inv = read_in.real_box_vectors(g_var.box_vec)
-    chiral_atoms, coord= fetch_chiral_coord(merge_temp, residue_type)
+    chiral_atoms, coord = fetch_chiral_coord(merge_temp, residue_type)
     for residue in chiral_atoms:
         if residue_type in ['PROTEIN', 'OTHER']:
             for atom in chiral_atoms[residue]:
@@ -467,14 +480,8 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
             resname=residue_type
         for chiral_group in g_var.res_top[resname]['CHIRAL']:
             if chiral_group != 'atoms':
-                stat = merge_temp[chiral_atoms[residue][chiral_group]].copy()
-                atom_move = {'stat':np.array([stat['x'],stat['y'],stat['z']]), 'm':'', 'c1':'', 'c2':'', 'c3':''}
-                for chir_atom in atom_move:
-                    if chir_atom != 'stat':
-                        test = merge_temp[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group][chir_atom]]].copy()
-                        atom_move[chir_atom]= np.array([test['x'],test['y'],test['z']])
-                        if gen.calculate_distance(atom_move['stat'], atom_move[chir_atom]) > 10:
-                            atom_move[chir_atom] = np.array(read_in.brute_mic(atom_move['stat'],atom_move[chir_atom], r_b_vec))
+                atom_move = get_atom_move(merge_temp, resname, residue, chiral_group, chiral_atoms)
+
                 S_M = atom_move['m'] - atom_move['stat']
                 rotation = align_to_vector(S_M, [0,0,1])
                 c1_coord = (atom_move['c1'] - atom_move['stat']).dot(rotation)
@@ -486,7 +493,7 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
                         merge_temp[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] = merge_temp[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group]['m']]][axis] - (3*S_M[ax_val])   
                         merge_temp[chiral_atoms[residue][chiral_group]][axis] = merge_temp[chiral_atoms[residue][chiral_group]][axis] - (S_M[ax_val])        
                     coord[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group]['m']]] -=  (2*S_M) #move_coord -
-                    coord[chiral_atoms[residue][chiral_group]] -=  (0.25*S_M) #stat_coord -
+                    coord[chiral_atoms[residue][chiral_group]] -=  (0.25*S_M) 
     merge+=merge_temp
     merged_coords+=coord
     return merge, merged_coords
