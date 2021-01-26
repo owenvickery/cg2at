@@ -19,7 +19,7 @@ requirements:
     - pathlib
 
 build:
-  number: {{ environ['GIT_DESCRIBE_HASH'] }} #   '{{ environ.get("GIT_DESCRIBE_NUMBER", 0) }}'
+  number: {{ environ.get("GIT_DESCRIBE_NUMBER", 0) }} #{{ environ['GIT_DESCRIBE_HASH'] }} 
   script_env:
     - VERSION
     - CONDA_BLD_PATH
