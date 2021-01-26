@@ -538,11 +538,9 @@ def check_ringed_lipids(protein):
     print('Checking for ringed lipids')
     if not os.path.exists(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb'):
         if not os.path.exists(g_var.merged_directory+'merged_cg2at_threaded.pdb'):
-            box_vec = g_var.box_vec.split()[1:4]
             r_b_vec, r_b_inv = read_in.real_box_vectors(g_var.box_vec)
             os.chdir(g_var.merged_directory)
             merge, merge_coords = read_in_merged_pdbs([], [], protein)
-            resid_prev=0
             ringed=False
             lipid_atoms = []
             with open(g_var.merged_directory+'threaded_lipids.dat', 'w') as ring_ouput:
@@ -550,8 +548,6 @@ def check_ringed_lipids(protein):
                     resname = get_np_resname(at_val)
                     if resname != None:
                         offset = fetch_start_of_residue_np(at_val, resname)
-                        resid_prev=atom['residue_id']
-                        resname_prev = resname
                         if atom['atom_number']-offset in g_var.heavy_bond[resname]:
                             for at_bond in g_var.heavy_bond[resname][atom['atom_number']-offset]:
                                 at_bond -=1
