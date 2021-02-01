@@ -614,16 +614,16 @@ class TestSum(unittest.TestCase):
         box_vec = 'CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1'
         correct1 = np.array([[1.59804000e+02, 7.61773172e-15, 6.33160765e-15], [0.00000000e+00, 1.24407000e+02, 6.33160765e-15], [0.00000000e+00, 0.00000000e+00, 1.03403000e+02]])
         correct2 = np.array([[ 6.25766564e-03,  0.00000000e+00,  0.00000000e+00], [-3.83171510e-19,  8.03813290e-03,  0.00000000e+00], [-3.83171510e-19, -4.92193687e-19,  9.67089930e-03]])
-        r_b_vec, r_b_inv = read_in.real_box_vectors(box_vec)
-        np.testing.assert_array_almost_equal(r_b_vec, correct1)
-        np.testing.assert_array_almost_equal(r_b_inv, correct2)
+        read_in.real_box_vectors(box_vec)
+        np.testing.assert_array_almost_equal(g_var.r_b_vec, correct1)
+        np.testing.assert_array_almost_equal(g_var.r_b_inv, correct2)
 
     def test_brute_mic(self):
-        r_b_vec = np.array([[1.59804000e+02, 7.61773172e-15, 6.33160765e-15], [0.00000000e+00, 1.24407000e+02, 6.33160765e-15], [0.00000000e+00, 0.00000000e+00, 1.03403000e+02]])
+        g_var.r_b_vec = np.array([[1.59804000e+02, 7.61773172e-15, 6.33160765e-15], [0.00000000e+00, 1.24407000e+02, 6.33160765e-15], [0.00000000e+00, 0.00000000e+00, 1.03403000e+02]])
         p1, p2= np.array([155, 50, 50]), np.array([[5, 50, 50], [160, 50, 50], [50, 50, 50]])
         correct = [[164.804,  50.,     50.   ], [160,  50,  50], [50, 50, 50]]
         for i in range(3):
-            result = read_in.brute_mic(p1, p2[i], r_b_vec)
+            result = read_in.brute_mic(p1, p2[i])
             self.assertIsNone(np.testing.assert_array_equal(result, correct[i]))
 
     def test_duplicate_chain(self):
@@ -661,6 +661,7 @@ class TestSum(unittest.TestCase):
     def test_fix_pbc(self):
         g_var.cg_residues = {'PROTEIN': {0: {'BB': {'residue_name': 'ALA', 'coord': np.array([41.938, 58.822, 52.274])}}, 1: {'BB': {'residue_name': 'ALA', 'coord': np.array([75.016, 60.271, 50.624])}}, 2: {'BB': {'residue_name': 'ALA', 'coord': np.array([77.956, 62.112, 52.127])}}, 3: {'BB': {'residue_name': 'ALA', 'coord': np.array([ 1.118, 63.4  , 50.505])}}, 4: {'BB': {'residue_name': 'ALA', 'coord': np.array([ 3.974, 65.397, 51.969])}}}}
         box_vec, new_box, box_shift = 'CRYST1   80.000  124.000  103.000  90.00  90.00  90.00 P 1           1', 'CRYST1   80.000  124.000  103.000  90.00  90.00  90.00 P 1           1', [0, 0, 0]
+        read_in.real_box_vectors(box_vec)
         g_var.res_top['ALA']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'BB': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}, 'ATOMS': ['N', 'CA', 'CB', 'C', 'O'], 'RESIDUE': ['ALA'], 'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
         correct = {'PROTEIN': {0: {'BB': {'residue_name': 'ALA', 'coord': np.array([41.938, 58.822, 52.274])}}, 1: {'BB': {'residue_name': 'ALA', 'coord': np.array([75.016, 60.271, 50.624])}}, 2: {'BB': {'residue_name': 'ALA', 'coord': np.array([77.956, 62.112, 52.127])}}, 3: {'BB': {'residue_name': 'ALA', 'coord': np.array([81.118, 63.4  , 50.505])}}, 4: {'BB': {'residue_name': 'ALA', 'coord': np.array([83.974, 65.397, 51.969])}}}}
         read_in.fix_pbc(box_vec, new_box, box_shift)
