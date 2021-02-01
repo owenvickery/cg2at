@@ -3,6 +3,7 @@
 import os, sys
 import numpy as np
 import itertools
+import math
 from scipy.spatial import cKDTree
 import gen, g_var, at_mod_p, read_in, gro
 
@@ -260,7 +261,7 @@ def get_atomistic(frag_location):
             if line.startswith('ATOM'):
                 line_sep = gen.pdbatom(line) ## splits up pdb line
                 residue[group][bead][line_sep['atom_number']]={'coord':np.array([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf]),
-                                                                'atom':line_sep['atom_name'],'resid':1, 'res_type':line_sep['residue_name'],
+                                                                'atom':line_sep['atom_name'],'resid':1, 'resid_ori':line_sep['residue_id'],'res_type':line_sep['residue_name'],
                                                                 'frag_mass':1}    
 #### updates fragment mass   
                 if not gen.is_hydrogen(line_sep['atom_name']):
@@ -300,6 +301,23 @@ def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
             cg_connection.append(cg_frag_centers[bead])
             at_connection.append(at_frag_centers[bead])   
     return at_connection, cg_connection    
+
+def get_rotation(cg_connect, at_connect, center, resname, group, cg_resid):
+    if len(at_connect) == len(cg_connect):
+        if len(cg_connect) == 0:
+            return gen.AnglesToRotMat([np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2)])
+        else:
+            return kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
+    else:
+        print('atom connections: '+str(len(at_connect))+' does not match CG connections: '+str(len(cg_connect)))
+        sys.exit('residue number: '+str(cg_resid)+', residue type: '+str(resname)+', group: '+group)
+
+def apply_rotations(atomistic_fragments,cg_resid, group_fit, center, xyz_rot_apply):
+    for bead in group_fit:
+        for atom in group_fit[bead]:
+            group_fit[bead][atom]['coord'] = rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   
+            atomistic_fragments[cg_resid][atom] = group_fit[bead][atom].copy()
+    return atomistic_fragments
 
 ### end fragment information
 ### linked residue connectivity start
@@ -374,11 +392,14 @@ def write_pdb(merge, merge_coords, index_conversion, write_file):
             if line_val in index_conversion:
                 x, y, z = gen.trunc_coord(merge_coords[index_conversion[line_val]])
             else:
-                x, y, z = gen.trunc_coord([line['x'],line['y'],line['z']])
+                if 'coord' in line:
+                    x, y, z = gen.trunc_coord(line['coord'])
+                else:
+                    x, y, z = gen.trunc_coord([line['x'],line['y'],line['z']])
             if atom_counter >= 99_999:
                 atom_counter=1
             else:
-                atom_counter+=1        
+                atom_counter+=1      
             pdb_output.write(g_var.pdbline%((atom_counter, line['atom_name'], line['residue_name'],' ',line['residue_id'],\
             x,y,z,1,0))+'\n')
         pdb_output.close()
@@ -463,13 +484,12 @@ def get_atom_move(merge_temp, resname, residue, chiral_group, chiral_atoms):
             test = merge_temp[chiral_atoms[residue][g_var.res_top[resname]['CHIRAL'][chiral_group][chir_atom]]].copy()
             atom_move[chir_atom]= np.array([test['x'],test['y'],test['z']])
             if gen.calculate_distance(atom_move['stat'], atom_move[chir_atom]) > 10:
-                atom_move[chir_atom] = np.array(read_in.brute_mic(atom_move['stat'],atom_move[chir_atom], r_b_vec))
+                atom_move[chir_atom] = np.array(read_in.brute_mic(atom_move['stat'],atom_move[chir_atom]))
     return atom_move
 
 
 def fix_chirality(merge, merge_temp, merged_coords, residue_type):
 #### fixes chiral groups
-    r_b_vec, r_b_inv = read_in.real_box_vectors(g_var.box_vec)
     chiral_atoms, coord = fetch_chiral_coord(merge_temp, residue_type)
     for residue in chiral_atoms:
         if residue_type in ['PROTEIN', 'OTHER']:
@@ -538,7 +558,6 @@ def check_ringed_lipids(protein):
     print('Checking for ringed lipids')
     if not os.path.exists(g_var.merged_directory+'checked_ringed_lipid_de_novo.pdb'):
         if not os.path.exists(g_var.merged_directory+'merged_cg2at_threaded.pdb'):
-            r_b_vec, r_b_inv = read_in.real_box_vectors(g_var.box_vec)
             os.chdir(g_var.merged_directory)
             merge, merge_coords = read_in_merged_pdbs([], [], protein)
             ringed=False
@@ -552,7 +571,7 @@ def check_ringed_lipids(protein):
                             for at_bond in g_var.heavy_bond[resname][atom['atom_number']-offset]:
                                 at_bond -=1
                                 if merge[at_bond+offset]['atom_number'] > merge[at_val]['atom_number']:
-                                    merge[at_bond+offset]['x'], merge[at_bond+offset]['y'], merge[at_bond+offset]['z'] = np.array(read_in.brute_mic(merge_coords[at_val],merge_coords[at_bond+offset], r_b_vec))
+                                    merge[at_bond+offset]['x'], merge[at_bond+offset]['y'], merge[at_bond+offset]['z'] = np.array(read_in.brute_mic(merge_coords[at_val],merge_coords[at_bond+offset]))
                                     merge_coords[at_bond+offset] = merge[at_bond+offset]['x'], merge[at_bond+offset]['y'], merge[at_bond+offset]['z']
                                     dist = gen.calculate_distance(merge_coords[at_val], merge_coords[at_bond+offset])
                                     if 2 < dist < 6:

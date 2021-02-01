@@ -577,11 +577,6 @@ def create_aligned():
     at_mod.merge_system_pdbs('_aligned') ## create restraint positions for aligned system
     aligned_atoms, chain_count = read_in.read_in_atomistic(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb') ## reads in final pdb
     rmsd = at_mod_p.RMSD_measure(aligned_atoms) ## gets rmsd of de novo
-    if os.path.exists(g_var.final_dir+'final_cg2at_de_novo.pdb'):
-        initial = g_var.final_dir+'final_cg2at_de_novo'
-    else:
-        initial = g_var.merged_directory+'checked_ringed_lipid_de_novo'
-
     for chain in rmsd:
         if rmsd[chain] > 3.5:
             print('Your aligned structure is quite far from the CG, therefore running gentle steering\n')
@@ -591,11 +586,11 @@ def create_aligned():
         else:
             steer = ['low', 'high', 'ultra']
 
-    final_file = run_steer(steer, initial)
+    final_file = run_steer(steer, g_var.merged_directory+'checked_ringed_lipid_de_novo')
     if final_file:
         gen.file_copy_and_check(final_file, g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
     else:
-        final_file = run_steer(['very_low', 'low', 'mid', 'high', 'very_high', 'ultra'], initial)
+        final_file = run_steer(['very_low', 'low', 'mid', 'high', 'very_high', 'ultra'], g_var.merged_directory+'checked_ringed_lipid_de_novo')
         print('Completed alignment, please find final aligned system: \n'+g_var.final_dir+'final_cg2at_aligned.pdb')
         gen.file_copy_and_check(final_file, g_var.final_dir+'final_cg2at_aligned.pdb') ## copy to final folder
 
@@ -616,7 +611,7 @@ def run_steer(steer, initial):
                 print('Steering to aligned failed at: '+restraint)
                 if len(steer) > 5:
                     print('Your aligned structure may be too far from the CG input')
-                    print('The closest the script can get is found in the FINAL directory')
+                    print('The closest the script can get, is found in the FINAL directory')
                     return g_var.merged_directory+'STEER/merged_cg2at_aligned_steer_'+steer[res_val]+'.pdb'
                 else:
                     print('Your aligned structure may be quite far from the CG input')

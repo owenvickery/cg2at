@@ -49,20 +49,12 @@ def build_multi_residue_atomistic_system(cg_residues, sys_type):
                         at_connect, cg_connect, new_chain = at_mod.BB_connectivity(at_connect,cg_connect, cg_residues[sys_type], group_fit[group_bead], residue_number, group_bead)
                         if sys_type == 'PROTEIN':
                             g_var.backbone_coords[chain_count].append(np.append(cg_residues[sys_type][residue_number][group_bead]['coord'], 1)) 
-                if len(at_connect) == len(cg_connect) and len(at_connect) != 0:
-                    xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
-                elif len(at_connect) == 0:
-                    xyz_rot_apply = False
-                    print('Cannot find any connectivity for residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+str(group))
-                else:
-                    print('atom connections: '+str(len(at_connect))+' does not equal CG connections: '+str(len(cg_connect)))
-                    sys.exit('residue number: '+str(residue_number)+', residue type: '+str(resname)+', group: '+group)
 
-                for bead in group_fit:
-                    for atom in group_fit[bead]:
-                        group_fit[bead][atom]['coord'] = at_mod.rotate_atom(group_fit[bead][atom]['coord'], center, xyz_rot_apply)   
-                        atom_new = group_fit[bead][atom].copy()
-                        coord_atomistic[chain_count][residue_number][atom] = atom_new
+
+
+
+                xyz_rot_apply = at_mod.get_rotation(cg_connect, at_connect, center, resname, group, residue_number)
+                coord_atomistic[chain_count] = at_mod.apply_rotations(coord_atomistic[chain_count],residue_number, group_fit, center, xyz_rot_apply)
         if new_chain:
             g_var.ter_res[sys_type][chain_count][1] = resname
             chain_count+=1

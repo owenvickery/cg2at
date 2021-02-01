@@ -6,7 +6,6 @@ import argparse
 from pathlib import Path
 
 if __name__ == "g_var" and 'timestamp' not in locals():
-# def get_arg():
 	parser = argparse.ArgumentParser(description='Converts CG representation into an atomistic representation', prog='CG2AT2', epilog='Enjoy the program and best of luck!\n')
 	parser.add_argument('-info', help=' provides version, available forcefields and fragments', action='store_true')
 	parser.add_argument('-version', action='version', version='%(prog)s 0.2')
@@ -58,7 +57,6 @@ if __name__ == "g_var" and 'timestamp' not in locals():
 
 	os.environ['GMX_SUPPRESS_DUMP'] = '1'  ## prevent gromacs filling the file system with step files
 
-	script_update = '14-01-2021'
 	### CG2AT folder locations
 
 	timestamp =  strftime("%Y-%m-%d_%H-%M-%S", gmtime())

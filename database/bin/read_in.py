@@ -112,18 +112,18 @@ def real_box_vectors(box_vec):
     cyz, cxz, cxy, sxy = math.cos(np.radians(yz)), math.cos(np.radians(xz)), math.cos(np.radians(xy)) , math.sin(np.radians(xy))
     wx, wy             = z*cxz, z*(cyz-cxz*cxy)/sxy
     wz                 = math.sqrt(z**2 - wx**2 - wy**2)
-    r_b_vec = np.array([[x, 0, 0], [y*cxy, y*sxy, 0], [wx, wy, wz]]).T
-    r_b_inv = np.linalg.inv(r_b_vec).T
-    return r_b_vec, r_b_inv
+    g_var.r_b_vec = np.array([[x, 0, 0], [y*cxy, y*sxy, 0], [wx, wy, wz]]).T
+    g_var.r_b_inv = np.linalg.inv(g_var.r_b_vec).T
+    # return r_b_vec, r_b_inv
 
-def brute_mic(p1, p2, r_b_vec):
+def brute_mic(p1, p2):
     result = None
     n = 2
     if gen.calculate_distance(p1, p2) > 10:
         for x in range(-n, n+1):
             for y in range(-n, n+1):
                 for z in range(-n, n+1):
-                    rp = p2+np.dot(r_b_vec, [x,y,z])
+                    rp = p2+np.dot(g_var.r_b_vec, [x,y,z])
                     d = gen.calculate_distance(p1, rp)
                     if (result is None) or (result[1] > d):
                         result = (rp, d)
@@ -136,7 +136,7 @@ def brute_mic(p1, p2, r_b_vec):
 
 def fix_pbc(box_vec, new_box, box_shift):
 #### fixes box PBC
-    r_b_vec, r_b_inv = real_box_vectors(box_vec)
+    # r_b_vec, r_b_inv = real_box_vectors(box_vec)
     new_box = new_box.split()[1:4]
     BB_pre_resid = 0
     for residue_type in g_var.cg_residues:
@@ -161,11 +161,11 @@ def fix_pbc(box_vec, new_box, box_shift):
                                 BB_cur = g_var.cg_residues[residue_type][residue][bead]['coord']
                                 if residue+connection in g_var.cg_residues[residue_type]:
                                     BB_pre = g_var.cg_residues[residue_type][residue+connection][con_info['Con_Bd'][con_val]]['coord']
-                                    g_var.cg_residues[residue_type][residue][bead]['coord'] = brute_mic(BB_pre, BB_cur, r_b_vec)
+                                    g_var.cg_residues[residue_type][residue][bead]['coord'] = brute_mic(BB_pre, BB_cur)
 
                 if bead_val != 0 and residue_type not in ['ION','SOL']:
                     g_var.cg_residues[residue_type][residue][bead]['coord'] = brute_mic(g_var.cg_residues[residue_type][residue][bead_prev]['coord'],
-                                                                                    g_var.cg_residues[residue_type][residue][bead]['coord'], r_b_vec)
+                                                                                    g_var.cg_residues[residue_type][residue][bead]['coord'])
                 bead_prev=bead
                 if g_var.args.box != None:
                     g_var.cg_residues[residue_type][residue][bead]['coord'] = g_var.cg_residues[residue_type][residue][bead]['coord']-box_shift
@@ -208,7 +208,7 @@ def read_in_atomistic(protein):
         chain_count = 0
 #### read in pdb
     ter_residues=[]
-    r_b_vec, r_b_inv = real_box_vectors(g_var.box_vec)
+    # r_b_vec, r_b_inv = real_box_vectors(g_var.box_vec)
     with open(protein, 'r') as pdb_input:
         pdb_lines_atoms = filter_input(pdb_input.readlines(), False)
         atomistic_protein_input[chain_count]={}
@@ -222,7 +222,7 @@ def read_in_atomistic(protein):
                         line_sep['atom_name']='O'
                 #### makes C_terminal connecting atom variable  
                     if 'prev_atom_coord' in locals():
-                        line_sep['x'],line_sep['y'],line_sep['z'] = brute_mic(prev_atom_coord, [line_sep['x'],line_sep['y'],line_sep['z']], r_b_vec)
+                        line_sep['x'],line_sep['y'],line_sep['z'] = brute_mic(prev_atom_coord, [line_sep['x'],line_sep['y'],line_sep['z']])
                     if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']:
 
                         if g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms'][line_sep['atom_name']] > 0:

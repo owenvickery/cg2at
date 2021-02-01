@@ -558,11 +558,11 @@ def read_database_directories():
 def database_selection(provided, selection_type, test=False):
 #### print out selection of forcefields
     if not test:
-        print('\n\n{0:^45}\n'.format('Provided '+selection_type))
-        print('{0:^20}{1:^30}'.format('Selection',selection_type))
-        print('{0:^20}{1:^30}'.format('---------','----------'))
+        print('\n\n{0:^79}\n'.format('Provided '+selection_type))
+        print('{0:^90}'.format('{0:^20}{1:^41}'.format('Selection',selection_type)))
+        print('{0:^90}'.format('{0:^20}{1:^41}'.format('---------','-'*len(selection_type))))
         for force_num_prov, line in enumerate(provided):
-            print('{0:^20}{1:^30}'.format(force_num_prov,line.split('.')[0]))
+            print('{0:^90}'.format('{0:^20}{1:^41}'.format(force_num_prov,line.split('.')[0])))
     return ask_database(provided,  selection_type)
 
 def ask_database(provided, selection_type, test=False):
@@ -811,7 +811,7 @@ def print_script_timings():
         print('\nAll script timings have been saved in: \n'+g_var.final_dir+'script_timings.dat\n')
 
 def cg2at_header():
-    print('{0:30}'.format('\nCG2AT2 is a fragment based conversion of coarsegrain to atomistic.\n'))
+    print('\n{0:^90}\n'.format('CG2AT2 is a fragment based conversion of coarsegrain to atomistic.'))
     print('{0:^90}\n'.format('CG2AT2 version: '+str(g_var.version)))
     print('{0:^90}\n'.format('Last updated : '+str(g_var.script_update)))
     print('{0:^90}'.format('CG2AT2 is written by Owen Vickery'))

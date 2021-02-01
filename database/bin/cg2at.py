@@ -13,6 +13,7 @@ if __name__ == '__main__':
     ## hardcoded varibles used by the script
     ## I've tried to make them as comprehensive as possible but they may need updating occasionally
     g_var.version = 0.2
+    g_var.script_update = '28-01-2021'
 
     g_var.cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
 
@@ -68,7 +69,7 @@ if __name__ == '__main__':
     else:
         g_var.box_vec=box_vec_initial
         box_shift=np.array([0,0,0])
-
+    read_in.real_box_vectors(g_var.box_vec)
     #### pbc fix and residue truncation if required
     read_in.fix_pbc(box_vec_initial, g_var.box_vec, box_shift)
 
