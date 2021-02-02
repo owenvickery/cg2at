@@ -21,18 +21,18 @@ def build_atomistic_system(residue_type, a):
         if os.path.exists(g_var.working_dir+'SOL'+'/SOL_all.pdb') and residue_type == 'SOL':
             atomistic_fragments[residue_type], system['SOL'] = read_solvent_conversion(residue_type, g_var.cg_residues[residue_type])
         else:
-            atomistic_fragments[residue_type], solvent_number = atomistic_non_protein_solvent(residue_type, g_var.cg_residues[residue_type])
+            atomistic_fragments[residue_type], solvent_number = at_np_solvent(residue_type, g_var.cg_residues[residue_type])
         if residue_type in ['ION']:
             system = solvent_ion( system, atomistic_fragments, residue_type)
         elif not os.path.exists(g_var.working_dir+'SOL'+'/SOL_all.pdb'):
             system['SOL'] = solvent_number
-            write_solvent( system, atomistic_fragments, residue_type)   
+            write_solvent(system, atomistic_fragments, residue_type)   
     else:
         if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb'):
-            atomistic_fragments[residue_type], system[residue_type] = atomistic_non_protein_non_solvent(residue_type, g_var.cg_residues[residue_type])
+            atomistic_fragments[residue_type], system[residue_type] = at_np_solvent(residue_type, g_var.cg_residues[residue_type])
             write_solvent(system, atomistic_fragments, residue_type)
         else:
-            system[residue_type]=len(cg_residues) 
+            system[residue_type]=len(g_var.cg_residues[residue_type]) 
             
     print('{:<100}'.format(''), end='\r')
     print('Finished converting: '+residue_type)
@@ -62,30 +62,6 @@ def solvent_ion(system, atomistic_fragments, residue_type):
             system[atom['residue_name']]+=1
     return system
 
-def atomistic_non_protein_non_solvent(cg_residue_type,cg_residues):
-    atomistic_fragments={}  #### residue dictionary
-#### run through every residue in a particular residue type
-    residue_type={}
-    residue_type_mass={}
-    atomistic_list = []
-    for cg_resid, cg_residue in enumerate(cg_residues):
-        atomistic_fragments[cg_resid]={}
-        frag_location=gen.fragment_location(cg_residue_type) ### get fragment location from database
-        residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
-        for group in residue_type[cg_residue_type]:
-            center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][group], residue_type_mass[cg_residue_type], cg_residue, cg_residues[cg_residue])
-            at_connect, cg_connect = at_mod.connectivity(cg_residues[cg_residue], at_frag_centers, cg_frag_centers, group_fit, group)
-            xyz_rot_apply=at_mod.get_rotation(cg_connect, at_connect, center, cg_residue_type, group, cg_resid)
-            atomistic_fragments = at_mod.apply_rotations(atomistic_fragments,cg_resid, group_fit, center, xyz_rot_apply)
-        atomistic_fragments[cg_resid] = at_mod.check_hydrogens(atomistic_fragments[cg_resid])
-        for atom in atomistic_fragments[cg_resid].values():
-            atom['atom_name'] = atom.pop('atom')
-            atom['residue_name'] = atom.pop('res_type')
-            atom['residue_id'] = atom.pop('resid')
-            atomistic_list.append(atom)
-    return atomistic_list, len(atomistic_fragments)
-   
-
 def read_solvent_conversion(cg_residue_type,cg_residues):
     residue_type={}
     residue_type_mass={}
@@ -100,29 +76,47 @@ def read_solvent_conversion(cg_residue_type,cg_residues):
                         sol_p_bead = int(atom['resid_ori'])
                 return sol_p_bead, sol_p_bead*len(cg_residues)
 
-def atomistic_non_protein_solvent(cg_residue_type,cg_residues): 
+def at_np_solvent(cg_residue_type,cg_residues):   
     atomistic_fragments={}  #### residue dictionary
 #### run through every residue in a particular residue type
     residue_type={}
     residue_type_mass={}
     atomistic_fragments_list = []
     for cg_resid, cg_residue in enumerate(cg_residues):
+        atomistic_fragments[cg_resid]={}
         frag_location=gen.fragment_location(cg_residue_type) ### get fragment location from database
         residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
-        sol_p_bead = 0    
-        atomistic_fragments[cg_resid]={}
-        for res_type in residue_type[cg_residue_type]:
-            if g_var.water in residue_type[cg_residue_type][res_type]:
-                center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][res_type], residue_type_mass[cg_residue_type]
-                                                                                       , cg_residue, cg_residues[cg_residue])
-                xyz_rot_apply=gen.AnglesToRotMat([np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2), np.random.uniform(0, math.pi*2)])
-                # atomistic_fragments = at_mod.apply_rotations(atomistic_fragments,cg_resid, group_fit, center, xyz_rot_apply)
-                for bead in at_mod.apply_rotations(atomistic_fragments,cg_resid, group_fit, center, xyz_rot_apply)[cg_resid].values():
-                    bead['atom_name'] = bead.pop('atom')
-                    bead['residue_name'] = bead.pop('res_type')
-                    bead['residue_id'] = bead.pop('resid')
-                    atomistic_fragments_list.append(bead)    
-                    if bead['resid_ori'] > sol_p_bead:
-                        sol_p_bead = bead['resid_ori']
 
-    return atomistic_fragments_list, sol_p_bead*len(cg_residues)
+        for group in residue_type[cg_residue_type]:
+            if convert_question(residue_type[cg_residue_type][group], cg_residue_type, cg_residues[cg_residue]):
+                center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][group], 
+                                                                                        residue_type_mass[cg_residue_type], 
+                                                                                        cg_residue, cg_residues[cg_residue])
+                at_connect, cg_connect = at_mod.connectivity(cg_residues[cg_residue], at_frag_centers, cg_frag_centers, group_fit, group)
+                xyz_rot_apply=at_mod.get_rotation(cg_connect, at_connect, center, cg_residue_type, group, cg_resid)
+
+                atomistic_fragments = at_mod.apply_rotations(atomistic_fragments,cg_resid, group_fit, center, xyz_rot_apply)
+        if cg_residue_type not in ['SOL','ION']:
+            atomistic_fragments[cg_resid] = at_mod.check_hydrogens(atomistic_fragments[cg_resid])
+        sol_p_bead = 0
+        for atom in atomistic_fragments[cg_resid].values():
+            atom['atom_name'] = atom.pop('atom')
+            atom['residue_name'] = atom.pop('res_type')
+            atom['residue_id'] = atom.pop('resid')
+            atomistic_fragments_list.append(atom)    
+            if atom['resid_ori'] > sol_p_bead:
+                sol_p_bead = atom['resid_ori']
+    if cg_residue_type in ['SOL']:
+        return atomistic_fragments_list, sol_p_bead*len(cg_residues)
+    else:
+        return atomistic_fragments_list, len(atomistic_fragments)
+
+def convert_question(res_type, cg_residue_type, bead):
+    if cg_residue_type == 'SOL' and g_var.water in res_type:
+        return True
+    elif cg_residue_type == 'ION' and list(bead.keys())[0] in res_type:
+        return True 
+    elif cg_residue_type not in ['SOL', 'ION']:
+        return True
+    else:
+        return False

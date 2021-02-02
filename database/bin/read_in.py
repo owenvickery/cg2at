@@ -114,7 +114,6 @@ def real_box_vectors(box_vec):
     wz                 = math.sqrt(z**2 - wx**2 - wy**2)
     g_var.r_b_vec = np.array([[x, 0, 0], [y*cxy, y*sxy, 0], [wx, wy, wz]]).T
     g_var.r_b_inv = np.linalg.inv(g_var.r_b_vec).T
-    # return r_b_vec, r_b_inv
 
 def brute_mic(p1, p2):
     result = None
@@ -136,7 +135,6 @@ def brute_mic(p1, p2):
 
 def fix_pbc(box_vec, new_box, box_shift):
 #### fixes box PBC
-    # r_b_vec, r_b_inv = real_box_vectors(box_vec)
     new_box = new_box.split()[1:4]
     BB_pre_resid = 0
     for residue_type in g_var.cg_residues:
@@ -208,7 +206,6 @@ def read_in_atomistic(protein):
         chain_count = 0
 #### read in pdb
     ter_residues=[]
-    # r_b_vec, r_b_inv = real_box_vectors(g_var.box_vec)
     with open(protein, 'r') as pdb_input:
         pdb_lines_atoms = filter_input(pdb_input.readlines(), False)
         atomistic_protein_input[chain_count]={}

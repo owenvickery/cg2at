@@ -7,7 +7,6 @@ import multiprocessing as mp
 from pathlib import Path
 from shutil import rmtree
 import time
-import logging
 import gen, g_var, at_mod, read_in, at_mod_p
 
 

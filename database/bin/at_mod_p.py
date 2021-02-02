@@ -333,7 +333,7 @@ def align_chain_sequence(sys_type):
         print(gen.print_sequnce_info('PROTEIN'))
 
 def sort_chains(cg_chain_group, sys_type):
-    if g_var.group_chains == None:
+    if g_var.group_chains is None:
         g_var.group_chains = {}
         for i in range(len(g_var.seq_at[sys_type])):
             g_var.group_chains[i] = i
@@ -460,7 +460,6 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
     return at_com_group, cg_com_group
 
 def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, at_com_group,cg_com_group,cg_com):
-    final_rotations = []
     final_user_supplied_coord={}
     for chain in range(len(final_coordinates_atomistic)):
         rotations=[]
