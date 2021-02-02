@@ -1,2 +1,9 @@
 codecov:
   token: ebaec28c-6def-4d7f-b048-8affb010e960
+
+coverage:
+  precision: 2
+  round: down
+  range: "50...100"
+  status:
+    patch: off
