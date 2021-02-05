@@ -630,7 +630,7 @@ def write_RMSD():
                     line+= '{0:^28}'.format(', '.join(seg_rmsd[chain])) 
             print(line)
             qual_out.write(line+'\n')
-        print('\nAll RMSDs have been saved in: \n'+g_var.final_dir+'structure_quality.dat\n')
+        print('\n * Segment alignments may have minor deviations due to either clashes or structure hybridisation.\n\nAll RMSDs have been saved in: \n'+g_var.final_dir+'structure_quality.dat\n')
 
 def RMSD_measure_de_novo(structure_atoms):
     RMSD_dict = {}
@@ -680,7 +680,8 @@ def get_coordinates(input_coord, P_R, chain):
             if residue_val in seg:
                 for atom in residue.values():
                     if atom['atom'] in g_var.res_top[atom['res_type']]['ATOMS'] and atom['res_type'] in g_var.p_residues:
-                        coord_dict[seg_val].append(np.append(atom['coord'],atom['frag_mass']))
+                        # if atom['atom'] == 'CA':
+                            coord_dict[seg_val].append(np.append(atom['coord'],atom['frag_mass']))
                 break
     for segment in range(len(coord_dict)):
         coord_dict[segment] = np.array(coord_dict[segment])
@@ -688,6 +689,7 @@ def get_coordinates(input_coord, P_R, chain):
 
 def RMSD_measure_aligned(Final_structure):
     seg_rmsd={}
+    total_initial, total_final = np.array([]),np.array([])
     for chain in g_var.atomistic_protein_input_aligned:
         initial_structure, chain_count = read_in.read_in_atomistic(g_var.working_dir+'PROTEIN/MIN/PROTEIN_aligned_'+str(chain)+'.pdb')
         P_R = []
@@ -698,6 +700,12 @@ def RMSD_measure_aligned(Final_structure):
         seg_rmsd[chain]=[]
         for segment in range(len(final_backbone)):
             initial_backbone_fitted = RMSD_align(initial_backbone[segment][:,:3],final_backbone[segment][:,:3])
+            total_initial = np.append(total_initial, initial_backbone_fitted)
+            total_final = np.append(total_final, final_backbone[segment][:,:3])
             RMSD_val = Calculate_RMSD(np.array(initial_backbone_fitted), final_backbone[segment][:,:3])
-            seg_rmsd[chain].append(str(RMSD_val))
+            if RMSD_val > 0.15:
+                seg_rmsd[chain].append(str(RMSD_val)+' *')
+            else:
+                seg_rmsd[chain].append(str(RMSD_val))
+    # print(Calculate_RMSD(total_initial, total_final))
     return seg_rmsd
