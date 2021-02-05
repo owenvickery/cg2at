@@ -605,24 +605,34 @@ def write_RMSD():
     de_novo_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb') ## reads in final pdb
     if chain_count != g_var.system['PROTEIN']:
         sys.exit('number of chains in atomistic protein input ('+str(chain_count)+') does not match CG representation ('+str(g_var.system['PROTEIN'])+')')
-    RMSD['de novo '] = RMSD_measure(de_novo_atoms) ## gets rmsd of de novo
+    RMSD_de_novo = RMSD_measure_de_novo(de_novo_atoms) ## gets rmsd of de novo
 
     if g_var.user_at_input and 'PROTEIN' in g_var.cg_residues: 
         if g_var.args.o in ['all', 'align']: 
             at_input_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_aligned.pdb')
-            RMSD['at aligned'] = RMSD_measure(at_input_atoms)   
+            RMSD_aligned = RMSD_measure_de_novo(at_input_atoms)   
+            seg_rmsd = RMSD_measure_aligned(at_input_atoms)   
+
     with open(g_var.final_dir+'structure_quality.dat', 'w') as qual_out:   
-        qual_out.write('\n{0:^10}{1:^25}{2:^10}\n'.format('output ','chain','RMSD ('+chr(197)+')'))
-        qual_out.write('{0:^10}{1:^25}{2:^10}\n'.format('-------','-----','---------'))
-        print('\n{0:^10}{1:^25}{2:^10}'.format('output ','chain','RMSD ('+chr(197)+')'))
-        print('{0:^10}{1:^25}{2:^10}'.format('-------','-----','---------'))
-        for rmsd in RMSD:
-            for chain in RMSD[rmsd]:
-                qual_out.write('{0:^10}{1:^25}{2:^10}\n'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
-                print('{0:^10}{1:^25}{2:^10}'.format(rmsd, str(chain), float(RMSD[rmsd][chain])))
+        line_1   = ' chain    De novo BB RMSD ('+chr(197)+')'
+        line_2   = ' -----    -------------------'
+        if 'seg_rmsd' in locals():
+            line_1+= '    Aligned BB RMSD ('+chr(197)+')    Seg backbone RMSD ('+chr(197)+')'
+            line_2+= '    -------------------    ---------------------'
+        qual_out.write(line_1+'\n'+line_2+'\n')
+        print(line_1+'\n'+line_2)
+
+        for chain in RMSD_de_novo:
+            line = ' {0:^5}{1:^28}'.format(str(chain), float(RMSD_de_novo[chain]))
+            if 'seg_rmsd' in locals():
+                line += '{0:^18}'.format(float(RMSD_aligned[chain]))
+                if chain in seg_rmsd:
+                    line+= '{0:^28}'.format(', '.join(seg_rmsd[chain])) 
+            print(line)
+            qual_out.write(line+'\n')
         print('\nAll RMSDs have been saved in: \n'+g_var.final_dir+'structure_quality.dat\n')
 
-def RMSD_measure(structure_atoms):
+def RMSD_measure_de_novo(structure_atoms):
     RMSD_dict = {}
     for chain in range(g_var.system['PROTEIN']):
         at_centers=[]
@@ -630,27 +640,64 @@ def RMSD_measure(structure_atoms):
         for residue in structure_atoms[chain]:
         #### gets center of mass of each residue (note only backbone heavy atoms have a mass)
             at_centers_iter=[]
-            for atom in structure_atoms[chain][residue]:
-                at_centers_iter.append(np.append(structure_atoms[chain][residue][atom]['coord'],structure_atoms[chain][residue][atom]['frag_mass']))
-            try:
+            for atom in structure_atoms[chain][residue].values():
+                if atom['atom'] in g_var.res_top[atom['res_type']]['ATOMS']:
+                    at_centers_iter.append(np.append(atom['coord'],atom['frag_mass']))
+            if np.any(np.array(at_centers_iter)[:,3] > 0):
                 at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
-            except BaseException:
-                print('The fragment probably has no mass\n')
-                for atom in structure_atoms[chain][residue]:
-                    print(structure_atoms[chain][residue][atom])
-                sys.exit()
+            else:
+                sys.exit('Missing masses for RMSD')
+
     #### checks that the number of residues in the chain are the same between CG and AT
         if len(at_centers) != len(g_var.backbone_coords[chain]):
             sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
     number of CG residues '+str(len(g_var.backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
+
         cg_center = np.mean(np.array(g_var.backbone_coords[chain])[:,:3], axis=0)
         at_align = np.array(at_centers) - (np.mean(np.array(at_centers), axis=0) - cg_center)
-        xyz_rot_apply=at_mod.kabsch_rotate(np.array(at_align)-cg_center, np.array(np.array(g_var.backbone_coords[chain])[:,:3])-cg_center)
-        for at_val, atom in enumerate(at_align):
-            at_align[at_val] = at_mod.rotate_atom(atom, cg_center, xyz_rot_apply) 
-        #### finds distance between backbone COM and cg backbone beads
-        dist=np.sqrt((np.array(at_align) - np.array(g_var.backbone_coords[chain])[:,:3])**2)
-        RMSD_val = np.sqrt(np.mean(dist**2)) #### RMSD calculation
-        RMSD_dict[chain]=np.round(RMSD_val, 3)  #### stores RMSD in dictionary
+        at_align = RMSD_align(at_align, np.array(g_var.backbone_coords[chain])[:,:3])
+        RMSD_dict[chain]=Calculate_RMSD(np.array(at_align), np.array(g_var.backbone_coords[chain])[:,:3])  #### stores RMSD in dictionary
     return RMSD_dict
 
+def RMSD_align(coord_set_1, coord_set_2):
+    center = np.mean(coord_set_2, axis=0)
+    xyz_rot_apply=at_mod.kabsch_rotate(coord_set_1-center, coord_set_2-center)
+    ali= []
+    for at_val, atom in enumerate(coord_set_1):
+        ali.append( at_mod.rotate_atom(atom, center, xyz_rot_apply) )
+    return np.array(ali)
+
+def Calculate_RMSD(C1, C2):
+    dist=np.sqrt((C1 - C2)**2)
+    return np.round(np.sqrt(np.mean(dist**2)),3) #### RMSD calculation
+
+def get_coordinates(input_coord, P_R, chain):
+    coord_dict = {}
+    for residue_val, residue in input_coord[chain].items():
+        for seg_val, seg in enumerate(P_R):
+            if seg_val not in coord_dict:
+                coord_dict[seg_val]=[]
+            if residue_val in seg:
+                for atom in residue.values():
+                    if atom['atom'] in g_var.res_top[atom['res_type']]['ATOMS'] and atom['res_type'] in g_var.p_residues:
+                        coord_dict[seg_val].append(np.append(atom['coord'],atom['frag_mass']))
+                break
+    for segment in range(len(coord_dict)):
+        coord_dict[segment] = np.array(coord_dict[segment])
+    return coord_dict
+
+def RMSD_measure_aligned(Final_structure):
+    seg_rmsd={}
+    for chain in g_var.atomistic_protein_input_aligned:
+        initial_structure, chain_count = read_in.read_in_atomistic(g_var.working_dir+'PROTEIN/MIN/PROTEIN_aligned_'+str(chain)+'.pdb')
+        P_R = []
+        for key in g_var.atomistic_protein_input_aligned[chain].keys():
+            P_R.append(np.arange(int(key.split(':')[0]), int(key.split(':')[1])+1))
+        final_backbone = get_coordinates(Final_structure, P_R, chain)
+        initial_backbone = get_coordinates(initial_structure, P_R, 0)
+        seg_rmsd[chain]=[]
+        for segment in range(len(final_backbone)):
+            initial_backbone_fitted = RMSD_align(initial_backbone[segment][:,:3],final_backbone[segment][:,:3])
+            RMSD_val = Calculate_RMSD(np.array(initial_backbone_fitted), final_backbone[segment][:,:3])
+            seg_rmsd[chain].append(str(RMSD_val))
+    return seg_rmsd

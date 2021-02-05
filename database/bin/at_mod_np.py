@@ -28,7 +28,7 @@ def build_atomistic_system(residue_type, a):
             system['SOL'] = solvent_number
             write_solvent(system, atomistic_fragments, residue_type)   
     else:
-        if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb'):
+        if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
             atomistic_fragments[residue_type], system[residue_type] = at_np_solvent(residue_type, g_var.cg_residues[residue_type])
             write_solvent(system, atomistic_fragments, residue_type)
         else:

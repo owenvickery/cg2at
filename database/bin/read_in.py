@@ -205,7 +205,7 @@ def read_in_atomistic(protein):
     else:
         chain_count = 0
 #### read in pdb
-    ter_residues=[]
+    new_chain= False
     with open(protein, 'r') as pdb_input:
         pdb_lines_atoms = filter_input(pdb_input.readlines(), False)
         atomistic_protein_input[chain_count]={}
@@ -214,19 +214,27 @@ def read_in_atomistic(protein):
                 line_sep['residue_name'] = g_var.alt_res_name[line_sep['residue_name']]
             if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in g_var.mod_residues:
                 if line_sep['residue_name'] in g_var.p_residues:
+                    if 'line_sep_prev' not in locals():
+                        line_sep_prev = line_sep.copy()
+                        line_sep_prev['residue_id'] = 'X'
                     #### sorts out wrong atoms in terminal residues
                     if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
                         line_sep['atom_name']='O'
                 #### makes C_terminal connecting atom variable  
                     if 'prev_atom_coord' in locals():
                         line_sep['x'],line_sep['y'],line_sep['z'] = brute_mic(prev_atom_coord, [line_sep['x'],line_sep['y'],line_sep['z']])
-                    if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']:
 
-                        if g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms'][line_sep['atom_name']] > 0:
-                            if 'C_ter' in locals() and len(g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']) <=1:
-                                ter_residues.append(line_sep['residue_id'])
+                    if line_sep['residue_id'] !=  line_sep_prev['residue_id']:
+                        dir_list = []
+                        for directions in g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms'].values():
+                            dir_list.append(directions)
+                        line_sep_prev = line_sep.copy()
+                        if not np.any(np.array(dir_list) < 0 ) or new_chain:
+                            if len(atomistic_protein_input[chain_count]) != 0 :
                                 chain_count+=1
                                 atomistic_protein_input[chain_count]={}
+                    if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']:
+                        if g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms'][line_sep['atom_name']] > 0:
                             C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
                             C_resid=line_sep['residue_id']
                         elif 'C_ter' in locals():
@@ -235,9 +243,10 @@ def read_in_atomistic(protein):
                             dist=gen.calculate_distance(N_ter, C_ter)
                             if C_resid != N_resid and dist > 3.5:
                                 del N_ter, C_ter
-                                ter_residues.append(line_sep['residue_id'])
                                 chain_count+=1
                                 atomistic_protein_input[chain_count]={} ### new chain key
+
+                    
                     prev_atom_coord = [line_sep['x'],line_sep['y'],line_sep['z']]
                     if line_sep['residue_id'] not in atomistic_protein_input[chain_count]:  ## if protein does not exist add to dict
                         atomistic_protein_input[chain_count][line_sep['residue_id']]={}

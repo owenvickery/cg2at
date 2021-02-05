@@ -575,9 +575,9 @@ def create_aligned():
     print('\nCreating aligned system') 
     at_mod.merge_system_pdbs('_aligned') ## create restraint positions for aligned system
     aligned_atoms, chain_count = read_in.read_in_atomistic(g_var.working_dir+'PROTEIN/PROTEIN_aligned_merged.pdb') ## reads in final pdb
-    rmsd = at_mod_p.RMSD_measure(aligned_atoms) ## gets rmsd of de novo
+    rmsd = at_mod_p.RMSD_measure_de_novo(aligned_atoms) ## gets rmsd of de novo
     for chain in rmsd:
-        if rmsd[chain] > 3.5:
+        if rmsd[chain] > 3:
             print('Your aligned structure is quite far from the CG, therefore running gentle steering\n')
             print_rmsd(rmsd)
             steer = ['very_low', 'low', 'mid', 'high', 'very_high', 'ultra']
