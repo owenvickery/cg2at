@@ -97,21 +97,25 @@ def at_np_solvent(cg_residue_type,cg_residues):
                 atomistic_fragments = at_mod.apply_rotations(atomistic_fragments,cg_resid, group_fit, center, xyz_rot_apply)
         if cg_residue_type not in ['SOL','ION']:
             atomistic_fragments[cg_resid] = at_mod.check_hydrogens(atomistic_fragments[cg_resid])
-        sol_p_bead = 0
-
-        dict_start = np.min(list(atomistic_fragments[cg_resid].keys()))
-        for atom_val in range(dict_start, len(atomistic_fragments[cg_resid])+dict_start):#.items():
-            atom = atomistic_fragments[cg_resid][atom_val]
-            atom['atom_name'] = atom.pop('atom')
-            atom['residue_name'] = atom.pop('res_type')
-            atom['residue_id'] = atom.pop('resid')
-            atomistic_fragments_list.append(atom)    
-            if atom['resid_ori'] > sol_p_bead:
-                sol_p_bead = atom['resid_ori']
+        atomistic_fragments_list, sol_p_bead =  sort_np_dictionary(atomistic_fragments[cg_resid], atomistic_fragments_list)
     if cg_residue_type in ['SOL']:
         return atomistic_fragments_list, sol_p_bead*len(cg_residues)
     else:
         return atomistic_fragments_list, len(atomistic_fragments)
+
+def sort_np_dictionary(atomistic_fragments, atomistic_fragments_list):
+    sol_p_bead = 0
+    dict_start = np.min(list(atomistic_fragments.keys()))
+    for atom_val in range(dict_start, len(atomistic_fragments)+dict_start):
+        atom = atomistic_fragments[atom_val]
+        atom['atom_name'] = atom.pop('atom')
+        atom['residue_name'] = atom.pop('res_type')
+        atom['residue_id'] = atom.pop('resid')
+        atomistic_fragments_list.append(atom)    
+        if atom['resid_ori'] > sol_p_bead:
+            sol_p_bead = atom['resid_ori']
+    return atomistic_fragments_list, sol_p_bead 
+
 
 def convert_question(res_type, cg_residue_type, bead):
     if cg_residue_type == 'SOL' and g_var.water in res_type:

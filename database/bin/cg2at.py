@@ -13,7 +13,7 @@ if __name__ == '__main__':
     ## hardcoded varibles used by the script
     ## I've tried to make them as comprehensive as possible but they may need updating occasionally
     g_var.version = 0.2
-    g_var.script_update = '05-02-2021'
+    g_var.script_update = '16-02-2021'
 
     g_var.cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
 
