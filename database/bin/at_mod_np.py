@@ -50,7 +50,6 @@ def solvent_ion(system, atomistic_fragments, residue_type):
     skip = os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
     if not skip:
         pdb_ion = gen.create_pdb(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
-    # for resid in atomistic_fragments[residue_type]:
     for at_id, atom in enumerate(atomistic_fragments[residue_type]):
     #### write ion coordinate out
         if not skip:
@@ -99,7 +98,10 @@ def at_np_solvent(cg_residue_type,cg_residues):
         if cg_residue_type not in ['SOL','ION']:
             atomistic_fragments[cg_resid] = at_mod.check_hydrogens(atomistic_fragments[cg_resid])
         sol_p_bead = 0
-        for atom in atomistic_fragments[cg_resid].values():
+
+        dict_start = np.min(list(atomistic_fragments[cg_resid].keys()))
+        for atom_val in range(dict_start, len(atomistic_fragments[cg_resid])+dict_start):#.items():
+            atom = atomistic_fragments[cg_resid][atom_val]
             atom['atom_name'] = atom.pop('atom')
             atom['residue_name'] = atom.pop('res_type')
             atom['residue_id'] = atom.pop('resid')
