@@ -1,6 +1,6 @@
 [ moleculetype ]
 ; name	nrexcl
-CARD_4 	     3
+CARD 	     3
 
 [ atoms ]
 ; nr	type	resnr	residu	atom	cgnr	charge	mass
