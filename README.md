@@ -5,6 +5,7 @@
 [![Github Releases](https://img.shields.io/github/v/release/owenvickery/cg2at)](https://github.com/owenvickery/cg2at/releases)
 [![Anaconda-Server Badge](https://anaconda.org/stansfeld_rg/cg2at/badges/latest_release_date.svg)](https://anaconda.org/stansfeld_rg/cg2at)
 [![Anaconda-Server Badge](https://anaconda.org/stansfeld_rg/cg2at/badges/installer/conda.svg)](https://conda.anaconda.org/stansfeld_rg)
+[![Anaconda-Server Badge](https://anaconda.org/stansfeld_rg/cg2at/badges/downloads.svg)](https://anaconda.org/stansfeld_rg/cg2at)
 
 <p align="center">
                                    <b>**CG2AT v2 README**</b>
