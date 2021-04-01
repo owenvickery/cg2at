@@ -79,13 +79,13 @@ class TestSum(unittest.TestCase):
         self.assertEqual(cm.exception.code, 'There is a issue in one of the fragment headers: \n[ BB AA ]')
 
     def test_sep_fragments_topology(self):
-        results = gen.sep_fragments_topology(run_dir+'database_test/fragments/test_1/protein/PHE/PHE')
+        results = gen.sep_fragments_topology('PHE', run_dir+'database_test/fragments/test_1/protein/PHE/PHE')
         out = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'group_max': 2, 'SC1': 1, 'SC2': 1, 'SC3': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}}
         self.assertEqual(results, out)
 
     def test_empty_sep_fragments_topology(self):
         empty = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': []}, 'GROUPS': {'group_max': 1}, 'CONNECT': {'atoms': {}}}
-        results = gen.sep_fragments_topology(run_dir+'PHE/missing')
+        results = gen.sep_fragments_topology('PHE', run_dir+'PHE/missing')
         self.assertEqual(results, empty)
 
     def test_get_fragment_topology(self):
@@ -273,24 +273,22 @@ class TestSum(unittest.TestCase):
     @patch('builtins.input', return_value='0')
     def test_ask_for_water_model(self, input):
         water = ['tip3p', 'tip4p', 'spc', 'spce']
-        directory = [run_dir+'database_test/fragments/test_1/non_protein/']
-        result1, result2 = gen.ask_for_water_model(directory, water)
-        self.assertEqual(result1, run_dir+'database_test/fragments/test_1/non_protein/SOL/')
-        self.assertEqual(result2, 'tip3p')
+        result = gen.ask_for_water_model(water)
+        self.assertEqual(result, 'tip3p')
 
     @patch('builtins.input', return_value='0')
     def test_check_water_molecules(self, input):
-        g_var.np_directories = [[run_dir+'database_test/fragments/test_1/non_protein/', 'SOL']]
+        g_var.sol_directories = [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]
         gen.check_water_molecules(True)
-        self.assertIsNone(np.testing.assert_array_equal(g_var.water_info, [[run_dir+'database_test/fragments/test_1/non_protein/SOL', 'tip3p', 'tip4p', 'spc', 'spce']]))
-        self.assertEqual(g_var.water_dir, run_dir+'database_test/fragments/test_1/non_protein/SOL/')
-        self.assertEqual(g_var.water, 'tip3p')
-        self.assertEqual(g_var.opt['w'], 'tip3p')
+        self.assertIsNone(np.testing.assert_array_equal(g_var.water_info, ['TIP3P', 'TIP4P', 'SPC', 'SPCE']))
+        self.assertEqual(g_var.water, 'TIP3P')
+        self.assertEqual(g_var.opt['w'], 'TIP3P')
+        self.assertEqual(g_var.args.w, 'TIP3P')
 
     def test_fetch_bond_info_atoms_heavy_linked(self):
         residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = 'PHE', ['N', 'NH1', '-0.470', '0'], [], {}, [], {}, []
-        at_mass = {'NH1': 14.007, 'CT1': 12.011, 'CT2': 12.011, 'CA': 12.011, 'C': 12.011, 'O': 15.999}
-        residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = gen.fetch_bond_info_atoms_linked(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict, at_mass)
+        g_var.at_mass = {'NH1': 14.007, 'CT1': 12.011, 'CT2': 12.011, 'CA': 12.011, 'C': 12.011, 'O': 15.999}
+        residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = gen.fetch_bond_info_atoms_linked(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict)
         self.assertEqual(residue_list, ['PHE'])
         self.assertEqual(atom_conversion, {'N': 1})
         self.assertEqual(H_dict, [])
@@ -299,8 +297,8 @@ class TestSum(unittest.TestCase):
 
     def test_fetch_bond_info_atoms_H_linked(self):
         residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = 'PHE', ['HN', 'H', '0.310', '1'], ['PHE'], {'N': 1}, [], {'N': 14.007}, ['N']
-        at_mass = {'NH1': 14.007, 'CT1': 12.011, 'CT2': 12.011, 'CA': 12.011, 'C': 12.011, 'O': 15.999}
-        residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = gen.fetch_bond_info_atoms_linked(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict, at_mass)
+        g_var.at_mass = {'NH1': 14.007, 'CT1': 12.011, 'CT2': 12.011, 'CA': 12.011, 'C': 12.011, 'O': 15.999}
+        residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = gen.fetch_bond_info_atoms_linked(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict)
         self.assertEqual(residue_list, ['PHE'])
         self.assertEqual(atom_conversion, {'N': 1, 'HN': 2})
         self.assertEqual(H_dict, ['HN'])
@@ -383,8 +381,10 @@ class TestSum(unittest.TestCase):
         residue = 'PHE'
         amino_acid_itp = [run_dir+'database_test/forcefields/charmm36-mar2019-updated.ff/merged.rtp']
         location = run_dir+'database_test/fragments/test_1/protein/PHE/PHE.pdb'
-        res_at_mass = {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'CG': 12.011, 'CD1': 12.011, 'CE1': 12.011, 'CZ': 12.011, 'CD2': 12.011, 'CE2': 12.011, 'C': 12.011, 'O': 15.999}
+        res_at_mass = {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'CG': 12.011, 'CD1': 12.011, 'CE1': 12.011, 
+                       'CZ': 12.011, 'CD2': 12.011, 'CE2': 12.011, 'C': 12.011, 'O': 15.999}
         at_mass = {'NH1': 14.007, 'CT1': 12.011, 'CT2': 12.011, 'CA': 12.011, 'C': 12.011, 'O': 15.999}
+        g_var.at_mass = {'NH1': 14.007, 'CT1': 12.011, 'CT2': 12.011, 'CA': 12.011, 'C': 12.011, 'O': 15.999}
         hydrogen, heavy_bond, residue_list, res_at_mass, amide_hydrogen = gen.fetch_bond_info(residue, amino_acid_itp, at_mass, location)
         self.assertEqual(hydrogen, {'N': ['HN'], 'CA': ['HA'], 'CB': ['HB1', 'HB2'], 'CD1': ['HD1'], 'CD2': ['HD2'], 'CE1': ['HE1'], 'CE2': ['HE2'], 'CZ': ['HZ']})
         self.assertEqual(heavy_bond, {3: [2, 4], 2: [3, 1, 10], 4: [3, 8, 5], 8: [4, 9], 6: [5, 7], 5: [6, 4], 7: [9, 6], 9: [7, 8], 1: [2], 10: [2, 11], 11: [10]})
@@ -424,12 +424,7 @@ class TestSum(unittest.TestCase):
     def test_fetch_atoms_water_ion(self):
         at_mass_water = {'OT':15.99940, 'OW':15.99940, 'OWT4':15.99940, 'MWT4':15.99940, 'HT':1, 'HW':1, 'HWT4':1}
         at_mass = gen.fetch_atoms_water_ion(run_dir+'database_test/fragments/test_1/non_protein/SOL/', at_mass_water)
-        self.assertEqual(at_mass, {'OW': 15.9994, 'HW1': 1.0, 'HW2': 1.0, 'MW': 15.9994})
-
-    def test_create_ion_list(self):
-        gen.create_ion_list(run_dir+'database_test/fragments/test_1/non_protein/ION/ION.pdb')
-        self.assertEqual(g_var.ions, ['NA+', 'NA', 'CL-', 'CL', 'K+', 'K'])
-        
+        self.assertEqual(at_mass, {'OW': 15.9994, 'HW1': 1.0, 'HW2': 1.0, 'MW': 15.9994})     
 
     def test_fetch_fragment(self):
         g_var.res_top = {}
@@ -445,7 +440,7 @@ class TestSum(unittest.TestCase):
         g_var.forcefield = 'charmm36-mar2019-updated.ff'
         g_var.p_residues =  ['PHE']
         g_var.p_directories =[[run_dir+'database_test/fragments/test_1/protein/', 'PHE']]
-        gen.fetch_fragment()
+        gen.fetch_fragment_multi()
         self.assertEqual(g_var.res_top['PHE'], res_top_correct)
         self.assertEqual(len(g_var.res_top), 3)
 
@@ -491,13 +486,13 @@ class TestSum(unittest.TestCase):
             gen.database_information()
         self.assertEqual(cm.exception.code, output)
 
-    def test_fragments_in_use(self):
-        output = '\n\n               The following residues are available in the database: test_1               \n------------------------------------------------------------------------------------------\n\n\n                                   Non protein residues                                   \n                                   --------------------                                   \n                                      CHOL, ION, SOL                                      \n\n                                     Protein residues                                     \n                                     ----------------                                     \n                                           PHE                                            \n\n                                Modified protein residues                                 \n                                -------------------------                                 \n                                                                                          \n\n                                  Other linked residues                                   \n                                  ---------------------                                   \n                                                                                          \n\n                                      Water residues                                      \n                                      --------------                                      \n                                 spc, spce, tip3p, tip4p                                  \n\n------------------------------------------------------------------------------------------\n\n'
-        g_var.forcefield_available =['charmm36-mar2019-updated']
-        g_var.fragments_available = ['test_1']
-        g_var.args.fg=['test_1']
-        to_print = gen.fragments_in_use('')
-        self.assertEqual(to_print, output)
+    # def test_fragments_in_use(self):
+    #     output = '\n\n               The following residues are available in the database: test_1               \n------------------------------------------------------------------------------------------\n\n\n                                   Non protein residues                                   \n                                   --------------------                                   \n                                      CHOL, ION, SOL                                      \n\n                                     Protein residues                                     \n                                     ----------------                                     \n                                           PHE                                            \n\n                                Modified protein residues                                 \n                                -------------------------                                 \n                                                                                          \n\n                                  Other linked residues                                   \n                                  ---------------------                                   \n                                                                                          \n\n                                      Water residues                                      \n                                      --------------                                      \n                                 spc, spce, tip3p, tip4p                                  \n\n------------------------------------------------------------------------------------------\n\n'
+    #     g_var.forcefield_available =['charmm36-mar2019-updated']
+    #     g_var.fragments_available = ['test_1']
+    #     g_var.args.fg=['test_1']
+    #     to_print = gen.fragments_in_use('')
+    #     self.assertEqual(to_print, output)
 
     def test_create_pdb(self):
         g_var.box_vec = 'test box vec '
@@ -528,14 +523,10 @@ class TestSum(unittest.TestCase):
     def test_print_water_selection(self):
         g_var.args.w = 'test'
         water = ['tip3p', 'tip4p', 'spc', 'spce']
-        directory = [run_dir+'database_test/fragments/test_1/non_protein/']
         correct  = "\nThe water type test doesn't exist\n\nPlease select a water molecule from below:\n\n     Selection              water_molecule        \n     ---------                ----------          \n         0                      tip3p             \n         1                      tip4p             \n         2                       spc              \n         3                       spce             \n"
-        result = gen.print_water_selection(water, directory)
+        result = gen.print_water_selection(water)
         self.assertEqual(result, correct)
-        g_var.args.w = None
-        with self.assertRaises(SystemExit) as cm:
-            result = gen.print_water_selection([], directory)
-        self.assertEqual(cm.exception.code, '\nCannot find any water models in: \n\n'+directory[0]+'SOL/'+'\n')
+
 
     def test_trunc_coord(self):
         xyz = [83.97299999999998, 44.467999999999996, 28.028000000000002]
@@ -569,25 +560,25 @@ class TestSum(unittest.TestCase):
 
 ######## read_in file
     def test_add_residue_to_dictionary(self):
-        g_var.p_residues, g_var.np_residues, g_var.o_residues = ['PHE'], ['CHOL', 'NA', 'W', 'ION'], ['DNA']
-        g_var.cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
-        line_test = [{'residue_name':'CHOL'}, {'residue_name':'PHE'}, {'residue_name':'ION'}, {'residue_name':'NA'}, {'residue_name':'W'}, {'residue_name':'DNA'}, {'residue_name':'SKIP'}]
+        g_var.p_residues, g_var.np_residues, g_var.sol_residues, g_var.ion_residues, g_var.o_residues = ['PHE'], ['CHOL'], ['W'], ['NA'], ['DNA']
+        # g_var.water_info = ['W', 'SOL', 'WN', 'WF', 'PW']
+        line_test = [{'residue_name':'CHOL'}, {'residue_name':'PHE'}, {'residue_name':'NA'}, {'residue_name':'W'}, {'residue_name':'DNA'}, {'residue_name':'SKIP'}]
         for l_val, l in enumerate(line_test):
             read_in.add_residue_to_dictionary(l)
-        self.assertEqual(g_var.cg_residues, {'CHOL': {}, 'PROTEIN': {}, 'ION': {}, 'SOL': {}, 'NA': {}, 'OTHER': {}})
+        self.assertEqual(g_var.cg_residues, {'CHOL': {}, 'PROTEIN': {}, 'NA': {}, 'W': {}, 'OTHER': {}})
         with self.assertRaises(SystemExit) as cm:
             read_in.add_residue_to_dictionary({'residue_name':'AAA'})
         self.assertEqual(cm.exception.code, '\nAAA is not in the fragment database!')
 
-    def test_add_to_cg_database(self):
-        g_var.cg_residues = {'ION':{}, 'CHOL':{}, 'W':{}, 'SOL':{}, 'DNA':{}, 'PROTEIN':{}, 'OTHER':{}, 'NA':{}}
-        g_var.p_residues, g_var.np_residues, g_var.o_residues = ['PHE'], ['CHOL', 'NA', 'W', 'ION'], ['DNA']
-        g_var.water = 'tip3p'
-        line_test = [{'residue_name':'CHOL', 'atom_name':'test_chol'}, {'residue_name':'PHE', 'atom_name':'test_phe'}, {'residue_name':'ION', 'atom_name':'test_ion'}, {'residue_name':'NA', 'atom_name':'test_na'}, {'residue_name':'W', 'atom_name':'test_w'}, {'residue_name':'DNA', 'atom_name':'test_dna'}]
-        output = {'ION': {10: {'test_ion': {}}}, 'CHOL': {10: {'test_ion': {}}}, 'W': {10: {'test_ion': {}}}, 'SOL': {10: {'tip3p': {'residue_name': 'SOL'}}}, 'DNA': {}, 'PROTEIN': {10: {'test_ion': {}}}, 'OTHER': {10: {'test_ion': {}}}, 'NA': {10: {'test_ion': {}}}}
-        for l_val, l in enumerate(line_test):
-            read_in.add_to_cg_database(l, 10, {'test_ion':{}})   
-        self.assertEqual(g_var.cg_residues, output)
+    # def test_add_to_cg_database(self):
+    #     g_var.cg_residues = {'ION':{}, 'CHOL':{}, 'W':{}, 'DNA':{}, 'PROTEIN':{}, 'OTHER':{}, 'NA':{}}
+    #     g_var.p_residues, g_var.np_residues, g_var.sol_residues, g_var.ion_residues, g_var.o_residues = ['PHE'], ['CHOL'], ['W'], ['NA'], ['DNA']
+    #     g_var.water = 'tip3p'
+    #     line_test = [{'residue_name':'CHOL', 'atom_name':'test_chol'}, {'residue_name':'PHE', 'atom_name':'test_phe'}, {'residue_name':'ION', 'atom_name':'test_ion'}, {'residue_name':'NA', 'atom_name':'test_na'}, {'residue_name':'W', 'atom_name':'test_w'}, {'residue_name':'DNA', 'atom_name':'test_dna'}]
+    #     output = {'ION': {10: {'test_ion': {}}}, 'CHOL': {10: {'test_ion': {}}}, 'W': {10: {'test_ion': {}}}, 'SOL': {10: {'tip3p': {'residue_name': 'SOL'}}}, 'DNA': {}, 'PROTEIN': {10: {'test_ion': {}}}, 'OTHER': {10: {'test_ion': {}}}, 'NA': {10: {'test_ion': {}}}}
+    #     for l_val, l in enumerate(line_test):
+    #         read_in.add_to_cg_database(l, 10, {'test_ion':{}})   
+    #     self.assertEqual(g_var.cg_residues, output)
 
     def test_check_new_box(self):
         box = [100,100,100] 
@@ -647,16 +638,16 @@ class TestSum(unittest.TestCase):
             read_in.filter_input(input_no_box)
         self.assertEqual(no_box.exception.code, 'The input file is missing the Box vectors')
 
-    def test_read_initial_cg_pdb(self):
-        g_var.p_residues, g_var.np_residues = ['PHE'], ['CHOL', 'NA', 'W', 'ION']
-        g_var.cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
-        g_var.water = 'tip3p'
-        g_var.cg_residues = {}
-        cg_residues_correct = {'SOL': {0: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([54.07 ,  9.145,  7.973])}}, 1: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([108.503,  91.79 ,  90.375])}}, 2: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([60.503, 61.79 , 60.375])}}, 3: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([70.503, 71.79 , 70.375])}}}, 'ION': {1: {'CL-': {'residue_name': 'ION', 'coord': np.array([108.503,  91.79 ,  90.375])}}, 2: {'CL-': {'residue_name': 'ION', 'coord': np.array([60.503, 61.79 , 60.375])}}, 3: {'NA+': {'residue_name': 'ION', 'coord': np.array([70.503, 71.79 , 70.375])}}}}
-        g_var.input_directory = run_dir+'/inputs/CG/'
-        box_vec = read_in.read_initial_cg_pdb(True)
-        self.assertEqual(box_vec, 'CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1\n')
-        self.assertCountEqual(g_var.cg_residues, cg_residues_correct)
+    # def test_read_initial_cg_pdb(self):
+    #     g_var.p_residues, g_var.np_residues, g_var.sol_residues, g_var.ion_residues = ['PHE'], ['CHOL'], ['W'], ['NA']
+    #     g_var.cg_water_types = ['W']
+    #     g_var.args.w = 'tip3p'
+    #     g_var.cg_residues = {}
+    #     cg_residues_correct = {'SOL': {0: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([54.07 ,  9.145,  7.973])}}, 1: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([108.503,  91.79 ,  90.375])}}, 2: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([60.503, 61.79 , 60.375])}}, 3: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([70.503, 71.79 , 70.375])}}}, 'ION': {1: {'CL-': {'residue_name': 'ION', 'coord': np.array([108.503,  91.79 ,  90.375])}}, 2: {'CL-': {'residue_name': 'ION', 'coord': np.array([60.503, 61.79 , 60.375])}}, 3: {'NA+': {'residue_name': 'ION', 'coord': np.array([70.503, 71.79 , 70.375])}}}}
+    #     g_var.input_directory = run_dir+'/inputs/CG/'
+    #     box_vec = read_in.read_initial_cg_pdb(True)
+    #     self.assertEqual(box_vec, 'CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1\n')
+    #     self.assertCountEqual(g_var.cg_residues, cg_residues_correct)
 
     def test_fix_pbc(self):
         g_var.cg_residues = {'PROTEIN': {0: {'BB': {'residue_name': 'ALA', 'coord': np.array([41.938, 58.822, 52.274])}}, 1: {'BB': {'residue_name': 'ALA', 'coord': np.array([75.016, 60.271, 50.624])}}, 2: {'BB': {'residue_name': 'ALA', 'coord': np.array([77.956, 62.112, 52.127])}}, 3: {'BB': {'residue_name': 'ALA', 'coord': np.array([ 1.118, 63.4  , 50.505])}}, 4: {'BB': {'residue_name': 'ALA', 'coord': np.array([ 3.974, 65.397, 51.969])}}}}
@@ -961,7 +952,8 @@ class TestSum(unittest.TestCase):
                        5: {'coord': np.array([66.6741639 , 56.08565711, 53.71077245]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}} 
         residue_number, BB_bead = 0, 'BB'
         at_connections_cor,cg_connections_cor = np.array([np.array([67.0521639 , 55.10465711, 53.35077245])]), np.array([np.array([69.286, 56.581, 51.125])])
-        at_connections,cg_connections, new_chain = at_mod.BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead)
+        at_connections,cg_connections, new_chain = at_mod.BB_connectivity(at_connections,cg_connections, cg_residues, 
+                                                                        at_residues, residue_number, BB_bead, 'ALA')
         np.testing.assert_array_almost_equal(at_connections,at_connections_cor)
         np.testing.assert_array_almost_equal(cg_connections,cg_connections_cor)
         self.assertFalse(new_chain, 'Exception raised')
@@ -981,7 +973,8 @@ class TestSum(unittest.TestCase):
                        5: {'coord': np.array([76.2441639 , 60.01965711, 49.37777245]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}} 
         residue_number, BB_bead = 1, 'BB'
         at_connections_cor,cg_connections_cor = np.array([ np.array([74.6511639 , 58.20165711, 48.49577245]), np.array([76.6221639 , 59.03865711, 49.01777245])]), np.array([ np.array([72.878, 57.293, 50.09 ]), np.array([78.893, 60.584, 49.962])])
-        at_connections,cg_connections, new_chain = at_mod.BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead)
+        at_connections,cg_connections, new_chain = at_mod.BB_connectivity(at_connections,cg_connections, cg_residues, 
+                                                                            at_residues, residue_number, BB_bead, 'ALA')
         np.testing.assert_array_almost_equal(at_connections,at_connections_cor)
         np.testing.assert_array_almost_equal(cg_connections,cg_connections_cor)
         self.assertFalse(new_chain, 'Exception raised') 
@@ -1001,7 +994,8 @@ class TestSum(unittest.TestCase):
                        5: {'coord': np.array([79.2701639 , 61.69965711, 50.89877245]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}}
         residue_number, BB_bead = 2, 'BB'
         at_connections_cor,cg_connections_cor = np.array([np.array([77.6771639 , 59.88165711, 50.01677245])]), np.array([np.array([75.867, 58.904, 48.441])])
-        at_connections,cg_connections, new_chain = at_mod.BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead)
+        at_connections,cg_connections, new_chain = at_mod.BB_connectivity(at_connections,cg_connections, cg_residues, 
+                                                                            at_residues, residue_number, BB_bead, 'ALA')
         np.testing.assert_array_almost_equal(at_connections,at_connections_cor)
         np.testing.assert_array_almost_equal(cg_connections,cg_connections_cor)
         self.assertTrue(new_chain, 'Exception raised') 

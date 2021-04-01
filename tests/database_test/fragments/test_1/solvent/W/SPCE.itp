@@ -1,7 +1,7 @@
 
 [ moleculetype ]
 ; molname	nrexcl
-SOL		2
+spce		2
 
 [ atoms ]
 ;	nr	 type  resnr residue  atom	 cgnr	  charge	   mass
