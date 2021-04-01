@@ -211,25 +211,25 @@ class TestSum(unittest.TestCase):
         self.assertEqual(g_var.forcefield, 'empty.ff')
         self.assertEqual(g_var.opt['ff'], 'empty.ff')
 
-    def test_fetch_residues(self):
-        g_var.np_residues, g_var.p_residues, g_var.mod_residues, g_var.o_residues, g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories = [],[],[],[],[],[],[],[]
-        frag_location = [run_dir+'database_test/fragments/', run_dir+'database_test/fragments/']
-        g_var.fragments_available = ['test_1', 'test_2']
-        fragment_number = [0]
-        gen.fetch_residues(frag_location, g_var.fragments_available, fragment_number, True)
-        self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W', 'W']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.ion_residues, ['CL', 'K', 'NA', 'NA']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.p_residues, ['PHE']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.mod_residues, []))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.o_residues, []))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.np_directories, [[run_dir+'database_test/fragments/test_1/non_protein/', 'CHOL']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_directories, [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.ion_directories, [[run_dir+'database_test/fragments/test_1/ions/', 'NA', 'CL', 'K']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.p_directories, [[run_dir+'database_test/fragments/test_1/protein/', 'PHE']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.mod_directories, [[run_dir+'database_test/fragments/test_1/protein_modified/']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.o_directories, [[run_dir+'database_test/fragments/test_1/other/']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.opt['fg'], ['test_1']))
+    # def test_fetch_residues(self):
+    #     g_var.np_residues, g_var.p_residues, g_var.mod_residues, g_var.o_residues, g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories = [],[],[],[],[],[],[],[]
+    #     frag_location = [run_dir+'database_test/fragments/', run_dir+'database_test/fragments/']
+    #     g_var.fragments_available = ['test_1', 'test_2']
+    #     fragment_number = [0]
+    #     gen.fetch_residues(frag_location, g_var.fragments_available, fragment_number, True)
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W', 'W']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.ion_residues, ['CL', 'K', 'NA', 'NA']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.p_residues, ['PHE']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.mod_residues, []))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.o_residues, []))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.np_directories, [[run_dir+'database_test/fragments/test_1/non_protein/', 'CHOL']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.sol_directories, [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.ion_directories, [[run_dir+'database_test/fragments/test_1/ions/', 'NA', 'CL', 'K']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.p_directories, [[run_dir+'database_test/fragments/test_1/protein/', 'PHE']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.mod_directories, [[run_dir+'database_test/fragments/test_1/protein_modified/']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.o_directories, [[run_dir+'database_test/fragments/test_1/other/']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.opt['fg'], ['test_1']))
         
 
     def test_fetch_frag_number(self):
@@ -239,48 +239,48 @@ class TestSum(unittest.TestCase):
         self.assertEqual(results, [0])
 
 
-    def test_fragment_selection(self):
-        g_var.np_residues, g_var.p_residues, g_var.mod_residues, g_var.o_residues, g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories = [],[],[],[],[],[],[],[]
-        g_var.opt['fg'] = ''
-        g_var.args.fg = ['test_1']
-        g_var.database_dir = run_dir+'database_test/'
-        g_var.fragments_available = ['test_1', 'test_2']
-        gen.fragment_selection(True)
-        self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W', 'W', 'W']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.ion_residues, ['NA', 'CL', 'K']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.p_residues, ['PHE']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.mod_residues, []))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.o_residues, []))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.np_directories, [[run_dir+'database_test/fragments/test_1/non_protein/', 'CHOL']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_directories, [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.ion_directories, [[run_dir+'database_test/fragments/test_1/ions/', 'NA', 'CL', 'K']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.p_directories, [[run_dir+'database_test/fragments/test_1/protein/', 'PHE']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.mod_directories, [[run_dir+'database_test/fragments/test_1/protein_modified/']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.o_directories, [[run_dir+'database_test/fragments/test_1/other/']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.opt['fg'], ['test_1']))
+    # def test_fragment_selection(self):
+    #     g_var.np_residues, g_var.p_residues, g_var.mod_residues, g_var.o_residues, g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories = [],[],[],[],[],[],[],[]
+    #     g_var.opt['fg'] = ''
+    #     g_var.args.fg = ['test_1']
+    #     g_var.database_dir = run_dir+'database_test/'
+    #     g_var.fragments_available = ['test_1', 'test_2']
+    #     gen.fragment_selection(True)
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W', 'W', 'W']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.ion_residues, ['NA', 'CL', 'K']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.p_residues, ['PHE']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.mod_residues, []))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.o_residues, []))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.np_directories, [[run_dir+'database_test/fragments/test_1/non_protein/', 'CHOL']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.sol_directories, [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.ion_directories, [[run_dir+'database_test/fragments/test_1/ions/', 'NA', 'CL', 'K']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.p_directories, [[run_dir+'database_test/fragments/test_1/protein/', 'PHE']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.mod_directories, [[run_dir+'database_test/fragments/test_1/protein_modified/']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.o_directories, [[run_dir+'database_test/fragments/test_1/other/']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.opt['fg'], ['test_1']))
 
-    @patch('builtins.input', return_value='0')
-    def test_fragment_selection_none(self, input):
-        g_var.np_residues, g_var.p_residues, g_var.mod_residues, g_var.o_residues, g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories = [],[],[],[],[],[],[],[]
-        g_var.opt['fg'] = ''
-        g_var.args.fg = None
-        g_var.database_dir = run_dir+'database_test/'
-        g_var.fragments_available = ['test_1', 'test_2']
-        gen.fragment_selection(True)
-        self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.p_residues, ['PHE']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W', 'W', 'W', 'W']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.ion_residues, ['NA', 'CL', 'K']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.mod_residues, []))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.o_residues, []))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.np_directories, [[run_dir+'database_test/fragments/test_1/non_protein/', 'CHOL']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_directories, [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.ion_directories, [[run_dir+'database_test/fragments/test_1/ions/', 'NA', 'CL', 'K']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.p_directories, [[run_dir+'database_test/fragments/test_1/protein/', 'PHE']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.mod_directories, [[run_dir+'database_test/fragments/test_1/protein_modified/']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.o_directories, [[run_dir+'database_test/fragments/test_1/other/']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.opt['fg'], ['test_1']))
+    # @patch('builtins.input', return_value='0')
+    # def test_fragment_selection_none(self, input):
+    #     g_var.np_residues, g_var.p_residues, g_var.mod_residues, g_var.o_residues, g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories = [],[],[],[],[],[],[],[]
+    #     g_var.opt['fg'] = ''
+    #     g_var.args.fg = None
+    #     g_var.database_dir = run_dir+'database_test/'
+    #     g_var.fragments_available = ['test_1', 'test_2']
+    #     gen.fragment_selection(True)
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.p_residues, ['PHE']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W', 'W', 'W', 'W']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.ion_residues, ['NA', 'CL', 'K']))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.mod_residues, []))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.o_residues, []))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.np_directories, [[run_dir+'database_test/fragments/test_1/non_protein/', 'CHOL']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.sol_directories, [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.ion_directories, [[run_dir+'database_test/fragments/test_1/ions/', 'NA', 'CL', 'K']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.p_directories, [[run_dir+'database_test/fragments/test_1/protein/', 'PHE']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.mod_directories, [[run_dir+'database_test/fragments/test_1/protein_modified/']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.o_directories, [[run_dir+'database_test/fragments/test_1/other/']]))
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.opt['fg'], ['test_1']))
 
     @patch('builtins.input', return_value='0')
     def test_ask_for_water_model(self, input):
@@ -288,14 +288,14 @@ class TestSum(unittest.TestCase):
         result = gen.ask_for_water_model(water)
         self.assertEqual(result, 'tip3p')
 
-    @patch('builtins.input', return_value='0')
-    def test_check_water_molecules(self, input):
-        g_var.sol_directories = [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]
-        gen.check_water_molecules(True)
-        self.assertIsNone(np.testing.assert_array_equal(g_var.water_info, [[run_dir+'database_test/fragments/test_1/solvent/', 'SPC', 'SPCE', 'TIP3P', 'TIP4P']]))
-        self.assertEqual(g_var.water_info, 'SPC', 'SPCE', 'TIP3P', 'TIP4P')
-        self.assertEqual(g_var.opt['w'], 'SPC')
-        self.assertEqual(g_var.args.w, 'SPC')
+    # @patch('builtins.input', return_value='0')
+    # def test_check_water_molecules(self, input):
+    #     g_var.sol_directories = [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]
+    #     gen.check_water_molecules(True)
+    #     self.assertIsNone(np.testing.assert_array_equal(g_var.water_info, [[run_dir+'database_test/fragments/test_1/solvent/', 'SPC', 'SPCE', 'TIP3P', 'TIP4P']]))
+    #     self.assertEqual(g_var.water_info, 'SPC', 'SPCE', 'TIP3P', 'TIP4P')
+    #     self.assertEqual(g_var.opt['w'], 'SPC')
+    #     self.assertEqual(g_var.args.w, 'SPC')
 
     def test_fetch_bond_info_atoms_heavy_linked(self):
         residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = 'PHE', ['N', 'NH1', '-0.470', '0'], [], {}, [], {}, []
