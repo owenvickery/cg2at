@@ -22,29 +22,33 @@ def read_itp(filename_itp, footer=False):
     molecule ={}
     mol_type = False
     atoms=False
-    with open(filename_itp, 'r') as itp_input:
-        for line in itp_input.readlines():
-            if not (line.isspace() or len(line) == 0) and not line.startswith(';'):
-                line_sep = line.split()
-                if line.startswith('[') and gen.strip_header(line) == 'moleculetype':
-                    mol_type = True
-                elif line.startswith('[') and gen.strip_header(line) == 'atoms':
-                    atoms, mol_type = True, False
-                elif line.startswith('['):    
-                    atoms = False
-                    mol_type = False  
-                elif mol_type:
-                    molecule[line_sep[0]] = []
-                    posre[line_sep[0]] = []
-                    mol = line_sep[0]
-                elif atoms:
-                    molecule[mol].append(line_sep[4])
-                    if len(line.split()) >= 8:
-                        if int(float(line.split()[7])) > 1:
-                            posre[mol].append('   {0:5}{1:3}{2:11}{3:11}{4:11}\n'.format(line.split()[0],1,50,50,50))
-                if '#ifdef NP' in line:
-                    footer=True
-    return molecule, posre, footer
+    if os.path.exists(filename_itp):
+        with open(filename_itp, 'r') as itp_input:
+            for line in itp_input.readlines():
+                if not (line.isspace() or len(line) == 0) and not line.startswith(';'):
+                    line_sep = line.split()
+                    if line.startswith('[') and gen.strip_header(line) == 'moleculetype':
+                        mol_type = True
+                    elif line.startswith('[') and gen.strip_header(line) == 'atoms':
+                        atoms, mol_type = True, False
+                    elif line.startswith('['):    
+                        atoms = False
+                        mol_type = False  
+                    elif mol_type:
+                        molecule[line_sep[0]] = []
+                        posre[line_sep[0]] = []
+                        mol = line_sep[0]
+                    elif atoms:
+                        molecule[mol].append(line_sep[4])
+                        if len(line.split()) >= 8:
+                            if int(float(line.split()[7])) > 1:
+                                posre[mol].append('   {0:5}{1:3}{2:11}{3:11}{4:11}\n'.format(line.split()[0],1,50,50,50))
+                    if '#ifdef NP' in line:
+                        footer=True
+        return molecule, posre, footer
+    else:
+        sys.exit('Cannot find itp file: ', filename_itp)
+    
 
 def check_frag_file(directory, molecule):
     exists = []
