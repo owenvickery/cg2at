@@ -1,6 +1,6 @@
 [ moleculetype ]
 ; name	nrexcl
-CARD_4 	     3
+CARD 	     3
 
 [ atoms ]
 ; nr	type	resnr	residu	atom	cgnr	charge	mass
@@ -2251,5 +2251,5 @@ CARD_4 	     3
 
 ; Include heavy atom position restraint file
 #ifdef NP
-#include "CARD_4_posre.itp"
+#include "CARD_posre.itp"
 #endif

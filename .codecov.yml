@@ -4,6 +4,6 @@ codecov:
 coverage:
   precision: 2
   round: down
-  range: "50...100"
+  range: "0...100"
   status:
     patch: off
