@@ -5,7 +5,7 @@ import numpy as np
 import time
 import multiprocessing as mp
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+'/database/bin')
-import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
+import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var, check_library
 
 
 if __name__ == '__main__':
@@ -13,22 +13,19 @@ if __name__ == '__main__':
     ## hardcoded varibles used by the script
     ## I've tried to make them as comprehensive as possible but they may need updating occasionally
     g_var.version = 0.2
-    g_var.script_update = '16-02-2021'
 
-    g_var.cg_water_types = ['W', 'SOL', 'WN', 'WF', 'PW']
+    g_var.script_update = '31-03-2021'
 
-    g_var.aas = {'ALA':'A', 'ARG':'R', 'ASN':'N', 'ASP':'D', 'CYS':'C', 'GLN':'Q', 'GLU':'E', 
-                'GLY':'G', 'HIS':'H', 'ILE':'I', 'LEU':'L', 'LYS':'K', 'MET':'M', 'PHE':'F', 
-                'PRO':'P', 'SER':'S', 'THR':'T', 'TRP':'W', 'TYR':'Y', 'VAL':'V'}
+    g_var.other = {'DA':'A', 'DG':'G', 'DC':'C', 'DT':'T', 'DAX':'A', 'DGX':'G', 'DCX':'C', 'DTX':'T'}
 
-    g_var.alt_res_name = {'HSD':'HIS', 'HSE':'HIS', 'HSP':'HIS', 'HIE':'HIS'}
-
-    g_var.other = {'DA':'A', 'DG':'G', 'DC':'C', 'DT':'T'}
-
-    g_var.termini_selections = {'charmm':{'N_TERMINAL':{'PRO':{'NH2+':0,'NH':1,'NH3+':2, '5TER':3, 'NONE':4},'NORM':{'NH3+':0,'NH2':1,'5TER':2, 'NONE':3},}, 
-                                          'C_TERMINAL':{'NORM':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4},'PRO':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4}}},
-                                'opls':{'N_TERMINAL':{'PRO':{'NH':2, 'NH3+':3, 'NONE':5},'NORM':{'NH3+':0,'NH2':2, 'NONE':3}}, 
-                                        'C_TERMINAL':{'NORM':{'COO-':0,'COOH':2, 'NONE':3},'PRO':{'COO-':0,'COOH':2, 'NONE':3}}}
+    g_var.termini_selections = {'charmm':{'N_TERMINAL':{'PRO':{'NH2+':0,'NH':1,'NH3+':2, '5TER':3, 'NONE':4},
+                                                        'NORM':{'NH3+':0,'NH2':1,'5TER':2, 'NONE':3},}, 
+                                          'C_TERMINAL':{'NORM':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4},
+                                                        'PRO':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4}}},
+                                'opls':{'N_TERMINAL':{'PRO':{'NH':2, 'NH3+':3, 'NONE':5},
+                                                      'NORM':{'NH3+':0,'NH2':2, 'NONE':3}}, 
+                                        'C_TERMINAL':{'NORM':{'COO-':0,'COOH':2, 'NONE':3},
+                                                     'PRO':{'COO-':0,'COOH':2, 'NONE':3}}}
                                 }
 
 # Nothing in the script below here should need changing by the user
@@ -36,6 +33,7 @@ if __name__ == '__main__':
     g_var.tc['i_t']=time.time()
     ### initialise script 
     gen.cg2at_header()
+    gen.fetch_forcefield_water_info()
     gen.check_input_flag() #### if missing structure file print help and quit
     gen.correct_number_cpus()
     gen.find_gromacs()
@@ -43,20 +41,23 @@ if __name__ == '__main__':
     gen.forcefield_selection()
     gen.fragment_selection()
     gen.check_water_molecules()
-
+    if g_var.args.posre != None and len(g_var.np_directories) > 0:
+        check_library.add_posres_file()
+    if g_var.args.compare != None and len(g_var.np_directories) > 0:
+        check_library.compare_forcefield_to_database()
     if g_var.args.info:
         gen.database_information()
     if g_var.args.v >= 1:
         print(gen.fragments_in_use())
 
-    gen.fetch_fragment()    
+    gen.fetch_fragment_multi() 
+    gen.fetch_fragment_single()   
     gen.fetch_chain_groups()
     gen.sort_swap_group()
     print(gen.print_swap_residues())
     ###
     #### collects initial structures into INPUT folder
     gro.collect_input()
-
     #### saves flags used into INPUT folder
     gen.flags_used()
     g_var.tc['i_t_e']=time.time()
@@ -72,7 +73,6 @@ if __name__ == '__main__':
     read_in.real_box_vectors(g_var.box_vec)
     #### pbc fix and residue truncation if required
     read_in.fix_pbc(box_vec_initial, g_var.box_vec, box_shift)
-
     #### checks if fragment database and input files match  
     at_mod.sanity_check()
     ### convert protein to atomistic representation
@@ -127,23 +127,20 @@ if __name__ == '__main__':
     if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTEIN', 'OTHER']]) > 0:
         print('\nConverting the following residues concurrently: \n')
         with mp.Pool(g_var.args.ncpus) as pool:
-            pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(residue_type, 1) 
+            pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(residue_type, {}) 
                                         for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'OTHER']]]).get() ## fragment fitting done in parrallel  
         for residue_type in pool_process:
             g_var.system.update(residue_type) ## updates residue counts 
         #### attempts to minimise all residues at once 
         print('\nThis may take some time....(probably time for a coffee)\n')
-        for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'ION', 'OTHER']]:
+        for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'OTHER']]:
             if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
                 print('Minimising: '+residue_type) 
                 error = gro.minimise_merged(residue_type, g_var.working_dir+residue_type+'/'+residue_type+'_all.pdb')
                 if error == True and residue_type not in ['SOL']:
                     print('Failed to minimise as a group: '+residue_type)
                     print('please check your input file as there is likely something wrong')
-                    # gro.non_protein_minimise_ind(residue_type) ## runs grompp and minimises each residue
-                    # at_mod_np.merge_minimised(residue_type) ## merges minimised residues
-                    # gro.minimise_merged(residue_type, g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged.pdb') ## minimises merged residues
-
+ 
     ### MERGES system
     g_var.tc['n_p_t']=time.time()
 

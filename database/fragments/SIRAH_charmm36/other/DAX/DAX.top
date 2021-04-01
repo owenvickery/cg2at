@@ -1,0 +1,10 @@
+[ CONNECT ]
+# bead_1 atom_1 bead_2 resid direction
+   C1X     O3'      PX       1
+   PX      P        C1X     -1
+[ N_TERMINAL ]
+5TER
+[ C_TERMINAL ]
+3TER
+[ GROUPS ]
+C2A N1A N6A

@@ -316,70 +316,28 @@ def write_topol(residue_type, residue_number, chain):
     with open('topol_'+residue_type+chain+'.top', 'w') as topol_write:
     #### add standard headers may need to be changed dependant on forcefield
         topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+g_var.forcefield+'/forcefield.itp\"\n')
-        if 'SOL' == residue_type:
-            topol_write.write('#include \"'+g_var.water_dir+g_var.water+'.itp\"\n\n#include \"'+g_var.final_dir+g_var.forcefield+'/ions.itp\"\n\n')
     #### add location of residue topology file absolute file locations
-        if residue_type not in ['ION','SOL']:
-            for directory in range(len(g_var.np_directories)):
-                if os.path.exists(g_var.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp'):
-                    topol_write.write('#include \"'+g_var.np_directories[directory][0]+residue_type+'/'+residue_type+'.itp\"\n')
+        if residue_type in g_var.sol_residues+g_var.ion_residues+g_var.np_residues:
+            for directory in g_var.sol_directories+g_var.ion_directories+g_var.np_directories:
+                if os.path.exists(directory[0]+residue_type+'/'+gen.swap_to_solvent(residue_type)+'.itp'):
+                    topol_write.write('#include \"'+directory[0]+residue_type+'/'+gen.swap_to_solvent(residue_type)+'.itp\"')
                     found=True
-                    break
-            if os.path.exists(g_var.working_dir+'/'+residue_type.split('_')[0]+'/'+residue_type+chain+'.itp'):
-                topol_write.write('#include \"'+residue_type+chain+'.itp\"\n')
-                found=True
             if not found:
-                sys.exit('cannot find itp : '+residue_type+'/'+residue_type+chain)
+                sys.exit('cannot find itp : '+residue_type+'/'+gen.swap_to_solvent(residue_type)+'.itp')
+        elif os.path.exists(g_var.working_dir+'/'+residue_type.split('_')[0]+'/'+residue_type+chain+'.itp'):
+            topol_write.write('#include \"'+residue_type+chain+'.itp\"\n')
+        else:
+            sys.exit('cannot find itp : '+residue_type+'/'+residue_type+chain)
     #### topology section headers
         topol_write.write('\n\n[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
     #### individual number of residues
         if residue_type.split('_')[0] in ['PROTEIN', 'OTHER']:
              residue_type=residue_type.split('_')[0]+'_'
+        residue_type = gen.swap_to_solvent(residue_type)
         topol_write.write(residue_type+chain+'    '+str(residue_number))
 
 
 #################################################################   Non protein
-
-# def non_protein_minimise_ind(residue_type):
-# #### in the case of SOL all residues are minimised, whilst in all other cases individual residues are minimised separately
-#     if residue_type != 'SOL':
-#         individual = 1
-#         resid=g_var.system[residue_type]
-#     else:
-#         individual=g_var.system['SOL']
-#         resid=1
-#     os.chdir(g_var.working_dir+residue_type)
-# ### write topology and minimisation parts (min folder and em.mdp)
-#     write_topol(residue_type, individual, '')
-#     make_min(residue_type)#, fragment_names)
-# #### spin up multiprocessing for grompp 
-#     with mp.Pool(g_var.args.ncpus) as pool:
-#         m = mp.Manager()
-#         q = m.Queue()
-#         pool_process = pool.map_async(gromacs, [(g_var.args.gmx+' grompp '+
-#                                       '-po md_out-'+residue_type+'_temp_'+str(rid)+' '+
-#                                       '-f em_'+residue_type+'.mdp '+
-#                                       '-p topol_'+residue_type+'.top '+
-#                                       '-c '+residue_type+'_'+str(rid)+'.pdb '+
-#                                       '-o MIN/'+residue_type+'_temp_'+str(rid)+' -maxwarn 1', 
-#                                       'MIN/'+residue_type+'_temp_'+str(rid)+'.tpr',rid, q) for rid in range(0, resid)])
-#         while not pool_process.ready():
-#             report_complete('GROMPP', q.qsize(), resid)
-#         print('{:<100}'.format(''), end='\r')
-#         print('GROMPP completed on residue type: '+residue_type)       
-# #### close grompp multiprocessing and change to min directory and spin up mdrun multiprocessing
-#     os.chdir('MIN')
-#     m = mp.Manager()
-#     q = m.Queue()
-#     pool = mp.Pool(g_var.args.ncpus)
-#     pool_process = pool.map_async(gromacs, [(g_var.args.gmx+' mdrun -v -nt 1 -deffnm '+residue_type+'_temp_'+str(rid)+' -c '+residue_type+'_'+str(rid)+'.pdb', 
-#                                   residue_type+'_'+str(rid)+'.pdb',rid, q) for rid in range(0, resid)])          ## minimisation grompp parallised  
-#     while not pool_process.ready():
-#         report_complete('Minimisation', q.qsize(), resid)
-#     print('{:<100}'.format(''), end='\r')
-#     print('Minimisation completed on residue type: '+residue_type)
-#     pool.close()
-#     os.chdir(g_var.working_dir)
 
 def report_complete(func, size, resid):
     if np.round((size/resid)*100,2).is_integer():
@@ -403,8 +361,6 @@ def minimise_merged(residue_type, input_file):
     complete, success = gromacs([g_var.args.gmx+' mdrun -v -nt '+str(g_var.args.ncpus)+' -pin on -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb', '../'+residue_type+'_merged.pdb'])
     os.chdir(g_var.working_dir)
     return success
-
-
 
 ################################################################ Gromacs for merged system
 
@@ -449,36 +405,34 @@ def strip_atomtypes(itp_file):
             for line in itp_lines[mol:]: 
                 itp_output.write(line+'\n')
 
+
+
 def write_merged_topol():
     os.chdir(g_var.working_dir+'MERGED')
     # if not os.path.exists('topol_final.top'):
     with open('topol_final.top', 'w') as topol_write:
         topologies_to_include=[]
-    #### writes topology headers (will probably need updating with other forcefields)
-        if 'SOL' in g_var.system:
-            gen.file_copy_and_check(g_var.water_dir+g_var.water+'.itp', g_var.water+'.itp')
-            topologies_to_include.append('#include \"'+g_var.water+'.itp\"')
-            topologies_to_include.append('\n#include \"'+g_var.final_dir+g_var.forcefield+'/ions.itp\"\n\n')
     #### runs through residue types and copies to MERGED directory and simplifies the names
         for residue_type in g_var.system:
-            if residue_type not in ['ION','SOL']:
             #### copies 1st itp file it comes across 
-                for directory in g_var.np_directories:
-                    if os.path.exists(directory[0]+residue_type+'/'+residue_type+'.itp'):  
-                        topologies_to_include.append('#include \"'+residue_type+'.itp\"\n')
-                        gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'.itp', residue_type+'.itp')
-                        gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type+'_posre.itp', residue_type+'_posre.itp')
-                        strip_atomtypes(residue_type+'.itp')
-                        break
-            #### copies across protein itp files and simplifies the names 
-                if residue_type in ['PROTEIN', 'OTHER']:
-                    for unit in range(g_var.system[residue_type]): 
-                        topologies_to_include.append('#include \"'+residue_type+'_'+str(unit)+'.itp\"\n')
-                        gen.file_copy_and_check(g_var.working_dir+residue_type+'/'+residue_type+'_de_novo_'+str(unit)+'.itp', residue_type+'_'+str(unit)+'.itp')
-                        if residue_type in ['PROTEIN']:
-                            for posres_type in ['_very_low_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_very_high_posre.itp','_ultra_posre.itp','_ca_posre.itp','_posre.itp']:
-                                gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(unit)+posres_type, 'PROTEIN_'+str(unit)+posres_type)
-                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'PROTEIN_disres.itp')  
+            for directory in g_var.np_directories+g_var.sol_directories+g_var.ion_directories:
+                residue_type_name = gen.swap_to_solvent(residue_type)
+                if os.path.exists(directory[0]+residue_type+'/'+residue_type_name+'.itp'):  
+                    if not any(residue_type_name+'.itp' in s for s in topologies_to_include):
+                        topologies_to_include.append('#include \"'+residue_type_name+'.itp\"\n')
+                        gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type_name+'.itp', residue_type_name+'.itp')
+                        gen.file_copy_and_check(directory[0]+residue_type+'/'+residue_type_name+'_posre.itp', residue_type_name+'_posre.itp')
+                        strip_atomtypes(residue_type_name+'.itp')
+                    break
+        #### copies across protein itp files and simplifies the names 
+            if residue_type in ['PROTEIN', 'OTHER']:
+                for unit in range(g_var.system[residue_type]): 
+                    topologies_to_include.append('#include \"'+residue_type+'_'+str(unit)+'.itp\"\n')
+                    gen.file_copy_and_check(g_var.working_dir+residue_type+'/'+residue_type+'_de_novo_'+str(unit)+'.itp', residue_type+'_'+str(unit)+'.itp')
+                    if residue_type in ['PROTEIN']:
+                        for posres_type in ['_very_low_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_very_high_posre.itp','_ultra_posre.itp','_ca_posre.itp','_posre.itp']:
+                            gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(unit)+posres_type, 'PROTEIN_'+str(unit)+posres_type)
+                        gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'PROTEIN_disres.itp')  
         if os.path.exists('extra_atomtypes.itp'):
             topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+g_var.forcefield+'/forcefield.itp\"\n')
             topol_write.write('#include \"extra_atomtypes.itp\"\n')
@@ -491,7 +445,7 @@ def write_merged_topol():
     #### adds number of residues to the topology
         for residue_type in g_var.system:
             if residue_type not in  ['PROTEIN', 'OTHER']:
-                topol_write.write(residue_type+'    '+str(g_var.system[residue_type])+'\n')   
+                topol_write.write(gen.swap_to_solvent(residue_type)+'    '+str(g_var.system[residue_type])+'\n')   
         #### adds monomers separately
             else:
                 for unit in range(g_var.system[residue_type]):

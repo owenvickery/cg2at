@@ -13,7 +13,7 @@ import gen, g_var, at_mod_p, read_in, gro
 def sanity_check_fragments(res, cg, sin_bead):
 #### fetches bead and atom info from fragment database
     location = gen.fragment_location(res)
-    residue, fragment_mass = get_atomistic(location)
+    residue, fragment_mass = get_atomistic(location, res)
     atom_list = []
     bead_list = []
     for group in residue.values():
@@ -96,7 +96,7 @@ def sanity_check():
     for res_type in g_var.cg_residues:
         if res_type in ['PROTEIN', 'OTHER']:
             sanity_check_protein_other(res_type)
-        elif res_type in ['SOL', 'ION']:
+        elif res_type in g_var.sol_residues or res_type in g_var.ion_residues:
             sanity_check_solvent(res_type)
         else:
             sanity_check_non_protein(res_type)
@@ -184,6 +184,8 @@ def COM(mass, fragment):
             return np.average(np.array(mass)[:,:3], axis=0, weights=np.array(mass)[:,3])
     except:
         for bead in fragment:
+            print(bead, fragment[bead], '\n')
+            print(mass)
             sys.exit('missing the mass one of the atoms in '+fragment[bead][1]['res_type'])      
 
 def rigid_fit(group, frag_mass, resid, cg):
@@ -248,11 +250,12 @@ def split_fragment_names(line, residue, resname):
         residue[group][bead]={} 
     return residue, group, bead   
 
-def get_atomistic(frag_location):
+def get_atomistic(frag_location, resname=False):
+    if not resname:
+        resname = frag_location.split('/')[-1][:-4]
 #### read in atomistic fragments into dictionary    
     residue = {} ## a dictionary of bead in each residue eg residue[group][bead][atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
     fragment_mass = {}
-    resname = frag_location.split('/')[-1][:-4]
     with open(frag_location, 'r') as pdb_input:
         for line_nr, line in enumerate(pdb_input.readlines()):
             if line.startswith('['):
@@ -322,10 +325,10 @@ def apply_rotations(atomistic_fragments,cg_resid, group_fit, center, xyz_rot_app
 ### end fragment information
 ### linked residue connectivity start
 
-def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead):
+def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, residue_number, BB_bead, resname):
     con_atoms = {}
     for atom in at_residues:
-        resname = at_residues[atom]['res_type']
+        # resname = at_residues[atom]['res_type']
         if at_residues[atom]['atom'] in g_var.res_top[resname]['CONNECT'][BB_bead]['atom']:
             con_atoms[g_var.res_top[resname]['CONNECT'][BB_bead]['atom'].index(at_residues[atom]['atom'])]=atom
     new_chain=False
@@ -364,7 +367,7 @@ def merge_indivdual_chain_pdbs(file, end, res_type):
         else:
             sys.exit('cannot find chain: '+file+'_'+str(chain)+end)
         if res_type+'_aligned' in file:  
-            count, restraint_count = at_mod_p.write_disres(merge_temp, chain, file, count, restraint_count)
+            count, restraint_count = at_mod_p.create_disres(merge_temp, chain, file, count, restraint_count)
         merge, merge_coords = fix_chirality(merge,merge_temp,merged_coords, res_type)   
     if res_type+'_aligned' not in file:
         coords, index_conversion = index_conversion_generate(merge, merge_coords)
@@ -417,19 +420,16 @@ def merge_system_pdbs(protein):
         for segment, residue_type in enumerate(g_var.system):
             if residue_type not in done:
                 if residue_type not in ['PROTEIN', 'OTHER']:
-                    if residue_type in g_var.ions and 'ION' not in done:
-                        merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+'ION/ION_merged.pdb')
-                        done.append('ION')
-                    elif residue_type not in g_var.ions:
-                        if residue_type != 'SOL':
-                            start_num = len(merge_coords)
-                        merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
-                        if residue_type != 'SOL':
-                            g_var.np_blocks[residue_type]=[start_num,len(merge_coords)]
+                        start_num = len(merge_coords)
+                        merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, 
+                                                                g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb')
+                        g_var.np_blocks[residue_type]=[start_num,len(merge_coords)]
                 elif residue_type == 'OTHER':
-                    merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+'_de_novo_merged.pdb')
+                    merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, 
+                                                            g_var.working_dir+residue_type+'/'+residue_type+'_de_novo_merged.pdb')
                 elif residue_type == 'PROTEIN':
-                    merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, g_var.working_dir+residue_type+'/'+residue_type+protein+'_merged.pdb')     
+                    merge, merge_coords = read_in_merged_pdbs(merge, merge_coords, 
+                                                            g_var.working_dir+residue_type+'/'+residue_type+protein+'_merged.pdb')     
                 done.append(residue_type)
         index_conversion = {}
         if 'novo' in protein:

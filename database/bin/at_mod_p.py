@@ -46,13 +46,9 @@ def build_multi_residue_atomistic_system(cg_residues, sys_type):
                 at_connect, cg_connect = at_mod.connectivity(cg_residues[sys_type][residue_number], at_frag_centers, cg_frag_centers, group_fit, group)
                 for group_bead in group_fit:
                     if group_bead in g_var.res_top[resname]['CONNECT']:
-                        at_connect, cg_connect, new_chain = at_mod.BB_connectivity(at_connect,cg_connect, cg_residues[sys_type], group_fit[group_bead], residue_number, group_bead)
+                        at_connect, cg_connect, new_chain = at_mod.BB_connectivity(at_connect,cg_connect, cg_residues[sys_type], group_fit[group_bead], residue_number, group_bead, resname)
                         if sys_type == 'PROTEIN':
                             g_var.backbone_coords[chain_count].append(np.append(cg_residues[sys_type][residue_number][group_bead]['coord'], 1)) 
-
-
-
-
                 xyz_rot_apply = at_mod.get_rotation(cg_connect, at_connect, center, resname, group, residue_number)
                 coord_atomistic[chain_count] = at_mod.apply_rotations(coord_atomistic[chain_count],residue_number, group_fit, center, xyz_rot_apply)
         if new_chain:
@@ -371,10 +367,18 @@ def align_user_chains(final_coordinates_atomistic):
     atomistic_protein_rotated = apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, 
                                                                 at_com_group,cg_com_group,cg_com) ## apply rotation matrix to atoms and build in missing residues
     final_user_supplied_coord = correct_disulphide_bonds(atomistic_protein_rotated) ## fixes sulphur distances in user structure
-    pool = mp.Pool(g_var.args.ncpus)
-    pool.starmap_async(write_user_chains_to_pdb, [(final_user_supplied_coord[chain], chain) ## write structure to pdb
-                                        for chain in final_user_supplied_coord]).get()
-    pool.close()
+    for chain, protein in final_user_supplied_coord.items():
+        at_id=0
+        coord=[]
+        final_atom = []
+        for resid, residue in protein.items():
+            for atom in residue.values():
+                coord.append(atom['coord'])
+                final_atom.append({'atom_name':atom['atom'], 'residue_name':atom['res_type'], 'chain':chain, 'residue_id':resid,\
+                                    'x':atom['coord'][0],'y':atom['coord'][1],'z':atom['coord'][2]})
+                at_id+=1
+        corrected_coords, index_conversion = at_mod.index_conversion_generate(final_atom, coord)
+        at_mod.write_pdb(final_atom, corrected_coords, index_conversion, g_var.working_dir+'PROTEIN/PROTEIN_aligned_'+str(chain)+'.pdb')
 
 def center_atomistic():
     cg_com={}
@@ -520,25 +524,6 @@ def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_cent
             complete_user_at[residue]=final_coordinates_atomistic[residue]
     return complete_user_at
 
-def write_user_chains_to_pdb(atomistic_user_supplied, chain):
-    if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_aligned_'+str(chain)+'.pdb'):
-        pdb_output = gen.create_pdb(g_var.working_dir+'PROTEIN/PROTEIN_aligned_'+str(chain)+'.pdb')
-        final_atom={}
-        at_id=0
-        coord=[]
-        for resid in atomistic_user_supplied:
-            for atom in atomistic_user_supplied[resid]:
-                coord.append(atomistic_user_supplied[resid][atom]['coord'])
-                short_line=atomistic_user_supplied[resid][atom]
-                final_atom[at_id]={'atom':short_line['atom'], 'res_type':short_line['res_type'], 'chain':chain, 'residue':resid,\
-                                    'x':short_line['coord'][0],'y':short_line['coord'][1],'z':short_line['coord'][2]}
-                at_id+=1
-        merge_coords=at_mod.check_atom_overlap(coord)
-        for at_id, coord in enumerate(merge_coords):
-            x, y, z = gen.trunc_coord(coord)
-            pdb_output.write(g_var.pdbline%((at_id+1,final_atom[at_id]['atom'],final_atom[at_id]['res_type'],'A',final_atom[at_id]['residue'],
-                 x,y,z,1,0))+'\n') 
-
 ################################################################## Merge chains ####################    
 
 def correct_amide_h(lines, coords):
@@ -558,44 +543,52 @@ def correct_amide_h(lines, coords):
             del N, C, O, HN 
     return coords
 
-def write_disres(coord, chain, file, at_start, count):
+def create_disres(coord, chain, file, at_start, count):
     P_R = np.array([])
     if chain in g_var.atomistic_protein_input_aligned:
         for key in g_var.atomistic_protein_input_aligned[chain].keys():
             P_R = np.append(P_R, np.arange(int(key.split(':')[0]), int(key.split(':')[1])+1))
-        header = True if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp') else False
-        with open(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'a') as disres_out:
-            if header:
-                disres_out.write(';backbone hydrogen bonding distance restraints\n\n')
-                disres_out.write('[ intermolecular_interactions ]\n[ distance_restraints ]\n')
-                disres_out.write(';   i     j type label      funct         lo        up1        up2     weight')
-            HN, O = [],[]
-            for atom in coord:
-                if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == g_var.res_top[atom['residue_name']]['amide_h']:
-                    HN.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
-                if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == 'O':
-                    O.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
-            HN, O = np.array(HN), np.array(O)
-            tree = cKDTree(HN[:,1:])
-            for carbonyl in O:
-                ndx = tree.query_ball_point(carbonyl[1:], r=3)
-                if len(ndx) > 0:
-                    for at in ndx:
-                        if coord[int(HN[at][0])-1]['residue_id'] in P_R and coord[int(carbonyl[0])-1]['residue_id'] in P_R:
-                            if coord[int(HN[at][0])-1]['residue_id'] < coord[int(carbonyl[0])-1]['residue_id']-1 or \
-                                coord[int(HN[at][0])-1]['residue_id'] > coord[int(carbonyl[0])-1]['residue_id']+1:
-                                    count+=1
-                                    xyz1 = [coord[int(carbonyl[0])-1]['x'], coord[int(carbonyl[0])-1]['y'], coord[int(carbonyl[0])-1]['z']]
-                                    xyz2 = [coord[int(HN[at][0])-1]['x'], coord[int(HN[at][0])-1]['y'], coord[int(HN[at][0])-1]['z']]
-                                    dist = (gen.calculate_distance(xyz1, xyz2)/10)-0.05
-                                    disres_out.write('\n{0:10}{1:10}{2:3}{3:12}{4:12}{5:^12}{6:14}{7:14}{8:5}'.format(str(at_start+int(HN[at][0])), str(at_start+int(carbonyl[0])), 
-                                                                                                                    '1', str(count),'2', '0', str(np.round(dist,4)), str(np.round(dist+0.01,4)), '1'))
-    return len(coord)+at_start, count 
+        HN, O = get_backbone(coord)
+        count, disres = find_connect(coord, P_R, HN, O, at_start, count)
+        write_disres(disres)
+    return len(coord)+at_start, count
 
+def write_disres(disres):        
+    header = True if not os.path.exists(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp') else False
+    with open(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'a') as disres_out:
+        if header:
+            disres_out.write(';backbone hydrogen bonding distance restraints\n\n')
+            disres_out.write('[ intermolecular_interactions ]\n[ distance_restraints ]\n')
+            disres_out.write(';   i     j type label      funct         lo        up1        up2     weight\n')
+        for restraint in disres:
+            disres_out.write(restraint)
 
-
-
-
+def get_backbone(coord):
+    HN, O = [],[]
+    for atom in coord:
+        if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == g_var.res_top[atom['residue_name']]['amide_h']:
+            HN.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
+        if atom['residue_name'] in g_var.p_residues and atom['atom_name'] == 'O':
+            O.append([int(atom['atom_number']), atom['x'], atom['y'], atom['z']])
+    return np.array(HN), np.array(O)     
+            
+def find_connect(coord, P_R, HN, O, at_start, count):
+    disres = []
+    tree = cKDTree(HN[:,1:])
+    for carbonyl in O:
+        ndx = tree.query_ball_point(carbonyl[1:], r=3)
+        if len(ndx) > 0:
+            for at in ndx:
+                HN_resid = coord[int(HN[at][0])-1]['residue_id']
+                O_resid = coord[int(carbonyl[0])-1]['residue_id']
+                if HN_resid in P_R and O_resid in P_R and HN_resid not in [O_resid-1 ,O_resid, O_resid+1]:
+                    count+=1
+                    xyz1 = [coord[int(carbonyl[0])-1]['x'], coord[int(carbonyl[0])-1]['y'], coord[int(carbonyl[0])-1]['z']]
+                    xyz2 = [coord[int(HN[at][0])-1]['x'], coord[int(HN[at][0])-1]['y'], coord[int(HN[at][0])-1]['z']]
+                    dist = (gen.calculate_distance(xyz1, xyz2)/10)-0.05
+                    disres.append('{0:10}{1:10}{2:3}{3:12}{4:12}{5:^12}{6:14}{7:14}{8:5}\n'.format(str(at_start+int(HN[at][0])), str(at_start+int(carbonyl[0])), 
+                                                                                                         '1', str(count),'2', '0', str(np.round(dist,4)), str(np.round(dist+0.01,4)), '1'))
+    return count, disres 
 
 ########################################################### RMSD
 
@@ -621,16 +614,21 @@ def write_RMSD():
             line_2+= '    -------------------    ---------------------'
         qual_out.write(line_1+'\n'+line_2+'\n')
         print(line_1+'\n'+line_2)
-
+        write_warning = False
         for chain in RMSD_de_novo:
             line = ' {0:^5}{1:^28}'.format(str(chain), float(RMSD_de_novo[chain]))
             if 'seg_rmsd' in locals():
                 line += '{0:^18}'.format(float(RMSD_aligned[chain]))
                 if chain in seg_rmsd:
                     line+= '{0:^28}'.format(', '.join(seg_rmsd[chain])) 
+                    if '*' in ', '.join(seg_rmsd[chain]):
+                        write_warning = True
             print(line)
             qual_out.write(line+'\n')
-        print('\n * Segment alignments may have minor deviations due to either clashes or structure hybridisation.\n\nAll RMSDs have been saved in: \n'+g_var.final_dir+'structure_quality.dat\n')
+        if write_warning:
+            print('\n * Segment alignments may have minor deviations due to either clashes or structure hybridisation.')
+            qual_out.write('\n * Segment alignments may have minor deviations due to either clashes or structure hybridisation.')
+        print('\n\nAll RMSDs have been saved in: \n'+g_var.final_dir+'structure_quality.dat\n')
 
 def RMSD_measure_de_novo(structure_atoms):
     RMSD_dict = {}

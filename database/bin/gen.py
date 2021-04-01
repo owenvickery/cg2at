@@ -14,10 +14,14 @@ import ntpath
 import g_var
 
 
+def fetch_forcefield_water_info():
+    if g_var.args.info or g_var.args.posre != None or g_var.args.compare != None:
+        g_var.get_forcefield = False
+
 
 def forcefield_selection(test=False):
     ##### forcefield selection
-    if not g_var.args.info:
+    if g_var.get_forcefield:
         if g_var.args.ff != None:
             if os.path.exists(g_var.args.ff):
                 g_var.forcefield_location, g_var.forcefield = path_leaf(g_var.args.ff)
@@ -75,7 +79,7 @@ def correct_number_cpus():
     g_var.opt['ncpus'] = g_var.args.ncpus
 
 def check_input_flag():
-    if not g_var.args.info and g_var.args.c is None:
+    if g_var.get_forcefield and g_var.args.c is None:
         g_var.parser.print_help(sys.stderr)
         sys.exit('\nError: the following arguments are required: -c\n')
 
@@ -201,17 +205,6 @@ def sort_swap_group():
             else:
                 sys.exit('The length of your swap groups do not match')
         
-
-
-def create_ion_list(ion_pdb):
-    with open(ion_pdb, 'r') as pdb_input:
-        for line_nr, line in enumerate(pdb_input.readlines()):
-            if line.startswith('['):
-                header = strip_header(line)
-                if header not in g_var.ions:
-                    g_var.ions.append(header)
-
-
 def print_swap_residues():
     if g_var.args.swap != None:
         to_print = '\nYou have chosen to swap the following residues\n\n'
@@ -252,60 +245,92 @@ def new_box_vec(box_vec, box):
     return box_vec, np.array(box_shift)
 
 def strip_header(line):
-    line_new = line.replace('[','')
-    line_new = line_new.replace(']','')
+    line_new = line.replace('[','').split(']', 1)[0]
     if len(line_new.split())>1 or len(line_new.split())==0:
         sys.exit('There is a issue in one of the fragment headers: \n'+line)
     return line_new.strip()
 
-def sep_fragments_topology(location):
+def topology_header(line, topology, location):
+    top = strip_header(line).upper()
+    if top in topology:
+        return top
+    else:
+        print('The topology header line is incorrect, therefore ignoring: \n'+location+'.top')
+        return ''  
+
+def sep_fragments_topology(residue, location):
     topology={}
     group = 1
     topology = copy.deepcopy(g_var.topology)
     if os.path.exists(location+'.top'):
         with open(location+'.top', 'r') as top_input:
             for line_nr, line in enumerate(top_input.readlines()):
-                if len(line) > 0:
-                    if not line.startswith('#'):
-                        if line.startswith('['):
-                            top = strip_header(line).upper()
-                            if top in topology:
-                                topology_function = top
-                            else:
-                                print('The topology header line is incorrect, therefore ignoring: \n'+location+'.top')
-                                topology_function = ''                              
-                        else:
-                            line_sep = line.split()
-                            if len(line_sep) > 0:
-                                if topology_function == 'GROUPS':
-                                    if not g_var.args.mod:
-                                        for bead in line_sep:
-                                            topology[topology_function][bead] = group
-                                        group += 1
-                                    topology[topology_function]['group_max'] = group
-                                elif topology_function in ['N_TERMINAL', 'C_TERMINAL']:
-                                    topology[topology_function] = ''.join(line_sep)
-                                elif topology_function == 'CHIRAL':
-                                    if len(line_sep) == 5:
-                                        topology[topology_function]['atoms']+=line_sep
-                                        topology[topology_function][line_sep[0]]={'m':line_sep[1], 'c1':line_sep[2], 'c2':line_sep[3], 'c3':line_sep[4]}
-                                    else:
-                                        print('The chiral group section is incorrect: \n'+location+'.top')
-                                elif topology_function == 'CONNECT':
-                                    if len(line_sep) == 4:
-                                        topology[topology_function]['atoms'][line_sep[1]] = int(line_sep[3])
-                                        if line_sep[0] in topology[topology_function]:
-                                            topology[topology_function][line_sep[0]]['atom']+=[line_sep[1]]
-                                            topology[topology_function][line_sep[0]]['Con_Bd']+=[line_sep[2]]
-                                            topology[topology_function][line_sep[0]]['dir']+=[int(line_sep[3])]
-                                        else:
-                                            topology[topology_function][line_sep[0]]={'atom':[line_sep[1]], 'Con_Bd':[line_sep[2]], 'dir':[int(line_sep[3])]}
-                                    else:
-                                        print('The bead connection group section is incorrect: \n'+location+'.top')
+                if not line.startswith('#') and len(line) > 0:
+                    if line.startswith('['):
+                        topology_function = topology_header(line, topology, location)
+                    else:
+                        line_sep = line.split()
+                        if len(line_sep) > 0:
+                            if topology_function == 'GROUPS':
+                                topology, group = add_groups(topology, line_sep, group)
+                            elif topology_function in ['N_TERMINAL', 'C_TERMINAL']:
+                                topology[topology_function] = ''.join(line_sep)
+                            elif topology_function == 'CHIRAL':
+                                topology = add_chiral(topology, line_sep)
+                            elif topology_function == 'CONNECT':
+                                topology = add_connections(topology, line_sep)
+                            elif topology_function == 'ALT_RES':
+                                sort_alternate_residues(line_sep, residue)
+                            elif topology_function == 'HYDRATION':
+                                sort_hydration(line_sep, residue,)
     return topology
 
+def add_groups(topology, line_sep, group):
+    if not g_var.args.mod:
+        for bead in line_sep:
+            topology['GROUPS'][bead] = group
+        group += 1
+    topology['GROUPS']['group_max'] = group
+    return topology, group
+
+def add_chiral(topology, line_sep):
+    if len(line_sep) == 5:
+        topology['CHIRAL']['atoms']+=line_sep
+        topology['CHIRAL'][line_sep[0]]={'m':line_sep[1], 'c1':line_sep[2], 'c2':line_sep[3], 'c3':line_sep[4]}
+    else:
+        print('The chiral group section is incorrect: \n'+location+'.top')
+    return topology
+
+def add_connections(topology, line_sep):
+    if len(line_sep) == 4:
+        topology['CONNECT']['atoms'][line_sep[1]] = int(line_sep[3])
+        if line_sep[0] in topology['CONNECT']:
+            topology['CONNECT'][line_sep[0]]['atom']+=[line_sep[1]]
+            topology['CONNECT'][line_sep[0]]['Con_Bd']+=[line_sep[2]]
+            topology['CONNECT'][line_sep[0]]['dir']+=[int(line_sep[3])]
+        else:
+            topology['CONNECT'][line_sep[0]]={'atom':[line_sep[1]], 'Con_Bd':[line_sep[2]], 'dir':[int(line_sep[3])]}
+    else:
+        print('The bead connection group section is incorrect: \n'+location+'.top')
+    return topology
+
+def sort_alternate_residues(line_sep, residue):
+    for alt_res in line_sep:
+        if alt_res not in g_var.alt_res_name:
+            g_var.alt_res_name[alt_res] = residue
+        else:
+            sys.exit('The alternate residue name: \"'+alt_res+'\" already corresponds to: \"'+
+                     g_var.alt_res_name[alt_res]+'\"')
+
+def sort_hydration(line_sep, residue):
+    if len(line_sep) == 1 and residue not in g_var.hydration:
+        location = fragment_location(line_sep[0])
+        g_var.hydration[residue] = line_sep[0]
+    else:
+        print('There is a issue with the hydration section of: ', residue)
+
 def get_fragment_topology(residue, location):
-    topology = sep_fragments_topology(location[:-4])
+    topology = sep_fragments_topology(residue, location[:-4])
     g_var.res_top[residue] = {'ATOMS': [], 'C_TERMINAL':topology['C_TERMINAL'], 'N_TERMINAL':topology['N_TERMINAL'], \
                              'CHIRAL':topology['CHIRAL'], 'GROUPS':{}, 'CONNECT':topology['CONNECT']}
     with open(location, 'r') as pdb_input:
@@ -353,7 +378,7 @@ def sort_connectivity(atom_dict, heavy_bond):
                                 cut_group[group][atom] = [frag]
     return cut_group
 
-def fetch_fragment():
+def fetch_fragment_multi():
 #### fetches the Backbone heavy atoms and the connectivity with pre/proceeding residues 
     amino_acid_itp = fetch_amino_rtp_file_location(g_var.forcefield_location+g_var.forcefield) 
     g_var.at_mass = fetch_atom_masses(g_var.forcefield_location+g_var.forcefield)
@@ -362,33 +387,34 @@ def fetch_fragment():
             for residue in residue_type[directory][1:]:    
                 if residue not in g_var.res_top:
                     location = fragment_location(residue)
-                    g_var.hydrogen[residue], g_var.heavy_bond[residue], residue_list, at_mass, amide_h = fetch_bond_info(residue, amino_acid_itp, g_var.at_mass, location)
                     grouped_atoms = get_fragment_topology(residue, location)
+                    g_var.hydrogen[residue], g_var.heavy_bond[residue], residue_list, at_mass, amide_h = fetch_bond_info(residue, amino_acid_itp, g_var.at_mass, location)
+                    
                     g_var.sorted_connect[residue]  = sort_connectivity(grouped_atoms, g_var.heavy_bond[residue])
                     g_var.res_top[residue]['RESIDUE'] = residue_list
                     g_var.res_top[residue]['atom_masses'] = at_mass
                     if residue in g_var.p_residues:
                         g_var.res_top[residue]['amide_h'] = amide_h
-    for directory in range(len(g_var.np_directories)):
-        for residue in g_var.np_directories[directory][1:]:    
-            if residue not in g_var.res_top:
-                location = fragment_location(residue)
-                if residue in ['SOL','ION']: 
-                    at_mass = fetch_atoms_water_ion(g_var.np_directories[directory][0]+residue+'/', g_var.at_mass)
-                    if residue == 'ION':
-                        create_ion_list(location[:-4]+'.pdb')
-                    g_var.hydrogen[residue], g_var.heavy_bond[residue] = {},{}
-                    residue_list = [residue]
-                else:
-                    g_var.hydrogen[residue], g_var.heavy_bond[residue], residue_list, at_mass, amide_h  = fetch_bond_info(residue, [location[:-4]+'.itp'], g_var.at_mass, location)
+                    if residue in g_var.alt_res_name:
+                        g_var.res_top[g_var.alt_res_name[residue]]=g_var.res_top[residue]
 
-                grouped_atoms = get_fragment_topology(residue, location) 
-                g_var.res_top[residue]['RESIDUE'] = residue_list
-                g_var.res_top[residue]['atom_masses'] = at_mass
-                if residue in ['SOL', 'ION']: 
-                    g_var.sorted_connect[residue]={}
-                else:
-                    g_var.sorted_connect[residue]  = sort_connectivity(grouped_atoms, g_var.heavy_bond[residue])
+def fetch_fragment_single():
+    for frag_val, frag_dir in enumerate([g_var.sol_directories, g_var.ion_directories, g_var.np_directories]):
+        for directory in range(len(frag_dir)):
+            for residue in frag_dir[directory][1:]:    
+                if residue not in g_var.res_top:
+                    location = fragment_location(residue)
+                    grouped_atoms = get_fragment_topology(residue, location)
+                    if frag_val <=1: 
+                        at_mass = fetch_atoms_water_ion(frag_dir[directory][0]+residue+'/', g_var.at_mass)
+                        g_var.hydrogen[residue], g_var.heavy_bond[residue], g_var.sorted_connect[residue] = {},{},{}
+                        residue_list = [residue]
+                    else:
+                        g_var.hydrogen[residue], g_var.heavy_bond[residue], residue_list, at_mass, amide_h  = fetch_bond_info(residue, [location[:-4]+'.itp'], g_var.at_mass, location)
+                        g_var.sorted_connect[residue]  = sort_connectivity(grouped_atoms, g_var.heavy_bond[residue])
+                     
+                    g_var.res_top[residue]['RESIDUE'] = residue_list
+                    g_var.res_top[residue]['atom_masses'] = at_mass
 
 def atom_bond_check(line_sep):
     if line_sep[1] == 'atoms':
@@ -410,7 +436,7 @@ def fetch_atom_masses(forcefield_loc):
     if os.path.exists(forcefield_loc+'/atomtypes.atp'):
         with open(forcefield_loc+'/atomtypes.atp', 'r') as itp_input:
             for line in itp_input.readlines():
-                if len(line.split()) >= 2 and not line.startswith(';'):
+                if not (line.isspace() or len(line) == 0) and line[0] not in [';', '#']:
                     line_sep = line.split()       
                     at_mass[line_sep[0]]=line_sep[1] 
     else:
@@ -422,53 +448,71 @@ def fetch_atoms_water_ion(forcefield_loc, at_mass_p):
     for file in os.listdir(forcefield_loc):
         if file.endswith('itp'):
             with open(forcefield_loc+file, 'r') as itp_input:
+                strip_atoms = False
                 for line in itp_input.readlines():
                     line_sep = line.split()
-                    if len(line_sep) >= 3:
-                        if line[0] not in [';', '#']:
-                            if line_sep[0] == '[' and line_sep[1] != 'atoms':
-                                strip_atoms = False
-                            if strip_atoms:
-                                at_mass[line_sep[4]] = float(at_mass_p[line_sep[1]])
-                            if line_sep[0] == '[' and line_sep[1] == 'atoms':
-                                strip_atoms = True
+                    if not (line.isspace() or len(line) == 0) and line[0] not in [';', '#']:
+                        if line.strip().startswith('[') and strip_header(line) == 'atoms':
+                            strip_atoms = True
+                        elif line.strip().startswith('['):
+                            strip_atoms = False
+                        elif strip_atoms:
+                            at_mass[line_sep[4]] = float(at_mass_p[line_sep[1]])
     return at_mass
+
+
+def check_res_name(residue, residue_itp):
+    if residue_itp in g_var.alt_res_name or residue_itp == residue:
+        if residue_itp == residue:
+            return True
+        elif g_var.alt_res_name[residue_itp] == residue:
+            return True
+        else:
+            return False
+    else:
+        return False
 
 
 def fetch_bond_info(residue, rtp, at_mass,location):
     bond_dict=[]
     heavy_dict, H_dict=[],[]
-    residue_present = False
+    residue_present, mol_type = False,False
     atom_conversion = {}
     residue_list=[]
     res_at_mass = {}
     for rtp_file in rtp:
         with open(rtp_file, 'r') as itp_input:
             for line in itp_input.readlines():
-                if len(line.split()) >= 2 and not line.startswith(';'):
+                if not (line.isspace() or len(line) == 0) and line[0] not in [';', '#']:
                     line_sep = line.split()
-                    if line_sep[1] == residue:
-                        residue_present = True
-                    elif line_sep[1] in g_var.alt_res_name and residue == 'HIS': 
-                        residue_present = True
+                    if line.strip().startswith('[') and not residue_present: 
+                        residue_present = check_res_name(residue, strip_header(line))  
+                        if strip_header(line) == 'moleculetype':
+                            mol_type = True
+                    elif mol_type:
+                        residue_present = check_res_name(residue, line.split()[0])  
+                        mol_type = False
                     elif residue_present or residue not in g_var.p_residues+g_var.o_residues:
-                        if line_sep[0] == '[':
+                        if line.strip().startswith('[') :
                             atoms, bonds = atom_bond_check(line_sep)
-                        elif 'atoms' not in locals():
-                            sys.exit('There is a issue with: \n'+rtp_file)
-                        elif atoms and residue in g_var.p_residues + g_var.o_residues:
-                            residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = fetch_bond_info_atoms_linked(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict, at_mass)
-                        elif atoms:
-                            residue_list, H_dict, res_at_mass, heavy_dict = fetch_bond_info_atoms_NP(residue, line_sep, residue_list, H_dict, res_at_mass, heavy_dict)
-                        elif bonds:
-                            try:
-                                bond_dict.append([int(line_sep[0]),int(line_sep[1])])
-                            except:
-                                bond_dict.append([line_sep[0],line_sep[1]])
-                        elif not atoms and not bonds and residue in g_var.p_residues+g_var.o_residues:
-                            break
+                        elif 'atoms' in locals():
+                            if atoms and residue in g_var.p_residues + g_var.o_residues:
+                                residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = fetch_bond_info_atoms_linked(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict)
+                            elif atoms:
+                                residue_list, H_dict, res_at_mass, heavy_dict = fetch_bond_info_atoms_NP(residue, line_sep, residue_list, H_dict, res_at_mass, heavy_dict)
+                            elif bonds:
+                                try:
+                                    bond_dict.append([int(line_sep[0]),int(line_sep[1])])
+                                except:
+                                    bond_dict.append([line_sep[0],line_sep[1]])
+                            elif not atoms and not bonds and residue in g_var.p_residues+g_var.o_residues:
+                                break
+            if 'atoms' not in locals():
+                sys.exit('There is a issue with: \n'+rtp_file)
         if len(heavy_dict) > 0:
             break
+    if not residue_present:
+        sys.exit('cannot find topology information for: '+residue)
     bond_dict=np.array(bond_dict)
     hydrogen = {}
     heavy_bond = {}
@@ -484,14 +528,14 @@ def fetch_bond_info(residue, rtp, at_mass,location):
     else:
         return hydrogen, heavy_bond, residue_list, res_at_mass, None
 
-def fetch_bond_info_atoms_linked(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict, at_mass):
+def fetch_bond_info_atoms_linked(residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict):
     if residue not in residue_list:
         residue_list.append(residue)
     atom_conversion[line_sep[0]]=int(line_sep[3])+1
     if is_hydrogen(line_sep[0]):
         H_dict.append(line_sep[0])
     else:
-        res_at_mass[line_sep[0]] = float(at_mass[line_sep[1]])
+        res_at_mass[line_sep[0]] = float(g_var.at_mass[line_sep[1]])
         heavy_dict.append(line_sep[0])
     return residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict
 
@@ -533,11 +577,11 @@ def add_to_topology_list(bond_1, bond_2, top_list, dict1, dict2, conversion, res
 
 def fragment_location(residue):  
 #### runs through dirctories looking for the atomistic fragments returns the correct location
-    for res_type in [g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories]:
+    for res_type in [g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories, g_var.sol_directories, g_var.ion_directories]:
         for directory in range(len(res_type)):
-            if os.path.exists(res_type[directory][0]+residue+'/'+residue+'.pdb'):
-                return res_type[directory][0]+residue+'/'+residue+'.pdb'            
-    sys.exit('cannot find fragment: '+residue+'/'+residue+'.pdb')
+            if os.path.exists(res_type[directory][0]+residue+'/'+swap_to_solvent(residue)+'.pdb'):
+                return res_type[directory][0]+residue+'/'+swap_to_solvent(residue)+'.pdb'            
+    sys.exit('Cannot find fragment: '+residue+'/'+swap_to_solvent(residue)+'.pdb')
 
 
 def read_database_directories():
@@ -634,7 +678,7 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number, test=Fal
     #### separate selection between provided and user
         location = frag_dir[database]+ fragments_available_prov[database]
     #### runs through protein and non protein
-        for directory_type in ['/non_protein/', '/protein/', '/other/', '/protein_modified/']:
+        for directory_type in ['/non_protein/', '/protein/', '/other/', '/protein_modified/', '/solvent/', '/ions/']:
             if os.path.exists(location+directory_type):
                 for root, dirs, files in os.walk(location+directory_type):
                     #### adds non protein residues locations to np_directories
@@ -649,15 +693,19 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number, test=Fal
                     elif directory_type =='/protein_modified/':
                         add_to_list(root, dirs, g_var.mod_directories, g_var.mod_residues)
                         g_var.p_residues+=g_var.mod_residues
+                    elif directory_type =='/ions/':
+                        add_to_list(root, dirs, g_var.ion_directories, g_var.ion_residues)
+                    elif directory_type =='/solvent/':
+                        add_to_list(root, dirs, g_var.sol_directories, g_var.sol_residues)
                     break
+            else:
+                print('Cannot find fragments for: ', directory_type[1:-1] )
     
 
-def print_water_selection(water, directory, test=False):
+def print_water_selection(water):
     to_print =''
     if g_var.args.w != None:
         to_print +='\nThe water type '+g_var.args.w+' doesn\'t exist\n'
-    if len(water) == 0:
-        sys.exit('\nCannot find any water models in: \n\n'+directory[0]+'SOL/'+'\n')
     to_print +='\nPlease select a water molecule from below:\n\n'
     to_print +='{0:^20}{1:^30}\n'.format('Selection','water_molecule')
     to_print +='{0:^20}{1:^30}\n'.format('---------','----------')
@@ -665,39 +713,48 @@ def print_water_selection(water, directory, test=False):
         to_print +='{0:^20}{1:^30}\n'.format(selection,water_model)
     return to_print
 
-def ask_for_water_model(directory, water):
+def ask_for_water_model(water):
     while True:
         try:
             number = int(input('\nplease select a water model: '))
             if number < len(water):
-                return directory[0]+'SOL/', water[number]
+                return water[number]
         except KeyboardInterrupt:
             sys.exit('\nInterrupted')
         except BaseException:
             print("Oops!  That was a invalid choice")
 
 def check_water_molecules(test=False):
-    if any('SOL' in sublist for sublist in g_var.np_directories): 
-        water=[]
-        for directory in g_var.np_directories:
-            if os.path.exists(directory[0]+'SOL/SOL.pdb'):
-                g_var.water_info.append([directory[0]+'SOL'])
-                with open(directory[0]+'SOL/SOL.pdb', 'r') as sol_input:
-                    for line_nr, line in enumerate(sol_input.readlines()):
-                        if line.startswith('['):
-                            water.append(strip_header(line))
-                            g_var.water_info[-1].append(strip_header(line))
-        if not g_var.args.info:
-            if g_var.args.w in water:
-                if not test:
-                    print('\nYou have selected the water model: '+g_var.args.w)
-                g_var.water_dir, g_var.water = directory[0]+'SOL/', g_var.args.w
+    water_info=[]        
+    water=np.array([])
+    for directory in g_var.sol_directories:
+        water_info.append([directory[0]])
+        for fragment in directory[1:]:
+            for filename in os.listdir(directory[0]+fragment+'/'):
+                if filename.endswith('.pdb') and not filename.startswith('_'):
+                    water = np.append(water, filename[:-4])
+                    water_info[-1].append(filename[:-4])
+        water_info[-1] = np.unique(np.array(water_info[-1]))
+    g_var.water_info = water_info    
+    g_var.water = np.unique(water) 
+    if g_var.get_forcefield:
+        g_var.args.w=g_var.args.w.upper()
+        if len(water) == 0:
+            print('WARNING cannot find any solvent fragments')
+        else:
+
+            if g_var.args.w.upper() in water:
+                print('\nYou have selected the water model: '+g_var.args.w)
             else:
-                if not test:
-                    print(print_water_selection(water, directory, test))
-                g_var.water_dir, g_var.water = ask_for_water_model(directory, water)
-            if g_var.args.w is None:
-                g_var.opt['w'] = g_var.water
+                print(print_water_selection(water))
+                g_var.args.w = ask_for_water_model(water)
+            g_var.opt['w'] = g_var.args.w 
+
+def swap_to_solvent(residue_type):
+    if residue_type in g_var.sol_residues:
+        return g_var.args.w
+    else:
+        return residue_type
 
 ############################################################################################## fragment rotation #################################################################################
 
@@ -761,21 +818,21 @@ def clean(test=False):
     if not test:
         print()
     for residue_type in g_var.cg_residues:
-        if residue_type not in ['SOL', 'ION']:
-            if not test:
-                print('Cleaning temp files from : '+residue_type)
-            os.chdir(g_var.working_dir+residue_type)
-            file_list = glob.glob('*temp*', recursive=True)
-            file_list += glob.glob(residue_type+'*pdb', recursive=True)
-            for file in file_list:
-                if not file.endswith('.tpr') and not file.endswith('_merged.pdb') and 'gmx' not in file:
-                    os.remove(file)
-            os.chdir(g_var.working_dir+residue_type+'/MIN')
-            file_list = glob.glob('*temp*', recursive=True)
-            file_list += glob.glob('*trr', recursive=True)
-            for file in file_list:
-                if not file.endswith('.tpr'):
-                    os.remove(file) 
+
+        if not test:
+            print('Cleaning temp files from : '+residue_type)
+        os.chdir(g_var.working_dir+residue_type)
+        file_list = glob.glob('*temp*', recursive=True)
+        file_list += glob.glob(residue_type+'*pdb', recursive=True)
+        for file in file_list:
+            if not file.endswith('.tpr') and not file.endswith('_merged.pdb') and 'gmx' not in file:
+                os.remove(file)
+        os.chdir(g_var.working_dir+residue_type+'/MIN')
+        file_list = glob.glob('*temp*', recursive=True)
+        file_list += glob.glob('*trr', recursive=True)
+        for file in file_list:
+            if not file.endswith('.tpr'):
+                os.remove(file) 
 
 def fix_time(t1, t2):
     minutes, seconds= divmod(t1-t2, 60)
@@ -816,8 +873,9 @@ def cg2at_header():
     print('{0:^90}\n'.format('Last updated : '+str(g_var.script_update)))
     print('{0:^90}'.format('CG2AT2 is written by Owen Vickery'))
     print('{0:^90}'.format('Project leader Phillip Stansfeld'))
-    print('\n{0:^90}\n{1:^90}'.format('Contact email address:','owen.vickery@warwick.ac.uk'))
+    print('\n{0:^90}\n{1:^90}'.format('Contact email address:','cg2at2@gmail.com'))
     print('\n{0:^90}\n{1:^90}\n{2:^90}\n{3:-<90}'.format('Address:','School of Life Sciences, University of Warwick,','Gibbet Hill Road, Coventry, CV4 7AL, UK', ''))
+    print('{0:^90}'.format('Please email me any new residues for the database!'))
     print('\n{0:^90}\n{1:^90}'.format('If you are using this script please acknowledge me (Dr Owen Vickery)','and cite the following DOI: 10.5281/zenodo.3890163'))    
     print('\n{0:-<90}\n{1:^90}'.format('', 'File locations'))
     print('\n{0:^90}'.format('Executable: '+g_var.opt['input'].split()[0]))
@@ -838,11 +896,11 @@ def database_information():
 
 def fragments_in_use(to_print=''):
     protein_directories=[]
-    if np.any(np.array([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info], dtype=object)):
+    if np.any(np.array([g_var.np_directories, protein_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info, g_var.ion_directories], dtype=object)):
         for database_val, database in enumerate(sorted(g_var.args.fg)):
             to_print += '\n\n{0:^90}\n{1:-<90}\n\n'.format('The following residues are available in the database: '+database,'')
-            res_type_name = ['Non protein residues', 'Protein residues', 'Modified protein residues', 'Other linked residues', 'Water residues']
-            for res_val, residue in enumerate([g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories, g_var.water_info]):
+            res_type_name = ['Non protein residues', 'Protein residues', 'Modified protein residues', 'Other linked residues', 'Solvent residues', 'Solvent models', 'Ions']
+            for res_val, residue in enumerate([g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories, g_var.sol_directories, g_var.water_info, g_var.ion_directories]):
                 try:
                     res_type = sorted(residue[database_val][1:])
                     to_print += '\n{0:^90}\n{1:^90}\n'.format(res_type_name[res_val], '-'*len(res_type_name[res_val]))
