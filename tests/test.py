@@ -219,7 +219,7 @@ class TestSum(unittest.TestCase):
         gen.fetch_residues(frag_location, g_var.fragments_available, fragment_number, True)
         self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W', 'W']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.ion_residues, ['NA', 'CL', 'K']))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.ion_residues, ['CL', 'K', 'NA', 'NA']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.p_residues, ['PHE']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.mod_residues, []))
         self.assertIsNone(np.testing.assert_array_equal(g_var.o_residues, []))
@@ -247,7 +247,7 @@ class TestSum(unittest.TestCase):
         g_var.fragments_available = ['test_1', 'test_2']
         gen.fragment_selection(True)
         self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W']))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W', 'W', 'W']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.ion_residues, ['NA', 'CL', 'K']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.p_residues, ['PHE']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.mod_residues, []))
@@ -270,7 +270,7 @@ class TestSum(unittest.TestCase):
         gen.fragment_selection(True)
         self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.p_residues, ['PHE']))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W']))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W', 'W', 'W', 'W']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.ion_residues, ['NA', 'CL', 'K']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.mod_residues, []))
         self.assertIsNone(np.testing.assert_array_equal(g_var.o_residues, []))
@@ -293,9 +293,9 @@ class TestSum(unittest.TestCase):
         g_var.sol_directories = [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]
         gen.check_water_molecules(True)
         self.assertIsNone(np.testing.assert_array_equal(g_var.water_info, [[run_dir+'database_test/fragments/test_1/solvent/', 'SPC', 'SPCE', 'TIP3P', 'TIP4P']]))
-        self.assertEqual(g_var.water, 'TIP3P')
-        self.assertEqual(g_var.opt['w'], 'TIP3P')
-        self.assertEqual(g_var.args.w, 'TIP3P')
+        self.assertEqual(g_var.water_info, 'SPC', 'SPCE', 'TIP3P', 'TIP4P')
+        self.assertEqual(g_var.opt['w'], 'SPC')
+        self.assertEqual(g_var.args.w, 'SPC')
 
     def test_fetch_bond_info_atoms_heavy_linked(self):
         residue, line_sep, residue_list, atom_conversion, H_dict, res_at_mass, heavy_dict = 'PHE', ['N', 'NH1', '-0.470', '0'], [], {}, [], {}, []
