@@ -805,15 +805,15 @@ class TestSum(unittest.TestCase):
     #         raised = True
     #     self.assertFalse(raised, 'Exception raised')         
 
-    def test_sanity_check_non_protein(self):
-        g_var.res_top['CHOL'] = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': []}, 'GROUPS': {'ROH': 1, 'R1': 1, 'R2': 1, 'R3': 2, 'R4': 2, 'R5': 2, 'C1': 3, 'C2': 4}, 'CONNECT': {'atoms': {}}, 'RESIDUE': ['CHOL'], 'atom_masses': {'C3': 12.011, 'O3': 15.9994, 'C4': 12.011, 'C5': 12.011, 'C6': 12.011, 'C7': 12.011, 'C8': 12.011, 'C14': 12.011, 'C15': 12.011, 'C16': 12.011, 'C17': 12.011, 'C13': 12.011, 'C18': 12.011, 'C12': 12.011, 'C11': 12.011, 'C9': 12.011, 'C10': 12.011, 'C19': 12.011, 'C1': 12.011, 'C2': 12.011, 'C20': 12.011, 'C21': 12.011, 'C22': 12.011, 'C23': 12.011, 'C24': 12.011, 'C25': 12.011, 'C26': 12.011, 'C27': 12.011}}
-        g_var.cg_residues = {'CHOL': {0: {'ROH': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R1': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R2': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R3': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R4': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R5': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'C1': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'C2': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}}}}
-        raised = False
-        try:
-            at_mod.sanity_check_non_protein('CHOL')
-        except:
-            raised = True
-        self.assertFalse(raised, 'Exception raised') 
+    # def test_sanity_check_non_protein(self):
+    #     g_var.res_top['CHOL'] = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': []}, 'GROUPS': {'ROH': 1, 'R1': 1, 'R2': 1, 'R3': 2, 'R4': 2, 'R5': 2, 'C1': 3, 'C2': 4}, 'CONNECT': {'atoms': {}}, 'RESIDUE': ['CHOL'], 'atom_masses': {'C3': 12.011, 'O3': 15.9994, 'C4': 12.011, 'C5': 12.011, 'C6': 12.011, 'C7': 12.011, 'C8': 12.011, 'C14': 12.011, 'C15': 12.011, 'C16': 12.011, 'C17': 12.011, 'C13': 12.011, 'C18': 12.011, 'C12': 12.011, 'C11': 12.011, 'C9': 12.011, 'C10': 12.011, 'C19': 12.011, 'C1': 12.011, 'C2': 12.011, 'C20': 12.011, 'C21': 12.011, 'C22': 12.011, 'C23': 12.011, 'C24': 12.011, 'C25': 12.011, 'C26': 12.011, 'C27': 12.011}}
+    #     g_var.cg_residues = {'CHOL': {0: {'ROH': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R1': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R2': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R3': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R4': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'R5': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'C1': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}, 'C2': {'residue_name': 'CHOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}}}}
+    #     raised = False
+    #     try:
+    #         at_mod.sanity_check_non_protein('CHOL')
+    #     except:
+    #         raised = True
+    #     self.assertFalse(raised, 'Exception raised') 
 
     def test_fix_atom_wrap(self):
         correct = {'PROTEIN': {0: {'BB': {'residue_name': 'PHE', 'coord': np.array([84.312, 45.09 , 28.573])}, 'SC1': {'residue_name': 'PHE', 'coord': np.array([82.306, 43.106, 29.565])}, 'SC2': {'residue_name': 'PHE', 'coord': np.array([79.798, 42.108, 29.557])}, 'SC3': {'residue_name': 'PHE', 'coord': np.array([81.894, 40.487, 30.077])}}}}        
