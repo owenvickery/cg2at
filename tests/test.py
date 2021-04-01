@@ -80,11 +80,11 @@ class TestSum(unittest.TestCase):
 
     def test_sep_fragments_topology(self):
         results = gen.sep_fragments_topology('PHE', run_dir+'database_test/fragments/test_1/protein/PHE/PHE')
-        out = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'group_max': 2, 'SC1': 1, 'SC2': 1, 'SC3': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}}
+        out = {'ALT_RES': '','C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': ['CA', 'HA', 'CB', 'N', 'C'], 'CA': {'m': 'HA', 'c1': 'CB', 'c2': 'N', 'c3': 'C'}}, 'GROUPS': {'group_max': 2, 'SC1': 1, 'SC2': 1, 'SC3': 1}, 'CONNECT': {'atoms': {'N': -1, 'C': 1}, 'BB': {'atom': ['N', 'C'], 'Con_Bd': ['BB', 'BB'], 'dir': [-1, 1]}}}
         self.assertEqual(results, out)
 
     def test_empty_sep_fragments_topology(self):
-        empty = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': []}, 'GROUPS': {'group_max': 1}, 'CONNECT': {'atoms': {}}}
+        empty = {'ALT_RES': '', 'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': []}, 'GROUPS': {'group_max': 1}, 'CONNECT': {'atoms': {}}}
         results = gen.sep_fragments_topology('PHE', run_dir+'PHE/missing')
         self.assertEqual(results, empty)
 
@@ -217,11 +217,15 @@ class TestSum(unittest.TestCase):
         g_var.fragments_available = ['test_1', 'test_2']
         fragment_number = [0]
         gen.fetch_residues(frag_location, g_var.fragments_available, fragment_number, True)
-        self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL', 'ION', 'SOL']))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL']))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W']))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.ions_residues, ['NA', 'CL', 'K']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.p_residues, ['PHE']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.mod_residues, []))
         self.assertIsNone(np.testing.assert_array_equal(g_var.o_residues, []))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.np_directories, [[run_dir+'database_test/fragments/test_1/non_protein/', 'CHOL', 'ION', 'SOL']]))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.np_directories, [[run_dir+'database_test/fragments/test_1/non_protein/', 'CHOL']]))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_directories, [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.ion_directories, [[run_dir+'database_test/fragments/test_1/ions/', 'NA', 'CL', 'K']]))
         self.assertIsNone(np.testing.assert_array_equal(g_var.p_directories, [[run_dir+'database_test/fragments/test_1/protein/', 'PHE']]))
         self.assertIsNone(np.testing.assert_array_equal(g_var.mod_directories, [[run_dir+'database_test/fragments/test_1/protein_modified/']]))
         self.assertIsNone(np.testing.assert_array_equal(g_var.o_directories, [[run_dir+'database_test/fragments/test_1/other/']]))
@@ -242,12 +246,15 @@ class TestSum(unittest.TestCase):
         g_var.database_dir = run_dir+'database_test/'
         g_var.fragments_available = ['test_1', 'test_2']
         gen.fragment_selection(True)
-        self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL', 'ION', 'SOL']))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.np_residues, ['CHOL']))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_residues, ['W']))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.ions_residues, ['NA', 'CL', 'K']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.p_residues, ['PHE']))
         self.assertIsNone(np.testing.assert_array_equal(g_var.mod_residues, []))
         self.assertIsNone(np.testing.assert_array_equal(g_var.o_residues, []))
         self.assertIsNone(np.testing.assert_array_equal(g_var.np_directories, [[run_dir+'database_test/fragments/test_1/non_protein/', 'CHOL', 'ION', 'SOL']]))
-        self.assertIsNone(np.testing.assert_array_equal(g_var.p_directories, [[run_dir+'database_test/fragments/test_1/protein/', 'PHE']]))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.sol_directories, [[run_dir+'database_test/fragments/test_1/solvent/', 'W']]))
+        self.assertIsNone(np.testing.assert_array_equal(g_var.ion_directories, [[run_dir+'database_test/fragments/test_1/ions/', 'NA', 'CL', 'K']]))        self.assertIsNone(np.testing.assert_array_equal(g_var.p_directories, [[run_dir+'database_test/fragments/test_1/protein/', 'PHE']]))
         self.assertIsNone(np.testing.assert_array_equal(g_var.mod_directories, [[run_dir+'database_test/fragments/test_1/protein_modified/']]))
         self.assertIsNone(np.testing.assert_array_equal(g_var.o_directories, [[run_dir+'database_test/fragments/test_1/other/']]))
         self.assertIsNone(np.testing.assert_array_equal(g_var.opt['fg'], ['test_1']))
@@ -423,7 +430,7 @@ class TestSum(unittest.TestCase):
 
     def test_fetch_atoms_water_ion(self):
         at_mass_water = {'OT':15.99940, 'OW':15.99940, 'OWT4':15.99940, 'MWT4':15.99940, 'HT':1, 'HW':1, 'HWT4':1}
-        at_mass = gen.fetch_atoms_water_ion(run_dir+'database_test/fragments/test_1/non_protein/SOL/', at_mass_water)
+        at_mass = gen.fetch_atoms_water_ion(run_dir+'database_test/fragments/test_1/solvent/W/', at_mass_water)
         self.assertEqual(at_mass, {'OW': 15.9994, 'HW1': 1.0, 'HW2': 1.0, 'MW': 15.9994})     
 
     def test_fetch_fragment(self):
@@ -442,7 +449,7 @@ class TestSum(unittest.TestCase):
         g_var.p_directories =[[run_dir+'database_test/fragments/test_1/protein/', 'PHE']]
         gen.fetch_fragment_multi()
         self.assertEqual(g_var.res_top['PHE'], res_top_correct)
-        self.assertEqual(len(g_var.res_top), 3)
+        self.assertEqual(len(g_var.res_top), 1)
 
     def test_fetch_chain_groups(self):
         test = [['1,2','3,4'], ['chain'], ['all']]
@@ -594,7 +601,7 @@ class TestSum(unittest.TestCase):
               {'NA+': {'NA+:skip': {'ALL': 'ALL', 'resid': [4000, 4001, 4002], 'range': ['4000-4002']}}},\
               {'NA+': {'NA+:skip': {'ALL': 'ALL', 'resid': [4000, 4001, 4002], 'range': ['4000-4002']}}}]
         test_suite = [['NH3', 'POPE', 50],['C1A', 'POPE', 50],['NH3', 'POPE', 50],['NA+', 'NA+', 4000],['NA+', 'NA+',30]  ]
-        test_out = [['GL0', 'POPG'],['C1A', 'POPG'],['SKIP', 'POPG'],['NA+', 'SKIP'],['NA+', 'ION'] ]
+        test_out = [['GL0', 'POPG'],['C1A', 'POPG'],['SKIP', 'POPG'],['NA+', 'SKIP'],['NA+', 'NA+'] ]
         for test_val, test in enumerate(test_suite):
             g_var.swap_dict = swap[test_val]
             atom, resname = read_in.swap(test[0], test[1], test[2])
@@ -784,11 +791,11 @@ class TestSum(unittest.TestCase):
         self.assertFalse(raised, 'Exception raised')         
 
     def test_sanity_check_solvent(self):
-        g_var.res_top['SOL'] = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': []}, 'GROUPS': {'tip3p': 1, 'tip4p': 2, 'spc': 3, 'spce': 4}, 'CONNECT': {'atoms': {}}, 'RESIDUE': ['SOL'], 'atom_masses': {'OW': 15.9994, 'HW1': 1.008, 'HW2': 1.008, 'MW': 0.0}}
-        g_var.cg_residues = {'SOL': {0: {'tip3p': {'residue_name': 'SOL', 'coord': np.array([60.577, 12.72 ,  2.4  ])}}}}
+        g_var.res_top['W'] = {'C_TERMINAL': 'default', 'N_TERMINAL': 'default', 'CHIRAL': {'atoms': []}, 'GROUPS': {'W': 1,}, 'CONNECT': {'atoms': {}}, 'RESIDUE': ['W'], 'atom_masses': {'OW': 15.9994, 'HW1': 1.008, 'HW2': 1.008, 'MW': 0.0}}
+        g_var.cg_residues = {'W': {0: {'TIP3P': {'residue_name': 'W', 'coord': np.array([60.577, 12.72 ,  2.4  ])}}}}
         raised = False
         try:
-            at_mod.sanity_check_solvent('SOL')
+            at_mod.sanity_check_solvent('W')
         except:
             raised = True
         self.assertFalse(raised, 'Exception raised')         

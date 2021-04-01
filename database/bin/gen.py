@@ -473,7 +473,7 @@ def check_res_name(residue, residue_itp):
         return False
 
 
-def fetch_bond_info(residue, rtp, at_mass,location):
+def fetch_bond_info(residue, rtp, at_mass, location):
     bond_dict=[]
     heavy_dict, H_dict=[],[]
     residue_present, mol_type = False,False
@@ -738,12 +738,12 @@ def check_water_molecules(test=False):
     g_var.water_info = water_info    
     g_var.water = np.unique(water) 
     if g_var.get_forcefield:
-        g_var.args.w=g_var.args.w.upper()
+        if g_var.args.w != None:
+            g_var.args.w=g_var.args.w.upper()
         if len(water) == 0:
             print('WARNING cannot find any solvent fragments')
         else:
-
-            if g_var.args.w.upper() in water:
+            if g_var.args.w in water:
                 print('\nYou have selected the water model: '+g_var.args.w)
             else:
                 print(print_water_selection(water))
