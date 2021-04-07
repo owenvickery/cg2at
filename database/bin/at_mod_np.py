@@ -14,7 +14,7 @@ def build_atomistic_system(residue_type, system={}):
     if not os.path.exists(g_var.working_dir+residue_type+'/'+residue_type+'_merged.pdb'):
         atomistic_fragments, system[residue_type] = at_np_solvent(residue_type, g_var.cg_residues[residue_type])
         write_solvent(atomistic_fragments, residue_type)
-    elif residue_type in g_var.sol_residues+g_var.ion_residues:
+    elif residue_type in g_var.sol_residues:
         atomistic_fragments, system[residue_type] = read_solvent_conversion(residue_type, g_var.cg_residues[residue_type])
     else:
         system[residue_type]=len(g_var.cg_residues[residue_type])
@@ -33,14 +33,17 @@ def read_solvent_conversion(cg_residue_type,cg_residues):
     residue_type_mass={}
     for cg_resid, cg_residue in enumerate(cg_residues):
         frag_location=gen.fragment_location(cg_residue_type) ### get fragment location from database
-        residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location)
-        for res_type in residue_type[cg_residue_type]:
-            if g_var.args.w in residue_type[cg_residue_type][res_type]:
-                sol_p_bead = 0
-                for atom in residue_type[cg_residue_type][res_type][g_var.args.w].values():
+        residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location, cg_residue_type)
+
+        for group in residue_type[cg_residue_type]:
+            sol_p_bead = 0
+            for frag in residue_type[cg_residue_type][group].values():
+                for atom in frag.values():
                     if int(atom['resid_ori']) > sol_p_bead:
                         sol_p_bead = int(atom['resid_ori'])
-                return sol_p_bead, sol_p_bead*len(cg_residues)
+            return sol_p_bead, sol_p_bead*len(cg_residues)
+    else:
+        sys.exit('There is an issue with the solvent recalculation')
 
 def at_np_solvent(cg_residue_type,cg_residues):   
     atomistic_fragments={}  #### residue dictionary

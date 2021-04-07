@@ -678,8 +678,7 @@ def get_coordinates(input_coord, P_R, chain):
             if residue_val in seg:
                 for atom in residue.values():
                     if atom['atom'] in g_var.res_top[atom['res_type']]['ATOMS'] and atom['res_type'] in g_var.p_residues:
-                        # if atom['atom'] == 'CA':
-                            coord_dict[seg_val].append(np.append(atom['coord'],atom['frag_mass']))
+                        coord_dict[seg_val].append(np.append(atom['coord'],atom['frag_mass']))
                 break
     for segment in range(len(coord_dict)):
         coord_dict[segment] = np.array(coord_dict[segment])
@@ -692,7 +691,7 @@ def RMSD_measure_aligned(Final_structure):
         initial_structure, chain_count = read_in.read_in_atomistic(g_var.working_dir+'PROTEIN/MIN/PROTEIN_aligned_'+str(chain)+'.pdb')
         P_R = []
         for key in g_var.atomistic_protein_input_aligned[chain].keys():
-            P_R.append(np.arange(int(key.split(':')[0]), int(key.split(':')[1])+1))
+            P_R.append(np.arange(int(key.split(':')[0])-1, int(key.split(':')[1])))
         final_backbone = get_coordinates(Final_structure, P_R, chain)
         initial_backbone = get_coordinates(initial_structure, P_R, 0)
         seg_rmsd[chain]=[]
