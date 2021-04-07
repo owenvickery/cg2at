@@ -51135,7 +51135,7 @@ CX1   O11   CX2   OX1
 	    C     C    0.510  5
 	    O     O   -0.510  6
 	   C1     C    0.550  7
-	   O1     O   -0.600  8
+	   O3     O   -0.600  8
 	   C2  CTL2   -0.070  9
 	  H2A  HAL2    0.060 10
 	  H2B  HAL2    0.060 11
@@ -51238,9 +51238,9 @@ CX1   O11   CX2   OX1
 	  C16  H16B
 	  C16  H16C
 	    O     C
-	   C1    O1
+	   C1    O3
   [ impropers ]
-	   C1    O1     N    C2
+	   C1    O3     N    C2
 	    N    C1    CA    HN
 	    C    CA    +N     O
 

@@ -8,7 +8,7 @@ ATOM      6  C   GLYP    1       4.953   2.422  50.812  1.00  0.00      PROA C
 ATOM     55  O   GLYP    1       4.660   2.105  49.632  1.00  0.00      PROA O
 [ C1C ]
 ATOM      7  C1  GLYP    1       7.131   5.000  49.109  1.00  0.00      PROA C
-ATOM      8  O1  GLYP    1       7.838   5.097  50.219  1.00  0.00      PROA O
+ATOM      8  O3  GLYP    1       7.838   5.097  50.219  1.00  0.00      PROA O
 ATOM      9  C2  GLYP    1       7.326   6.304  47.879  1.00  0.00      PROA C
 ATOM     10  H2A GLYP    1       7.282   7.408  47.930  1.00  0.00      PROA H
 ATOM     11  H2B GLYP    1       6.479   6.923  47.511  1.00  0.00      PROA H
