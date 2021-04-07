@@ -4,7 +4,6 @@ import os, sys
 import numpy as np
 import subprocess 
 import multiprocessing as mp
-from pathlib import Path
 from shutil import rmtree
 import time
 import gen, g_var, at_mod, read_in, at_mod_p
@@ -273,7 +272,7 @@ def write_posres(chain):
 
 def convert_topology(topol, protein_number, res_type):
 #### reads in topology 
-    if Path(topol+str(protein_number)+'.top').exists():
+    if os.path.exists(topol+str(protein_number)+'.top'):
         read=False
         mol_type=False
         if not os.path.exists(topol+str(protein_number)+'.itp'):

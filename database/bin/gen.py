@@ -992,5 +992,8 @@ def print_sequnce_info_header(rep_val, rep, to_print, counter, index):
             rep[index] = ['-']*int(seq_range[0])+rep[index]+['-']*(chain_max-int(seq_range[1]))
             counter += 1
         else:
+            seq_range = list(g_var.atomistic_protein_input_aligned[g_var.cg_chain_group[index]].keys())[counter].split(':')
+            if int(seq_range[0]) > 0:
+                rep[index] = ['-']*int(seq_range[0])+rep[index]
             counter = 0
     return rep, to_print, counter
