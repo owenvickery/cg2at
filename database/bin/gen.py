@@ -734,9 +734,9 @@ def check_water_molecules(test=False):
                 if filename.endswith('.pdb') and not filename.startswith('_'):
                     water = np.append(water, filename[:-4])
                     water_info[-1].append(filename[:-4])
-        water_info[-1] = np.unique(np.array(water_info[-1]))
-    g_var.water_info = water_info    
-    g_var.water = np.unique(water) 
+        water_info[-1] = np.sort(np.unique(np.array(water_info[-1])))
+    g_var.water_info = water_info  
+    g_var.water = np.sort(np.unique(water))
     if g_var.get_forcefield:
         if g_var.args.w != None:
             g_var.args.w=g_var.args.w.upper()
@@ -746,8 +746,8 @@ def check_water_molecules(test=False):
             if g_var.args.w in water:
                 print('\nYou have selected the water model: '+g_var.args.w)
             else:
-                print(print_water_selection(water))
-                g_var.args.w = ask_for_water_model(water)
+                print(print_water_selection(g_var.water))
+                g_var.args.w = ask_for_water_model(g_var.water)
             g_var.opt['w'] = g_var.args.w 
 
 def swap_to_solvent(residue_type):

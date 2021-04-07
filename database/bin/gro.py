@@ -34,7 +34,8 @@ def collect_input():
 
     gen.file_copy_and_check(g_var.args.c, g_var.input_directory+gen.path_leaf(g_var.args.c)[1])
     os.chdir(g_var.input_directory)
-    gromacs([g_var.args.gmx+' -version', 'version.txt'])
+    if not hasattr(g_var, 'gmx_version'):
+        gromacs([g_var.args.gmx+' -version', 'version.txt'])
     gromacs([g_var.args.gmx+' editconf -f '+gen.path_leaf(g_var.args.c)[1]+' -resnr 0 -c -o '+g_var.input_directory+'CG_INPUT.pdb', g_var.input_directory+'CG_INPUT.pdb'])
     if not os.path.exists(g_var.input_directory+'CG_INPUT.pdb'):
         sys.exit('\nFailed to process coarsegrain input file')      
@@ -80,7 +81,7 @@ def check_gromacs_version(output, err):
     err = err.decode("utf-8")
     for line in err.split('\n') :
         if line.startswith('GROMACS') and 'version' in line:
-            if float(line.split()[-1]) > 6:
+            if float(line.split()[-1].split('.')[0]) > 6:
                 g_var.gmx_version = True
             else:
                 g_var.gmx_version = False

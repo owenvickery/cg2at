@@ -565,7 +565,7 @@ def check_ringed_lipids(protein):
             with open(g_var.merged_directory+'threaded_lipids.dat', 'w') as ring_ouput:
                 for at_val, atom in enumerate(merge): 
                     resname = get_np_resname(at_val)
-                    if resname != None:
+                    if resname in g_var.np_residues:
                         offset = fetch_start_of_residue_np(at_val, resname)
                         if atom['atom_number']-offset in g_var.heavy_bond[resname]:
                             for at_bond in g_var.heavy_bond[resname][atom['atom_number']-offset]:
@@ -609,8 +609,6 @@ def get_np_resname(atom):
     for res_check in g_var.np_blocks:
         if g_var.np_blocks[res_check][0] <= atom < g_var.np_blocks[res_check][1]:
             return res_check 
-
-
 
 def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
     if not os.path.exists(g_var.merged_directory+'merged_cg2at_threaded.pdb'):
