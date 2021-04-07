@@ -940,40 +940,57 @@ def print_sequnce_info(sys_type):
     sequence_info = [g_var.seq_cg[sys_type], g_var.seq_at[sys_type]] if g_var.user_at_input and sys_type == 'PROTEIN' else [g_var.seq_cg[sys_type]]
     to_print = ''
     for rep_val, rep in enumerate(sequence_info):
-        if rep_val == 0:
+        if rep_val == 0 and len(rep) != 0:
             to_print += 'Summary of coarsegrain '+sys_type+' chains\n'
-        else:
+        elif rep_val > 0 and len(rep) != 0:
             to_print += '\nSummary of atomistic '+sys_type+' chains\n'
-        if len(rep) == 0:
+        else:
             break
-        
         to_print += '\n{0:^15}{1:^12}\n'.format('chain number', 'length of chain') #   \nchain number\tDelta A\t\tno in pdb\tlength of chain')
         to_print += '\n{0:^15}{1:^12}\n'.format('------------', '---------------')
         for chain in rep:
             to_print += '{0:^15}{1:^12}\n'.format(chain, len(rep[chain]))
         to_print += '\nSequences:\n'
+        counter=0
         for index in rep:
-            if rep_val == 0:
-                to_print += '\nCG chain: '+str(index)+'\n'
-            else:
-                to_print += '\nAT chain: '+str(index)+' -> Group '+str(g_var.group_chains[index])+'\n'
-            to_print += '{0:9}{1:10}{2:10}{3:10}{4:10}{5:10}{6:10}{7:10}\n'.format('1','10','20','30','40','50','60','70')
-            if len(''.join(map(str, rep[index]))) <= 80:
-                to_print += '{0:80}\n'.format(''.join(map(str, rep[index])))
-            else:
-                start, end = 0, 1                       
-                while end < len(rep[index]):
-                    line = ''.join(map(str, rep[index][start:end]))
-                    while len(line) <= 80:
-                        if end < len(rep[index]):
-                            end+=1
-                            line = ''.join(map(str, rep[index][start:end]))
-                            if len(line) > 80:
-                                end-=1
-                                line = ''.join(map(str, rep[index][start:end]))
-                                break
-                        else:
-                            break
-                    to_print += '{0:80}\n'.format(line)
-                    start = end
+            rep, to_print, counter = print_sequnce_info_header(rep_val, rep, to_print, counter, index)
+            to_print += '{0:9}{1:10}{2:10}{3:10}{4:10}{5:10}{6:10}{7:10}{8:10}{9:10}\n'.format('1','10','20','30','40','50','60','70','80','90')
+            to_print = print_to_100_char(rep[index], to_print)
     return to_print
+
+def print_to_100_char(list_to_print, to_print):
+    if len(''.join(map(str, list_to_print))) <= 100:
+        to_print += '{0:100}\n'.format(''.join(map(str, list_to_print)))
+    else:
+        start, end = 0, 1                       
+        while end < len(list_to_print):
+            line = ''.join(map(str, list_to_print[start:end]))
+            while len(line) <= 100:
+                if end < len(list_to_print):
+                    end+=1
+                    line = ''.join(map(str, list_to_print[start:end]))
+                    if len(line) > 100:
+                        end-=1
+                        line = ''.join(map(str, list_to_print[start:end]))
+                        break
+                else:
+                    break
+            to_print += '{0:100}\n'.format(line)
+            start = end
+    return to_print
+
+def print_sequnce_info_header(rep_val, rep, to_print, counter, index):
+    if rep_val == 0:
+        to_print += '\nCG chain: '+str(index)+'\n'
+    else:
+        to_print += '\nAT chain: '+str(index)+' -> Group '+str(g_var.group_chains[index])+' -> CG chain '+str(g_var.cg_chain_group[index])+'\n'
+        if len(g_var.atomistic_protein_input_aligned[g_var.cg_chain_group[index]].keys()) > 1:
+            for seq in list(g_var.atomistic_protein_input_aligned[g_var.cg_chain_group[index]].keys()):
+                chain_max = int(seq.split(':')[1])
+            chain_max = np.max(chain_max)
+            seq_range = list(g_var.atomistic_protein_input_aligned[g_var.cg_chain_group[index]].keys())[counter].split(':')
+            rep[index] = ['-']*int(seq_range[0])+rep[index]+['-']*(chain_max-int(seq_range[1]))
+            counter += 1
+        else:
+            counter = 0
+    return rep, to_print, counter

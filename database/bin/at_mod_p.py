@@ -290,7 +290,6 @@ def check_sequence():
 
 def align_chain_sequence(sys_type):
     cg_sequence = copy.deepcopy(g_var.seq_cg) 
-    cg_chain_group={}
     for chain_at in range(len(g_var.atomistic_protein_input_raw)):
         skip_sequence=False
         chain_cg=0
@@ -314,7 +313,7 @@ def align_chain_sequence(sys_type):
                     temp[resid + seq_info[0][1]] = g_var.atomistic_protein_input_raw[chain_at][residue]
                 g_var.atomistic_protein_input_aligned[chain_cg][str(seq_info[0][1])+':'+str(seq_info[0][1]+seq_info[0][2])]=temp  
             cg_sequence[sys_type][chain_cg] = mask_sequence(cg_sequence[sys_type][chain_cg], seq_info[0][1], seq_info[0][1]+seq_info[0][2])
-            cg_chain_group[chain_at]=chain_cg
+            g_var.cg_chain_group[chain_at]=chain_cg
 
     check_chain_alignment_coverage(sys_type)
 
@@ -324,23 +323,24 @@ def align_chain_sequence(sys_type):
         g_var.user_at_input = True
     else: 
         g_var.user_at_input = False
-    sort_chains(cg_chain_group, sys_type)
+    sort_chains(sys_type)
     if g_var.args.v >= 2:
         print(gen.print_sequnce_info('PROTEIN'))
 
-def sort_chains(cg_chain_group, sys_type):
+def sort_chains(sys_type):
     if g_var.group_chains is None:
         g_var.group_chains = {}
         for i in range(len(g_var.seq_at[sys_type])):
             g_var.group_chains[i] = i
     elif g_var.group_chains == 'chain':
-        g_var.group_chains = cg_chain_group
+        g_var.group_chains = g_var.cg_chain_group
     elif g_var.group_chains == 'all':
         g_var.group_chains = {}
-        for i in range(len(cg_chain_group)):
+        for i in range(len(g_var.cg_chain_group)):
             g_var.group_chains[i] = 0
     else:
-        pass
+        sys.exit('Failed to parse chain sorting')
+
 
 def check_chain_alignment_coverage(sys_type):
     for key, chain in g_var.atomistic_protein_input_aligned.items():

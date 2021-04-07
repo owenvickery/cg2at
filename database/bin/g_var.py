@@ -102,3 +102,4 @@ if __name__ == "g_var" and 'start_dir' not in locals():
     alt_res_name = {} ## alternative residue names
     hydration = {}
     get_forcefield = True
+    cg_chain_group = {}
