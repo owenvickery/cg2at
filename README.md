@@ -102,14 +102,16 @@ OPTIONAL
 - -w          (str)
 - -ff         (str) 
 - -fg         (str) 
-- -gromacs    (str) 
+- -gmx        (str) 
 - -messy      (True/False) 
 - -info       (True/False)
 - -version    (True/False)
 - -v          (-vvv) 
 - -disre      (True/False)
 - -ov         (float)
-
+- -silent     (True/False)
+- -posre      (str) 
+- -compare    (str) 
 
 <p align="center">
                                    <b>**Fragment based fitting**</b>
@@ -616,20 +618,31 @@ New forcefields and fragments can be added very easily by creating a new folder 
                                | -- Aminoacids (eg. ASP)
                                     - fragment pdb called the same as bead names (eg. ASP.pdb)
                                     - topology file (eg. ASP.top) (optional)
-                               | -- MOD
-                                    | -- modified residues (eg. CYSD) 
-                                         - fragment pdb called the same as bead names (eg. CYSD.pdb)
-                                         - topology file (eg. CYSD.top) (optional)            
+                          | -- protein_modified 
+                               | -- modified residues (eg. CYSD) 
+                                    - fragment pdb called the same as bead names (eg. CYSD.pdb)
+                                    - topology file (eg. CYSD.top) (optional)            
                           | -- non_protein 
                                | -- non protein molecules (eg. lipids POPC)
                                     - fragment pdb called the same as residue names (eg. POPC.pdb)
                                     - itp file of residue called the same as residue names (eg. POPC.itp)
                                     - topology file (eg. POPC.top) (optional)
+                          | -- solvent 
+                               | -- solvent molecules (eg. W)
+                                    - fragment pdb called the same as residue names (eg. TIP3P.pdb)
+                                    - itp file of residue called the same as residue names (eg. TIP3P.itp)
+                                    - topology file (eg. TIP3P.top) (optional)
+                          | -- ions 
+                               | -- ions types (eg. K)
+                                    - fragment pdb called the same as residue names (eg. K.pdb)
+                                    - itp file of residue called the same as residue names (eg. K.itp)
+                                    - topology file (eg. K.top) (optional)
                           | -- other
                                | -- multi residue constructs (eg. DNA)
                                     - fragment pdb called the same as bead names (eg. DA.pdb)
                                     - topology file (eg. DA.top) (optional)
 </pre>
+
 
 You can prevent the script from reading any file or folder by prefixing the name with a underscore.
 
@@ -707,23 +720,18 @@ CA HA CB N C
 
 For non protein residues you can create a position restraint file which is applied during the creation of the aligned.
 
-A script exists within the scripts directory called make_fragments_posre.py this can either create the correct posre files for every residue in the system or for individual residues.
+cg2at can create a posres file for the molecule with the flag "-posre"
 
-To apply to every folder in directory in non_protein:
 <pre>
-python make_fragments_posre.py -dir
-</pre>
-To apply to a single residue:
-<pre>
-python make_fragments_posre.py -f POPE.itp
+cg2at -posre POPE.pdb -fg martini_2-2_charm36
 </pre>
 
-In the case of solvent. All ions and water molecules are in single repective pdb files with separate groups.
+In the case of solvent. each water type is contained within the bead folder e.g solvent/W/TIP3P.pdb, solvent/W/SPCE.pdb
 
-In martini water, 4 atomistic water molecules are condensed into a single bead, therefore the fragment has 4 water molecules.
+In martini water, multiple atomistic water molecules are condensed into a single bead, therefore the fragment can multiple molecules.
 
 <pre>
-[ tip3p ]
+[ TIP3P ]
 ATOM      1  OW  SOL     1      20.910  21.130  75.300  1.00  0.00
 ATOM      2  HW1 SOL     1      20.580  21.660  76.020  1.00  0.00
 ATOM      3  HW2 SOL     1      21.640  21.640  74.940  1.00  0.00
@@ -736,30 +744,19 @@ ATOM      9  HW2 SOL     3      23.510  23.340  74.810  1.00  0.00
 ATOM     10  OW  SOL     4      22.890  21.190  76.980  1.00  0.00
 ATOM     11  HW1 SOL     4      22.130  20.970  76.440  1.00  0.00
 ATOM     12  HW2 SOL     4      23.090  20.380  77.460  1.00  0.00
-[ tip4p ]
-ATOM      1  OW  SOL     1      38.680  58.360  49.620  1.00  0.00
-ATOM      2  HW1 SOL     1      37.800  58.250  49.280  1.00  0.00
-ATOM      3  HW2 SOL     1      38.580  58.980  50.350  1.00  0.00
-ATOM      4  MW  SOL     1      38.560  58.430  49.670  1.00  0.00
-ATOM      5  OW  SOL     2      36.110  58.430  49.680  1.00  0.00
-ATOM      6  HW1 SOL     2      36.530  59.190  50.080  1.00  0.00
-ATOM      7  HW2 SOL     2      36.480  57.680  50.140  1.00  0.00
-ATOM      8  MW  SOL     2      36.210  58.430  49.790  1.00  0.00
-ATOM      9  OW  SOL     3      37.520  59.880  51.350  1.00  0.00
-ATOM     10  HW1 SOL     3      37.430  58.950  51.530  1.00  0.00
-ATOM     11  HW2 SOL     3      37.480  60.300  52.210  1.00  0.00
-ATOM     12  MW  SOL     3      37.500  59.810  51.480  1.00  0.00
-ATOM     13  OW  SOL     4      37.410  57.240  51.590  1.00  0.00
-ATOM     14  HW1 SOL     4      37.960  57.460  50.840  1.00  0.00
-ATOM     15  HW2 SOL     4      37.630  56.330  51.790  1.00  0.00
-ATOM     16  MW  SOL     4      37.510  57.150  51.520  1.00  0.00
 </pre>
 
-In the case of ions only the ion is stored as a fragment. During the conversion a water bead is superimposed over the ion, to replace the hydration shell of the ion.
+In the case of ions only the ion is stored as a fragment. 
 
 <pre>
 [ NA+ ]
 ATOM      1  NA   NA     1      21.863  22.075  76.118  1.00  0.00
-[ NA ]
-ATOM      1  NA   NA     1      21.863  22.075  76.118  1.00  0.00
+</pre>
+
+During the conversion a water bead is superimposed over the ion, to replace the hydration shell of the ion.
+
+This is controlled by the topology file. The Hydration section contains the solvent bead to overlay if specified.
+<pre>
+[ HYDRATION ]
+W
 </pre>
