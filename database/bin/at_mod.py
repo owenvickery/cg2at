@@ -464,9 +464,9 @@ def fetch_chiral_coord(merge_temp, residue_type):
     coord=[]
     for atom in range(len(merge_temp)):
         if residue_type in ['PROTEIN', 'OTHER']:
-            resname = merge_temp[atom]['residue_name']
+            resname = gen.check_alternate_resname(merge_temp[atom]['residue_name'])
         else:
-            resname=residue_type
+            resname = gen.check_alternate_resname(residue_type)
         if len(g_var.res_top[resname]['CHIRAL']['atoms']) > 0:
             if merge_temp[atom]['atom_name'] in g_var.res_top[resname]['CHIRAL']['atoms']:
                 if merge_temp[atom]['residue_id'] not in chiral_atoms:
@@ -495,9 +495,11 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
         if residue_type in ['PROTEIN', 'OTHER']:
             for atom in chiral_atoms[residue]:
                 resname = merge_temp[chiral_atoms[residue][atom]]['residue_name']
+                resname = gen.check_alternate_resname(resname)
                 break
         else:
-            resname=residue_type
+            resname = gen.check_alternate_resname(residue_type)
+
         for chiral_group in g_var.res_top[resname]['CHIRAL']:
             if chiral_group != 'atoms':
                 atom_move = get_atom_move(merge_temp, resname, residue, chiral_group, chiral_atoms)
