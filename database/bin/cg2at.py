@@ -14,7 +14,7 @@ if __name__ == '__main__':
     ## I've tried to make them as comprehensive as possible but they may need updating occasionally
     g_var.version = 0.2
 
-    g_var.script_update = '31-03-2021'
+    g_var.script_update = '01-07-2021'
 
     g_var.other = {'DA':'A', 'DG':'G', 'DC':'C', 'DT':'T', 'DAX':'A', 'DGX':'G', 'DCX':'C', 'DTX':'T'}
 
