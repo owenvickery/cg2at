@@ -14,6 +14,12 @@ import ntpath
 import g_var
 
 
+def check_alternate_resname(resname):
+    if resname in g_var.alt_res_name:
+        return  g_var.alt_res_name[resname]
+    else:
+        return resname
+
 def fetch_forcefield_water_info():
     if g_var.args.info or g_var.args.posre != None or g_var.args.compare != None:
         g_var.get_forcefield = False
