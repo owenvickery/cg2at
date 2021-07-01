@@ -118,11 +118,11 @@ def histidine_protonation(chain, input, chain_ter):
     with open('PROTEIN_'+input+str(chain)+'.top', 'r') as top_input:
         for line in top_input.readlines():
             if line.startswith('; residue'):
-                if line.split()[5] in ['HSD','HID']:
+                if line.split()[5] in ['HSD','HID', 'HISD']:
                     histidines.append(0)
-                elif line.split()[5] in ['HSE', 'HIE']:
+                elif line.split()[5] in ['HSE', 'HIE', 'HISE']:
                     histidines.append(1)
-                elif line.split()[5] in ['HSP','HIS1']:
+                elif line.split()[5] in ['HSP','HIS1', 'HISP']:
                     histidines.append(2)
     pdb2gmx_selections='-his << EOF \n1'
     for his in histidines:
