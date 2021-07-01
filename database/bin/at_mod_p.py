@@ -532,7 +532,9 @@ def correct_amide_h(lines, coords):
             C = np.array(coords[at_val])
         if atom['atom_name'] == 'O':   
             O = np.array(coords[at_val]) 
-        if atom['atom_name'] == g_var.res_top[atom['residue_name']]['amide_h'] and atom['residue_id'] != 0:  
+
+        resname = gen.check_alternate_resname(atom['residue_name'])
+        if atom['atom_name'] == g_var.res_top[resname]['amide_h'] and atom['residue_id'] != 0:  
             HN = np.array(coords[at_val]) 
             HN_index = at_val
         if atom['atom_name'] == 'N' and atom['residue_id'] != 0:
