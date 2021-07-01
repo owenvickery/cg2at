@@ -6,7 +6,9 @@ import math
 import gen, g_var, at_mod
 
 
-def build_atomistic_system(residue_type, system={}):
+
+def build_atomistic_system(residue_type):
+    system={}
 #### for each residue type covert to atomistic except protein
     print('Converting residue type: ' +residue_type)
 #### creates folder for residue type
