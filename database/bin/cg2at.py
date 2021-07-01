@@ -125,12 +125,17 @@ if __name__ == '__main__':
 
     #### converts non protein residues into atomistic (runs on all cores)
     if len([key for value, key in enumerate(g_var.cg_residues) if key not in ['PROTEIN', 'OTHER']]) > 0:
-        print('\nConverting the following residues concurrently: \n')
-        with mp.Pool(g_var.args.ncpus) as pool:
-            pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(residue_type, {}) 
-                                        for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'OTHER']]]).get() ## fragment fitting done in parrallel  
-        for residue_type in pool_process:
-            g_var.system.update(residue_type) ## updates residue counts 
+        print('\nConverting the following residues: \n')
+        # os.chdir(g_var.start_dir)
+        for residue_type in g_var.cg_residues.keys():
+            if residue_type not in ['PROTEIN', 'OTHER']:
+                number = at_mod_np.build_atomistic_system(residue_type) 
+                g_var.system.update(number)
+        # with mp.Pool(g_var.args.ncpus) as pool:
+        #     pool_process = pool.starmap_async(at_mod_np.build_atomistic_system, [(residue_type, g_var.working_dir, g_var.cg_residues) 
+        #                                 for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'OTHER']]]).get() ## fragment fitting done in parrallel  
+        # for residue_type in pool_process:
+        #     g_var.system.update(residue_type) ## updates residue counts 
         #### attempts to minimise all residues at once 
         print('\nThis may take some time....(probably time for a coffee)\n')
         for residue_type in [key for key in g_var.cg_residues if key not in ['PROTEIN', 'OTHER']]:
