@@ -5,7 +5,7 @@ package:
   version: {{ environ['VERSION'] }}
 
 source:
-  git_rev: "v0.2"
+  git_rev: "v0.9"
   git_url: https://github.com/owenvickery/cg2at
 
 requirements:
