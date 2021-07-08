@@ -24,6 +24,7 @@ build:
     - VERSION
     - CONDA_BLD_PATH
     - package
+  noarch: generic
 run:
   - python
 
