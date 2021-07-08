@@ -4,7 +4,6 @@ import os, sys
 import numpy as np
 import difflib
 from scipy.spatial import cKDTree
-import multiprocessing as mp
 import copy
 import gen, g_var, at_mod, read_in
 
