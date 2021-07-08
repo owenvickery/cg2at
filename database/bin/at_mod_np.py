@@ -44,8 +44,8 @@ def read_solvent_conversion(cg_residue_type,cg_residues):
                     if int(atom['resid_ori']) > sol_p_bead:
                         sol_p_bead = int(atom['resid_ori'])
             return sol_p_bead, sol_p_bead*len(cg_residues)
-    else:
-        sys.exit('There is an issue with the solvent recalculation')
+    
+    sys.exit('There is an issue with the solvent recalculation')
 
 def at_np_solvent(cg_residue_type,cg_residues):   
     atomistic_fragments={}  #### residue dictionary
