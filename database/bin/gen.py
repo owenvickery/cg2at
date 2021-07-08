@@ -330,7 +330,6 @@ def sort_alternate_residues(line_sep, residue):
 
 def sort_hydration(line_sep, residue):
     if len(line_sep) == 1 and residue not in g_var.hydration:
-        location = fragment_location(line_sep[0])
         g_var.hydration[residue] = line_sep[0]
     else:
         print('There is a issue with the hydration section of: ', residue)
