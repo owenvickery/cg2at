@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 import os, sys
-import numpy as np
-import gen, g_var, at_mod, read_in, at_mod_p
+import gen, g_var
 
 
 def write_posre_file(residue, posres):
