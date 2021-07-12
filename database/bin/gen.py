@@ -17,6 +17,8 @@ import g_var
 def check_alternate_resname(resname):
     if resname in g_var.alt_res_name:
         return  g_var.alt_res_name[resname]
+    elif resname not in g_var.res_top:
+        sys.exit('The residue '+resname+' cannot be found in the topology or alternate resnames')
     else:
         return resname
 
