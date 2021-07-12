@@ -9,3 +9,5 @@ SC2 SC3
 # central atom, atom to move, atom_1, atom_2, atom_3
 # eg: CA HA CB N C
 CA HA CB N C
+[ ALT_RES ]
+HSD HSE HSP HIE HISE HISD
