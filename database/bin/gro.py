@@ -11,7 +11,9 @@ import gen, g_var, at_mod, read_in, at_mod_p
 
 #### collects input structures and creates initial folders
 def collect_input():
-    if not os.path.exists(g_var.args.c):
+    if os.path.exists(g_var.args.c):
+        print('You have selected the following coarse grain input file: ', g_var.args.c)
+    else:
         sys.exit('Cannot find CG input file: '+g_var.args.c)
     gen.mkdir_directory(g_var.working_dir)
     gen.mkdir_directory(g_var.final_dir)
@@ -19,8 +21,11 @@ def collect_input():
     gen.mkdir_directory(g_var.merged_directory)
 #### collates all input files in input directory
     if g_var.args.a != None:
+        print('You have selected the following atomistic input files:') 
         for file_num, file_name in enumerate(g_var.args.a):
-            if not os.path.exists(file_name):
+            if os.path.exists(file_name):
+                print( file_name )
+            else:
                 sys.exit('cannot find atomistic input file: '+file_name)
             gen.file_copy_and_check(file_name, g_var.input_directory+gen.path_leaf(file_name)[1])
             os.chdir(g_var.input_directory)
