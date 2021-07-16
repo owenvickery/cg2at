@@ -46,7 +46,7 @@ def read_itp(filename_itp, footer=False):
                         footer=True
         return molecule, posre, footer
     else:
-        sys.exit('Cannot find itp file: ', filename_itp)
+        sys.exit('Cannot find itp file: '+filename_itp)
     
 
 def check_frag_file(directory, molecule):
