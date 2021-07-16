@@ -2285,6 +2285,6 @@ LIP1             3
   236   238   240   246   248     1 
 
 ; Include Position restraint file
-#ifdef POSRES_NP
-#include "posre_LIP1.itp"
+#ifdef NP
+#include "LIP1_posre.itp"
 #endif
