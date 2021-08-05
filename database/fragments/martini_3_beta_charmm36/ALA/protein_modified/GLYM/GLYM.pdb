@@ -1,0 +1,53 @@
+[ BB ]
+ATOM      1  N   GLYM    1       6.000   4.233  49.807  1.00  0.00      PROA N
+ATOM      2  HN  GLYM    1       5.046   4.161  49.350  1.00  0.00      PROA H
+ATOM      3  CA  GLYM    1       5.453   3.803  51.062  1.00  0.00      PROA C
+ATOM      4  HA1 GLYM    1       4.520   4.249  51.437  1.00  0.00      PROA H
+ATOM      5  HA2 GLYM    1       6.305   3.835  51.677  1.00  0.00      PROA H
+ATOM      6  C   GLYM    1       4.953   2.422  50.812  1.00  0.00      PROA C
+ATOM     49  O   GLYM    1       4.660   2.105  49.632  1.00  0.00      PROA O
+[ C1C ]
+ATOM      7  C1  GLYM    1       7.131   5.000  49.109  1.00  0.00      PROA C
+ATOM      8  O1  GLYM    1       7.838   5.097  50.219  1.00  0.00      PROA O
+ATOM      9  C2  GLYM    1       7.326   6.304  47.879  1.00  0.00      PROA C
+ATOM     10  H2A GLYM    1       7.282   7.408  47.930  1.00  0.00      PROA H
+ATOM     11  H2B GLYM    1       6.479   6.923  47.511  1.00  0.00      PROA H
+ATOM     12  C3  GLYM    1       7.798   6.207  46.456  1.00  0.00      PROA C
+ATOM     13  H3A GLYM    1       7.939   5.225  46.910  1.00  0.00      PROA H
+ATOM     14  H3B GLYM    1       8.751   6.513  46.718  1.00  0.00      PROA H
+ATOM     15  C4  GLYM    1       6.733   6.926  45.435  1.00  0.00      PROA C
+ATOM     16  H4A GLYM    1       6.980   7.987  45.403  1.00  0.00      PROA H
+ATOM     17  H4B GLYM    1       5.661   6.993  45.753  1.00  0.00      PROA H
+ATOM     18  C5  GLYM    1       6.457   6.114  44.118  1.00  0.00      PROA C
+ATOM     19  H5A GLYM    1       5.724   5.295  44.230  1.00  0.00      PROA H
+ATOM     20  H5B GLYM    1       7.378   5.559  43.894  1.00  0.00      PROA H
+ATOM     21  C6  GLYM    1       5.597   6.537  42.945  1.00  0.00      PROA C
+ATOM     22  H6A GLYM    1       6.039   7.468  42.558  1.00  0.00      PROA H
+ATOM     23  H6B GLYM    1       4.513   6.711  43.131  1.00  0.00      PROA H
+[ C2C ]
+ATOM     24  C7  GLYM    1       5.662   5.357  41.962  1.00  0.00      PROA C
+ATOM     25  H7A GLYM    1       5.023   4.470  42.187  1.00  0.00      PROA H
+ATOM     26  H7B GLYM    1       6.705   4.963  41.930  1.00  0.00      PROA H
+ATOM     27  C8  GLYM    1       5.302   5.850  40.603  1.00  0.00      PROA C
+ATOM     28  H8A GLYM    1       5.822   6.822  40.441  1.00  0.00      PROA H
+ATOM     29  H8B GLYM    1       4.204   6.047  40.559  1.00  0.00      PROA H
+ATOM     30  C9  GLYM    1       5.781   4.816  39.600  1.00  0.00      PROA C
+ATOM     31  H9A GLYM    1       5.217   3.863  39.762  1.00  0.00      PROA H
+ATOM     32  H9B GLYM    1       6.868   4.613  39.696  1.00  0.00      PROA H
+ATOM     33  C10 GLYM    1       5.475   5.327  38.217  1.00  0.00      PROA C
+ATOM     34 H10A GLYM    1       5.871   6.359  38.108  1.00  0.00      PROA H
+ATOM     35 H10B GLYM    1       4.396   5.374  38.402  1.00  0.00      PROA H
+[ C3C ]
+ATOM     36  C11 GLYM    1       5.822   4.284  37.110  1.00  0.00      PROA C
+ATOM     37 H11A GLYM    1       5.235   3.415  37.471  1.00  0.00      PROA H
+ATOM     38 H11B GLYM    1       6.924   4.233  37.151  1.00  0.00      PROA H
+ATOM     39  C12 GLYM    1       5.482   4.404  35.587  1.00  0.00      PROA C
+ATOM     40 H12A GLYM    1       5.791   5.449  35.538  1.00  0.00      PROA H
+ATOM     41 H12B GLYM    1       4.456   4.092  35.384  1.00  0.00      PROA H
+ATOM     42  C13 GLYM    1       5.752   3.604  34.279  1.00  0.00      PROA C
+ATOM     43 H13A GLYM    1       5.552   2.545  34.545  1.00  0.00      PROA H
+ATOM     44 H13B GLYM    1       6.765   4.026  34.097  1.00  0.00      PROA H
+ATOM     45  C14 GLYM    1       5.118   3.729  32.868  1.00  0.00      PROA C
+ATOM     46 H14A GLYM    1       4.040   4.007  32.860  1.00  0.00      PROA H
+ATOM     47 H14B GLYM    1       5.567   4.584  32.382  1.00  0.00      PROA H
+ATOM     48 H14C GLYM    1       5.612   3.262  32.005  1.00  0.00      PROA H
