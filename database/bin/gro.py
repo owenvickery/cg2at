@@ -85,7 +85,11 @@ def check_gromacs_version(output, err):
     err = err.decode("utf-8")
     for line in err.split('\n') :
         if line.startswith('GROMACS') and 'version' in line:
-            if float(line.split()[-1].split('.')[0]) > 6:
+            if '-' in line.split()[-1].split('.')[0]:
+                version = line.split()[-1].split('.')[0].split('-')[0]
+                if version > 6:
+                    g_var.gmx_version = True
+            elif float(line.split()[-1].split('.')[0]) > 6:
                 g_var.gmx_version = True
             else:
                 g_var.gmx_version = False
