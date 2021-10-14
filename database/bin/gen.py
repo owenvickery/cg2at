@@ -361,6 +361,8 @@ def get_fragment_topology(residue, location):
             if line.startswith('ATOM'):
                 line_sep = pdbatom(line)
                 grouped_atoms[group_temp][bead].append(line_sep['atom_number'])
+            if 'bead' not in locals():
+                sys.exit('error reading:\n'+location)
             ### return backbone info for each aminoacid residue
             if bead in g_var.res_top[residue]['CONNECT']:
                 if line.startswith('ATOM'):
