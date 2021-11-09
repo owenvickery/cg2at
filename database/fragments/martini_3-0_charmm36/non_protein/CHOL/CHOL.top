@@ -1,0 +1,8 @@
+[ GROUPS ]
+ROH R1 R2
+R3 R4 R5
+[ CHIRAL ]
+# column must be in the order:
+# central atom, atom to move, atom_1, atom_2, atom_3
+# eg: CA HA CB N C
+C3 H3 O3 C4 C2
