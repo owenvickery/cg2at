@@ -443,10 +443,10 @@ def write_merged_topol():
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(unit)+posres_type, 'PROTEIN_'+str(unit)+posres_type)
                         gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'PROTEIN_disres.itp')  
         if os.path.exists('extra_atomtypes.itp'):
-            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+g_var.forcefield+'/forcefield.itp\"\n')
+            topol_write.write('; Include forcefield parameters\n#include \"'../FINAL/'+g_var.forcefield+'/forcefield.itp\"\n')
             topol_write.write('#include \"extra_atomtypes.itp\"\n')
         else:
-            topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+g_var.forcefield+'/forcefield.itp\"\n')
+            topol_write.write('; Include forcefield parameters\n#include \"'../FINAL/'+g_var.forcefield+'/forcefield.itp\"\n')
         for line in topologies_to_include:
             topol_write.write(line)
 
