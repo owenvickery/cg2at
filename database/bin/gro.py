@@ -324,7 +324,7 @@ def write_topol(residue_type, residue_number, chain):
     found=False
     with open('topol_'+residue_type+chain+'.top', 'w') as topol_write:
     #### add standard headers may need to be changed dependant on forcefield
-        topol_write.write('; Include forcefield parameters\n#include \"'+g_var.final_dir+g_var.forcefield+'/forcefield.itp\"\n')
+        topol_write.write('; Include forcefield parameters\n#include \"'+g_var.forcefield+'/forcefield.itp\"\n')
     #### add location of residue topology file absolute file locations
         if residue_type in g_var.sol_residues+g_var.ion_residues+g_var.np_residues:
             for directory in g_var.sol_directories+g_var.ion_directories+g_var.np_directories:
