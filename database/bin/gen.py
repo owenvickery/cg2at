@@ -621,6 +621,7 @@ def database_selection(provided, selection_type, test=False):
 
 def ask_database(provided, selection_type, test=False):
 #### ask which database to use
+    attempt=0
     while True:
         try:
             if len(provided)==1:
@@ -647,6 +648,9 @@ def ask_database(provided, selection_type, test=False):
             if test:
                 return True
             print("Oops!  That was a invalid choice")
+            attempt+=1
+            if attempt > 3:
+                sys.exit('Too many invalid choices')
 
 def fetch_frag_number(fragments_available, test=False):
     fragment_number = []
@@ -724,6 +728,7 @@ def print_water_selection(water):
     return to_print
 
 def ask_for_water_model(water):
+    attempt=0
     while True:
         try:
             number = int(input('\nplease select a water model: '))
@@ -733,6 +738,9 @@ def ask_for_water_model(water):
             sys.exit('\nInterrupted')
         except BaseException:
             print("Oops!  That was a invalid choice")
+            attempt+=1
+            if attempt > 3:
+                sys.exit('Too many invalid choices')
 
 def check_water_molecules(test=False):
     water_info=[]        
