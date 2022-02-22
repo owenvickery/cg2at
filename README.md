@@ -10,7 +10,8 @@
 <p align="center">
                                    <b>**CG2AT v2 README**</b>
 </p>
-If you are using CG2AT2 please acknowledge me (Dr Owen Vickery) and cite the following DOI.
+If you are using CG2AT2 please acknowledge me (Dr Owen Vickery) and use the following citation.
+
 
 Vickery ON, Stansfeld PJ. CG2AT2: an Enhanced Fragment-Based Approach for Serial Multi-scale Molecular Dynamics Simulations. J Chem Theory Comput. 2021 Oct 12;17(10):6472-6482. doi: 10.1021/acs.jctc.1c00295. Epub 2021 Sep 7. PMID: 34492188; PMCID: PMC8515810.
 
