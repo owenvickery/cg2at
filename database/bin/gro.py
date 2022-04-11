@@ -31,7 +31,7 @@ def collect_input():
             os.chdir(g_var.input_directory)
             gromacs([g_var.args.gmx+' editconf -f '+gen.path_leaf(file_name)[1]+' -resnr 0 -o '+g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb', g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb'])
             if not os.path.exists(g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb'):
-                sys.exit('\nFailed to process atomistic input file')
+                sys.exit('\nFailed to process atomistic input file.\nCheck gromacs outputs in '+g_var.input_directory)
             else:
                 g_var.user_at_input = True
             os.chdir(g_var.start_dir)
