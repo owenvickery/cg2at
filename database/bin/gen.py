@@ -516,11 +516,14 @@ def fetch_bond_info(residue, rtp, at_mass, location):
                                     bond_dict.append([line_sep[0],line_sep[1]])
                             elif not atoms and not bonds and residue in g_var.p_residues+g_var.o_residues:
                                 break
-            if 'atoms' not in locals():
-                print('Issue finding information for residue: ',residue)
-                sys.exit('There is a issue with: \n'+rtp_file)
+            # if 'atoms' not in locals():
+            #     print('Issue finding information for residue: ',residue)
+            #     sys.exit('There is a issue with: \n'+rtp_file)
         if len(heavy_dict) > 0:
             break
+    if 'atoms' not in locals():
+        print('Issue finding information for residue: ',residue)
+        sys.exit('There is a issue with: \n'+rtp_file)
     if not residue_present:
         sys.exit('cannot find topology information for: '+residue)
     bond_dict=np.array(bond_dict)
