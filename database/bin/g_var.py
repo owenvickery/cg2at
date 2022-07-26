@@ -31,7 +31,7 @@ if __name__ == "g_var" and 'start_dir' not in locals():
     parser.add_argument('-box', help='box size in Angstrom (0 = use input file) (Optional)',metavar='100',type=float, nargs=3)
     parser.add_argument('-vs', help='use virtual sites', action='store_true')
     parser.add_argument('-sf', help='scale factor for fragments, shrinks fragments before fitting to CG',metavar='0.9',type=float, default=0.9)
-    parser.add_argument('-ncpus', help='maximum number of cores to use (default = all)', type=int)
+    parser.add_argument('-ncpus', help='DEPRECATED due to gromacs issues. maximum number of cores to use (default = all)', type=int)
     parser.add_argument('-disre', help='switches on the distance restraint matrix for the backbone', action='store_true')
     parser.add_argument('-ov', help='amount of overlap allowed between atoms', type=float, default=0.3, metavar='0.3')
     parser.add_argument('-posre', help='non protein residue to generate posre file', type=str, metavar='POPC')
