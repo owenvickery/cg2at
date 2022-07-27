@@ -1,0 +1,9 @@
+[ CONNECT ]
+[ GROUPS ]
+B1 B2 B3 B4
+B5 B6 B7 B8 B9
+[ CHIRAL ]
+# column must be in the order:
+# central atom, atom to move, atom_1, atom_2, atom_3
+# eg: CA HA CB N C
+CA HA CB N C

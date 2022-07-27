@@ -1,0 +1,151 @@
+[ C1 ]
+ATOM      1  C12 POPI    1       8.329   5.352  64.986  1.00  0.00      MEMB
+ATOM      2  H2  POPI    1       8.800   5.873  64.113  1.00  0.00      MEMB
+ATOM      3  O2  POPI    1       8.650   3.957  64.855  1.00  0.00      MEMB
+ATOM      4  HO2 POPI    1       8.652   3.450  65.674  1.00  0.00      MEMB
+ATOM     21  C11 POPI    1       6.825   5.596  64.923  1.00  0.00      MEMB
+ATOM     22  H1  POPI    1       6.636   6.701  64.977  1.00  0.00      MEMB
+[ C2 ]
+ATOM      5  C13 POPI    1       8.920   5.966  66.250  1.00  0.00      MEMB
+ATOM      6  H3  POPI    1       8.764   7.076  66.221  1.00  0.00      MEMB
+ATOM      7  O3  POPI    1      10.312   5.685  66.328  1.00  0.00      MEMB
+ATOM      8  HO3 POPI    1      10.913   6.372  65.974  1.00  0.00      MEMB
+ATOM      9  C14 POPI    1       8.231   5.395  67.482  1.00  0.00      MEMB
+ATOM     10  H4  POPI    1       8.454   4.293  67.519  1.00  0.00      MEMB
+ATOM     11  O4  POPI    1       8.716   5.984  68.698  1.00  0.00      MEMB
+ATOM     12  HO4 POPI    1       8.679   5.306  69.381  1.00  0.00      MEMB
+[ C3 ]
+ATOM     13  C15 POPI    1       6.736   5.596  67.410  1.00  0.00      MEMB
+ATOM     14  H5  POPI    1       6.518   6.700  67.407  1.00  0.00      MEMB
+ATOM     15  O5  POPI    1       6.113   5.010  68.556  1.00  0.00      MEMB
+ATOM     16  HO5 POPI    1       6.410   5.459  69.341  1.00  0.00      MEMB
+ATOM     17  C16 POPI    1       6.142   5.001  66.151  1.00  0.00      MEMB
+ATOM     18  H6  POPI    1       6.297   3.892  66.151  1.00  0.00      MEMB
+ATOM     19  O6  POPI    1       4.739   5.269  66.162  1.00  0.00      MEMB
+ATOM     20  HO6 POPI    1       4.284   4.454  66.393  1.00  0.00      MEMB
+[ PO4 ]
+ATOM     23  P   POPI    1       6.207   6.022  62.345  1.00  0.00      MEMB
+ATOM     24  O13 POPI    1       7.566   6.431  61.907  1.00  0.00      MEMB
+ATOM     25  O14 POPI    1       5.279   7.128  62.588  1.00  0.00      MEMB
+ATOM     26  O12 POPI    1       6.317   5.059  63.693  1.00  0.00      MEMB
+ATOM     27  O11 POPI    1       5.597   4.995  61.330  1.00  0.00      MEMB
+[ GL1 ]
+ATOM     28  C1  POPI    1       6.193   3.719  61.138  1.00  0.00      MEMB
+ATOM     29  HA  POPI    1       5.651   2.957  61.738  1.00  0.00      MEMB
+ATOM     30  HB  POPI    1       7.274   3.680  61.428  1.00  0.00      MEMB
+ATOM     31  C2  POPI    1       6.068   3.373  59.648  1.00  0.00      MEMB
+ATOM     32  HS  POPI    1       6.746   2.528  59.402  1.00  0.00      MEMB
+ATOM     33  O21 POPI    1       6.347   4.475  58.803  1.00  0.00      MEMB
+ATOM     34  C21 POPI    1       7.445   5.141  58.926  1.00  0.00      MEMB
+ATOM     35  O22 POPI    1       8.445   4.824  59.540  1.00  0.00      MEMB
+ATOM     36  C22 POPI    1       7.389   6.149  57.805  1.00  0.00      MEMB
+ATOM     37  H2R POPI    1       7.717   7.141  58.176  1.00  0.00      MEMB
+ATOM     38  H2S POPI    1       6.346   6.251  57.426  1.00  0.00      MEMB
+[ GL2 ]
+ATOM     39  C3  POPI    1       4.623   2.971  59.317  1.00  0.00      MEMB
+ATOM     40  HX  POPI    1       4.296   2.165  60.005  1.00  0.00      MEMB
+ATOM     41  HY  POPI    1       3.960   3.851  59.500  1.00  0.00      MEMB
+ATOM     42  O31 POPI    1       4.530   2.498  57.968  1.00  0.00      MEMB
+ATOM     43  C31 POPI    1       4.251   3.386  57.035  1.00  0.00      MEMB
+ATOM     44  O32 POPI    1       4.109   4.587  57.171  1.00  0.00      MEMB
+ATOM     45  C32 POPI    1       4.146   2.593  55.733  1.00  0.00      MEMB
+ATOM     46  H2X POPI    1       3.178   2.052  55.768  1.00  0.00      MEMB
+ATOM     47  H2Y POPI    1       4.961   1.847  55.772  1.00  0.00      MEMB
+[ C1A ]
+ATOM     48  C23 POPI    1       8.281   5.571  56.688  1.00  0.00      MEMB
+ATOM     49  H3R POPI    1       8.088   4.492  56.512  1.00  0.00      MEMB
+ATOM     50  H3S POPI    1       9.333   5.663  57.052  1.00  0.00      MEMB
+ATOM     51  C24 POPI    1       8.038   6.371  55.408  1.00  0.00      MEMB
+ATOM     52  H4R POPI    1       7.880   7.340  55.878  1.00  0.00      MEMB
+ATOM     53  H4S POPI    1       7.069   6.190  54.919  1.00  0.00      MEMB
+ATOM     54  C25 POPI    1       9.176   6.263  54.381  1.00  0.00      MEMB
+ATOM     55  H5R POPI    1       8.877   5.382  53.777  1.00  0.00      MEMB
+ATOM     56  H5S POPI    1      10.128   6.023  54.917  1.00  0.00      MEMB
+ATOM     57  C26 POPI    1       9.559   7.408  53.400  1.00  0.00      MEMB
+ATOM     58  H6R POPI    1      10.314   7.023  52.683  1.00  0.00      MEMB
+ATOM     59  H6S POPI    1      10.197   8.105  53.945  1.00  0.00      MEMB
+ATOM     60  C27 POPI    1       8.444   8.162  52.621  1.00  0.00      MEMB
+ATOM     61  H7R POPI    1       8.882   8.921  51.922  1.00  0.00      MEMB
+ATOM     62  H7S POPI    1       7.753   8.763  53.240  1.00  0.00      MEMB
+[ D2A ]
+ATOM     63  C28 POPI    1       7.600   7.218  51.825  1.00  0.00      MEMB
+ATOM     64  H8R POPI    1       6.724   7.763  51.402  1.00  0.00      MEMB
+ATOM     65  H8S POPI    1       7.229   6.408  52.497  1.00  0.00      MEMB
+ATOM     66  C29 POPI    1       8.577   6.757  50.782  1.00  0.00      MEMB
+ATOM     67  H91 POPI    1       9.605   7.140  50.852  1.00  0.00      MEMB
+ATOM     68 C210 POPI    1       8.251   5.999  49.761  1.00  0.00      MEMB
+ATOM     69 H101 POPI    1       9.015   5.694  49.031  1.00  0.00      MEMB
+ATOM     70 C211 POPI    1       6.847   5.538  49.576  1.00  0.00      MEMB
+ATOM     71 H11R POPI    1       6.186   5.748  50.447  1.00  0.00      MEMB
+ATOM     72 H11S POPI    1       6.868   4.442  49.506  1.00  0.00      MEMB
+[ C3A ]
+ATOM     73 C212 POPI    1       6.230   6.245  48.363  1.00  0.00      MEMB
+ATOM     74 H12R POPI    1       6.368   7.350  48.444  1.00  0.00      MEMB
+ATOM     75 H12S POPI    1       5.135   6.055  48.388  1.00  0.00      MEMB
+ATOM     76 C213 POPI    1       6.789   5.774  47.015  1.00  0.00      MEMB
+ATOM     77 H13R POPI    1       7.726   6.334  46.794  1.00  0.00      MEMB
+ATOM     78 H13S POPI    1       6.057   6.049  46.222  1.00  0.00      MEMB
+ATOM     79 C214 POPI    1       7.133   4.274  46.960  1.00  0.00      MEMB
+ATOM     80 H14R POPI    1       7.990   4.070  47.630  1.00  0.00      MEMB
+ATOM     81 H14S POPI    1       7.506   4.058  45.936  1.00  0.00      MEMB
+[ C4A ]
+ATOM     82 C215 POPI    1       6.003   3.302  47.343  1.00  0.00      MEMB
+ATOM     83 H15R POPI    1       5.656   3.396  48.390  1.00  0.00      MEMB
+ATOM     84 H15S POPI    1       6.385   2.264  47.205  1.00  0.00      MEMB
+ATOM     85 C216 POPI    1       4.811   3.438  46.439  1.00  0.00      MEMB
+ATOM     86 H16R POPI    1       4.390   4.470  46.473  1.00  0.00      MEMB
+ATOM     87 H16S POPI    1       3.989   2.754  46.749  1.00  0.00      MEMB
+ATOM     88 C217 POPI    1       5.293   3.057  45.053  1.00  0.00      MEMB
+ATOM     89 H17R POPI    1       5.763   2.050  45.050  1.00  0.00      MEMB
+ATOM     90 H17S POPI    1       5.997   3.826  44.660  1.00  0.00      MEMB
+ATOM     91 C218 POPI    1       4.135   3.053  44.155  1.00  0.00      MEMB
+ATOM     92 H18R POPI    1       4.392   3.164  43.082  1.00  0.00      MEMB
+ATOM     93 H18S POPI    1       3.492   2.172  44.324  1.00  0.00      MEMB
+ATOM     94 H18T POPI    1       3.612   3.966  44.520  1.00  0.00      MEMB
+[ C1B ]
+ATOM     95  C33 POPI    1       4.253   3.402  54.422  1.00  0.00      MEMB
+ATOM     96  H3X POPI    1       3.522   4.239  54.445  1.00  0.00      MEMB
+ATOM     97  H3Y POPI    1       3.969   2.734  53.576  1.00  0.00      MEMB
+ATOM     98  C34 POPI    1       5.653   3.978  54.158  1.00  0.00      MEMB
+ATOM     99  H4X POPI    1       5.924   4.588  55.043  1.00  0.00      MEMB
+ATOM    100  H4Y POPI    1       5.625   4.634  53.260  1.00  0.00      MEMB
+ATOM    101  C35 POPI    1       6.771   2.960  53.953  1.00  0.00      MEMB
+ATOM    102  H5X POPI    1       6.796   2.266  54.816  1.00  0.00      MEMB
+ATOM    103  H5Y POPI    1       7.765   3.460  53.942  1.00  0.00      MEMB
+ATOM    104  C36 POPI    1       6.641   2.171  52.652  1.00  0.00      MEMB
+ATOM    105  H6X POPI    1       6.658   2.874  51.810  1.00  0.00      MEMB
+ATOM    106  H6Y POPI    1       5.624   1.784  52.484  1.00  0.00      MEMB
+[ C2B ]
+ATOM    107  C37 POPI    1       7.627   0.985  52.717  1.00  0.00      MEMB
+ATOM    108  H7X POPI    1       7.252  -0.022  52.488  1.00  0.00      MEMB
+ATOM    109  H7Y POPI    1       8.023   0.844  53.736  1.00  0.00      MEMB
+ATOM    110  C38 POPI    1       8.823   1.241  51.901  1.00  0.00      MEMB
+ATOM    111  H8X POPI    1       9.477   0.355  51.783  1.00  0.00      MEMB
+ATOM    112  H8Y POPI    1       9.359   1.941  52.545  1.00  0.00      MEMB
+ATOM    113  C39 POPI    1       8.526   2.022  50.643  1.00  0.00      MEMB
+ATOM    114  H9X POPI    1       8.274   3.083  50.926  1.00  0.00      MEMB
+ATOM    115  H9Y POPI    1       7.748   1.625  49.986  1.00  0.00      MEMB
+ATOM    116 C310 POPI    1       9.812   2.219  49.972  1.00  0.00      MEMB
+ATOM    117 H10X POPI    1      10.356   2.418  50.888  1.00  0.00      MEMB
+ATOM    118 H10Y POPI    1       9.751   3.168  49.406  1.00  0.00      MEMB
+[ C3B ]
+ATOM    119 C311 POPI    1      10.595   1.022  49.438  1.00  0.00      MEMB
+ATOM    120 H11X POPI    1      10.726   0.236  50.206  1.00  0.00      MEMB
+ATOM    121 H11Y POPI    1      11.646   1.347  49.266  1.00  0.00      MEMB
+ATOM    122 C312 POPI    1      10.072   0.533  48.096  1.00  0.00      MEMB
+ATOM    123 H12X POPI    1       9.102   0.028  48.230  1.00  0.00      MEMB
+ATOM    124 H12Y POPI    1      10.849  -0.193  47.753  1.00  0.00      MEMB
+ATOM    125 C313 POPI    1      10.010   1.712  47.104  1.00  0.00      MEMB
+ATOM    126 H13X POPI    1      11.054   1.926  47.204  1.00  0.00      MEMB
+ATOM    127 H13Y POPI    1       9.475   2.617  47.437  1.00  0.00      MEMB
+[ C4B ]
+ATOM    128 C314 POPI    1       9.925   1.469  45.596  1.00  0.00      MEMB
+ATOM    129 H14X POPI    1       8.853   1.398  45.354  1.00  0.00      MEMB
+ATOM    130 H14Y POPI    1      10.423   0.489  45.434  1.00  0.00      MEMB
+ATOM    131 C315 POPI    1      10.581   2.506  44.631  1.00  0.00      MEMB
+ATOM    132 H15X POPI    1      11.525   2.908  44.965  1.00  0.00      MEMB
+ATOM    133 H15Y POPI    1       9.966   3.419  44.553  1.00  0.00      MEMB
+ATOM    134 C316 POPI    1      11.043   1.940  43.274  1.00  0.00      MEMB
+ATOM    135 H16X POPI    1      10.615   2.555  42.470  1.00  0.00      MEMB
+ATOM    136 H16Y POPI    1      12.123   1.920  43.057  1.00  0.00      MEMB
+ATOM    137 H16Z POPI    1      10.783   0.871  43.222  1.00  0.00      MEMB
