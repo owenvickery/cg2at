@@ -245,8 +245,8 @@ def fix_carbonyl_chiral(residue_id, cg, at, cross_vector):
         ca = get_crossvector(cg, residue_id)
         cross_vector = at_mod.find_cross_vector( ca )
     at = correct_carbonyl_alignment(at, cross_vector, carbonyl)
-    if len(g_var.res_top[at[1]['res_type']]['CHIRAL']) >= 2:
-        at = at_mod.correct_chiral_atoms(at, chiral)
+#    if len(g_var.res_top[at[1]['res_type']]['CHIRAL']) >= 2:
+#        at = at_mod.correct_chiral_atoms(at, chiral)
     return at, cross_vector
 
 
