@@ -18,7 +18,7 @@
  O      OT1 OC  15.9994 -0.67
  OXT    OT2 OC  15.9994 -0.67
 [ add ]
-2   8   OT    C      CA     CB    
+2   8   OT    C      CA     N    
   OC        15.999400  -0.6700  -1
 [ impropers ]
 C      CA     OT2    OT1   
