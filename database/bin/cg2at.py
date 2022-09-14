@@ -18,16 +18,6 @@ if __name__ == '__main__':
 
     g_var.other = {'DA':'A', 'DG':'G', 'DC':'C', 'DT':'T', 'DAX':'A', 'DGX':'G', 'DCX':'C', 'DTX':'T'}
 
-    g_var.termini_selections = {'charmm':{'N_TERMINAL':{'PRO':{'NH2+':0,'NH':1,'NH3+':2, '5TER':3, 'NONE':4},
-                                                        'NORM':{'NH3+':0,'NH2':1,'5TER':2, 'NONE':3},}, 
-                                          'C_TERMINAL':{'NORM':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4},
-                                                        'PRO':{'COO-':0,'COOH':1,'CT2':2, '3TER':3, 'NONE':4}}},
-                                'opls':{'N_TERMINAL':{'PRO':{'NH':2, 'NH3+':3, 'NONE':5},
-                                                      'NORM':{'NH3+':0,'NH2':2, 'NONE':3}}, 
-                                        'C_TERMINAL':{'NORM':{'COO-':0,'COOH':2, 'NONE':3},
-                                                     'PRO':{'COO-':0,'COOH':2, 'NONE':3}}}
-                                }
-
 # Nothing in the script below here should need changing by the user
     
     g_var.tc['i_t']=time.time()
@@ -49,7 +39,7 @@ if __name__ == '__main__':
         gen.database_information()
     if g_var.args.v >= 1:
         print(gen.fragments_in_use())
-
+    gen.get_termini_selections()
     gen.fetch_fragment_multi() 
     gen.fetch_fragment_single()   
     gen.fetch_chain_groups()
