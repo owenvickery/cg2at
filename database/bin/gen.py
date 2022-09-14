@@ -52,6 +52,78 @@ def forcefield_selection(test=False):
             g_var.forcefield_location, g_var.forcefield=g_var.database_dir+'forcefields/', g_var.forcefield_available[forcefield_number]
             g_var.opt['ff'] = g_var.forcefield_available[forcefield_number]
 
+def get_rtp_database(ff_files):
+    rtp = [files for files in ff_files if files.endswith('.rtp')]
+    exclusions_rtp = ['bondedtypes','atoms','bonds','exclusions', 'angles', 'dihedrals', 'impropers','cmap']
+    rtp_database = []
+    for rtp_file in rtp:
+        # rtp_database[rtp_file[:-4]]=[]
+        with open(g_var.final_dir+g_var.forcefield+'/'+rtp_file, 'r') as rtp_input:
+            for line in rtp_input.readlines():
+                if not (line.isspace() or len(line) == 0) and line[0] not in [';', '#']:
+                    if line.strip().startswith('[') and strip_header(line) not in exclusions_rtp: 
+                        rtp_database.append(strip_header(line))
+    return rtp_database
+
+def get_tdb_database(ff_files, rtp_database):
+    tdb = [files for files in ff_files if files.endswith('.tdb')]
+    exclusions_tdb = ['None', 'replace', 'add', 'delete', 'impropers']
+    tdb_database={}
+    for tdb_file in tdb:
+        # if tdb_file[:-6] not in tdb_database:
+        #     tdb_database[tdb_file[:-6]]={}
+        with open(g_var.final_dir+g_var.forcefield+'/'+tdb_file, 'r') as tdb_input:
+            if tdb_file[-5] not in tdb_database:
+                tdb_database[tdb_file[-5]]=[]
+            for line in tdb_input.readlines():
+                if not (line.isspace() or len(line) == 0) and line[0] not in [';', '#']: 
+                    if line.strip().startswith('[') and strip_header(line) not in exclusions_tdb :
+                        tdb_database[tdb_file[-5]].append(strip_header(line))
+    return tdb_database
+
+
+def get_termini_selections():
+    ff_files = os.listdir(g_var.final_dir+g_var.forcefield)
+    rtp_database = get_rtp_database(ff_files)
+    tdb_database = get_tdb_database(ff_files, rtp_database)
+    g_var.termini_selections = {'n': {}, 'c':{}}
+    for tdb, ter in tdb_database.items():
+            if len(ter) > 0:
+                for res in rtp_database :
+                    g_var.termini_selections[tdb][res]=[]
+                    skip = []
+                    specific=[]
+                    generic=[]
+                    numeric=[]
+                    for t in ter:
+                        if t.endswith('-') :
+                            if t.startswith(res) and t.count('-') > 1:
+                                specific.append(t)
+                            elif t.count('-') == 1:
+                                generic.append(t)
+                        elif '-' in t and len(t.split('-')) > 0 and not t.endswith('-'):
+                            if t.startswith(res):
+                                specific.append(t)
+                                if t.split('-')[-1].endswith('+') or t.split('-')[-1].endswith('-'):
+                                    skip.append(t.split('-')[-1][:-1])
+                                else:
+                                    skip.append(t.split('-')[-1])
+                        else:
+                            cont=True
+                            for s in skip:
+                                if not t.startswith(s):
+                                    cont = True
+                                else:
+                                    cont=False 
+                                    break
+                            if cont:
+                                if not t[0].isalpha():
+                                    numeric.append(t) 
+                                else:             
+                                    generic.append(t)               
+                    g_var.termini_selections[tdb][res]=specific+generic+numeric+['None']            
+            
+            
 def fragment_selection(test=False):
     ##### fragment selection
     frag_location, fragment_number, fragments_available_other = [],[],[]
