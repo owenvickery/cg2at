@@ -156,52 +156,23 @@ def ask_ter_question(residue, options, chain):
         try:
             number = int(input('\nplease select a option: '))
             if number < len(options):
-                return options[sel[number]]
+                return number
         except KeyboardInterrupt:
             sys.exit('\nInterrupted')
         except BaseException:
             print("Oops!  That was a invalid choice")
 
 def ask_terminal(sys_info, residue_type):
-#### default termini is neutral, however if ter flag is supplied you interactively choose termini 
-    for ff in g_var.termini_selections:
-        if ff in g_var.forcefield:
-            ter_conv = g_var.termini_selections[ff]
-    if 'ter_conv' not in locals():
-        print('Cannot find terminal definitions for: '+g_var.forcefield+'\nDefaulting to CHARMM terminal definitions\n')
-        ter_conv = g_var.termini_selections['charmm']
-    system_ter = []
+    system_ter=[]
     for chain in range(g_var.system[residue_type]):
-        conv_type = 'NORM'
-        default_ter=[]
-        ter_name=['N_TERMINAL','C_TERMINAL']
+        chain_ter=[]
+        ter_name=['n','c']
         for ter_val,  ter_residue in enumerate(sys_info[chain]):
-            if ter_residue == 'PRO' and ter_val == 0:
-                conv_type = 'PRO'
-            termini = g_var.res_top[ter_residue][ter_name[ter_val]].upper()
-            if len(termini) == 0 or termini == 'DEFAULT':
-                if not g_var.args.ter:
-                    if g_var.args.nt and ter_val==0:
-                        if conv_type == 'PRO':
-                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH'])
-                        else:
-                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH2'])
-                    elif ter_val==0:
-                        if conv_type == 'PRO':
-                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH2+'])
-                        else:
-                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH3+'])
-                    if g_var.args.ct and ter_val==1:
-                        default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COOH'])
-                    elif ter_val==1:
-                        default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COO-'])
-                else:
-                    default_ter.append(ask_ter_question(termini, ter_conv[ter_name[ter_val]][conv_type], chain))
+            if g_var.args.ter:
+                chain_ter.append(ask_ter_question(g_var.res_top[ter_residue]['RESIDUE'][0], g_var.termini_selections[ter_name[ter_val]][g_var.res_top[ter_residue]['RESIDUE'][0]], chain))
             else:
-                default_ter.append(ter_conv[ter_name[ter_val]][conv_type][termini])
-                if g_var.args.ter:
-                    print('\n The '+ter_name[ter_val]+' of residue '+ter_residue+' is non adjustable')
-        system_ter.append(default_ter)
+                chain_ter.append(['',''])
+    system_ter.append(chain_ter)
     return system_ter
 
 def run_parallel_pdb2gmx_min(res_type, sys_info):
@@ -225,8 +196,9 @@ def run_parallel_pdb2gmx_min(res_type, sys_info):
 
 def pdb2gmx_chain(chain, input,res_type, pdb2gmx_selections):
 #### pdb2gmx on on protein chain, creates the topologies    
+    ter = ' -ter ' if g_var.args.ter else ''
     gromacs([g_var.args.gmx+' pdb2gmx -f '+res_type+'_'+input+str(chain)+'.pdb -o '+res_type+'_'+input+str(chain)+'_gmx.pdb -water none \
-    -p '+res_type+'_'+input+str(chain)+'.top  -i '+res_type+'_'+str(chain)+'_posre.itp '+g_var.vs+' -ter '+pdb2gmx_selections+'\nEOF', ''+res_type+'_'+input+str(chain)+'_gmx.pdb']) #### single chains
+    -p '+res_type+'_'+input+str(chain)+'.top  -i '+res_type+'_'+str(chain)+'_posre.itp '+g_var.vs+ter+pdb2gmx_selections+'\nEOF', ''+res_type+'_'+input+str(chain)+'_gmx.pdb']) #### single chains
 #### converts the topology file and processes it into a itp file
     convert_topology(res_type+'_'+input, chain, res_type)
 #### writes topology overview for each chain 
