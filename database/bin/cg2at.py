@@ -12,9 +12,9 @@ if __name__ == '__main__':
     mp.freeze_support()
     ## hardcoded varibles used by the script
     ## I've tried to make them as comprehensive as possible but they may need updating occasionally
-    g_var.version = 0.9
+    g_var.version = 1
 
-    g_var.script_update = '08-07-2021'
+    g_var.script_update = '14-09-2022'
 
     g_var.other = {'DA':'A', 'DG':'G', 'DC':'C', 'DT':'T', 'DAX':'A', 'DGX':'G', 'DCX':'C', 'DTX':'T'}
 
