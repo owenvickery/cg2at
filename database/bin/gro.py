@@ -171,8 +171,8 @@ def ask_terminal(sys_info, residue_type):
             if g_var.args.ter:
                 chain_ter.append(ask_ter_question(g_var.res_top[ter_residue]['RESIDUE'][0], g_var.termini_selections[ter_name[ter_val]][g_var.res_top[ter_residue]['RESIDUE'][0]], chain))
             else:
-                chain_ter.append(['',''])
-    system_ter.append(chain_ter)
+                chain_ter.append('')
+        system_ter.append(chain_ter)
     return system_ter
 
 def run_parallel_pdb2gmx_min(res_type, sys_info):
