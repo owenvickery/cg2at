@@ -1,0 +1,133 @@
+[ NH3 ]
+ATOM      1  N   DPPE    1       9.155   4.612  64.139  0.00  0.00      MEMB  
+ATOM      2  HN1 DPPE    1       8.370   4.560  63.440  0.00  0.00      MEMB  
+ATOM      3  HN2 DPPE    1       9.875   3.897  63.865  0.00  0.00      MEMB  
+ATOM      4  HN3 DPPE    1       8.737   4.409  65.061  0.00  0.00      MEMB  
+ATOM      5  C12 DPPE    1       9.740   5.972  64.158  0.00  0.00      MEMB  
+ATOM      6 H12A DPPE    1      10.538   6.015  64.929  0.00  0.00      MEMB  
+ATOM      7 H12B DPPE    1       8.917   6.681  64.390  0.00  0.00      MEMB  
+ATOM      8  C11 DPPE    1      10.288   6.318  62.800  1.00  1.00      MEMB  
+ATOM      9 H11A DPPE    1      10.753   5.425  62.317  1.00  0.00      MEMB  
+ATOM     10 H11B DPPE    1      11.045   7.106  62.993  1.00  0.00      MEMB  
+[ PO4 ]
+ATOM     11  P   DPPE    1       9.129   6.705  60.453  0.00  0.00      MEMB  
+ATOM     12  O13 DPPE    1       9.865   5.473  60.117  0.00  0.00      MEMB  
+ATOM     13  O14 DPPE    1       9.485   8.003  59.839  0.00  0.00      MEMB  
+ATOM     14  O11 DPPE    1       7.632   6.445  60.270  0.00  2.00      MEMB  
+ATOM     15  O12 DPPE    1       9.261   6.887  62.018  0.00  1.00      MEMB  
+[ GL1 ]
+ATOM     16  C1  DPPE    1       6.963   6.168  61.478  2.00  2.00      MEMB  
+ATOM     17  HA  DPPE    1       7.067   7.018  62.197  2.00  0.00      MEMB  
+ATOM     18  HB  DPPE    1       7.402   5.248  61.876  2.00  0.00      MEMB  
+ATOM     19  C2  DPPE    1       5.483   6.028  61.233  0.00  3.00      MEMB  
+ATOM     20  HS  DPPE    1       5.034   5.513  62.103  0.00  0.00      MEMB  
+ATOM     21  O21 DPPE    1       5.200   5.311  60.050  0.00  0.00      MEMB  
+ATOM     22  C21 DPPE    1       5.415   4.051  60.024  0.00  0.00      MEMB  
+ATOM     23  O22 DPPE    1       5.772   3.369  60.947  0.00  0.00      MEMB  
+ATOM     24  C22 DPPE    1       5.039   3.664  58.577  3.00  4.00      MEMB  
+ATOM     25  H2R DPPE    1       4.187   4.306  58.260  3.00  0.00      MEMB  
+ATOM     26  H2S DPPE    1       4.632   2.649  58.637  3.00  0.00      MEMB  
+[ GL2 ]
+ATOM     27  C3  DPPE    1       4.921   7.462  61.104  4.00  3.00      MEMB  
+ATOM     28  HX  DPPE    1       5.148   8.034  62.024  4.00  0.00      MEMB  
+ATOM     29  HY  DPPE    1       3.850   7.463  60.997  4.00  0.00      MEMB  
+ATOM     30  O31 DPPE    1       5.466   8.158  60.009  0.00  0.00      MEMB  
+ATOM     31  C31 DPPE    1       5.027   7.760  58.841  0.00  0.00      MEMB  
+ATOM     32  O32 DPPE    1       4.102   7.039  58.565  0.00  0.00      MEMB  
+ATOM     33  C32 DPPE    1       5.867   8.402  57.833  5.00  5.00      MEMB  
+ATOM     34  H2X DPPE    1       6.537   9.131  58.340  5.00  0.00      MEMB  
+ATOM     35  H2Y DPPE    1       5.130   8.870  57.159  5.00  0.00      MEMB  
+[ C1A ]
+ATOM     36  C23 DPPE    1       6.217   3.866  57.577  6.00  4.00      MEMB  
+ATOM     37  H3R DPPE    1       7.107   3.284  57.898  6.00  0.00      MEMB  
+ATOM     38  H3S DPPE    1       6.544   4.914  57.644  6.00  0.00      MEMB  
+ATOM     39  C24 DPPE    1       5.882   3.572  56.102  0.00  0.00      MEMB  
+ATOM     40  H4R DPPE    1       5.130   4.293  55.728  0.00  0.00      MEMB  
+ATOM     41  H4S DPPE    1       5.402   2.588  55.992  0.00  0.00      MEMB  
+ATOM     42  C25 DPPE    1       7.111   3.514  55.183  0.00  0.00      MEMB  
+ATOM     43  H5R DPPE    1       7.978   3.091  55.743  0.00  0.00      MEMB  
+ATOM     44  H5S DPPE    1       7.413   4.532  54.874  0.00  0.00      MEMB  
+ATOM     45  C26 DPPE    1       6.828   2.627  53.962  7.00  6.00      MEMB  
+ATOM     46  H6R DPPE    1       6.289   1.685  54.217  7.00  0.00      MEMB  
+ATOM     47  H6S DPPE    1       7.781   2.353  53.462  7.00  0.00      MEMB  
+[ C2A ]
+ATOM     48  C27 DPPE    1       5.956   3.334  52.965  8.00  6.00      MEMB  
+ATOM     49  H7R DPPE    1       6.395   4.345  52.839  8.00  0.00      MEMB  
+ATOM     50  H7S DPPE    1       4.928   3.460  53.372  8.00  0.00      MEMB  
+ATOM     51  C28 DPPE    1       5.908   2.555  51.655  0.00  0.00      MEMB  
+ATOM     52  H8R DPPE    1       5.646   1.492  51.851  0.00  0.00      MEMB  
+ATOM     53  H8S DPPE    1       6.920   2.566  51.187  0.00  0.00      MEMB  
+ATOM     54  C29 DPPE    1       4.882   3.197  50.731  0.00  0.00      MEMB  
+ATOM     55  H9R DPPE    1       3.893   3.198  51.236  0.00  0.00      MEMB  
+ATOM     56  H9S DPPE    1       4.804   2.609  49.791  0.00  0.00      MEMB  
+ATOM     57 C210 DPPE    1       5.317   4.632  50.436  9.00  7.00      MEMB  
+ATOM     58 H10R DPPE    1       6.268   4.548  49.911  9.00  0.00      MEMB  
+ATOM     59 H10S DPPE    1       5.482   5.239  51.348  9.00  0.00      MEMB  
+[ C3A ]
+ATOM     60 C211 DPPE    1       4.426   5.447  49.537  10.0  7.00      MEMB  
+ATOM     61 H11R DPPE    1       4.844   6.475  49.451  10.0  0.00      MEMB  
+ATOM     62 H11S DPPE    1       3.443   5.518  50.015  10.0  0.00      MEMB  
+ATOM     63 C212 DPPE    1       4.252   4.863  48.155  0.00  0.00      MEMB  
+ATOM     64 H12R DPPE    1       3.583   3.982  48.232  0.00  0.00      MEMB  
+ATOM     65 H12S DPPE    1       5.185   4.442  47.751  0.00  0.00      MEMB  
+ATOM     66 C213 DPPE    1       3.703   5.958  47.238  11.0  8.00      MEMB  
+ATOM     67 H13R DPPE    1       4.472   6.719  47.010  11.0  0.00      MEMB  
+ATOM     68 H13S DPPE    1       2.866   6.461  47.768  11.0  0.00      MEMB  
+[ C4A ]
+ATOM     69 C214 DPPE    1       3.120   5.331  45.994  12.0  8.00      MEMB  
+ATOM     70 H14R DPPE    1       2.576   4.509  46.473  12.0  0.00      MEMB  
+ATOM     71 H14S DPPE    1       3.904   4.834  45.395  12.0  0.00      MEMB  
+ATOM     72 C215 DPPE    1       2.142   6.219  45.185  0.00  0.00      MEMB  
+ATOM     73 H15R DPPE    1       2.742   6.993  44.671  0.00  0.00      MEMB  
+ATOM     74 H15S DPPE    1       1.451   6.776  45.852  0.00  0.00      MEMB  
+ATOM     75 C216 DPPE    1       1.274   5.478  44.157  0.00  0.00      MEMB  
+ATOM     76 H16R DPPE    1       1.009   6.145  43.314  0.00  0.00      MEMB  
+ATOM     77 H16S DPPE    1       0.322   5.098  44.552  0.00  0.00      MEMB  
+ATOM     78 H16T DPPE    1       1.824   4.595  43.778  0.00  0.00      MEMB  
+[ C1B ]
+ATOM     79  C33 DPPE    1       6.732   7.398  57.126  13.0  5.00      MEMB  
+ATOM     80  H3X DPPE    1       6.112   6.811  56.408  13.0  0.00      MEMB  
+ATOM     81  H3Y DPPE    1       7.219   6.725  57.864  13.0  0.00      MEMB  
+ATOM     82  C34 DPPE    1       7.826   8.181  56.454  0.00  0.00      MEMB  
+ATOM     83  H4X DPPE    1       8.400   8.794  57.187  0.00  0.00      MEMB  
+ATOM     84  H4Y DPPE    1       7.273   8.843  55.795  0.00  0.00      MEMB  
+ATOM     85  C35 DPPE    1       8.710   7.298  55.624  0.00  0.00      MEMB  
+ATOM     86  H5X DPPE    1       8.022   6.643  55.045  0.00  0.00      MEMB  
+ATOM     87  H5Y DPPE    1       9.308   6.672  56.324  0.00  0.00      MEMB  
+ATOM     88  C36 DPPE    1       9.623   8.056  54.667  14.0  9.00      MEMB  
+ATOM     89  H6X DPPE    1      10.114   8.908  55.191  14.0  0.00      MEMB  
+ATOM     90  H6Y DPPE    1       9.034   8.479  53.827  14.0  0.00      MEMB  
+[ C2B ]
+ATOM     91  C37 DPPE    1      10.664   7.091  54.110  15.0  9.00      MEMB  
+ATOM     92  H7X DPPE    1      11.201   6.666  54.992  15.0  0.00      MEMB  
+ATOM     93  H7Y DPPE    1      11.408   7.634  53.490  15.0  0.00      MEMB  
+ATOM     94  C38 DPPE    1      10.028   5.942  53.307  0.00  0.00      MEMB  
+ATOM     95  H8X DPPE    1       9.183   5.485  53.862  0.00  0.00      MEMB  
+ATOM     96  H8Y DPPE    1      10.786   5.138  53.199  0.00  0.00      MEMB  
+ATOM     97  C39 DPPE    1       9.521   6.365  51.918  0.00  0.00      MEMB  
+ATOM     98  H9X DPPE    1       8.760   7.169  52.006  0.00  0.00      MEMB  
+ATOM     99  H9Y DPPE    1      10.388   6.800  51.377  0.00  0.00      MEMB  
+ATOM    100 C310 DPPE    1       8.920   5.174  51.140  16.0  10.0      MEMB  
+ATOM    101 H10X DPPE    1       8.041   4.785  51.686  16.0  0.00      MEMB  
+ATOM    102 H10Y DPPE    1       9.674   4.357  51.129  16.0  0.00      MEMB  
+[ C3B ]
+ATOM    103 C311 DPPE    1       8.523   5.476  49.678  17.0  10.0      MEMB  
+ATOM    104 H11X DPPE    1       9.272   6.170  49.257  17.0  0.00      MEMB  
+ATOM    105 H11Y DPPE    1       7.579   6.060  49.672  17.0  0.00      MEMB  
+ATOM    106 C312 DPPE    1       8.417   4.194  48.790  0.00  0.00      MEMB  
+ATOM    107 H12X DPPE    1       7.736   3.449  49.242  0.00  0.00      MEMB  
+ATOM    108 H12Y DPPE    1       9.404   3.708  48.763  0.00  0.00      MEMB  
+ATOM    109 C313 DPPE    1       7.934   4.461  47.349  18.0  11.0      MEMB  
+ATOM    110 H13X DPPE    1       8.559   5.272  46.993  18.0  0.00      MEMB  
+ATOM    111 H13Y DPPE    1       6.968   4.992  47.399  18.0  0.00      MEMB  
+[ C4B ]
+ATOM    112 C314 DPPE    1       7.770   3.251  46.351  19.0  11.0      MEMB  
+ATOM    113 H14X DPPE    1       7.124   3.627  45.528  19.0  0.00      MEMB  
+ATOM    114 H14Y DPPE    1       7.173   2.482  46.876  19.0  0.00      MEMB  
+ATOM    115 C315 DPPE    1       8.971   2.509  45.665  0.00  0.00      MEMB  
+ATOM    116 H15X DPPE    1       9.416   1.797  46.390  0.00  0.00      MEMB  
+ATOM    117 H15Y DPPE    1       9.794   3.161  45.343  0.00  0.00      MEMB  
+ATOM    118 C316 DPPE    1       8.691   1.805  44.319  0.00  0.00      MEMB  
+ATOM    119 H16X DPPE    1       7.836   1.108  44.373  0.00  0.00      MEMB  
+ATOM    120 H16Y DPPE    1       9.598   1.240  44.003  0.00  0.00      MEMB  
+ATOM    121 H16Z DPPE    1       8.507   2.550  43.513  0.00  0.00      MEMB  

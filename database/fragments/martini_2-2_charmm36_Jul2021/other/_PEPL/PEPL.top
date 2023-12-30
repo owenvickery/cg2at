@@ -1,0 +1,7 @@
+[ CONNECT ]
+# bead_1 atom_1 bead_2 resid direction
+   B1      N      B5       -1
+   B7      C      B6        C
+   B6      NZ     B7        C
+[ N_TERMINAL ]
+None

@@ -1,0 +1,10 @@
+; CHARMM-port for GROMACS
+; created with charmm2gmx version 0.7.dev35+g8845a0f on 2022-11-10 13:46:59.784634
+; Code: https://gitlab.com/awacha/charmm2gmx
+; Documentation: https://awacha.gitlab.com/charmm2gmx
+; Charmm2GMX written by András Wacha, based on the original port by 
+; E. Prabhu Raman, Justin A. Lemkul, Robert Best and Alexander D. MacKerell, Jr.
+; Termini database from the CHARMM force field
+
+[ None ]
+; Empty, do-nothing terminus

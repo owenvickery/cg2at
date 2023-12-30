@@ -520,6 +520,28 @@ def fix_chirality(merge, merge_temp, merged_coords, residue_type):
     merged_coords+=coord
     return merge, merged_coords
 
+def get_chiral_non_carbonyl(at):
+    chiral = {}
+    for atom in at:
+        if at[atom]['atom'] in g_var.res_top[at[atom]['res_type']]['CHIRAL']['atoms']:
+            chiral[at[atom]['atom']] = atom
+    return chiral
+
+def correct_chiral_atoms(at, chiral):
+    for chiral_group in g_var.res_top[at[1]['res_type']]['CHIRAL']:
+        if chiral_group != 'atoms':            
+            atom_list = [chiral[chiral_group]]
+            for chiral_atoms in ['c1','c2','c3']:
+                atom_list.append(chiral[g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group][chiral_atoms]])
+            cross_vector_chiral = find_cross_vector( [at[atom_list[3]]['coord'], at[atom_list[2]]['coord'], at[atom_list[1]]['coord']])
+            norm_vector_chiral = noramlised_vector(at[chiral[g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['m']]]['coord'], at[atom_list[0]]['coord'])
+            if not np.dot(cross_vector_chiral, norm_vector_chiral) > 0.5:
+                if g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['m'] in chiral:
+                    at[atom_list[0]]['coord'] = at[atom_list[0]]['coord'] + cross_vector_chiral*0.5
+                    m = chiral[g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['m']]
+                    at[m]['coord'] = at[m]['coord'] + cross_vector_chiral*2
+    return at
+
 ## chirality end
 ## hydrogen orientaion checker
 

@@ -1,0 +1,155 @@
+[ NH3 ]  
+ATOM      1  N   DGPE    1       3.855  -0.775  63.857  0.00  0.00      MEMB  
+ATOM      2  HN1 DGPE    1       3.797   0.262  63.902  0.00  0.00      MEMB  
+ATOM      3  HN2 DGPE    1       2.982  -1.166  64.288  0.00  0.00      MEMB  
+ATOM      4  HN3 DGPE    1       4.686  -1.024  64.438  0.00  0.00      MEMB  
+ATOM      5  C12 DGPE    1       4.053  -1.119  62.404  0.00  0.00      MEMB  
+ATOM      6 H12A DGPE    1       3.081  -1.021  61.879  0.00  0.00      MEMB  
+ATOM      7 H12B DGPE    1       4.386  -2.169  62.307  0.00  0.00      MEMB  
+ATOM      8  C11 DGPE    1       5.057  -0.102  61.851  1.00  1.00      MEMB  
+ATOM      9 H11A DGPE    1       5.237  -0.305  60.762  1.00  0.00      MEMB  
+ATOM     10 H11B DGPE    1       6.047  -0.210  62.327  1.00  0.00      MEMB  
+[ PO4 ]  
+ATOM     11  P   DGPE    1       3.818   1.934  60.958  0.00  0.00      MEMB  
+ATOM     12  O13 DGPE    1       2.889   0.903  60.508  0.00  0.00      MEMB  
+ATOM     13  O14 DGPE    1       3.326   3.248  61.439  0.00  0.00      MEMB  
+ATOM     14  O12 DGPE    1       4.603   1.232  62.141  0.00  2.00      MEMB  
+ATOM     15  O11 DGPE    1       4.981   2.067  59.925  0.00  1.00      MEMB  
+[ GL1 ]  
+ATOM     16  C1  DGPE    1       5.888   3.147  60.072  2.00  2.00      MEMB  
+ATOM     17  HA  DGPE    1       6.048   3.401  61.132  2.00  0.00      MEMB  
+ATOM     18  HB  DGPE    1       5.470   4.052  59.599  2.00  0.00      MEMB  
+ATOM     19  C2  DGPE    1       7.291   2.811  59.515  0.00  3.00      MEMB  
+ATOM     20  HS  DGPE    1       7.921   3.720  59.599  0.00  0.00      MEMB  
+ATOM     21  O21 DGPE    1       7.406   2.308  58.167  0.00  0.00      MEMB  
+ATOM     22  C21 DGPE    1       6.500   2.603  57.273  0.00  0.00      MEMB  
+ATOM     23  O22 DGPE    1       5.528   3.298  57.408  0.00  0.00      MEMB  
+ATOM     24  C22 DGPE    1       6.895   2.193  55.878  3.00  4.00      MEMB  
+ATOM     25  H2R DGPE    1       6.100   2.619  55.218  3.00  0.00      MEMB  
+ATOM     26  H2S DGPE    1       6.892   1.095  55.793  3.00  0.00      MEMB  
+[ GL2 ]  
+ATOM     27  C3  DGPE    1       7.937   1.790  60.491  4.00  3.00      MEMB  
+ATOM     28  HX  DGPE    1       7.609   2.023  61.525  4.00  0.00      MEMB  
+ATOM     29  HY  DGPE    1       8.979   2.095  60.453  4.00  0.00      MEMB  
+ATOM     30  O31 DGPE    1       7.737   0.380  60.263  0.00  0.00      MEMB  
+ATOM     31  C31 DGPE    1       8.385  -0.193  59.269  0.00  0.00      MEMB  
+ATOM     32  O32 DGPE    1       9.074   0.306  58.405  0.00  0.00      MEMB  
+ATOM     33  C32 DGPE    1       7.998  -1.645  59.239  5.00  5.00      MEMB  
+ATOM     34  H2X DGPE    1       7.434  -1.948  60.144  5.00  0.00      MEMB  
+ATOM     35  H2Y DGPE    1       8.938  -2.236  59.169  5.00  0.00      MEMB  
+[ C1A ]  
+ATOM     36  C23 DGPE    1       8.217   2.807  55.420  6.00  4.00      MEMB  
+ATOM     37  H3R DGPE    1       9.062   2.277  55.923  6.00  0.00      MEMB  
+ATOM     38  H3S DGPE    1       8.321   3.892  55.659  6.00  0.00      MEMB  
+ATOM     39  C24 DGPE    1       8.327   2.637  53.923  0.00  0.00      MEMB  
+ATOM     40  H4R DGPE    1       7.500   3.101  53.345  0.00  0.00      MEMB  
+ATOM     41  H4S DGPE    1       8.302   1.539  53.714  0.00  0.00      MEMB  
+ATOM     42  C25 DGPE    1       9.655   3.168  53.469  0.00  0.00      MEMB  
+ATOM     43  H5R DGPE    1       9.966   2.401  52.765  0.00  0.00      MEMB  
+ATOM     44  H5S DGPE    1      10.396   3.285  54.294  0.00  0.00      MEMB  
+ATOM     45  C26 DGPE    1       9.652   4.353  52.581  7.00  6.00      MEMB  
+ATOM     46  H6R DGPE    1       9.180   5.199  53.126  7.00  0.00      MEMB  
+ATOM     47  H6S DGPE    1       9.034   4.159  51.672  7.00  0.00      MEMB  
+[ C2A ]  
+ATOM     48  C27 DGPE    1      11.085   4.687  52.152  8.00  6.00      MEMB  
+ATOM     49  H7R DGPE    1      11.950   4.062  52.124  8.00  0.00      MEMB  
+ATOM     50  H7S DGPE    1      11.545   5.279  52.974  8.00  0.00      MEMB  
+ATOM     51  C28 DGPE    1      11.041   5.299  50.786  0.00  0.00      MEMB  
+ATOM     52  H8R DGPE    1      10.229   5.069  50.068  0.00  0.00      MEMB  
+ATOM     53  H8S DGPE    1      12.030   5.370  50.277  0.00  0.00      MEMB  
+ATOM     54  C29 DGPE    1      10.810   6.559  51.411  0.00  7.00      MEMB  
+ATOM     55  H9R DGPE    1      11.902   6.735  51.712  0.00  0.00      MEMB  
+ATOM     56  H9S DGPE    1      10.094   6.619  52.255  0.00  0.00      MEMB  
+[ D3A ]  
+ATOM     57 C210 DGPE    1      10.390   7.680  50.691  9.00  7.00      MEMB  
+ATOM     58 H10R DGPE    1      11.432   7.856  50.370  9.00  0.00      MEMB  
+ATOM     59 H10S DGPE    1      10.031   8.407  51.425  9.00  0.00      MEMB  
+ATOM     60 C211 DGPE    1       9.405   7.844  49.694  0.00  0.00      MEMB  
+ATOM     61 H11R DGPE    1       8.514   8.447  49.897  0.00  0.00      MEMB  
+ATOM     62 C212 DGPE    1       9.855   7.592  48.528  0.00  0.00      MEMB  
+ATOM     63 H12R DGPE    1       9.201   8.030  47.805  0.00  0.00      MEMB  
+ATOM     64 C213 DGPE    1      11.304   7.153  48.268  10.0  8.00      MEMB  
+ATOM     65 H13R DGPE    1      11.547   6.115  48.505  10.0  0.00      MEMB  
+ATOM     66 H13S DGPE    1      12.108   7.812  48.699  10.0  0.00      MEMB  
+[ C4A ]  
+ATOM     67 C214 DGPE    1      11.704   7.396  46.920  11.0  8.00      MEMB  
+ATOM     68 H14R DGPE    1      12.698   7.713  46.692  11.0  0.00      MEMB  
+ATOM     69 H14S DGPE    1      11.375   8.436  47.025  11.0  0.00      MEMB  
+ATOM     70 C215 DGPE    1      11.044   6.458  45.956  0.00  0.00      MEMB  
+ATOM     71 H15R DGPE    1      10.959   6.873  44.947  0.00  0.00      MEMB  
+ATOM     72 H15S DGPE    1      10.019   6.317  46.261  0.00  0.00      MEMB  
+ATOM     73 C216 DGPE    1      11.561   5.079  45.833  12.0  9.00      MEMB  
+ATOM     74 H16R DGPE    1      11.322   4.524  46.761  12.0  0.00      MEMB  
+ATOM     75 H16S DGPE    1      12.611   4.923  45.672  12.0  0.00      MEMB  
+[ C5A ]  
+ATOM     76 C217 DGPE    1      10.983   4.659  44.521  13.0  9.00      MEMB  
+ATOM     77 H17R DGPE    1      10.683   5.409  43.806  13.0  0.00      MEMB  
+ATOM     78 H17S DGPE    1       9.981   4.377  44.808  13.0  0.00      MEMB  
+ATOM     79 C218 DGPE    1      11.878   3.737  43.705  0.00  0.00      MEMB  
+ATOM     80 H18R DGPE    1      12.474   3.230  44.481  0.00  0.00      MEMB  
+ATOM     81 H18S DGPE    1      12.721   4.195  43.170  0.00  0.00      MEMB  
+ATOM     82 C219 DGPE    1      10.919   2.949  42.703  0.00  0.00      MEMB  
+ATOM     83 H19R DGPE    1      11.470   3.225  41.797  0.00  0.00      MEMB  
+ATOM     84 H19S DGPE    1      10.006   3.511  43.005  0.00  0.00      MEMB  
+ATOM     85 C220 DGPE    1       9.917   1.671  42.448  0.00  0.00      MEMB  
+ATOM     86 H20R DGPE    1       9.829   0.605  42.163  0.00  0.00      MEMB  
+ATOM     87 H20S DGPE    1      10.749   1.500  41.811  0.00  0.00      MEMB  
+ATOM     88 H20T DGPE    1       9.982   1.033  43.249  0.00  0.00      MEMB  
+[ C1B ]  
+ATOM     89  C33 DGPE    1       7.149  -1.845  57.971  14.0  5.00      MEMB  
+ATOM     90  H3X DGPE    1       7.265  -2.902  57.690  14.0  0.00      MEMB  
+ATOM     91  H3Y DGPE    1       7.561  -1.273  57.109  14.0  0.00      MEMB  
+ATOM     92  C34 DGPE    1       5.671  -1.451  58.161  0.00  0.00      MEMB  
+ATOM     93  H4X DGPE    1       5.632  -0.345  58.297  0.00  0.00      MEMB  
+ATOM     94  H4Y DGPE    1       5.214  -1.893  59.067  0.00  0.00      MEMB  
+ATOM     95  C35 DGPE    1       4.787  -1.796  56.960  0.00  0.00      MEMB  
+ATOM     96  H5X DGPE    1       4.395  -2.826  56.940  0.00  0.00      MEMB  
+ATOM     97  H5Y DGPE    1       5.391  -1.667  56.038  0.00  0.00      MEMB  
+ATOM     98  C36 DGPE    1       3.485  -1.023  56.910  15.0  10.0      MEMB  
+ATOM     99  H6X DGPE    1       3.584  -0.037  57.416  15.0  0.00      MEMB  
+ATOM    100  H6Y DGPE    1       2.704  -1.608  57.449  15.0  0.00      MEMB  
+[ C2B ]  
+ATOM    101  C37 DGPE    1       3.092  -0.808  55.465  16.0  10.0      MEMB  
+ATOM    102  H7X DGPE    1       2.006  -0.581  55.408  16.0  0.00      MEMB  
+ATOM    103  H7Y DGPE    1       3.236  -1.772  54.916  16.0  0.00      MEMB  
+ATOM    104  C38 DGPE    1       3.939   0.367  54.908  0.00  0.00      MEMB  
+ATOM    105  H8X DGPE    1       5.011   0.067  54.920  0.00  0.00      MEMB  
+ATOM    106  H8Y DGPE    1       3.791   1.280  55.507  0.00  0.00      MEMB  
+ATOM    107  C39 DGPE    1       3.570   0.612  53.470  17.0  11.0      MEMB  
+ATOM    108  H9X DGPE    1       2.465   0.649  53.399  17.0  0.00      MEMB  
+ATOM    109  H9Y DGPE    1       3.841  -0.425  53.311  17.0  0.00      MEMB  
+[ D3B ]  
+ATOM    110 C310 DGPE    1       4.390   1.595  52.515  18.0  11.0      MEMB  
+ATOM    111 H10X DGPE    1       5.382   1.124  52.412  18.0  0.00      MEMB  
+ATOM    112 H10Y DGPE    1       4.496   2.473  53.175  18.0  0.00      MEMB  
+ATOM    113 C311 DGPE    1       3.927   2.104  51.110  0.00  0.00      MEMB  
+ATOM    114 H11X DGPE    1       2.879   2.447  51.023  0.00  0.00      MEMB  
+ATOM    115 C312 DGPE    1       4.527   2.141  49.925  0.00  0.00      MEMB  
+ATOM    116 H12X DGPE    1       3.966   2.434  49.011  0.00  0.00      MEMB  
+ATOM    117 C313 DGPE    1       5.911   1.655  49.746  19.0  12.0      MEMB  
+ATOM    118 H13X DGPE    1       6.121   1.311  48.710  19.0  0.00      MEMB  
+ATOM    119 H13Y DGPE    1       6.161   0.843  50.457  19.0  0.00      MEMB  
+[ C4B ]  
+ATOM    120 C314 DGPE    1       6.576   2.973  50.068  20.0  12.0      MEMB  
+ATOM    121 H14X DGPE    1       7.674   2.821  50.037  20.0  0.00      MEMB  
+ATOM    122 H14Y DGPE    1       6.332   3.378  51.081  20.0  0.00      MEMB  
+ATOM    123 C315 DGPE    1       6.173   4.013  49.033  0.00  0.00      MEMB  
+ATOM    124 H15X DGPE    1       5.118   4.341  48.984  0.00  0.00      MEMB  
+ATOM    125 H15Y DGPE    1       6.217   3.502  48.079  0.00  0.00      MEMB  
+ATOM    126 C316 DGPE    1       7.059   5.212  49.182  21.0  13.0      MEMB  
+ATOM    127 H16X DGPE    1       8.122   4.886  49.209  21.0  0.00      MEMB  
+ATOM    128 H16Y DGPE    1       6.792   5.731  50.128  21.0  0.00      MEMB  
+[ C5A ]  
+ATOM    129 C317 DGPE    1       6.859   6.079  47.979  22.0  13.0      MEMB  
+ATOM    130 H17X DGPE    1       7.381   7.038  48.105  22.0  0.00      MEMB  
+ATOM    131 H17Y DGPE    1       5.788   6.315  47.931  22.0  0.00      MEMB  
+ATOM    132 C318 DGPE    1       7.306   5.289  46.744  0.00  0.00      MEMB  
+ATOM    133 H18X DGPE    1       6.456   4.663  46.413  0.00  0.00      MEMB  
+ATOM    134 H18Y DGPE    1       8.155   4.638  47.002  0.00  0.00      MEMB  
+ATOM    135 C319 DGPE    1       7.729   6.120  45.593  0.00  0.00      MEMB  
+ATOM    136 H19X DGPE    1       8.100   5.634  44.668  0.00  0.00      MEMB  
+ATOM    137 H19Y DGPE    1       8.375   6.926  45.971  0.00  0.00      MEMB  
+ATOM    138 C320 DGPE    1       6.597   6.884  45.247  0.00  0.00      MEMB  
+ATOM    139 H20X DGPE    1       6.672   7.333  44.251  0.00  0.00      MEMB  
+ATOM    140 H20Y DGPE    1       5.663   6.368  45.211  0.00  0.00      MEMB  
+ATOM    141 H20Z DGPE    1       6.524   7.637  46.060  0.00  0.00      MEMB  

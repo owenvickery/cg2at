@@ -225,14 +225,11 @@ def get_crossvector(cg, residue_id):
     return ca
 
 def get_chiral_carbonyl(at):
-    chiral = {}
     carbonyl = {}
     for atom in at:
         if at[atom]['atom'] in ['N','CA', 'C', 'O']:
             carbonyl[at[atom]['atom']] = atom
-        if at[atom]['atom'] in g_var.res_top[at[atom]['res_type']]['CHIRAL']['atoms']:
-            chiral[at[atom]['atom']] = atom
-    return chiral, carbonyl
+    return carbonyl
 
 def correct_carbonyl_alignment(at, cross_vector, carbonyl):
     rotation = at_mod.align_to_vector(at_mod.noramlised_vector(at[carbonyl['O']]['coord'],at[carbonyl['C']]['coord']), cross_vector)
@@ -241,28 +238,17 @@ def correct_carbonyl_alignment(at, cross_vector, carbonyl):
     at[carbonyl['N']]['coord'] = at[carbonyl['N']]['coord'] - cross_vector*0.5
     return at
 
-def correct_protein_chiral(at, chiral):
-    for chiral_group in g_var.res_top[at[1]['res_type']]['CHIRAL']:
-        if chiral_group != 'atoms':            
-            atom_list = [chiral[chiral_group]]
-            for chiral_atoms in ['c1','c2','c3']:
-                atom_list.append(chiral[g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group][chiral_atoms]])
-            cross_vector_chiral = at_mod.find_cross_vector( [at[atom_list[3]]['coord'], at[atom_list[2]]['coord'], at[atom_list[1]]['coord']])
-            at[atom_list[0]]['coord'] = at[atom_list[0]]['coord'] + cross_vector_chiral*0.5
-            if g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['m'] in chiral:
-                m = chiral[g_var.res_top[at[1]['res_type']]['CHIRAL'][chiral_group]['m']]
-                at[m]['coord'] = at[m]['coord'] + cross_vector_chiral*1
-    return at
-
 def fix_carbonyl_chiral(residue_id, cg, at, cross_vector):
-    chiral, carbonyl = get_chiral_carbonyl(at)
+    carbonyl = get_chiral_carbonyl(at)
+    chiral = at_mod.get_chiral_non_carbonyl(at)
     if not np.any(cross_vector):
         ca = get_crossvector(cg, residue_id)
         cross_vector = at_mod.find_cross_vector( ca )
     at = correct_carbonyl_alignment(at, cross_vector, carbonyl)
-    if len(g_var.res_top[at[1]['res_type']]['CHIRAL']) >= 2:
-        at = correct_protein_chiral(at, chiral)
+#    if len(g_var.res_top[at[1]['res_type']]['CHIRAL']) >= 2:
+#        at = at_mod.correct_chiral_atoms(at, chiral)
     return at, cross_vector
+
 
 ### align sequences of user AT structure and CG input
 

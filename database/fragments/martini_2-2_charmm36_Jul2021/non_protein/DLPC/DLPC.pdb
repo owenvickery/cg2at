@@ -1,0 +1,116 @@
+[ NC3 ]
+ATOM      1  N   DLPC    1       5.882   7.332  56.987  0.00  0.00      MEMB  
+ATOM      2  C13 DLPC    1       4.914   8.459  56.763  0.00  0.00      MEMB  
+ATOM      3 H13A DLPC    1       4.605   8.507  55.727  0.00  0.00      MEMB  
+ATOM      4 H13B DLPC    1       5.311   9.414  57.066  0.00  0.00      MEMB  
+ATOM      5 H13C DLPC    1       3.993   8.263  57.338  0.00  0.00      MEMB  
+ATOM      6  C14 DLPC    1       7.087   7.522  56.110  0.00  0.00      MEMB  
+ATOM      7 H14A DLPC    1       7.845   6.767  56.278  0.00  0.00      MEMB  
+ATOM      8 H14B DLPC    1       7.589   8.477  56.310  0.00  0.00      MEMB  
+ATOM      9 H14C DLPC    1       6.838   7.531  55.059  0.00  0.00      MEMB  
+ATOM     10  C15 DLPC    1       6.327   7.377  58.418  0.00  0.00      MEMB  
+ATOM     11 H15A DLPC    1       5.455   7.534  59.051  0.00  0.00      MEMB  
+ATOM     12 H15B DLPC    1       7.059   8.159  58.592  0.00  0.00      MEMB  
+ATOM     13 H15C DLPC    1       6.781   6.440  58.713  0.00  0.00      MEMB  
+ATOM     14  C12 DLPC    1       5.149   6.008  56.738  0.00  0.00      MEMB  
+ATOM     15 H12A DLPC    1       5.871   5.204  56.737  0.00  0.00      MEMB  
+ATOM     16 H12B DLPC    1       4.690   6.031  55.754  0.00  0.00      MEMB  
+ATOM     17  C11 DLPC    1       3.989   5.627  57.710  1.00  1.00      MEMB  
+ATOM     18 H11A DLPC    1       4.339   5.547  58.761  1.00  0.00      MEMB  
+ATOM     19 H11B DLPC    1       3.602   4.623  57.420  1.00  0.00      MEMB  
+[ PO4 ]
+ATOM     20  P   DLPC    1       1.498   6.483  58.232  0.00  0.00      MEMB  
+ATOM     21  O13 DLPC    1       1.239   7.610  59.168  0.00  0.00      MEMB  
+ATOM     22  O14 DLPC    1       1.254   5.128  58.761  0.00  0.00      MEMB  
+ATOM     23  O11 DLPC    1       0.635   6.658  56.902  0.00  1.00      MEMB  
+ATOM     24  O12 DLPC    1       2.975   6.604  57.629  0.00  2.00      MEMB  
+[ GL1 ]
+ATOM     25  C1  DLPC    1       1.096   7.500  55.834  2.00  2.00      MEMB  
+ATOM     26  HA  DLPC    1       2.114   7.920  55.987  2.00  0.00      MEMB  
+ATOM     27  HB  DLPC    1       0.400   8.361  55.760  2.00  0.00      MEMB  
+ATOM     28  C2  DLPC    1       1.074   6.837  54.427  0.00  6.00      MEMB  
+ATOM     29  HS  DLPC    1       0.009   6.560  54.287  0.00  0.00      MEMB  
+ATOM     30  O21 DLPC    1       1.993   5.720  54.339  0.00  0.00      MEMB  
+ATOM     31  C21 DLPC    1       2.153   5.032  53.211  0.00  0.00      MEMB  
+ATOM     32  O22 DLPC    1       1.556   5.194  52.168  0.00  0.00      MEMB  
+ATOM     33  C22 DLPC    1       3.141   3.888  53.478  3.00  3.00      MEMB  
+ATOM     34  H2R DLPC    1       2.732   3.316  54.256  3.00  0.00      MEMB  
+ATOM     35  H2S DLPC    1       4.121   4.217  53.842  3.00  0.00      MEMB  
+[ GL2 ]
+ATOM     36  C3  DLPC    1       1.406   7.835  53.337  4.00  6.00      MEMB  
+ATOM     37  HX  DLPC    1       0.870   8.791  53.518  4.00  0.00      MEMB  
+ATOM     38  HY  DLPC    1       1.028   7.437  52.363  4.00  0.00      MEMB  
+ATOM     39  O31 DLPC    1       2.834   8.000  53.438  0.00  0.00      MEMB  
+ATOM     40  C31 DLPC    1       3.467   7.890  52.311  0.00  0.00      MEMB  
+ATOM     41  O32 DLPC    1       2.957   7.683  51.228  0.00  0.00      MEMB  
+ATOM     42  C32 DLPC    1       4.959   8.014  52.602  5.00  7.00      MEMB  
+ATOM     43  H2X DLPC    1       5.162   7.607  53.613  5.00  0.00      MEMB  
+ATOM     44  H2Y DLPC    1       5.243   9.088  52.583  5.00  0.00      MEMB  
+[ C1A ]
+ATOM     45  C23 DLPC    1       3.125   2.728  52.490  6.00  3.00      MEMB  
+ATOM     46  H3R DLPC    1       2.088   2.442  52.191  6.00  0.00      MEMB  
+ATOM     47  H3S DLPC    1       3.614   1.821  52.904  6.00  0.00      MEMB  
+ATOM     48  C24 DLPC    1       3.932   3.236  51.378  0.00  0.00      MEMB  
+ATOM     49  H4R DLPC    1       5.007   3.256  51.654  0.00  0.00      MEMB  
+ATOM     50  H4S DLPC    1       3.609   4.291  51.255  0.00  0.00      MEMB  
+ATOM     51  C25 DLPC    1       3.662   2.526  50.089  7.00  4.00      MEMB  
+ATOM     52  H5R DLPC    1       2.565   2.408  49.936  7.00  0.00      MEMB  
+ATOM     53  H5S DLPC    1       4.099   1.503  50.145  7.00  0.00      MEMB  
+[ C2A ]
+ATOM     54  C26 DLPC    1       4.325   3.440  49.067  8.00  4.00      MEMB  
+ATOM     55  H6R DLPC    1       4.496   2.885  48.128  8.00  0.00      MEMB  
+ATOM     56  H6S DLPC    1       5.318   3.714  49.500  8.00  0.00      MEMB  
+ATOM     57  C27 DLPC    1       3.587   4.770  48.798  0.00  0.00      MEMB  
+ATOM     58  H7R DLPC    1       3.465   5.408  49.704  0.00  0.00      MEMB  
+ATOM     59  H7S DLPC    1       4.182   5.371  48.083  0.00  0.00      MEMB  
+ATOM     60  C28 DLPC    1       2.187   4.583  48.236  0.00  0.00      MEMB  
+ATOM     61  H8R DLPC    1       2.276   4.021  47.289  0.00  0.00      MEMB  
+ATOM     62  H8S DLPC    1       1.625   3.939  48.941  0.00  0.00      MEMB  
+ATOM     63  C29 DLPC    1       1.468   5.934  48.053  9.00  5.00      MEMB  
+ATOM     64  H9R DLPC    1       2.160   6.698  47.646  9.00  0.00      MEMB  
+ATOM     65  H9S DLPC    1       1.168   6.273  49.075  9.00  0.00      MEMB  
+[ C3A ]
+ATOM     66 C210 DLPC    1       0.215   5.866  47.175  10.0  5.00      MEMB  
+ATOM     67 H10R DLPC    1      -0.600   6.503  47.579  10.0  0.00      MEMB  
+ATOM     68 H10S DLPC    1      -0.104   4.824  47.233  10.0  0.00      MEMB  
+ATOM     69 C211 DLPC    1       0.376   6.016  45.666  0.00  0.00      MEMB  
+ATOM     70 H11R DLPC    1       0.760   7.023  45.420  0.00  0.00      MEMB  
+ATOM     71 H11S DLPC    1      -0.644   5.950  45.219  0.00  0.00      MEMB  
+ATOM     72 C212 DLPC    1       1.240   4.888  45.086  0.00  0.00      MEMB  
+ATOM     73 H12R DLPC    1       0.951   3.907  45.526  0.00  0.00      MEMB  
+ATOM     74 H12S DLPC    1       2.306   5.046  45.335  0.00  0.00      MEMB  
+ATOM     75 H12T DLPC    1       1.119   4.809  43.990  0.00  0.00      MEMB  
+[ C1B ]
+ATOM     76  C33 DLPC    1       5.728   7.215  51.540  11.0  7.00      MEMB  
+ATOM     77  H3X DLPC    1       5.240   6.223  51.386  11.0  0.00      MEMB  
+ATOM     78  H3Y DLPC    1       6.764   7.023  51.890  11.0  0.00      MEMB  
+ATOM     79  C34 DLPC    1       5.769   7.982  50.215  0.00  0.00      MEMB  
+ATOM     80  H4X DLPC    1       6.221   8.985  50.366  0.00  0.00      MEMB  
+ATOM     81  H4Y DLPC    1       4.726   8.156  49.859  0.00  0.00      MEMB  
+ATOM     82  C35 DLPC    1       6.479   7.242  49.078  12.0  8.00      MEMB  
+ATOM     83  H5X DLPC    1       6.107   6.192  49.065  12.0  0.00      MEMB  
+ATOM     84  H5Y DLPC    1       7.575   7.216  49.255  12.0  0.00      MEMB  
+[ C2B ]
+ATOM     85  C36 DLPC    1       6.143   7.901  47.730  13.0  8.00      MEMB  
+ATOM     86  H6X DLPC    1       6.656   8.885  47.657  13.0  0.00      MEMB  
+ATOM     87  H6Y DLPC    1       5.046   8.106  47.722  13.0  0.00      MEMB  
+ATOM     88  C37 DLPC    1       6.480   7.028  46.512  0.00  0.00      MEMB  
+ATOM     89  H7X DLPC    1       6.224   5.969  46.744  0.00  0.00      MEMB  
+ATOM     90  H7Y DLPC    1       7.577   7.082  46.336  0.00  0.00      MEMB  
+ATOM     91  C38 DLPC    1       5.720   7.435  45.232  0.00  0.00      MEMB  
+ATOM     92  H8X DLPC    1       6.227   6.964  44.361  0.00  0.00      MEMB  
+ATOM     93  H8Y DLPC    1       5.767   8.538  45.103  0.00  0.00      MEMB  
+ATOM     94  C39 DLPC    1       4.252   6.974  45.241  14.0  9.00      MEMB  
+ATOM     95  H9X DLPC    1       3.760   7.358  46.163  14.0  0.00      MEMB  
+ATOM     96  H9Y DLPC    1       4.247   5.863  45.308  14.0  0.00      MEMB  
+[ C3B ]
+ATOM     97 C310 DLPC    1       3.397   7.428  44.038  15.0  9.00      MEMB  
+ATOM     98 H10X DLPC    1       3.315   8.535  44.028  15.0  0.00      MEMB  
+ATOM     99 H10Y DLPC    1       2.367   7.053  44.195  15.0  0.00      MEMB  
+ATOM    100 C311 DLPC    1       3.828   6.908  42.658  0.00  0.00      MEMB  
+ATOM    101 H11X DLPC    1       4.747   6.290  42.766  0.00  0.00      MEMB  
+ATOM    102 H11Y DLPC    1       4.088   7.784  42.021  0.00  0.00      MEMB  
+ATOM    103 C312 DLPC    1       2.746   6.083  41.945  0.00  0.00      MEMB  
+ATOM    104 H12X DLPC    1       2.517   5.158  42.513  0.00  0.00      MEMB  
+ATOM    105 H12Y DLPC    1       3.080   5.777  40.938  0.00  0.00      MEMB  
+ATOM    106 H12Z DLPC    1       1.815   6.663  41.792  0.00  0.00      MEMB  

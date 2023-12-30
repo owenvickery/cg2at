@@ -1,0 +1,20 @@
+OL21 nucleic (Zgarbova et al., J. Chem. Theory Comput. 17, 6292-6301, 2021;
+J. Chem. Theory Comput. 7, 2886-2902, 2011)
+
+********************************************************************
+* OL21 nucleic acid package combines several dihedral              *
+* modifications, which were added to ff99 force field:             *
+* DNA:                                                             *
+* chiOL4 (Krepl et al. 8, 2506-2520, 2012)                         *
+* epsilon/zetaOL1 (Zgarbova et al. JCTC 9, 2339-2354, 2013)        *
+* betaOL1 (Zgarbova et al. JCTC  11, 5723-36, 2015)                *
+* alpha/gammaOL21 (Zgarbova et al., JCTC 17, 6292-6301, 2021)      *
+* RNA (implemented by Man Hoang Viet):                             *
+* chiOL3 (Zgarbova et al., JCTC 7, 2886-2902, 2011)                * 
+* bsc0 (Perez et al., Biophys. J. 11, 3817-3829, 2007)             *
+* see also http://ffol.upol.cz                                     *
+* OL21 nucleic is combined with amber14SB protein FF implemented   *
+* by Man Hoang Viet, vhman@ncsu.edu                                *
+* In this version corrected typo in Na+ ion parameters             *
+********************************************************************
+

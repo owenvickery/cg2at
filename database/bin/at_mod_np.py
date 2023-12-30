@@ -68,6 +68,9 @@ def at_np_solvent(cg_residue_type,cg_residues):
             
         if cg_residue_type in g_var.np_residues:
             atomistic_fragments[cg_resid] = at_mod.check_hydrogens(atomistic_fragments[cg_resid])
+        if len(g_var.res_top[cg_residue_type]['CHIRAL']) > 1:
+            chiral = at_mod.get_chiral_non_carbonyl(atomistic_fragments[cg_resid])
+            atomistic_fragments[cg_resid] = at_mod.correct_chiral_atoms(atomistic_fragments[cg_resid], chiral)            
         atomistic_fragments_list, sol_p_bead =  sort_np_dictionary(atomistic_fragments[cg_resid], atomistic_fragments_list)
     if cg_residue_type in g_var.sol_residues:
         return atomistic_fragments_list, sol_p_bead*len(cg_residues)

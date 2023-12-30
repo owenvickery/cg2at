@@ -31,7 +31,7 @@ def collect_input():
             os.chdir(g_var.input_directory)
             gromacs([g_var.args.gmx+' editconf -f '+gen.path_leaf(file_name)[1]+' -resnr 0 -o '+g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb', g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb'])
             if not os.path.exists(g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb'):
-                sys.exit('\nFailed to process atomistic input file')
+                sys.exit('\nFailed to process atomistic input file.\nCheck gromacs outputs in '+g_var.input_directory)
             else:
                 g_var.user_at_input = True
             os.chdir(g_var.start_dir)
@@ -47,7 +47,7 @@ def collect_input():
 #### gromacs parser
 def gromacs(gro):
     possible_errors = ['File input/output error:','Error in user input:', 'did not converge to Fmax ', 
-                        'but did not reach the requested Fmax ', 'Segmentation fault', 'Fatal error:', 'Cannot read from input']
+                        'but did not reach the requested Fmax ', 'Segmentation fault', 'Fatal error:', 'Cannot read from input', 'threads is only supported with thread-MPI']
     cmd,output = gro[0], gro[1]
     error = False
     if os.path.exists(output):
@@ -71,6 +71,8 @@ def gromacs(gro):
                     if 'residue naming needs to be fixed' in out and 'PROTEIN_aligned' in out:
                         print('\n\n###  The supplied protein structure contains incorrectly named or missing atoms  ###\n\n')
                     error = True
+#                if err == 'threads is only supported with thread-MPI':
+#                    g_var.ntmpi = False
             if 'number of atoms in the topology (' in out:
                 print('\n'+out+'\n\n')
                 print('{0:^90}\n\n{1:^90}\n'.format('***NOTE***','If it is only out by multiples of two, check cysteine distances and increase -cys cutoff'))
@@ -154,52 +156,23 @@ def ask_ter_question(residue, options, chain):
         try:
             number = int(input('\nplease select a option: '))
             if number < len(options):
-                return options[sel[number]]
+                return number
         except KeyboardInterrupt:
             sys.exit('\nInterrupted')
         except BaseException:
             print("Oops!  That was a invalid choice")
 
 def ask_terminal(sys_info, residue_type):
-#### default termini is neutral, however if ter flag is supplied you interactively choose termini 
-    for ff in g_var.termini_selections:
-        if ff in g_var.forcefield:
-            ter_conv = g_var.termini_selections[ff]
-    if 'ter_conv' not in locals():
-        print('Cannot find terminal definitions for: '+g_var.forcefield+'\nDefaulting to CHARMM terminal definitions\n')
-        ter_conv = g_var.termini_selections['charmm']
-    system_ter = []
+    system_ter=[]
     for chain in range(g_var.system[residue_type]):
-        conv_type = 'NORM'
-        default_ter=[]
-        ter_name=['N_TERMINAL','C_TERMINAL']
+        chain_ter=[]
+        ter_name=['n','c']
         for ter_val,  ter_residue in enumerate(sys_info[chain]):
-            if ter_residue == 'PRO' and ter_val == 0:
-                conv_type = 'PRO'
-            termini = g_var.res_top[ter_residue][ter_name[ter_val]].upper()
-            if len(termini) == 0 or termini == 'DEFAULT':
-                if not g_var.args.ter:
-                    if g_var.args.nt and ter_val==0:
-                        if conv_type == 'PRO':
-                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH'])
-                        else:
-                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH2'])
-                    elif ter_val==0:
-                        if conv_type == 'PRO':
-                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH2+'])
-                        else:
-                            default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['NH3+'])
-                    if g_var.args.ct and ter_val==1:
-                        default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COOH'])
-                    elif ter_val==1:
-                        default_ter.append(ter_conv[ter_name[ter_val]][conv_type]['COO-'])
-                else:
-                    default_ter.append(ask_ter_question(termini, ter_conv[ter_name[ter_val]][conv_type], chain))
+            if g_var.args.ter:
+                chain_ter.append(ask_ter_question(g_var.res_top[ter_residue]['RESIDUE'][0], g_var.termini_selections[ter_name[ter_val]][g_var.res_top[ter_residue]['RESIDUE'][0]], chain))
             else:
-                default_ter.append(ter_conv[ter_name[ter_val]][conv_type][termini])
-                if g_var.args.ter:
-                    print('\n The '+ter_name[ter_val]+' of residue '+ter_residue+' is non adjustable')
-        system_ter.append(default_ter)
+                chain_ter.append('')
+        system_ter.append(chain_ter)
     return system_ter
 
 def run_parallel_pdb2gmx_min(res_type, sys_info):
@@ -223,8 +196,9 @@ def run_parallel_pdb2gmx_min(res_type, sys_info):
 
 def pdb2gmx_chain(chain, input,res_type, pdb2gmx_selections):
 #### pdb2gmx on on protein chain, creates the topologies    
+    ter = ' -ter ' if g_var.args.ter else ''
     gromacs([g_var.args.gmx+' pdb2gmx -f '+res_type+'_'+input+str(chain)+'.pdb -o '+res_type+'_'+input+str(chain)+'_gmx.pdb -water none \
-    -p '+res_type+'_'+input+str(chain)+'.top  -i '+res_type+'_'+str(chain)+'_posre.itp '+g_var.vs+' -ter '+pdb2gmx_selections+'\nEOF', ''+res_type+'_'+input+str(chain)+'_gmx.pdb']) #### single chains
+    -p '+res_type+'_'+input+str(chain)+'.top  -i '+res_type+'_'+str(chain)+'_posre.itp '+g_var.vs+ter+pdb2gmx_selections+'\nEOF', ''+res_type+'_'+input+str(chain)+'_gmx.pdb']) #### single chains
 #### converts the topology file and processes it into a itp file
     convert_topology(res_type+'_'+input, chain, res_type)
 #### writes topology overview for each chain 
@@ -243,7 +217,8 @@ def minimise_protein_chain(chain, input, res_type):
                 '-maxwarn 1 ', 'MIN/'+res_type+'_'+input+str(chain)+'.tpr'])
 #### minimises chain
     os.chdir('MIN')
-    gromacs([g_var.args.gmx+' mdrun -v -nt 1 -deffnm '+res_type+'_'+input+str(chain)+' -c '+res_type+'_'+input+str(chain)+'.pdb', res_type+'_'+input+str(chain)+'.pdb'])
+    # removed flag -nt 1
+    gromacs([g_var.args.gmx+' mdrun -v -deffnm '+res_type+'_'+input+str(chain)+' -c '+res_type+'_'+input+str(chain)+'.pdb', res_type+'_'+input+str(chain)+'.pdb'])
     os.chdir('..')  
 
 
@@ -367,7 +342,8 @@ def minimise_merged(residue_type, input_file):
             '-o '+g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged_min -maxwarn 1', g_var.working_dir+residue_type+'/MIN/'+residue_type+'_merged_min.tpr'])
 #### change to min directory and minimise
     os.chdir('MIN') 
-    complete, success = gromacs([g_var.args.gmx+' mdrun -v -nt '+str(g_var.args.ncpus)+' -pin on -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb', '../'+residue_type+'_merged.pdb'])
+    # removed flag -nt '+str(g_var.args.ncpus)+'
+    complete, success = gromacs([g_var.args.gmx+' mdrun -v -pin on -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb', '../'+residue_type+'_merged.pdb'])
     os.chdir(g_var.working_dir)
     return success
 
@@ -476,7 +452,8 @@ def minimise_merged_pdbs(protein):
             '-maxwarn 1', 'MIN/merged_cg2at'+protein+'_minimised.tpr'])
     os.chdir('MIN')
 #### runs minimises final systems
-    gromacs([g_var.args.gmx+' mdrun -nt '+str(g_var.args.ncpus)+' -v -pin on -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb', 'merged_cg2at'+protein+'_minimised.pdb'])
+# removed flag -nt '+str(g_var.args.ncpus)+'
+    gromacs([g_var.args.gmx+' mdrun -v -pin on -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb', 'merged_cg2at'+protein+'_minimised.pdb'])
 
    
 def write_steered_mdp(loc, posres, time, timestep):
@@ -502,7 +479,8 @@ def steer_to_aligned(protein_type, fc, input_file ):
             ' -o STEER/merged_cg2at_'+protein_type+'_steer_'+fc+' '+
             ' -maxwarn '+str(2), 'STEER/merged_cg2at_'+protein_type+'_steer_'+fc+'.tpr'])  
     os.chdir('STEER')
-    complete, equil = gromacs([g_var.args.gmx+' mdrun -v -nt '+str(g_var.args.ncpus)+' -pin on -deffnm merged_cg2at_'+protein_type+'_steer_'+fc+
+    # removed flag -nt '+str(g_var.args.ncpus)+'
+    complete, equil = gromacs([g_var.args.gmx+' mdrun -v -pin on -deffnm merged_cg2at_'+protein_type+'_steer_'+fc+
                                  ' -c merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb -cpo merged_cg2at_'+protein_type+'_steer_'+fc+'.cpt'
                                  ,'merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb'])
     print('{:<100}'.format(''), end='\r')
@@ -528,7 +506,8 @@ def run_nvt(input_file):
             ' -o NVT/merged_cg2at_de_novo_nvt'+
             ' -maxwarn '+str(2), 'NVT/merged_cg2at_de_novo_nvt.tpr'])   
     os.chdir(g_var.merged_directory+'NVT')
-    gromacs([g_var.args.gmx+' mdrun -v -nt '+str(g_var.args.ncpus)+' -pin on -deffnm merged_cg2at_de_novo_nvt'+
+    # removed flag -nt '+str(g_var.args.ncpus)+'
+    gromacs([g_var.args.gmx+' mdrun -v -pin on -deffnm merged_cg2at_de_novo_nvt'+
             ' -c merged_cg2at_de_novo_nvt.pdb -cpo merged_cg2at_de_novo_nvt.cpt'
             , 'merged_cg2at_de_novo_nvt.pdb'])  
     gen.file_copy_and_check('merged_cg2at_de_novo_nvt.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')    
