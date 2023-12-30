@@ -10,7 +10,7 @@
 <p align="center">
                                    <b>**CG2AT v2 README**</b>
 </p>
-If you are using CG2AT2 please acknowledge me (Dr Owen Vickery) and use the following citation.
+If you are using CG2AT2 please acknowledge by using the following citation:
 
 Vickery ON, Stansfeld PJ. 
 
@@ -25,9 +25,9 @@ doi: 10.1021/acs.jctc.1c00295
                                    <b>**CG2AT2 OVERVIEW**</b>
 </p>
 
-CG2AT2 is a fragment based conversion of coarse grain systems (e.g. martini) to atomistic. CG2AT2 generates a selection of outputs for allowing further refinements and analysis via atomistic simulations. 
+CG2AT2 is a fragment based conversion of Coarse-Grained systems (e.g. Martini) to an atomistic resolution. CG2AT2 generates a selection of outputs for allowing further refinements and analysis via atomistic simulations. 
 
-CG2AT2 has been designed for ease of use, where for the majority of users need only supply the coordinate file of the coarsegrain system and the original atomisitc file. CG2AT2 will then provide all the files required to run the further atomistic simulation. 
+CG2AT2 has been designed for ease of use, where for the majority of users need only supply the coordinate file of the Coarse-Grained system and the original atomistic file for the protein. CG2AT2 will then provide all the files required to run the further atomistic simulations. 
 
 <p align="center">
                                    <b>**INSTALL**</b>
@@ -37,7 +37,7 @@ The best method to get a copy of CG2AT2 is via CONDA which will install the late
 
 conda install -c stansfeld_rg cg2at
 
-However, CG2AT2 does not require any real install and can be downloaded ready to run from either github or zenodo,
+However, CG2AT2 does not require compilation and can be downloaded, ready to run from either Github or Zenodo,
 
 The addition of CG2AT to the system PATH is advisable for ease of use.
 
@@ -529,7 +529,7 @@ Interactively choose termini
                                    <b>PBC box resizing</b>
 </p>
 
-For the moment CG2AT2 only allows PBC box resizing for cubic boxs. The box flag controls the final box size and is measured in Angstroms. If you wish to shrink the box on selected axises replace the box vector with 0.
+For the moment CG2AT2 only allows PBC box resizing for cubic boxes. The box flag controls the final box size and is measured in Angstroms. If you wish to shrink the box on selected axises replace the box vector with 0.
 
 <pre>
 Change box size to 100, 100, 100
