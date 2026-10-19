@@ -1,0 +1,136 @@
+[ NH3 ]
+ATOM      1  N   PLPE    1       0.592   2.185   2.058  1.00  0.00      PLPE
+ATOM      2  HN1 PLPE    1      -0.087   1.744   2.711  1.00  0.00      PLPE
+ATOM      3  HN2 PLPE    1       0.847   3.110   2.459  1.00  0.00      PLPE
+ATOM      4  HN3 PLPE    1       0.109   2.333   1.148  1.00  0.00      PLPE
+ATOM      5  C12 PLPE    1       1.697   1.301   1.646  1.00  0.00      PLPE
+ATOM      6 H12A PLPE    1       2.305   0.964   2.512  1.00  0.00      PLPE
+ATOM      7 H12B PLPE    1       2.203   1.883   0.847  1.00  0.00      PLPE
+ATOM      8  C11 PLPE    1       1.202   0.003   0.970  1.00  0.00      PLPE
+ATOM      9 H11A PLPE    1       0.609  -0.446   1.795  1.00  0.00      PLPE
+ATOM     10 H11B PLPE    1       2.045  -0.671   0.706  1.00  0.00      PLPE
+[ PO4 ]
+ATOM     11  P   PLPE    1      -0.534  -0.739  -0.710  1.00  0.00      PLPE
+ATOM     12  O13 PLPE    1      -1.291  -1.377   0.396  1.00  0.00      PLPE
+ATOM     13  O14 PLPE    1      -1.361  -0.113  -1.759  1.00  0.00      PLPE
+ATOM     14  O12 PLPE    1       0.478   0.350  -0.196  1.00  0.00      PLPE
+ATOM     15  O11 PLPE    1       0.477  -1.863  -1.351  1.00  0.00      PLPE
+[ GL1 ]
+ATOM     16  C1  PLPE    1       0.056  -2.810  -2.226  1.00  0.00      PLPE
+ATOM     17  HA  PLPE    1      -1.029  -3.010  -2.090  1.00  0.00      PLPE
+ATOM     18  HB  PLPE    1       0.569  -3.790  -2.122  1.00  0.00      PLPE
+ATOM     19  C2  PLPE    1       0.229  -2.311  -3.718  1.00  0.00      PLPE
+ATOM     20  HS  PLPE    1      -0.408  -1.418  -3.892  1.00  0.00      PLPE
+ATOM     21  O21 PLPE    1      -0.104  -3.419  -4.626  1.00  0.00      PLPE
+ATOM     22  C21 PLPE    1      -1.391  -3.646  -4.835  1.00  0.00      PLPE
+ATOM     23  O22 PLPE    1      -2.334  -3.025  -4.272  1.00  0.00      PLPE
+[ GL2 ]
+ATOM     24  C3  PLPE    1       1.702  -1.974  -4.010  1.00  0.00      PLPE
+ATOM     25  HX  PLPE    1       2.105  -1.185  -3.339  1.00  0.00      PLPE
+ATOM     26  HY  PLPE    1       2.336  -2.843  -3.729  1.00  0.00      PLPE
+ATOM     27  O31 PLPE    1       1.971  -1.725  -5.363  1.00  0.00      PLPE
+ATOM     28  C31 PLPE    1       1.399  -0.629  -5.837  1.00  0.00      PLPE
+ATOM     29  O32 PLPE    1       0.883   0.209  -5.154  1.00  0.00      PLPE
+[ C1A ]
+ATOM     30  C22 PLPE    1      -1.504  -4.750  -5.867  1.00  0.00      PLPE
+ATOM     31  H2R PLPE    1      -0.573  -4.969  -6.433  1.00  0.00      PLPE
+ATOM     32  H2S PLPE    1      -1.829  -5.637  -5.281  1.00  0.00      PLPE
+ATOM     33  C23 PLPE    1      -2.469  -4.412  -7.047  1.00  0.00      PLPE
+ATOM     34  H3R PLPE    1      -3.488  -4.225  -6.646  1.00  0.00      PLPE
+ATOM     35  H3S PLPE    1      -2.503  -5.137  -7.888  1.00  0.00      PLPE
+ATOM     36  C24 PLPE    1      -2.152  -3.046  -7.728  1.00  0.00      PLPE
+ATOM     37  H4R PLPE    1      -1.105  -3.108  -8.094  1.00  0.00      PLPE
+ATOM     38  H4S PLPE    1      -2.337  -2.245  -6.980  1.00  0.00      PLPE
+ATOM     39  C25 PLPE    1      -3.126  -2.749  -8.846  1.00  0.00      PLPE
+ATOM     40  H5R PLPE    1      -4.185  -2.562  -8.565  1.00  0.00      PLPE
+ATOM     41  H5S PLPE    1      -3.170  -3.624  -9.530  1.00  0.00      PLPE
+ATOM     42  C26 PLPE    1      -2.665  -1.586  -9.753  1.00  0.00      PLPE
+ATOM     43  H6R PLPE    1      -1.560  -1.678  -9.822  1.00  0.00      PLPE
+ATOM     44  H6S PLPE    1      -2.851  -0.603  -9.270  1.00  0.00      PLPE
+[ D2A ]
+ATOM     45  C27 PLPE    1      -3.386  -1.599 -11.115  1.00  0.00      PLPE
+ATOM     46  H7R PLPE    1      -4.446  -1.862 -10.911  1.00  0.00      PLPE
+ATOM     47  H7S PLPE    1      -2.962  -2.410 -11.746  1.00  0.00      PLPE
+ATOM     48  C28 PLPE    1      -3.367  -0.171 -11.740  1.00  0.00      PLPE
+ATOM     49  H8R PLPE    1      -3.713   0.544 -10.963  1.00  0.00      PLPE
+ATOM     50  H8S PLPE    1      -4.136  -0.232 -12.539  1.00  0.00      PLPE
+ATOM     51  C29 PLPE    1      -2.033   0.271 -12.299  1.00  0.00      PLPE
+ATOM     52  H9R PLPE    1      -1.197   0.473 -11.615  1.00  0.00      PLPE
+ATOM     53 C210 PLPE    1      -1.830   0.754 -13.554  1.00  0.00      PLPE
+ATOM     54 H10R PLPE    1      -0.806   1.032 -13.846  1.00  0.00      PLPE
+[ D3A ]
+ATOM     55 C211 PLPE    1      -2.868   0.981 -14.627  1.00  0.00      PLPE
+ATOM     56 H11R PLPE    1      -3.570   1.814 -14.406  1.00  0.00      PLPE
+ATOM     57 H11S PLPE    1      -3.545   0.100 -14.641  1.00  0.00      PLPE
+ATOM     58 C212 PLPE    1      -2.377   1.178 -16.105  1.00  0.00      PLPE
+ATOM     59 H12R PLPE    1      -1.916   2.160 -16.288  1.00  0.00      PLPE
+ATOM     60 C213 PLPE    1      -2.669   0.389 -17.185  1.00  0.00      PLPE
+ATOM     61 H13R PLPE    1      -2.248   0.640 -18.170  1.00  0.00      PLPE
+ATOM     62 C214 PLPE    1      -3.482  -0.897 -17.294  1.00  0.00      PLPE
+ATOM     63 H14R PLPE    1      -3.583  -1.091 -18.384  1.00  0.00      PLPE
+ATOM     64 H14S PLPE    1      -4.499  -0.802 -16.857  1.00  0.00      PLPE
+[ C4A ]
+ATOM     65 C215 PLPE    1      -2.777  -2.125 -16.829  1.00  0.00      PLPE
+ATOM     66 H15R PLPE    1      -2.629  -1.930 -15.745  1.00  0.00      PLPE
+ATOM     67 H15S PLPE    1      -1.868  -2.156 -17.466  1.00  0.00      PLPE
+ATOM     68 C216 PLPE    1      -3.492  -3.460 -17.177  1.00  0.00      PLPE
+ATOM     69 H16R PLPE    1      -3.608  -3.531 -18.279  1.00  0.00      PLPE
+ATOM     70 H16S PLPE    1      -4.492  -3.383 -16.698  1.00  0.00      PLPE
+ATOM     71 C217 PLPE    1      -2.817  -4.751 -16.518  1.00  0.00      PLPE
+ATOM     72 H17R PLPE    1      -3.312  -5.723 -16.729  1.00  0.00      PLPE
+ATOM     73 H17S PLPE    1      -3.059  -4.752 -15.433  1.00  0.00      PLPE
+ATOM     74 C218 PLPE    1      -1.320  -4.882 -16.631  1.00  0.00      PLPE
+ATOM     75 H18R PLPE    1      -0.860  -5.585 -15.904  1.00  0.00      PLPE
+ATOM     76 H18S PLPE    1      -0.849  -3.921 -16.332  1.00  0.00      PLPE
+ATOM     77 H18T PLPE    1      -1.054  -5.268 -17.638  1.00  0.00      PLPE
+[ C1B ]
+ATOM     78  C32 PLPE    1       1.305  -0.683  -7.411  1.00  0.00      PLPE
+ATOM     79  H2X PLPE    1       0.240  -0.383  -7.517  1.00  0.00      PLPE
+ATOM     80  H2Y PLPE    1       1.560  -1.712  -7.743  1.00  0.00      PLPE
+ATOM     81  C33 PLPE    1       2.310   0.378  -7.934  1.00  0.00      PLPE
+ATOM     82  H3X PLPE    1       3.362   0.035  -7.840  1.00  0.00      PLPE
+ATOM     83  H3Y PLPE    1       2.146   1.343  -7.409  1.00  0.00      PLPE
+ATOM     84  C34 PLPE    1       2.075   0.687  -9.453  1.00  0.00      PLPE
+ATOM     85  H4X PLPE    1       2.753   1.532  -9.698  1.00  0.00      PLPE
+ATOM     86  H4Y PLPE    1       1.033   0.928  -9.754  1.00  0.00      PLPE
+[ C2B ]
+ATOM     87  C35 PLPE    1       2.471  -0.505 -10.324  1.00  0.00      PLPE
+ATOM     88  H5X PLPE    1       2.121  -1.512 -10.011  1.00  0.00      PLPE
+ATOM     89  H5Y PLPE    1       3.579  -0.459 -10.260  1.00  0.00      PLPE
+ATOM     90  C36 PLPE    1       2.280  -0.430 -11.773  1.00  0.00      PLPE
+ATOM     91  H6X PLPE    1       2.906   0.405 -12.155  1.00  0.00      PLPE
+ATOM     92  H6Y PLPE    1       1.226  -0.254 -12.076  1.00  0.00      PLPE
+ATOM     93  C37 PLPE    1       2.729  -1.720 -12.416  1.00  0.00      PLPE
+ATOM     94  H7X PLPE    1       2.445  -2.534 -11.715  1.00  0.00      PLPE
+ATOM     95  H7Y PLPE    1       3.838  -1.680 -12.458  1.00  0.00      PLPE
+ATOM     96  C38 PLPE    1       2.113  -1.990 -13.739  1.00  0.00      PLPE
+ATOM     97  H8X PLPE    1       1.005  -2.048 -13.681  1.00  0.00      PLPE
+ATOM     98  H8Y PLPE    1       2.549  -2.930 -14.139  1.00  0.00      PLPE
+[ C3B ]
+ATOM     99  C39 PLPE    1       2.362  -0.904 -14.765  1.00  0.00      PLPE
+ATOM    100  H9X PLPE    1       3.452  -0.692 -14.787  1.00  0.00      PLPE
+ATOM    101  H9Y PLPE    1       1.920   0.070 -14.465  1.00  0.00      PLPE
+ATOM    102 C310 PLPE    1       1.907  -1.308 -16.125  1.00  0.00      PLPE
+ATOM    103 H10X PLPE    1       0.818  -1.505 -16.033  1.00  0.00      PLPE
+ATOM    104 H10Y PLPE    1       2.326  -2.319 -16.318  1.00  0.00      PLPE
+ATOM    105 C311 PLPE    1       2.339  -0.409 -17.288  1.00  0.00      PLPE
+ATOM    106 H11X PLPE    1       2.018  -0.823 -18.268  1.00  0.00      PLPE
+ATOM    107 H11Y PLPE    1       3.446  -0.336 -17.340  1.00  0.00      PLPE
+ATOM    108 C312 PLPE    1       1.602   0.910 -17.080  1.00  0.00      PLPE
+ATOM    109 H12X PLPE    1       1.644   1.223 -16.015  1.00  0.00      PLPE
+ATOM    110 H12Y PLPE    1       0.538   0.668 -17.288  1.00  0.00      PLPE
+[ C4B ]
+ATOM    111 C313 PLPE    1       2.046   2.079 -18.041  1.00  0.00      PLPE
+ATOM    112 H13X PLPE    1       2.012   1.693 -19.083  1.00  0.00      PLPE
+ATOM    113 H13Y PLPE    1       3.074   2.382 -17.751  1.00  0.00      PLPE
+ATOM    114 C314 PLPE    1       1.057   3.229 -18.030  1.00  0.00      PLPE
+ATOM    115 H14X PLPE    1       1.529   4.234 -18.001  1.00  0.00      PLPE
+ATOM    116 H14Y PLPE    1       0.470   3.218 -17.087  1.00  0.00      PLPE
+ATOM    117 C315 PLPE    1      -0.042   3.217 -19.173  1.00  0.00      PLPE
+ATOM    118 H15X PLPE    1      -0.543   2.229 -19.256  1.00  0.00      PLPE
+ATOM    119 H15Y PLPE    1       0.567   3.497 -20.059  1.00  0.00      PLPE
+ATOM    120 C316 PLPE    1      -1.177   4.189 -18.849  1.00  0.00      PLPE
+ATOM    121 H16X PLPE    1      -1.675   3.922 -17.892  1.00  0.00      PLPE
+ATOM    122 H16Y PLPE    1      -0.727   5.205 -18.843  1.00  0.00      PLPE
+ATOM    123 H16Z PLPE    1      -1.936   4.175 -19.661  1.00  0.00      PLPE
+END

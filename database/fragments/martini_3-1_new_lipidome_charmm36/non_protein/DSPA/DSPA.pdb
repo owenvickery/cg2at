@@ -1,0 +1,136 @@
+[ PO4 ]
+ATOM      1  P   DSPA    1      -0.223   0.110  -0.032  1.00  0.00      DSPA
+ATOM      2  O13 DSPA    1      -1.515   0.371   0.617  1.00  0.00      DSPA
+ATOM      3  O14 DSPA    1      -0.249  -0.991  -1.022  1.00  0.00      DSPA
+ATOM      4  O12 DSPA    1       0.811  -0.192   1.123  1.00  0.00      DSPA
+ATOM      5  H12 DSPA    1       1.073   0.536   1.692  1.00  0.00      DSPA
+ATOM      6  O11 DSPA    1       0.269   1.356  -0.777  1.00  0.00      DSPA
+[ GL1 ]
+ATOM      7  C1  DSPA    1       1.452   1.148  -1.596  1.00  0.00      DSPA
+ATOM      8  HA  DSPA    1       1.488   0.162  -2.109  1.00  0.00      DSPA
+ATOM      9  HB  DSPA    1       2.407   1.318  -1.055  1.00  0.00      DSPA
+ATOM     10  C2  DSPA    1       1.530   2.250  -2.764  1.00  0.00      DSPA
+ATOM     11  HS  DSPA    1       2.021   3.161  -2.359  1.00  0.00      DSPA
+ATOM     12  O21 DSPA    1       0.243   2.564  -3.211  1.00  0.00      DSPA
+ATOM     13  C21 DSPA    1      -0.180   3.811  -2.892  1.00  0.00      DSPA
+ATOM     14  O22 DSPA    1       0.467   4.772  -2.541  1.00  0.00      DSPA
+[ GL2 ]
+ATOM     15  C3  DSPA    1       2.400   1.640  -3.895  1.00  0.00      DSPA
+ATOM     16  HX  DSPA    1       3.370   1.264  -3.505  1.00  0.00      DSPA
+ATOM     17  HY  DSPA    1       2.551   2.381  -4.709  1.00  0.00      DSPA
+ATOM     18  O31 DSPA    1       1.704   0.531  -4.478  1.00  0.00      DSPA
+ATOM     19  C31 DSPA    1       2.203   0.115  -5.685  1.00  0.00      DSPA
+ATOM     20  O32 DSPA    1       3.101   0.605  -6.255  1.00  0.00      DSPA
+[ C1A ]
+ATOM     21  C22 DSPA    1      -1.682   3.903  -3.248  1.00  0.00      DSPA
+ATOM     22  H2R DSPA    1      -1.896   4.912  -3.663  1.00  0.00      DSPA
+ATOM     23  H2S DSPA    1      -2.169   3.768  -2.259  1.00  0.00      DSPA
+ATOM     24  C23 DSPA    1      -2.194   2.864  -4.301  1.00  0.00      DSPA
+ATOM     25  H3R DSPA    1      -3.298   2.913  -4.193  1.00  0.00      DSPA
+ATOM     26  H3S DSPA    1      -1.958   1.801  -4.078  1.00  0.00      DSPA
+ATOM     27  C24 DSPA    1      -1.744   3.249  -5.711  1.00  0.00      DSPA
+ATOM     28  H4R DSPA    1      -1.753   4.343  -5.902  1.00  0.00      DSPA
+ATOM     29  H4S DSPA    1      -2.511   2.771  -6.357  1.00  0.00      DSPA
+ATOM     30  C25 DSPA    1      -0.381   2.746  -6.179  1.00  0.00      DSPA
+ATOM     31  H5R DSPA    1      -0.372   1.642  -6.062  1.00  0.00      DSPA
+ATOM     32  H5S DSPA    1       0.361   3.206  -5.492  1.00  0.00      DSPA
+ATOM     33  C26 DSPA    1       0.014   3.169  -7.642  1.00  0.00      DSPA
+ATOM     34  H6R DSPA    1      -0.089   4.259  -7.834  1.00  0.00      DSPA
+ATOM     35  H6S DSPA    1      -0.724   2.544  -8.190  1.00  0.00      DSPA
+[ C2A ]
+ATOM     36  C27 DSPA    1       1.385   2.758  -8.149  1.00  0.00      DSPA
+ATOM     37  H7R DSPA    1       1.383   1.668  -7.932  1.00  0.00      DSPA
+ATOM     38  H7S DSPA    1       2.295   3.098  -7.610  1.00  0.00      DSPA
+ATOM     39  C28 DSPA    1       1.682   3.020  -9.677  1.00  0.00      DSPA
+ATOM     40  H8R DSPA    1       1.720   4.111  -9.880  1.00  0.00      DSPA
+ATOM     41  H8S DSPA    1       0.825   2.596 -10.244  1.00  0.00      DSPA
+ATOM     42  C29 DSPA    1       3.026   2.394 -10.159  1.00  0.00      DSPA
+ATOM     43  H9R DSPA    1       2.778   1.315 -10.059  1.00  0.00      DSPA
+ATOM     44  H9S DSPA    1       3.922   2.652  -9.555  1.00  0.00      DSPA
+ATOM     45 C210 DSPA    1       3.377   2.589 -11.618  1.00  0.00      DSPA
+ATOM     46 H10R DSPA    1       4.341   2.057 -11.763  1.00  0.00      DSPA
+ATOM     47 H10S DSPA    1       3.589   3.673 -11.735  1.00  0.00      DSPA
+[ C3A ]
+ATOM     48 C211 DSPA    1       2.423   1.913 -12.626  1.00  0.00      DSPA
+ATOM     49 H11R DSPA    1       1.365   2.169 -12.403  1.00  0.00      DSPA
+ATOM     50 H11S DSPA    1       2.505   0.825 -12.419  1.00  0.00      DSPA
+ATOM     51 C212 DSPA    1       2.785   2.242 -14.162  1.00  0.00      DSPA
+ATOM     52 H12R DSPA    1       2.243   1.563 -14.855  1.00  0.00      DSPA
+ATOM     53 H12S DSPA    1       3.864   2.111 -14.390  1.00  0.00      DSPA
+ATOM     54 C213 DSPA    1       2.403   3.611 -14.571  1.00  0.00      DSPA
+ATOM     55 H13R DSPA    1       2.891   4.296 -13.845  1.00  0.00      DSPA
+ATOM     56 H13S DSPA    1       1.318   3.845 -14.607  1.00  0.00      DSPA
+ATOM     57 C214 DSPA    1       2.964   4.063 -15.926  1.00  0.00      DSPA
+ATOM     58 H14R DSPA    1       4.041   3.795 -15.981  1.00  0.00      DSPA
+ATOM     59 H14S DSPA    1       3.015   5.158 -16.102  1.00  0.00      DSPA
+[ C4A ]
+ATOM     60 C215 DSPA    1       2.294   3.464 -17.184  1.00  0.00      DSPA
+ATOM     61 H15R DSPA    1       1.280   3.891 -17.338  1.00  0.00      DSPA
+ATOM     62 H15S DSPA    1       2.100   2.375 -17.084  1.00  0.00      DSPA
+ATOM     63 C216 DSPA    1       3.152   3.821 -18.369  1.00  0.00      DSPA
+ATOM     64 H16R DSPA    1       3.413   4.896 -18.269  1.00  0.00      DSPA
+ATOM     65 H16S DSPA    1       4.055   3.173 -18.372  1.00  0.00      DSPA
+ATOM     66 C217 DSPA    1       2.598   3.608 -19.777  1.00  0.00      DSPA
+ATOM     67 H17R DSPA    1       2.410   2.522 -19.917  1.00  0.00      DSPA
+ATOM     68 H17S DSPA    1       1.594   4.081 -19.739  1.00  0.00      DSPA
+ATOM     69 C218 DSPA    1       3.402   4.131 -20.921  1.00  0.00      DSPA
+ATOM     70 H18R DSPA    1       2.860   3.985 -21.880  1.00  0.00      DSPA
+ATOM     71 H18S DSPA    1       4.330   3.521 -20.885  1.00  0.00      DSPA
+ATOM     72 H18T DSPA    1       3.589   5.217 -20.774  1.00  0.00      DSPA
+[ C1B ]
+ATOM     73  C32 DSPA    1       1.358  -1.104  -6.082  1.00  0.00      DSPA
+ATOM     74  H2X DSPA    1       0.267  -0.906  -6.014  1.00  0.00      DSPA
+ATOM     75  H2Y DSPA    1       1.546  -1.929  -5.362  1.00  0.00      DSPA
+ATOM     76  C33 DSPA    1       1.686  -1.637  -7.439  1.00  0.00      DSPA
+ATOM     77  H3X DSPA    1       2.756  -1.526  -7.719  1.00  0.00      DSPA
+ATOM     78  H3Y DSPA    1       1.222  -0.923  -8.152  1.00  0.00      DSPA
+ATOM     79  C34 DSPA    1       1.020  -2.982  -7.731  1.00  0.00      DSPA
+ATOM     80  H4X DSPA    1      -0.082  -2.933  -7.601  1.00  0.00      DSPA
+ATOM     81  H4Y DSPA    1       1.398  -3.806  -7.088  1.00  0.00      DSPA
+ATOM     82  C35 DSPA    1       1.268  -3.337  -9.173  1.00  0.00      DSPA
+ATOM     83  H5X DSPA    1       1.345  -2.368  -9.711  1.00  0.00      DSPA
+ATOM     84  H5Y DSPA    1       0.563  -4.095  -9.577  1.00  0.00      DSPA
+ATOM     85  C36 DSPA    1       2.757  -3.879  -9.299  1.00  0.00      DSPA
+ATOM     86  H6X DSPA    1       2.883  -4.784  -8.667  1.00  0.00      DSPA
+ATOM     87  H6Y DSPA    1       3.542  -3.222  -8.866  1.00  0.00      DSPA
+[ C2B ]
+ATOM     88  C37 DSPA    1       3.080  -4.154 -10.752  1.00  0.00      DSPA
+ATOM     89  H7X DSPA    1       2.379  -4.973 -11.023  1.00  0.00      DSPA
+ATOM     90  H7Y DSPA    1       4.052  -4.690 -10.800  1.00  0.00      DSPA
+ATOM     91  C38 DSPA    1       2.923  -2.968 -11.744  1.00  0.00      DSPA
+ATOM     92  H8X DSPA    1       3.476  -2.174 -11.198  1.00  0.00      DSPA
+ATOM     93  H8Y DSPA    1       1.872  -2.609 -11.748  1.00  0.00      DSPA
+ATOM     94  C39 DSPA    1       3.440  -3.164 -13.025  1.00  0.00      DSPA
+ATOM     95  H9X DSPA    1       2.790  -3.969 -13.430  1.00  0.00      DSPA
+ATOM     96  H9Y DSPA    1       4.525  -3.400 -13.055  1.00  0.00      DSPA
+ATOM     97 C310 DSPA    1       3.293  -1.983 -13.897  1.00  0.00      DSPA
+ATOM     98 H10X DSPA    1       4.120  -1.308 -13.591  1.00  0.00      DSPA
+ATOM     99 H10Y DSPA    1       2.310  -1.469 -13.834  1.00  0.00      DSPA
+[ C3B ]
+ATOM    100 C311 DSPA    1       3.543  -2.215 -15.381  1.00  0.00      DSPA
+ATOM    101 H11X DSPA    1       4.514  -2.751 -15.451  1.00  0.00      DSPA
+ATOM    102 H11Y DSPA    1       3.588  -1.224 -15.881  1.00  0.00      DSPA
+ATOM    103 C312 DSPA    1       2.335  -2.860 -16.007  1.00  0.00      DSPA
+ATOM    104 H12X DSPA    1       1.327  -2.407 -15.892  1.00  0.00      DSPA
+ATOM    105 H12Y DSPA    1       2.313  -3.883 -15.575  1.00  0.00      DSPA
+ATOM    106 C313 DSPA    1       2.474  -3.151 -17.472  1.00  0.00      DSPA
+ATOM    107 H13X DSPA    1       1.756  -3.941 -17.781  1.00  0.00      DSPA
+ATOM    108 H13Y DSPA    1       3.508  -3.455 -17.741  1.00  0.00      DSPA
+ATOM    109 C314 DSPA    1       2.114  -1.851 -18.296  1.00  0.00      DSPA
+ATOM    110 H14X DSPA    1       2.776  -1.094 -17.825  1.00  0.00      DSPA
+ATOM    111 H14Y DSPA    1       1.071  -1.602 -18.003  1.00  0.00      DSPA
+[ C4B ]
+ATOM    112 C315 DSPA    1       2.238  -2.056 -19.781  1.00  0.00      DSPA
+ATOM    113 H15X DSPA    1       1.361  -2.707 -19.981  1.00  0.00      DSPA
+ATOM    114 H15Y DSPA    1       3.222  -2.529 -19.987  1.00  0.00      DSPA
+ATOM    115 C316 DSPA    1       2.042  -0.726 -20.522  1.00  0.00      DSPA
+ATOM    116 H16X DSPA    1       1.086  -0.348 -20.101  1.00  0.00      DSPA
+ATOM    117 H16Y DSPA    1       2.807   0.004 -20.183  1.00  0.00      DSPA
+ATOM    118 C317 DSPA    1       1.875  -0.725 -22.075  1.00  0.00      DSPA
+ATOM    119 H17X DSPA    1       2.853  -1.021 -22.511  1.00  0.00      DSPA
+ATOM    120 H17Y DSPA    1       1.683   0.309 -22.432  1.00  0.00      DSPA
+ATOM    121 C318 DSPA    1       0.645  -1.530 -22.607  1.00  0.00      DSPA
+ATOM    122 H18X DSPA    1       0.520  -2.535 -22.150  1.00  0.00      DSPA
+ATOM    123 H18Y DSPA    1       0.734  -1.728 -23.697  1.00  0.00      DSPA
+ATOM    124 H18Z DSPA    1      -0.222  -0.892 -22.334  1.00  0.00      DSPA
+END

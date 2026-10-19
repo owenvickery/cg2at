@@ -1,0 +1,140 @@
+[ NH3 ]
+ATOM      1  N   POEE    1      -2.032  -2.265   1.605  1.00  0.00      POEE
+ATOM      2  HN1 POEE    1      -2.829  -2.460   0.967  1.00  0.00      POEE
+ATOM      3  HN2 POEE    1      -1.167  -2.688   1.212  1.00  0.00      POEE
+ATOM      4  HN3 POEE    1      -2.223  -2.730   2.516  1.00  0.00      POEE
+ATOM      5  C12 POEE    1      -1.807  -0.911   2.088  1.00  0.00      POEE
+ATOM      6 H12A POEE    1      -1.195  -1.078   2.999  1.00  0.00      POEE
+ATOM      7 H12B POEE    1      -2.810  -0.561   2.416  1.00  0.00      POEE
+ATOM      8  C11 POEE    1      -1.327   0.107   1.076  1.00  0.00      POEE
+ATOM      9 H11A POEE    1      -1.163   1.012   1.699  1.00  0.00      POEE
+ATOM     10 H11B POEE    1      -2.096   0.326   0.305  1.00  0.00      POEE
+[ PO4 ]
+ATOM     11  P   POEE    1       0.538   0.411  -0.639  1.00  0.00      POEE
+ATOM     12  O13 POEE    1       1.647  -0.437  -1.166  1.00  0.00      POEE
+ATOM     13  O14 POEE    1       0.792   1.787  -0.207  1.00  0.00      POEE
+ATOM     14  O11 POEE    1      -0.713   0.426  -1.631  1.00  0.00      POEE
+ATOM     15  O12 POEE    1      -0.075  -0.322   0.565  1.00  0.00      POEE
+[ ET1 ]
+ATOM     16  C1  POEE    1      -1.222  -0.844  -2.084  1.00  0.00      POEE
+ATOM     17  HA  POEE    1      -2.198  -0.993  -1.574  1.00  0.00      POEE
+ATOM     18  HB  POEE    1      -0.637  -1.764  -1.869  1.00  0.00      POEE
+ATOM     19  C2  POEE    1      -1.458  -0.837  -3.606  1.00  0.00      POEE
+ATOM     20  HS  POEE    1      -1.895  -1.821  -3.882  1.00  0.00      POEE
+ATOM     21  O21 POEE    1      -0.284  -0.574  -4.328  1.00  0.00      POEE
+ATOM     22  C21 POEE    1       0.724  -1.540  -4.347  1.00  0.00      POEE
+ATOM     23  H1R POEE    1       1.141  -1.855  -3.366  1.00  0.00      POEE
+ATOM     24  H1S POEE    1       1.573  -1.085  -4.900  1.00  0.00      POEE
+[ ET2 ]
+ATOM     25  C3  POEE    1      -2.478   0.353  -3.847  1.00  0.00      POEE
+ATOM     26  HX  POEE    1      -1.946   1.206  -3.373  1.00  0.00      POEE
+ATOM     27  HY  POEE    1      -3.383   0.040  -3.283  1.00  0.00      POEE
+ATOM     28  O31 POEE    1      -2.729   0.538  -5.221  1.00  0.00      POEE
+ATOM     29  C31 POEE    1      -3.558   1.647  -5.568  1.00  0.00      POEE
+ATOM     30  H1X POEE    1      -3.392   2.502  -4.878  1.00  0.00      POEE
+ATOM     31  H1Y POEE    1      -4.647   1.443  -5.492  1.00  0.00      POEE
+[ C1A ]
+ATOM     32  C22 POEE    1       0.334  -2.845  -4.932  1.00  0.00      POEE
+ATOM     33  H2R POEE    1      -0.301  -3.371  -4.187  1.00  0.00      POEE
+ATOM     34  H2S POEE    1       1.213  -3.508  -4.778  1.00  0.00      POEE
+ATOM     35  C23 POEE    1      -0.110  -2.951  -6.363  1.00  0.00      POEE
+ATOM     36  H3R POEE    1      -0.334  -4.022  -6.555  1.00  0.00      POEE
+ATOM     37  H3S POEE    1       0.774  -2.699  -6.987  1.00  0.00      POEE
+ATOM     38  C24 POEE    1      -1.243  -2.033  -6.913  1.00  0.00      POEE
+ATOM     39  H4R POEE    1      -1.045  -0.942  -6.848  1.00  0.00      POEE
+ATOM     40  H4S POEE    1      -2.096  -2.158  -6.212  1.00  0.00      POEE
+ATOM     41  C25 POEE    1      -1.740  -2.366  -8.339  1.00  0.00      POEE
+ATOM     42  H5R POEE    1      -2.828  -2.143  -8.307  1.00  0.00      POEE
+ATOM     43  H5S POEE    1      -1.699  -3.438  -8.629  1.00  0.00      POEE
+ATOM     44  C26 POEE    1      -1.314  -1.353  -9.420  1.00  0.00      POEE
+ATOM     45  H6R POEE    1      -0.204  -1.381  -9.459  1.00  0.00      POEE
+ATOM     46  H6S POEE    1      -1.485  -0.286  -9.162  1.00  0.00      POEE
+[ D2A ]
+ATOM     47  C27 POEE    1      -1.886  -1.544 -10.862  1.00  0.00      POEE
+ATOM     48  H7R POEE    1      -1.250  -0.813 -11.404  1.00  0.00      POEE
+ATOM     49  H7S POEE    1      -2.968  -1.314 -10.965  1.00  0.00      POEE
+ATOM     50  C28 POEE    1      -1.649  -2.944 -11.493  1.00  0.00      POEE
+ATOM     51  H8R POEE    1      -2.101  -2.952 -12.508  1.00  0.00      POEE
+ATOM     52  H8S POEE    1      -2.296  -3.668 -10.953  1.00  0.00      POEE
+ATOM     53  C29 POEE    1      -0.223  -3.444 -11.523  1.00  0.00      POEE
+ATOM     54  H91 POEE    1       0.151  -3.645 -10.508  1.00  0.00      POEE
+ATOM     55 C210 POEE    1       0.587  -3.408 -12.634  1.00  0.00      POEE
+ATOM     56 H101 POEE    1       1.612  -3.810 -12.621  1.00  0.00      POEE
+[ C3A ]
+ATOM     57 C211 POEE    1       0.228  -2.909 -13.994  1.00  0.00      POEE
+ATOM     58 H11R POEE    1       1.092  -2.573 -14.606  1.00  0.00      POEE
+ATOM     59 H11S POEE    1      -0.512  -2.094 -13.842  1.00  0.00      POEE
+ATOM     60 C212 POEE    1      -0.726  -3.862 -14.761  1.00  0.00      POEE
+ATOM     61 H12R POEE    1      -1.569  -4.200 -14.122  1.00  0.00      POEE
+ATOM     62 H12S POEE    1      -0.212  -4.779 -15.121  1.00  0.00      POEE
+ATOM     63 C213 POEE    1      -1.366  -3.116 -15.945  1.00  0.00      POEE
+ATOM     64 H13R POEE    1      -1.682  -2.078 -15.706  1.00  0.00      POEE
+ATOM     65 H13S POEE    1      -2.330  -3.655 -16.063  1.00  0.00      POEE
+ATOM     66 C214 POEE    1      -0.630  -3.170 -17.291  1.00  0.00      POEE
+ATOM     67 H14R POEE    1      -0.673  -4.190 -17.728  1.00  0.00      POEE
+ATOM     68 H14S POEE    1       0.418  -2.871 -17.075  1.00  0.00      POEE
+[ C4A ]
+ATOM     69 C215 POEE    1      -1.025  -2.140 -18.358  1.00  0.00      POEE
+ATOM     70 H15R POEE    1      -0.853  -1.136 -17.915  1.00  0.00      POEE
+ATOM     71 H15S POEE    1      -2.074  -2.337 -18.668  1.00  0.00      POEE
+ATOM     72 C216 POEE    1      -0.144  -2.277 -19.564  1.00  0.00      POEE
+ATOM     73 H16R POEE    1      -0.229  -3.294 -20.003  1.00  0.00      POEE
+ATOM     74 H16S POEE    1       0.905  -2.161 -19.218  1.00  0.00      POEE
+ATOM     75 C217 POEE    1      -0.532  -1.186 -20.509  1.00  0.00      POEE
+ATOM     76 H17R POEE    1      -0.713  -0.266 -19.913  1.00  0.00      POEE
+ATOM     77 H17S POEE    1      -1.491  -1.383 -21.032  1.00  0.00      POEE
+ATOM     78 C218 POEE    1       0.494  -0.900 -21.582  1.00  0.00      POEE
+ATOM     79 H18R POEE    1       0.114  -0.266 -22.411  1.00  0.00      POEE
+ATOM     80 H18S POEE    1       0.612  -1.902 -22.046  1.00  0.00      POEE
+ATOM     81 H18T POEE    1       1.428  -0.436 -21.198  1.00  0.00      POEE
+[ C1B ]
+ATOM     82  C32 POEE    1      -3.128   2.116  -6.958  1.00  0.00      POEE
+ATOM     83  H2X POEE    1      -3.470   3.151  -7.169  1.00  0.00      POEE
+ATOM     84  H2Y POEE    1      -3.488   1.478  -7.794  1.00  0.00      POEE
+ATOM     85  C33 POEE    1      -1.588   2.156  -7.178  1.00  0.00      POEE
+ATOM     86  H3X POEE    1      -1.440   2.805  -8.068  1.00  0.00      POEE
+ATOM     87  H3Y POEE    1      -1.335   1.082  -7.307  1.00  0.00      POEE
+ATOM     88  C34 POEE    1      -0.761   2.900  -6.051  1.00  0.00      POEE
+ATOM     89  H4X POEE    1      -0.842   2.290  -5.126  1.00  0.00      POEE
+ATOM     90  H4Y POEE    1      -1.163   3.920  -5.873  1.00  0.00      POEE
+[ C2B ]
+ATOM     91  C35 POEE    1       0.821   3.042  -6.159  1.00  0.00      POEE
+ATOM     92  H5X POEE    1       1.248   3.598  -5.298  1.00  0.00      POEE
+ATOM     93  H5Y POEE    1       0.990   3.490  -7.162  1.00  0.00      POEE
+ATOM     94  C36 POEE    1       1.526   1.623  -6.272  1.00  0.00      POEE
+ATOM     95  H6X POEE    1       0.935   0.912  -6.888  1.00  0.00      POEE
+ATOM     96  H6Y POEE    1       1.675   1.260  -5.232  1.00  0.00      POEE
+ATOM     97  C37 POEE    1       2.924   1.799  -6.915  1.00  0.00      POEE
+ATOM     98  H7X POEE    1       3.592   2.223  -6.136  1.00  0.00      POEE
+ATOM     99  H7Y POEE    1       2.987   2.501  -7.774  1.00  0.00      POEE
+ATOM    100  C38 POEE    1       3.534   0.472  -7.371  1.00  0.00      POEE
+ATOM    101  H8X POEE    1       3.532  -0.240  -6.519  1.00  0.00      POEE
+ATOM    102  H8Y POEE    1       4.596   0.635  -7.654  1.00  0.00      POEE
+[ C3B ]
+ATOM    103  C39 POEE    1       2.715  -0.187  -8.546  1.00  0.00      POEE
+ATOM    104  H9X POEE    1       1.702  -0.376  -8.129  1.00  0.00      POEE
+ATOM    105  H9Y POEE    1       3.100  -1.167  -8.901  1.00  0.00      POEE
+ATOM    106 C310 POEE    1       2.570   0.779  -9.716  1.00  0.00      POEE
+ATOM    107 H10X POEE    1       3.525   1.346  -9.739  1.00  0.00      POEE
+ATOM    108 H10Y POEE    1       1.794   1.541  -9.487  1.00  0.00      POEE
+ATOM    109 C311 POEE    1       2.370   0.097 -11.071  1.00  0.00      POEE
+ATOM    110 H11X POEE    1       1.297  -0.188 -11.038  1.00  0.00      POEE
+ATOM    111 H11Y POEE    1       2.970  -0.838 -11.080  1.00  0.00      POEE
+ATOM    112 C312 POEE    1       2.642   0.958 -12.281  1.00  0.00      POEE
+ATOM    113 H12X POEE    1       3.742   1.120 -12.281  1.00  0.00      POEE
+ATOM    114 H12Y POEE    1       2.224   1.976 -12.126  1.00  0.00      POEE
+[ C4B ]
+ATOM    115 C313 POEE    1       2.217   0.419 -13.682  1.00  0.00      POEE
+ATOM    116 H13X POEE    1       1.356   1.022 -14.042  1.00  0.00      POEE
+ATOM    117 H13Y POEE    1       2.025  -0.672 -13.593  1.00  0.00      POEE
+ATOM    118 C314 POEE    1       3.360   0.585 -14.718  1.00  0.00      POEE
+ATOM    119 H14X POEE    1       4.270   0.001 -14.461  1.00  0.00      POEE
+ATOM    120 H14Y POEE    1       3.822   1.595 -14.683  1.00  0.00      POEE
+ATOM    121 C315 POEE    1       2.872   0.158 -16.123  1.00  0.00      POEE
+ATOM    122 H15X POEE    1       2.009  -0.485 -15.848  1.00  0.00      POEE
+ATOM    123 H15Y POEE    1       3.528  -0.577 -16.635  1.00  0.00      POEE
+ATOM    124 C316 POEE    1       2.416   1.319 -17.041  1.00  0.00      POEE
+ATOM    125 H16X POEE    1       3.298   1.911 -17.367  1.00  0.00      POEE
+ATOM    126 H16Y POEE    1       1.736   2.039 -16.539  1.00  0.00      POEE
+ATOM    127 H16Z POEE    1       1.986   0.747 -17.891  1.00  0.00      POEE
+END

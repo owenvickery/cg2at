@@ -1,0 +1,146 @@
+[ GL0 ]
+ATOM      1  C13 SOPG    1       0.324   2.550   1.649  1.00  0.00      SOPG
+ATOM      2 H13A SOPG    1       0.848   3.444   2.049  1.00  0.00      SOPG
+ATOM      3 H13B SOPG    1       0.967   1.727   2.028  1.00  0.00      SOPG
+ATOM      4  OC3 SOPG    1      -1.024   2.471   2.194  1.00  0.00      SOPG
+ATOM      5  HO3 SOPG    1      -1.416   3.332   2.030  1.00  0.00      SOPG
+ATOM      6  C12 SOPG    1       0.270   2.498   0.094  1.00  0.00      SOPG
+ATOM      7 H12A SOPG    1       1.309   2.574  -0.296  1.00  0.00      SOPG
+ATOM      8  OC2 SOPG    1      -0.466   3.612  -0.401  1.00  0.00      SOPG
+ATOM      9  HO2 SOPG    1       0.160   4.370  -0.325  1.00  0.00      SOPG
+ATOM     10  C11 SOPG    1      -0.349   1.162  -0.512  1.00  0.00      SOPG
+ATOM     11 H11A SOPG    1      -0.261   1.240  -1.617  1.00  0.00      SOPG
+ATOM     12 H11B SOPG    1      -1.400   1.071  -0.163  1.00  0.00      SOPG
+[ PO4 ]
+ATOM     13  P   SOPG    1       0.254  -1.444  -0.362  1.00  0.00      SOPG
+ATOM     14  O13 SOPG    1      -0.723  -2.137   0.476  1.00  0.00      SOPG
+ATOM     15  O14 SOPG    1       1.666  -1.967  -0.433  1.00  0.00      SOPG
+ATOM     16  O12 SOPG    1       0.390   0.046   0.039  1.00  0.00      SOPG
+ATOM     17  O11 SOPG    1      -0.289  -1.423  -1.877  1.00  0.00      SOPG
+[ GL1 ]
+ATOM     18  C1  SOPG    1       0.593  -1.378  -3.004  1.00  0.00      SOPG
+ATOM     19  HA  SOPG    1       1.480  -2.037  -2.886  1.00  0.00      SOPG
+ATOM     20  HB  SOPG    1       0.828  -0.304  -3.161  1.00  0.00      SOPG
+ATOM     21  C2  SOPG    1      -0.199  -1.926  -4.201  1.00  0.00      SOPG
+ATOM     22  HS  SOPG    1      -0.469  -2.992  -4.045  1.00  0.00      SOPG
+ATOM     23  O21 SOPG    1       0.495  -1.662  -5.516  1.00  0.00      SOPG
+ATOM     24  C21 SOPG    1       1.356  -2.707  -5.830  1.00  0.00      SOPG
+ATOM     25  O22 SOPG    1       1.630  -3.577  -5.039  1.00  0.00      SOPG
+[ GL2 ]
+ATOM     26  C3  SOPG    1      -1.620  -1.321  -4.349  1.00  0.00      SOPG
+ATOM     27  HX  SOPG    1      -1.564  -0.217  -4.464  1.00  0.00      SOPG
+ATOM     28  HY  SOPG    1      -2.136  -1.463  -3.376  1.00  0.00      SOPG
+ATOM     29  O31 SOPG    1      -2.459  -1.953  -5.319  1.00  0.00      SOPG
+ATOM     30  C31 SOPG    1      -2.447  -1.348  -6.513  1.00  0.00      SOPG
+ATOM     31  O32 SOPG    1      -1.927  -0.307  -6.767  1.00  0.00      SOPG
+[ C1A ]
+ATOM     32  C22 SOPG    1       1.785  -2.799  -7.287  1.00  0.00      SOPG
+ATOM     33  H2R SOPG    1       0.960  -3.141  -7.948  1.00  0.00      SOPG
+ATOM     34  H2S SOPG    1       2.615  -3.534  -7.214  1.00  0.00      SOPG
+ATOM     35  C23 SOPG    1       2.368  -1.593  -7.976  1.00  0.00      SOPG
+ATOM     36  H3R SOPG    1       2.842  -1.931  -8.922  1.00  0.00      SOPG
+ATOM     37  H3S SOPG    1       3.208  -1.300  -7.311  1.00  0.00      SOPG
+ATOM     38  C24 SOPG    1       1.377  -0.444  -8.401  1.00  0.00      SOPG
+ATOM     39  H4R SOPG    1       0.532  -0.935  -8.929  1.00  0.00      SOPG
+ATOM     40  H4S SOPG    1       0.926   0.002  -7.489  1.00  0.00      SOPG
+ATOM     41  C25 SOPG    1       2.118   0.641  -9.222  1.00  0.00      SOPG
+ATOM     42  H5R SOPG    1       2.834   1.132  -8.529  1.00  0.00      SOPG
+ATOM     43  H5S SOPG    1       2.745   0.259 -10.055  1.00  0.00      SOPG
+ATOM     44  C26 SOPG    1       1.083   1.650  -9.645  1.00  0.00      SOPG
+ATOM     45  H6R SOPG    1       1.512   2.047 -10.590  1.00  0.00      SOPG
+ATOM     46  H6S SOPG    1       0.131   1.107  -9.822  1.00  0.00      SOPG
+[ D2A ]
+ATOM     47  C27 SOPG    1       0.785   2.756  -8.604  1.00  0.00      SOPG
+ATOM     48  H7R SOPG    1       0.333   2.136  -7.800  1.00  0.00      SOPG
+ATOM     49  H7S SOPG    1       1.750   3.221  -8.309  1.00  0.00      SOPG
+ATOM     50  C28 SOPG    1      -0.288   3.703  -9.256  1.00  0.00      SOPG
+ATOM     51  H8R SOPG    1      -0.387   4.556  -8.550  1.00  0.00      SOPG
+ATOM     52  H8S SOPG    1      -0.099   4.079 -10.284  1.00  0.00      SOPG
+ATOM     53  C29 SOPG    1      -1.616   3.045  -9.151  1.00  0.00      SOPG
+ATOM     54  H91 SOPG    1      -1.743   2.555  -8.174  1.00  0.00      SOPG
+ATOM     55 C210 SOPG    1      -2.621   2.932 -10.063  1.00  0.00      SOPG
+ATOM     56 H101 SOPG    1      -3.471   2.273  -9.833  1.00  0.00      SOPG
+[ C3A ]
+ATOM     57 C211 SOPG    1      -2.594   3.497 -11.491  1.00  0.00      SOPG
+ATOM     58 H11R SOPG    1      -2.149   4.507 -11.370  1.00  0.00      SOPG
+ATOM     59 H11S SOPG    1      -3.619   3.660 -11.887  1.00  0.00      SOPG
+ATOM     60 C212 SOPG    1      -1.873   2.667 -12.516  1.00  0.00      SOPG
+ATOM     61 H12R SOPG    1      -2.393   1.685 -12.531  1.00  0.00      SOPG
+ATOM     62 H12S SOPG    1      -0.821   2.496 -12.201  1.00  0.00      SOPG
+ATOM     63 C213 SOPG    1      -1.739   3.341 -13.959  1.00  0.00      SOPG
+ATOM     64 H13R SOPG    1      -1.551   4.424 -13.794  1.00  0.00      SOPG
+ATOM     65 H13S SOPG    1      -2.649   3.184 -14.576  1.00  0.00      SOPG
+ATOM     66 C214 SOPG    1      -0.480   2.638 -14.517  1.00  0.00      SOPG
+ATOM     67 H14R SOPG    1      -0.880   1.653 -14.839  1.00  0.00      SOPG
+ATOM     68 H14S SOPG    1       0.330   2.498 -13.770  1.00  0.00      SOPG
+[ C4A ]
+ATOM     69 C215 SOPG    1      -0.016   3.389 -15.773  1.00  0.00      SOPG
+ATOM     70 H15R SOPG    1       0.387   4.343 -15.370  1.00  0.00      SOPG
+ATOM     71 H15S SOPG    1      -0.865   3.739 -16.398  1.00  0.00      SOPG
+ATOM     72 C216 SOPG    1       1.039   2.602 -16.603  1.00  0.00      SOPG
+ATOM     73 H16R SOPG    1       0.734   1.536 -16.662  1.00  0.00      SOPG
+ATOM     74 H16S SOPG    1       1.971   2.680 -16.003  1.00  0.00      SOPG
+ATOM     75 C217 SOPG    1       1.278   3.197 -17.924  1.00  0.00      SOPG
+ATOM     76 H17R SOPG    1       1.627   4.247 -17.825  1.00  0.00      SOPG
+ATOM     77 H17S SOPG    1       0.314   3.229 -18.476  1.00  0.00      SOPG
+ATOM     78 C218 SOPG    1       2.277   2.433 -18.732  1.00  0.00      SOPG
+ATOM     79 H18R SOPG    1       1.920   1.386 -18.837  1.00  0.00      SOPG
+ATOM     80 H18S SOPG    1       3.324   2.344 -18.371  1.00  0.00      SOPG
+ATOM     81 H18T SOPG    1       2.358   2.784 -19.783  1.00  0.00      SOPG
+[ C1B ]
+ATOM     82  C32 SOPG    1      -3.322  -1.990  -7.524  1.00  0.00      SOPG
+ATOM     83  H2X SOPG    1      -4.402  -1.996  -7.261  1.00  0.00      SOPG
+ATOM     84  H2Y SOPG    1      -2.910  -3.021  -7.481  1.00  0.00      SOPG
+ATOM     85  C33 SOPG    1      -3.014  -1.452  -8.907  1.00  0.00      SOPG
+ATOM     86  H3X SOPG    1      -1.945  -1.516  -9.202  1.00  0.00      SOPG
+ATOM     87  H3Y SOPG    1      -3.391  -0.417  -9.052  1.00  0.00      SOPG
+ATOM     88  C34 SOPG    1      -3.665  -2.199 -10.063  1.00  0.00      SOPG
+ATOM     89  H4X SOPG    1      -4.753  -1.972 -10.061  1.00  0.00      SOPG
+ATOM     90  H4Y SOPG    1      -3.582  -3.269  -9.777  1.00  0.00      SOPG
+ATOM     91  C35 SOPG    1      -3.209  -1.976 -11.479  1.00  0.00      SOPG
+ATOM     92  H5X SOPG    1      -3.134  -0.869 -11.536  1.00  0.00      SOPG
+ATOM     93  H5Y SOPG    1      -3.996  -2.436 -12.113  1.00  0.00      SOPG
+ATOM     94  C36 SOPG    1      -1.801  -2.623 -11.755  1.00  0.00      SOPG
+ATOM     95  H6X SOPG    1      -1.990  -3.649 -12.139  1.00  0.00      SOPG
+ATOM     96  H6Y SOPG    1      -1.208  -2.757 -10.825  1.00  0.00      SOPG
+[ C2B ]
+ATOM     97  C37 SOPG    1      -0.899  -1.859 -12.722  1.00  0.00      SOPG
+ATOM     98  H7X SOPG    1      -0.762  -0.887 -12.201  1.00  0.00      SOPG
+ATOM     99  H7Y SOPG    1      -1.581  -1.605 -13.562  1.00  0.00      SOPG
+ATOM    100  C38 SOPG    1       0.458  -2.420 -13.317  1.00  0.00      SOPG
+ATOM    101  H8X SOPG    1       0.358  -3.446 -13.731  1.00  0.00      SOPG
+ATOM    102  H8Y SOPG    1       1.182  -2.463 -12.476  1.00  0.00      SOPG
+ATOM    103  C39 SOPG    1       1.118  -1.454 -14.412  1.00  0.00      SOPG
+ATOM    104  H9X SOPG    1       1.461  -0.514 -13.930  1.00  0.00      SOPG
+ATOM    105  H9Y SOPG    1       0.373  -1.298 -15.222  1.00  0.00      SOPG
+ATOM    106 C310 SOPG    1       2.296  -2.110 -15.080  1.00  0.00      SOPG
+ATOM    107 H10X SOPG    1       2.011  -3.093 -15.514  1.00  0.00      SOPG
+ATOM    108 H10Y SOPG    1       3.050  -2.388 -14.313  1.00  0.00      SOPG
+[ C3B ]
+ATOM    109 C311 SOPG    1       2.827  -1.220 -16.239  1.00  0.00      SOPG
+ATOM    110 H11X SOPG    1       3.199  -0.324 -15.699  1.00  0.00      SOPG
+ATOM    111 H11Y SOPG    1       2.028  -0.759 -16.859  1.00  0.00      SOPG
+ATOM    112 C312 SOPG    1       4.054  -1.755 -17.042  1.00  0.00      SOPG
+ATOM    113 H12X SOPG    1       4.408  -2.601 -16.415  1.00  0.00      SOPG
+ATOM    114 H12Y SOPG    1       4.810  -0.956 -17.200  1.00  0.00      SOPG
+ATOM    115 C313 SOPG    1       3.685  -2.460 -18.302  1.00  0.00      SOPG
+ATOM    116 H13X SOPG    1       2.714  -2.985 -18.180  1.00  0.00      SOPG
+ATOM    117 H13Y SOPG    1       4.411  -3.165 -18.762  1.00  0.00      SOPG
+ATOM    118 C314 SOPG    1       3.299  -1.446 -19.445  1.00  0.00      SOPG
+ATOM    119 H14X SOPG    1       4.007  -0.590 -19.442  1.00  0.00      SOPG
+ATOM    120 H14Y SOPG    1       2.424  -0.826 -19.152  1.00  0.00      SOPG
+[ C4B ]
+ATOM    121 C315 SOPG    1       2.917  -1.793 -20.837  1.00  0.00      SOPG
+ATOM    122 H15X SOPG    1       3.834  -2.137 -21.361  1.00  0.00      SOPG
+ATOM    123 H15Y SOPG    1       2.479  -0.927 -21.377  1.00  0.00      SOPG
+ATOM    124 C316 SOPG    1       1.987  -3.029 -20.952  1.00  0.00      SOPG
+ATOM    125 H16X SOPG    1       2.466  -3.878 -20.419  1.00  0.00      SOPG
+ATOM    126 H16Y SOPG    1       1.806  -3.318 -22.009  1.00  0.00      SOPG
+ATOM    127 C317 SOPG    1       0.572  -2.826 -20.375  1.00  0.00      SOPG
+ATOM    128 H17X SOPG    1       0.495  -2.457 -19.330  1.00  0.00      SOPG
+ATOM    129 H17Y SOPG    1       0.117  -3.832 -20.248  1.00  0.00      SOPG
+ATOM    130 C318 SOPG    1      -0.340  -1.937 -21.261  1.00  0.00      SOPG
+ATOM    131 H18X SOPG    1      -0.071  -0.867 -21.123  1.00  0.00      SOPG
+ATOM    132 H18Y SOPG    1      -1.381  -2.115 -20.917  1.00  0.00      SOPG
+ATOM    133 H18Z SOPG    1      -0.266  -2.034 -22.365  1.00  0.00      SOPG
+END

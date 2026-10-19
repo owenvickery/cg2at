@@ -1,0 +1,138 @@
+[ CNO ]
+ATOM      1  N   YOPS    1       0.920   2.567   1.661  1.00  0.00      YOPS
+ATOM      2  HN1 YOPS    1       1.490   2.651   2.527  1.00  0.00      YOPS
+ATOM      3  HN2 YOPS    1       1.349   3.034   0.837  1.00  0.00      YOPS
+ATOM      4  HN3 YOPS    1       0.101   3.106   2.010  1.00  0.00      YOPS
+ATOM      5  C12 YOPS    1       0.753   1.074   1.314  1.00  0.00      YOPS
+ATOM      6 H12A YOPS    1       0.498   0.435   2.146  1.00  0.00      YOPS
+ATOM      7  C13 YOPS    1       2.000   0.508   0.598  1.00  0.00      YOPS
+ATOM      8 O13A YOPS    1       1.916  -0.690   0.305  1.00  0.00      YOPS
+ATOM      9 O13B YOPS    1       3.002   1.179   0.317  1.00  0.00      YOPS
+ATOM     10  C11 YOPS    1      -0.373   1.128   0.227  1.00  0.00      YOPS
+ATOM     11 H11A YOPS    1      -0.149   1.931  -0.508  1.00  0.00      YOPS
+ATOM     12 H11B YOPS    1      -1.295   1.530   0.699  1.00  0.00      YOPS
+[ PO4 ]
+ATOM     13  P   YOPS    1      -1.736  -0.649  -1.031  1.00  0.00      YOPS
+ATOM     14  O13 YOPS    1      -2.677   0.491  -1.196  1.00  0.00      YOPS
+ATOM     15  O14 YOPS    1      -2.192  -1.802  -0.166  1.00  0.00      YOPS
+ATOM     16  O12 YOPS    1      -0.529  -0.125  -0.327  1.00  0.00      YOPS
+ATOM     17  O11 YOPS    1      -1.213  -1.193  -2.400  1.00  0.00      YOPS
+[ GL1 ]
+ATOM     18  C1  YOPS    1       0.137  -1.469  -2.465  1.00  0.00      YOPS
+ATOM     19  HA  YOPS    1       0.282  -2.413  -3.033  1.00  0.00      YOPS
+ATOM     20  HB  YOPS    1       0.629  -1.645  -1.484  1.00  0.00      YOPS
+ATOM     21  C2  YOPS    1       0.898  -0.444  -3.341  1.00  0.00      YOPS
+ATOM     22  HS  YOPS    1       0.923   0.492  -2.743  1.00  0.00      YOPS
+ATOM     23  O21 YOPS    1       0.287  -0.200  -4.607  1.00  0.00      YOPS
+ATOM     24  C21 YOPS    1      -0.139   1.092  -4.943  1.00  0.00      YOPS
+ATOM     25  O22 YOPS    1      -0.473   1.972  -4.192  1.00  0.00      YOPS
+[ GL2 ]
+ATOM     26  C3  YOPS    1       2.264  -1.053  -3.610  1.00  0.00      YOPS
+ATOM     27  HX  YOPS    1       2.022  -1.984  -4.166  1.00  0.00      YOPS
+ATOM     28  HY  YOPS    1       2.686  -1.276  -2.607  1.00  0.00      YOPS
+ATOM     29  O31 YOPS    1       3.147  -0.095  -4.304  1.00  0.00      YOPS
+ATOM     30  C31 YOPS    1       4.424  -0.508  -4.347  1.00  0.00      YOPS
+ATOM     31  O32 YOPS    1       4.829  -1.508  -3.880  1.00  0.00      YOPS
+[ C1A ]
+ATOM     32  C22 YOPS    1      -0.394   1.229  -6.446  1.00  0.00      YOPS
+ATOM     33  H2R YOPS    1      -1.348   0.826  -6.850  1.00  0.00      YOPS
+ATOM     34  H2S YOPS    1       0.376   0.542  -6.857  1.00  0.00      YOPS
+ATOM     35  C23 YOPS    1      -0.143   2.706  -6.745  1.00  0.00      YOPS
+ATOM     36  H3R YOPS    1       0.573   3.170  -6.033  1.00  0.00      YOPS
+ATOM     37  H3S YOPS    1      -1.116   3.211  -6.567  1.00  0.00      YOPS
+ATOM     38  C24 YOPS    1       0.345   3.025  -8.136  1.00  0.00      YOPS
+ATOM     39  H4R YOPS    1       1.358   2.597  -8.293  1.00  0.00      YOPS
+ATOM     40  H4S YOPS    1       0.536   4.117  -8.203  1.00  0.00      YOPS
+ATOM     41  C25 YOPS    1      -0.639   2.713  -9.283  1.00  0.00      YOPS
+ATOM     42  H5R YOPS    1      -1.567   3.284  -9.069  1.00  0.00      YOPS
+ATOM     43  H5S YOPS    1      -0.868   1.631  -9.184  1.00  0.00      YOPS
+ATOM     44  C26 YOPS    1      -0.049   3.097 -10.728  1.00  0.00      YOPS
+ATOM     45  H6R YOPS    1       1.055   3.211 -10.681  1.00  0.00      YOPS
+ATOM     46  H6S YOPS    1      -0.585   4.026 -11.017  1.00  0.00      YOPS
+[ D2A ]
+ATOM     47  C27 YOPS    1      -0.317   2.006 -11.719  1.00  0.00      YOPS
+ATOM     48  H7R YOPS    1      -1.378   1.707 -11.856  1.00  0.00      YOPS
+ATOM     49  H7S YOPS    1       0.311   1.113 -11.513  1.00  0.00      YOPS
+ATOM     50  C28 YOPS    1       0.023   2.395 -13.164  1.00  0.00      YOPS
+ATOM     51  H8R YOPS    1      -0.516   3.358 -13.291  1.00  0.00      YOPS
+ATOM     52  H8S YOPS    1      -0.456   1.685 -13.871  1.00  0.00      YOPS
+ATOM     53  C29 YOPS    1       1.522   2.683 -13.496  1.00  0.00      YOPS
+ATOM     54  H9R YOPS    1       1.745   3.759 -13.432  1.00  0.00      YOPS
+ATOM     55 C210 YOPS    1       2.343   1.760 -13.959  1.00  0.00      YOPS
+ATOM     56 H10R YOPS    1       3.377   2.024 -14.226  1.00  0.00      YOPS
+[ C3A ]
+ATOM     57 C211 YOPS    1       1.992   0.413 -14.260  1.00  0.00      YOPS
+ATOM     58 H11R YOPS    1       0.916   0.142 -14.206  1.00  0.00      YOPS
+ATOM     59 H11S YOPS    1       2.587  -0.266 -13.612  1.00  0.00      YOPS
+ATOM     60 C212 YOPS    1       2.396  -0.068 -15.674  1.00  0.00      YOPS
+ATOM     61 H12R YOPS    1       2.424  -1.163 -15.860  1.00  0.00      YOPS
+ATOM     62 H12S YOPS    1       3.439   0.289 -15.805  1.00  0.00      YOPS
+ATOM     63 C213 YOPS    1       1.518   0.470 -16.831  1.00  0.00      YOPS
+ATOM     64 H13R YOPS    1       1.589   1.575 -16.733  1.00  0.00      YOPS
+ATOM     65 H13S YOPS    1       0.488   0.142 -16.574  1.00  0.00      YOPS
+ATOM     66 C214 YOPS    1       2.006   0.005 -18.183  1.00  0.00      YOPS
+ATOM     67 H14R YOPS    1       1.272   0.217 -18.990  1.00  0.00      YOPS
+ATOM     68 H14S YOPS    1       2.110  -1.101 -18.191  1.00  0.00      YOPS
+[ C4A ]
+ATOM     69 C215 YOPS    1       3.414   0.363 -18.679  1.00  0.00      YOPS
+ATOM     70 H15R YOPS    1       3.671  -0.324 -19.513  1.00  0.00      YOPS
+ATOM     71 H15S YOPS    1       4.161   0.204 -17.872  1.00  0.00      YOPS
+ATOM     72 C216 YOPS    1       3.478   1.782 -19.202  1.00  0.00      YOPS
+ATOM     73 H16R YOPS    1       3.097   2.484 -18.429  1.00  0.00      YOPS
+ATOM     74 H16S YOPS    1       2.855   1.825 -20.121  1.00  0.00      YOPS
+ATOM     75 C217 YOPS    1       4.954   2.156 -19.593  1.00  0.00      YOPS
+ATOM     76 H17R YOPS    1       5.366   2.421 -18.596  1.00  0.00      YOPS
+ATOM     77 H17S YOPS    1       4.798   3.053 -20.230  1.00  0.00      YOPS
+ATOM     78 C218 YOPS    1       5.822   1.118 -20.357  1.00  0.00      YOPS
+ATOM     79 H18R YOPS    1       6.809   1.494 -20.700  1.00  0.00      YOPS
+ATOM     80 H18S YOPS    1       5.341   0.773 -21.297  1.00  0.00      YOPS
+ATOM     81 H18T YOPS    1       5.928   0.176 -19.776  1.00  0.00      YOPS
+[ C1B ]
+ATOM     82  C32 YOPS    1       5.167   0.352  -5.339  1.00  0.00      YOPS
+ATOM     83  H2X YOPS    1       6.225   0.342  -5.001  1.00  0.00      YOPS
+ATOM     84  H2Y YOPS    1       4.874   1.421  -5.255  1.00  0.00      YOPS
+ATOM     85  C33 YOPS    1       5.075  -0.132  -6.852  1.00  0.00      YOPS
+ATOM     86  H3X YOPS    1       5.007  -1.239  -6.909  1.00  0.00      YOPS
+ATOM     87  H3Y YOPS    1       5.935   0.333  -7.378  1.00  0.00      YOPS
+ATOM     88  C34 YOPS    1       3.767   0.408  -7.479  1.00  0.00      YOPS
+ATOM     89  H4X YOPS    1       2.970  -0.346  -7.307  1.00  0.00      YOPS
+ATOM     90  H4Y YOPS    1       3.522   1.367  -6.974  1.00  0.00      YOPS
+[ C2B ]
+ATOM     91  C35 YOPS    1       4.023   0.760  -8.946  1.00  0.00      YOPS
+ATOM     92  H5X YOPS    1       4.967   1.316  -9.132  1.00  0.00      YOPS
+ATOM     93  H5Y YOPS    1       3.241   1.500  -9.219  1.00  0.00      YOPS
+ATOM     94  C36 YOPS    1       3.967  -0.345 -10.035  1.00  0.00      YOPS
+ATOM     95  H6X YOPS    1       3.029  -0.918  -9.868  1.00  0.00      YOPS
+ATOM     96  H6Y YOPS    1       3.832   0.154 -11.018  1.00  0.00      YOPS
+ATOM     97  C37 YOPS    1       5.162  -1.282 -10.184  1.00  0.00      YOPS
+ATOM     98  H7X YOPS    1       6.021  -0.656 -10.508  1.00  0.00      YOPS
+ATOM     99  H7Y YOPS    1       5.353  -1.830  -9.236  1.00  0.00      YOPS
+ATOM    100  C38 YOPS    1       4.967  -2.400 -11.229  1.00  0.00      YOPS
+ATOM    101  H8X YOPS    1       4.663  -1.955 -12.200  1.00  0.00      YOPS
+ATOM    102  H8Y YOPS    1       5.987  -2.831 -11.321  1.00  0.00      YOPS
+[ D3B ]
+ATOM    103  C39 YOPS    1       4.012  -3.523 -10.750  1.00  0.00      YOPS
+ATOM    104  H9X YOPS    1       4.406  -3.971  -9.826  1.00  0.00      YOPS
+ATOM    105 C310 YOPS    1       2.835  -3.896 -11.257  1.00  0.00      YOPS
+ATOM    106 H10X YOPS    1       2.332  -4.758 -10.794  1.00  0.00      YOPS
+ATOM    107 C311 YOPS    1       2.163  -3.270 -12.412  1.00  0.00      YOPS
+ATOM    108 H11X YOPS    1       2.909  -2.872 -13.133  1.00  0.00      YOPS
+ATOM    109 H11Y YOPS    1       1.476  -2.479 -12.042  1.00  0.00      YOPS
+ATOM    110 C312 YOPS    1       1.280  -4.251 -13.283  1.00  0.00      YOPS
+ATOM    111 H12X YOPS    1       1.906  -4.961 -13.866  1.00  0.00      YOPS
+ATOM    112 H12Y YOPS    1       0.570  -4.711 -12.563  1.00  0.00      YOPS
+[ C4B ]
+ATOM    113 C313 YOPS    1       0.524  -3.477 -14.333  1.00  0.00      YOPS
+ATOM    114 H13X YOPS    1       1.102  -2.786 -14.983  1.00  0.00      YOPS
+ATOM    115 H13Y YOPS    1      -0.161  -2.870 -13.703  1.00  0.00      YOPS
+ATOM    116 C314 YOPS    1      -0.340  -4.378 -15.318  1.00  0.00      YOPS
+ATOM    117 H14X YOPS    1      -0.990  -4.974 -14.641  1.00  0.00      YOPS
+ATOM    118 H14Y YOPS    1      -1.012  -3.784 -15.973  1.00  0.00      YOPS
+ATOM    119 C315 YOPS    1       0.469  -5.305 -16.117  1.00  0.00      YOPS
+ATOM    120 H15X YOPS    1      -0.089  -5.909 -16.864  1.00  0.00      YOPS
+ATOM    121 H15Y YOPS    1       0.921  -6.096 -15.480  1.00  0.00      YOPS
+ATOM    122 C316 YOPS    1       1.516  -4.707 -16.998  1.00  0.00      YOPS
+ATOM    123 H16X YOPS    1       1.059  -3.934 -17.652  1.00  0.00      YOPS
+ATOM    124 H16Y YOPS    1       1.880  -5.500 -17.687  1.00  0.00      YOPS
+ATOM    125 H16Z YOPS    1       2.340  -4.227 -16.428  1.00  0.00      YOPS
+END

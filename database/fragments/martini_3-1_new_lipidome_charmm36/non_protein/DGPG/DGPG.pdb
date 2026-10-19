@@ -1,0 +1,158 @@
+[ GL0 ]
+ATOM      1  C13 DGPG    1      -0.640  -2.418   1.110  1.00  0.00      DGPG
+ATOM      2 H13A DGPG    1      -0.879  -3.346   1.672  1.00  0.00      DGPG
+ATOM      3 H13B DGPG    1      -0.788  -2.587   0.022  1.00  0.00      DGPG
+ATOM      4  OC3 DGPG    1      -1.654  -1.567   1.570  1.00  0.00      DGPG
+ATOM      5  HO3 DGPG    1      -2.504  -2.002   1.468  1.00  0.00      DGPG
+ATOM      6  C12 DGPG    1       0.809  -1.813   1.413  1.00  0.00      DGPG
+ATOM      7 H12A DGPG    1       1.563  -2.412   0.856  1.00  0.00      DGPG
+ATOM      8  OC2 DGPG    1       1.100  -1.928   2.802  1.00  0.00      DGPG
+ATOM      9  HO2 DGPG    1       1.334  -2.878   2.924  1.00  0.00      DGPG
+ATOM     10  C11 DGPG    1       0.872  -0.353   0.940  1.00  0.00      DGPG
+ATOM     11 H11A DGPG    1       1.956  -0.124   0.858  1.00  0.00      DGPG
+ATOM     12 H11B DGPG    1       0.539   0.394   1.692  1.00  0.00      DGPG
+[ PO4 ]
+ATOM     13  P   DGPG    1      -0.006   1.180  -0.859  1.00  0.00      DGPG
+ATOM     14  O13 DGPG    1      -1.050   1.833  -0.019  1.00  0.00      DGPG
+ATOM     15  O14 DGPG    1       1.243   1.966  -0.987  1.00  0.00      DGPG
+ATOM     16  O12 DGPG    1       0.215  -0.295  -0.290  1.00  0.00      DGPG
+ATOM     17  O11 DGPG    1      -0.651   0.823  -2.267  1.00  0.00      DGPG
+[ GL1 ]
+ATOM     18  C1  DGPG    1      -1.995   0.356  -2.271  1.00  0.00      DGPG
+ATOM     19  HA  DGPG    1      -2.633   1.255  -2.131  1.00  0.00      DGPG
+ATOM     20  HB  DGPG    1      -2.170  -0.316  -1.404  1.00  0.00      DGPG
+ATOM     21  C2  DGPG    1      -2.191  -0.359  -3.578  1.00  0.00      DGPG
+ATOM     22  HS  DGPG    1      -3.198  -0.826  -3.536  1.00  0.00      DGPG
+ATOM     23  O21 DGPG    1      -1.301  -1.459  -3.717  1.00  0.00      DGPG
+ATOM     24  C21 DGPG    1      -1.511  -2.638  -3.101  1.00  0.00      DGPG
+ATOM     25  O22 DGPG    1      -2.434  -2.875  -2.314  1.00  0.00      DGPG
+[ GL2 ]
+ATOM     26  C3  DGPG    1      -2.098   0.550  -4.838  1.00  0.00      DGPG
+ATOM     27  HX  DGPG    1      -1.060   0.944  -4.891  1.00  0.00      DGPG
+ATOM     28  HY  DGPG    1      -2.761   1.406  -4.591  1.00  0.00      DGPG
+ATOM     29  O31 DGPG    1      -2.405  -0.091  -6.118  1.00  0.00      DGPG
+ATOM     30  C31 DGPG    1      -3.630  -0.397  -6.294  1.00  0.00      DGPG
+ATOM     31  O32 DGPG    1      -4.542  -0.414  -5.450  1.00  0.00      DGPG
+[ C1A ]
+ATOM     32  C22 DGPG    1      -0.497  -3.674  -3.508  1.00  0.00      DGPG
+ATOM     33  H2R DGPG    1      -0.733  -4.003  -4.543  1.00  0.00      DGPG
+ATOM     34  H2S DGPG    1      -0.569  -4.529  -2.802  1.00  0.00      DGPG
+ATOM     35  C23 DGPG    1       0.938  -3.085  -3.215  1.00  0.00      DGPG
+ATOM     36  H3R DGPG    1       1.574  -3.962  -2.965  1.00  0.00      DGPG
+ATOM     37  H3S DGPG    1       0.754  -2.282  -2.470  1.00  0.00      DGPG
+ATOM     38  C24 DGPG    1       1.523  -2.447  -4.486  1.00  0.00      DGPG
+ATOM     39  H4R DGPG    1       0.659  -2.239  -5.153  1.00  0.00      DGPG
+ATOM     40  H4S DGPG    1       2.175  -3.213  -4.957  1.00  0.00      DGPG
+[ C2A ]
+ATOM     41  C25 DGPG    1       2.422  -1.185  -4.344  1.00  0.00      DGPG
+ATOM     42  H5R DGPG    1       3.381  -1.437  -3.842  1.00  0.00      DGPG
+ATOM     43  H5S DGPG    1       1.803  -0.544  -3.680  1.00  0.00      DGPG
+ATOM     44  C26 DGPG    1       2.699  -0.402  -5.660  1.00  0.00      DGPG
+ATOM     45  H6R DGPG    1       2.931   0.668  -5.469  1.00  0.00      DGPG
+ATOM     46  H6S DGPG    1       1.843  -0.425  -6.367  1.00  0.00      DGPG
+ATOM     47  C27 DGPG    1       3.860  -0.984  -6.550  1.00  0.00      DGPG
+ATOM     48  H7R DGPG    1       4.781  -1.163  -5.956  1.00  0.00      DGPG
+ATOM     49  H7S DGPG    1       4.192  -0.219  -7.285  1.00  0.00      DGPG
+ATOM     50  C28 DGPG    1       3.654  -2.156  -7.607  1.00  0.00      DGPG
+ATOM     51  H8R DGPG    1       3.517  -3.138  -7.106  1.00  0.00      DGPG
+ATOM     52  H8S DGPG    1       4.608  -2.289  -8.160  1.00  0.00      DGPG
+[ D3A ]
+ATOM     53  C29 DGPG    1       2.458  -1.981  -8.461  1.00  0.00      DGPG
+ATOM     54  H9R DGPG    1       2.334  -0.893  -8.646  1.00  0.00      DGPG
+ATOM     55  H9S DGPG    1       1.529  -2.242  -7.909  1.00  0.00      DGPG
+ATOM     56 C210 DGPG    1       2.662  -2.753  -9.767  1.00  0.00      DGPG
+ATOM     57 H10R DGPG    1       3.732  -2.664 -10.051  1.00  0.00      DGPG
+ATOM     58 H10S DGPG    1       2.180  -2.341 -10.679  1.00  0.00      DGPG
+ATOM     59 C211 DGPG    1       2.072  -4.170  -9.682  1.00  0.00      DGPG
+ATOM     60 H11R DGPG    1       2.146  -4.788  -8.775  1.00  0.00      DGPG
+ATOM     61 C212 DGPG    1       1.233  -4.745 -10.588  1.00  0.00      DGPG
+ATOM     62 H12R DGPG    1       0.881  -5.775 -10.430  1.00  0.00      DGPG
+[ C4A ]
+ATOM     63 C213 DGPG    1       0.695  -4.144 -11.912  1.00  0.00      DGPG
+ATOM     64 H13R DGPG    1       1.015  -4.935 -12.624  1.00  0.00      DGPG
+ATOM     65 H13S DGPG    1       1.391  -3.318 -12.170  1.00  0.00      DGPG
+ATOM     66 C214 DGPG    1      -0.770  -3.720 -11.897  1.00  0.00      DGPG
+ATOM     67 H14R DGPG    1      -0.953  -2.972 -11.095  1.00  0.00      DGPG
+ATOM     68 H14S DGPG    1      -1.352  -4.623 -11.614  1.00  0.00      DGPG
+ATOM     69 C215 DGPG    1      -1.279  -3.087 -13.251  1.00  0.00      DGPG
+ATOM     70 H15R DGPG    1      -2.214  -2.560 -12.964  1.00  0.00      DGPG
+ATOM     71 H15S DGPG    1      -1.690  -3.836 -13.961  1.00  0.00      DGPG
+ATOM     72 C216 DGPG    1      -0.395  -2.114 -13.969  1.00  0.00      DGPG
+ATOM     73 H16R DGPG    1       0.333  -2.592 -14.659  1.00  0.00      DGPG
+ATOM     74 H16S DGPG    1       0.262  -1.542 -13.280  1.00  0.00      DGPG
+[ C5A ]
+ATOM     75 C217 DGPG    1      -1.162  -1.144 -14.892  1.00  0.00      DGPG
+ATOM     76 H17R DGPG    1      -1.210  -0.079 -14.579  1.00  0.00      DGPG
+ATOM     77 H17S DGPG    1      -2.218  -1.455 -15.041  1.00  0.00      DGPG
+ATOM     78 C218 DGPG    1      -0.716  -1.112 -16.391  1.00  0.00      DGPG
+ATOM     79 H18R DGPG    1      -0.869  -2.037 -16.987  1.00  0.00      DGPG
+ATOM     80 H18S DGPG    1       0.353  -0.821 -16.312  1.00  0.00      DGPG
+ATOM     81 C219 DGPG    1      -1.523   0.035 -17.148  1.00  0.00      DGPG
+ATOM     82 H19R DGPG    1      -1.472   1.081 -16.776  1.00  0.00      DGPG
+ATOM     83 H19S DGPG    1      -2.610  -0.188 -17.198  1.00  0.00      DGPG
+ATOM     84 C220 DGPG    1      -1.052   0.097 -18.578  1.00  0.00      DGPG
+ATOM     85 H20R DGPG    1       0.008   0.419 -18.501  1.00  0.00      DGPG
+ATOM     86 H20S DGPG    1      -1.059  -0.852 -19.156  1.00  0.00      DGPG
+ATOM     87 H20T DGPG    1      -1.665   0.879 -19.076  1.00  0.00      DGPG
+[ C1B ]
+ATOM     88  C32 DGPG    1      -3.817  -0.851  -7.759  1.00  0.00      DGPG
+ATOM     89  H2X DGPG    1      -4.328  -0.055  -8.342  1.00  0.00      DGPG
+ATOM     90  H2Y DGPG    1      -4.510  -1.719  -7.788  1.00  0.00      DGPG
+ATOM     91  C33 DGPG    1      -2.478  -1.262  -8.461  1.00  0.00      DGPG
+ATOM     92  H3X DGPG    1      -2.770  -1.832  -9.368  1.00  0.00      DGPG
+ATOM     93  H3Y DGPG    1      -2.048  -2.005  -7.755  1.00  0.00      DGPG
+ATOM     94  C34 DGPG    1      -1.708   0.002  -8.908  1.00  0.00      DGPG
+ATOM     95  H4X DGPG    1      -1.256   0.497  -8.023  1.00  0.00      DGPG
+ATOM     96  H4Y DGPG    1      -2.334   0.648  -9.560  1.00  0.00      DGPG
+[ C2B ]
+ATOM     97  C35 DGPG    1      -0.527  -0.412  -9.798  1.00  0.00      DGPG
+ATOM     98  H5X DGPG    1      -0.942  -0.976 -10.661  1.00  0.00      DGPG
+ATOM     99  H5Y DGPG    1       0.239  -1.078  -9.348  1.00  0.00      DGPG
+ATOM    100  C36 DGPG    1       0.272   0.819 -10.248  1.00  0.00      DGPG
+ATOM    101  H6X DGPG    1       0.620   1.490  -9.433  1.00  0.00      DGPG
+ATOM    102  H6Y DGPG    1      -0.416   1.415 -10.886  1.00  0.00      DGPG
+ATOM    103  C37 DGPG    1       1.633   0.538 -10.925  1.00  0.00      DGPG
+ATOM    104  H7X DGPG    1       1.546  -0.378 -11.549  1.00  0.00      DGPG
+ATOM    105  H7Y DGPG    1       2.454   0.354 -10.199  1.00  0.00      DGPG
+ATOM    106  C38 DGPG    1       2.071   1.620 -11.931  1.00  0.00      DGPG
+ATOM    107  H8X DGPG    1       3.116   1.448 -12.267  1.00  0.00      DGPG
+ATOM    108  H8Y DGPG    1       2.000   2.586 -11.386  1.00  0.00      DGPG
+[ D3B ]
+ATOM    109  C39 DGPG    1       1.227   1.710 -13.121  1.00  0.00      DGPG
+ATOM    110  H9X DGPG    1       0.139   1.752 -12.897  1.00  0.00      DGPG
+ATOM    111  H9Y DGPG    1       1.338   0.749 -13.668  1.00  0.00      DGPG
+ATOM    112 C310 DGPG    1       1.666   2.840 -14.162  1.00  0.00      DGPG
+ATOM    113 H10X DGPG    1       2.757   2.826 -14.370  1.00  0.00      DGPG
+ATOM    114 H10Y DGPG    1       1.528   3.827 -13.669  1.00  0.00      DGPG
+ATOM    115 C311 DGPG    1       0.971   2.735 -15.531  1.00  0.00      DGPG
+ATOM    116 H11X DGPG    1      -0.081   3.043 -15.439  1.00  0.00      DGPG
+ATOM    117 C312 DGPG    1       1.407   2.494 -16.814  1.00  0.00      DGPG
+ATOM    118 H12X DGPG    1       0.627   2.384 -17.581  1.00  0.00      DGPG
+[ C4B ]
+ATOM    119 C313 DGPG    1       2.814   2.310 -17.271  1.00  0.00      DGPG
+ATOM    120 H13X DGPG    1       3.310   3.217 -16.864  1.00  0.00      DGPG
+ATOM    121 H13Y DGPG    1       2.868   2.363 -18.379  1.00  0.00      DGPG
+ATOM    122 C314 DGPG    1       3.403   1.012 -16.783  1.00  0.00      DGPG
+ATOM    123 H14X DGPG    1       2.977   0.855 -15.769  1.00  0.00      DGPG
+ATOM    124 H14Y DGPG    1       4.499   1.120 -16.631  1.00  0.00      DGPG
+ATOM    125 C315 DGPG    1       3.018  -0.192 -17.623  1.00  0.00      DGPG
+ATOM    126 H15X DGPG    1       3.446  -0.039 -18.637  1.00  0.00      DGPG
+ATOM    127 H15Y DGPG    1       1.928  -0.179 -17.835  1.00  0.00      DGPG
+ATOM    128 C316 DGPG    1       3.565  -1.515 -17.054  1.00  0.00      DGPG
+ATOM    129 H16X DGPG    1       3.289  -1.569 -15.979  1.00  0.00      DGPG
+ATOM    130 H16Y DGPG    1       4.674  -1.464 -17.001  1.00  0.00      DGPG
+[ C5B ]
+ATOM    131 C317 DGPG    1       3.007  -2.838 -17.584  1.00  0.00      DGPG
+ATOM    132 H17X DGPG    1       1.989  -2.985 -17.163  1.00  0.00      DGPG
+ATOM    133 H17Y DGPG    1       3.586  -3.690 -17.168  1.00  0.00      DGPG
+ATOM    134 C318 DGPG    1       2.897  -2.816 -19.134  1.00  0.00      DGPG
+ATOM    135 H18X DGPG    1       3.924  -2.795 -19.556  1.00  0.00      DGPG
+ATOM    136 H18Y DGPG    1       2.425  -1.876 -19.494  1.00  0.00      DGPG
+ATOM    137 C319 DGPG    1       2.185  -4.068 -19.769  1.00  0.00      DGPG
+ATOM    138 H19X DGPG    1       1.075  -4.082 -19.716  1.00  0.00      DGPG
+ATOM    139 H19Y DGPG    1       2.565  -4.923 -19.170  1.00  0.00      DGPG
+ATOM    140 C320 DGPG    1       2.544  -4.315 -21.169  1.00  0.00      DGPG
+ATOM    141 H20X DGPG    1       2.234  -3.486 -21.840  1.00  0.00      DGPG
+ATOM    142 H20Y DGPG    1       3.613  -4.543 -21.367  1.00  0.00      DGPG
+ATOM    143 H20Z DGPG    1       2.065  -5.263 -21.494  1.00  0.00      DGPG
+END

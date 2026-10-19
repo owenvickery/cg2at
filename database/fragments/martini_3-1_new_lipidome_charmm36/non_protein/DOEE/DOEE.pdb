@@ -1,0 +1,144 @@
+[ NH3 ]
+ATOM      1  N   DOEE    1      -1.702  -1.753  -2.147  1.00  0.00      DOEE
+ATOM      2  HN1 DOEE    1      -1.254  -0.956  -2.643  1.00  0.00      DOEE
+ATOM      3  HN2 DOEE    1      -0.926  -2.246  -1.660  1.00  0.00      DOEE
+ATOM      4  HN3 DOEE    1      -2.326  -2.203  -2.846  1.00  0.00      DOEE
+ATOM      5  C12 DOEE    1      -2.483  -1.078  -1.038  1.00  0.00      DOEE
+ATOM      6 H12A DOEE    1      -2.940  -1.836  -0.367  1.00  0.00      DOEE
+ATOM      7 H12B DOEE    1      -3.376  -0.504  -1.365  1.00  0.00      DOEE
+ATOM      8  C11 DOEE    1      -1.536  -0.039  -0.454  1.00  0.00      DOEE
+ATOM      9 H11A DOEE    1      -2.038   0.514   0.369  1.00  0.00      DOEE
+ATOM     10 H11B DOEE    1      -1.272   0.665  -1.273  1.00  0.00      DOEE
+[ PO4 ]
+ATOM     11  P   DOEE    1       0.939   0.247   0.533  1.00  0.00      DOEE
+ATOM     12  O13 DOEE    1       1.878  -0.685   1.218  1.00  0.00      DOEE
+ATOM     13  O14 DOEE    1       0.360   1.308   1.377  1.00  0.00      DOEE
+ATOM     14  O11 DOEE    1       1.571   0.950  -0.815  1.00  0.00      DOEE
+ATOM     15  O12 DOEE    1      -0.363  -0.646   0.050  1.00  0.00      DOEE
+[ ET1 ]
+ATOM     16  C1  DOEE    1       1.800   0.108  -1.937  1.00  0.00      DOEE
+ATOM     17  HA  DOEE    1       0.829  -0.089  -2.441  1.00  0.00      DOEE
+ATOM     18  HB  DOEE    1       2.280  -0.861  -1.682  1.00  0.00      DOEE
+ATOM     19  C2  DOEE    1       2.723   0.858  -2.893  1.00  0.00      DOEE
+ATOM     20  HS  DOEE    1       3.756   0.923  -2.489  1.00  0.00      DOEE
+ATOM     21  O21 DOEE    1       2.206   2.233  -3.146  1.00  0.00      DOEE
+ATOM     22  C21 DOEE    1       0.796   2.318  -3.545  1.00  0.00      DOEE
+ATOM     23  H1R DOEE    1       0.080   1.568  -3.145  1.00  0.00      DOEE
+ATOM     24  H1S DOEE    1       0.706   2.152  -4.639  1.00  0.00      DOEE
+[ ET2 ]
+ATOM     25  C3  DOEE    1       2.853   0.204  -4.362  1.00  0.00      DOEE
+ATOM     26  HX  DOEE    1       3.439  -0.676  -4.021  1.00  0.00      DOEE
+ATOM     27  HY  DOEE    1       3.498   0.821  -5.023  1.00  0.00      DOEE
+ATOM     28  O31 DOEE    1       1.600  -0.168  -4.903  1.00  0.00      DOEE
+ATOM     29  C31 DOEE    1       1.741  -0.932  -6.086  1.00  0.00      DOEE
+ATOM     30  H1X DOEE    1       1.504  -2.010  -5.956  1.00  0.00      DOEE
+ATOM     31  H1Y DOEE    1       2.766  -0.777  -6.486  1.00  0.00      DOEE
+[ C1A ]
+ATOM     32  C22 DOEE    1       0.251   3.741  -3.432  1.00  0.00      DOEE
+ATOM     33  H2R DOEE    1       1.098   4.459  -3.471  1.00  0.00      DOEE
+ATOM     34  H2S DOEE    1      -0.145   3.851  -2.400  1.00  0.00      DOEE
+ATOM     35  C23 DOEE    1      -0.753   4.230  -4.484  1.00  0.00      DOEE
+ATOM     36  H3R DOEE    1      -0.322   4.386  -5.496  1.00  0.00      DOEE
+ATOM     37  H3S DOEE    1      -1.222   5.187  -4.172  1.00  0.00      DOEE
+ATOM     38  C24 DOEE    1      -2.008   3.327  -4.666  1.00  0.00      DOEE
+ATOM     39  H4R DOEE    1      -2.788   4.106  -4.805  1.00  0.00      DOEE
+ATOM     40  H4S DOEE    1      -2.257   2.791  -3.725  1.00  0.00      DOEE
+ATOM     41  C25 DOEE    1      -2.004   2.380  -5.950  1.00  0.00      DOEE
+ATOM     42  H5R DOEE    1      -1.180   1.647  -5.819  1.00  0.00      DOEE
+ATOM     43  H5S DOEE    1      -1.781   2.913  -6.899  1.00  0.00      DOEE
+ATOM     44  C26 DOEE    1      -3.239   1.589  -6.072  1.00  0.00      DOEE
+ATOM     45  H6R DOEE    1      -4.102   2.285  -6.138  1.00  0.00      DOEE
+ATOM     46  H6S DOEE    1      -3.319   0.878  -5.222  1.00  0.00      DOEE
+[ D2A ]
+ATOM     47  C27 DOEE    1      -3.322   0.779  -7.403  1.00  0.00      DOEE
+ATOM     48  H7R DOEE    1      -4.269   0.226  -7.226  1.00  0.00      DOEE
+ATOM     49  H7S DOEE    1      -2.589  -0.056  -7.397  1.00  0.00      DOEE
+ATOM     50  C28 DOEE    1      -3.416   1.587  -8.720  1.00  0.00      DOEE
+ATOM     51  H8R DOEE    1      -2.477   2.162  -8.867  1.00  0.00      DOEE
+ATOM     52  H8S DOEE    1      -4.118   2.429  -8.546  1.00  0.00      DOEE
+ATOM     53  C29 DOEE    1      -3.848   0.941 -10.010  1.00  0.00      DOEE
+ATOM     54  H9R DOEE    1      -4.885   0.575 -10.030  1.00  0.00      DOEE
+ATOM     55 C210 DOEE    1      -3.024   0.735 -10.972  1.00  0.00      DOEE
+ATOM     56 H10R DOEE    1      -3.393   0.434 -11.963  1.00  0.00      DOEE
+[ C3A ]
+ATOM     57 C211 DOEE    1      -1.594   1.073 -10.946  1.00  0.00      DOEE
+ATOM     58 H11R DOEE    1      -1.295   1.652 -10.047  1.00  0.00      DOEE
+ATOM     59 H11S DOEE    1      -1.269   1.658 -11.833  1.00  0.00      DOEE
+ATOM     60 C212 DOEE    1      -0.681  -0.160 -11.051  1.00  0.00      DOEE
+ATOM     61 H12R DOEE    1      -0.911  -1.019 -10.385  1.00  0.00      DOEE
+ATOM     62 H12S DOEE    1       0.371   0.038 -10.754  1.00  0.00      DOEE
+ATOM     63 C213 DOEE    1      -0.514  -0.701 -12.495  1.00  0.00      DOEE
+ATOM     64 H13R DOEE    1      -0.366   0.129 -13.219  1.00  0.00      DOEE
+ATOM     65 H13S DOEE    1      -1.505  -1.128 -12.759  1.00  0.00      DOEE
+ATOM     66 C214 DOEE    1       0.607  -1.797 -12.688  1.00  0.00      DOEE
+ATOM     67 H14R DOEE    1       0.224  -2.575 -11.993  1.00  0.00      DOEE
+ATOM     68 H14S DOEE    1       1.568  -1.362 -12.342  1.00  0.00      DOEE
+[ C4A ]
+ATOM     69 C215 DOEE    1       0.770  -2.385 -14.044  1.00  0.00      DOEE
+ATOM     70 H15R DOEE    1      -0.118  -2.849 -14.524  1.00  0.00      DOEE
+ATOM     71 H15S DOEE    1       1.279  -3.291 -13.653  1.00  0.00      DOEE
+ATOM     72 C216 DOEE    1       1.736  -1.737 -15.027  1.00  0.00      DOEE
+ATOM     73 H16R DOEE    1       2.178  -2.403 -15.799  1.00  0.00      DOEE
+ATOM     74 H16S DOEE    1       2.601  -1.335 -14.457  1.00  0.00      DOEE
+ATOM     75 C217 DOEE    1       1.106  -0.505 -15.680  1.00  0.00      DOEE
+ATOM     76 H17R DOEE    1       0.906   0.291 -14.932  1.00  0.00      DOEE
+ATOM     77 H17S DOEE    1       0.187  -0.892 -16.171  1.00  0.00      DOEE
+ATOM     78 C218 DOEE    1       2.014   0.138 -16.765  1.00  0.00      DOEE
+ATOM     79 H18R DOEE    1       2.996   0.417 -16.326  1.00  0.00      DOEE
+ATOM     80 H18S DOEE    1       1.594   1.018 -17.298  1.00  0.00      DOEE
+ATOM     81 H18T DOEE    1       2.140  -0.547 -17.631  1.00  0.00      DOEE
+[ C1B ]
+ATOM     82  C32 DOEE    1       0.785  -0.528  -7.104  1.00  0.00      DOEE
+ATOM     83  H2X DOEE    1       1.248  -1.088  -7.945  1.00  0.00      DOEE
+ATOM     84  H2Y DOEE    1      -0.217  -1.007  -7.078  1.00  0.00      DOEE
+ATOM     85  C33 DOEE    1       0.846   0.952  -7.616  1.00  0.00      DOEE
+ATOM     86  H3X DOEE    1       0.771   1.615  -6.728  1.00  0.00      DOEE
+ATOM     87  H3Y DOEE    1       0.072   1.283  -8.341  1.00  0.00      DOEE
+ATOM     88  C34 DOEE    1       2.140   1.271  -8.410  1.00  0.00      DOEE
+ATOM     89  H4X DOEE    1       2.875   1.075  -7.601  1.00  0.00      DOEE
+ATOM     90  H4Y DOEE    1       2.199   0.559  -9.261  1.00  0.00      DOEE
+ATOM     91  C35 DOEE    1       2.305   2.680  -9.013  1.00  0.00      DOEE
+ATOM     92  H5X DOEE    1       3.380   2.817  -9.258  1.00  0.00      DOEE
+ATOM     93  H5Y DOEE    1       1.983   3.510  -8.348  1.00  0.00      DOEE
+ATOM     94  C36 DOEE    1       1.601   2.819 -10.379  1.00  0.00      DOEE
+ATOM     95  H6X DOEE    1       0.594   2.351 -10.329  1.00  0.00      DOEE
+ATOM     96  H6Y DOEE    1       2.292   2.235 -11.023  1.00  0.00      DOEE
+[ D2B ]
+ATOM     97  C37 DOEE    1       1.581   4.256 -10.895  1.00  0.00      DOEE
+ATOM     98  H7X DOEE    1       2.591   4.714 -10.827  1.00  0.00      DOEE
+ATOM     99  H7Y DOEE    1       1.271   4.301 -11.961  1.00  0.00      DOEE
+ATOM    100  C38 DOEE    1       0.568   5.077 -10.029  1.00  0.00      DOEE
+ATOM    101  H8X DOEE    1       0.498   6.134 -10.363  1.00  0.00      DOEE
+ATOM    102  H8Y DOEE    1       0.972   5.107  -8.994  1.00  0.00      DOEE
+ATOM    103  C39 DOEE    1      -0.866   4.633  -9.883  1.00  0.00      DOEE
+ATOM    104  H9X DOEE    1      -1.115   4.186  -8.910  1.00  0.00      DOEE
+ATOM    105 C310 DOEE    1      -1.855   4.780 -10.766  1.00  0.00      DOEE
+ATOM    106 H10X DOEE    1      -2.845   4.382 -10.500  1.00  0.00      DOEE
+[ C3B ]
+ATOM    107 C311 DOEE    1      -1.844   5.414 -12.157  1.00  0.00      DOEE
+ATOM    108 H11X DOEE    1      -2.571   6.254 -12.136  1.00  0.00      DOEE
+ATOM    109 H11Y DOEE    1      -0.855   5.919 -12.191  1.00  0.00      DOEE
+ATOM    110 C312 DOEE    1      -1.942   4.440 -13.324  1.00  0.00      DOEE
+ATOM    111 H12X DOEE    1      -2.786   4.737 -13.983  1.00  0.00      DOEE
+ATOM    112 H12Y DOEE    1      -2.318   3.451 -12.983  1.00  0.00      DOEE
+ATOM    113 C313 DOEE    1      -0.716   4.251 -14.252  1.00  0.00      DOEE
+ATOM    114 H13X DOEE    1       0.040   5.059 -14.352  1.00  0.00      DOEE
+ATOM    115 H13Y DOEE    1      -0.074   3.458 -13.811  1.00  0.00      DOEE
+ATOM    116 C314 DOEE    1      -1.161   3.718 -15.630  1.00  0.00      DOEE
+ATOM    117 H14X DOEE    1      -0.195   3.614 -16.168  1.00  0.00      DOEE
+ATOM    118 H14Y DOEE    1      -1.803   4.492 -16.103  1.00  0.00      DOEE
+[ C4B ]
+ATOM    119 C315 DOEE    1      -1.772   2.330 -15.559  1.00  0.00      DOEE
+ATOM    120 H15X DOEE    1      -2.642   2.449 -14.878  1.00  0.00      DOEE
+ATOM    121 H15Y DOEE    1      -1.085   1.619 -15.052  1.00  0.00      DOEE
+ATOM    122 C316 DOEE    1      -2.166   1.681 -16.872  1.00  0.00      DOEE
+ATOM    123 H16X DOEE    1      -2.340   0.612 -16.622  1.00  0.00      DOEE
+ATOM    124 H16Y DOEE    1      -1.345   1.795 -17.611  1.00  0.00      DOEE
+ATOM    125 C317 DOEE    1      -3.590   2.133 -17.413  1.00  0.00      DOEE
+ATOM    126 H17X DOEE    1      -4.336   1.786 -16.667  1.00  0.00      DOEE
+ATOM    127 H17Y DOEE    1      -3.625   3.241 -17.487  1.00  0.00      DOEE
+ATOM    128 C318 DOEE    1      -3.961   1.466 -18.738  1.00  0.00      DOEE
+ATOM    129 H18X DOEE    1      -3.403   1.891 -19.599  1.00  0.00      DOEE
+ATOM    130 H18Y DOEE    1      -3.633   0.416 -18.583  1.00  0.00      DOEE
+ATOM    131 H18Z DOEE    1      -5.050   1.467 -18.954  1.00  0.00      DOEE
+END

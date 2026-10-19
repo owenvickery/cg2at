@@ -1,0 +1,110 @@
+[ GL0 ]
+ATOM      1  C13 DUPG    1       0.691   1.684   2.468  1.00  0.00      DUPG
+ATOM      2 H13A DUPG    1       1.516   1.828   3.199  1.00  0.00      DUPG
+ATOM      3 H13B DUPG    1       0.498   0.608   2.665  1.00  0.00      DUPG
+ATOM      4  OC3 DUPG    1      -0.475   2.491   2.725  1.00  0.00      DUPG
+ATOM      5  HO3 DUPG    1      -0.705   2.234   3.621  1.00  0.00      DUPG
+ATOM      6  C12 DUPG    1       1.130   1.881   1.011  1.00  0.00      DUPG
+ATOM      7 H12A DUPG    1       2.165   1.491   0.899  1.00  0.00      DUPG
+ATOM      8  OC2 DUPG    1       1.151   3.271   0.697  1.00  0.00      DUPG
+ATOM      9  HO2 DUPG    1       1.976   3.603   1.120  1.00  0.00      DUPG
+ATOM     10  C11 DUPG    1       0.257   1.139  -0.063  1.00  0.00      DUPG
+ATOM     11 H11A DUPG    1       0.793   1.318  -1.020  1.00  0.00      DUPG
+ATOM     12 H11B DUPG    1      -0.771   1.558  -0.017  1.00  0.00      DUPG
+[ PO4 ]
+ATOM     13  P   DUPG    1      -0.232  -1.190  -1.126  1.00  0.00      DUPG
+ATOM     14  O13 DUPG    1      -1.542  -0.609  -1.518  1.00  0.00      DUPG
+ATOM     15  O14 DUPG    1      -0.165  -2.661  -0.808  1.00  0.00      DUPG
+ATOM     16  O12 DUPG    1       0.254  -0.351   0.087  1.00  0.00      DUPG
+ATOM     17  O11 DUPG    1       0.796  -1.035  -2.358  1.00  0.00      DUPG
+[ GL1 ]
+ATOM     18  C1  DUPG    1       2.193  -1.136  -2.090  1.00  0.00      DUPG
+ATOM     19  HA  DUPG    1       2.467  -2.142  -1.707  1.00  0.00      DUPG
+ATOM     20  HB  DUPG    1       2.562  -0.443  -1.303  1.00  0.00      DUPG
+ATOM     21  C2  DUPG    1       2.998  -0.846  -3.378  1.00  0.00      DUPG
+ATOM     22  HS  DUPG    1       4.064  -0.626  -3.154  1.00  0.00      DUPG
+ATOM     23  O21 DUPG    1       2.459   0.307  -3.975  1.00  0.00      DUPG
+ATOM     24  C21 DUPG    1       2.374   1.442  -3.341  1.00  0.00      DUPG
+ATOM     25  O22 DUPG    1       2.754   1.715  -2.199  1.00  0.00      DUPG
+[ GL2 ]
+ATOM     26  C3  DUPG    1       3.112  -2.038  -4.481  1.00  0.00      DUPG
+ATOM     27  HX  DUPG    1       2.108  -2.448  -4.725  1.00  0.00      DUPG
+ATOM     28  HY  DUPG    1       3.686  -2.860  -4.002  1.00  0.00      DUPG
+ATOM     29  O31 DUPG    1       3.726  -1.504  -5.688  1.00  0.00      DUPG
+ATOM     30  C31 DUPG    1       2.999  -1.024  -6.721  1.00  0.00      DUPG
+ATOM     31  O32 DUPG    1       1.832  -0.787  -6.697  1.00  0.00      DUPG
+[ C1A ]
+ATOM     32  C22 DUPG    1       1.841   2.505  -4.303  1.00  0.00      DUPG
+ATOM     33  H2R DUPG    1       2.378   2.433  -5.273  1.00  0.00      DUPG
+ATOM     34  H2S DUPG    1       2.111   3.507  -3.908  1.00  0.00      DUPG
+ATOM     35  C23 DUPG    1       0.291   2.283  -4.636  1.00  0.00      DUPG
+ATOM     36  H3R DUPG    1      -0.248   2.585  -3.712  1.00  0.00      DUPG
+ATOM     37  H3S DUPG    1       0.052   1.241  -4.937  1.00  0.00      DUPG
+ATOM     38  C24 DUPG    1      -0.221   3.059  -5.882  1.00  0.00      DUPG
+ATOM     39  H4R DUPG    1      -0.018   4.150  -5.834  1.00  0.00      DUPG
+ATOM     40  H4S DUPG    1      -1.331   3.004  -5.901  1.00  0.00      DUPG
+[ C2A ]
+ATOM     41  C25 DUPG    1       0.423   2.403  -7.059  1.00  0.00      DUPG
+ATOM     42  H5R DUPG    1       0.029   1.365  -7.083  1.00  0.00      DUPG
+ATOM     43  H5S DUPG    1       1.530   2.389  -6.965  1.00  0.00      DUPG
+ATOM     44  C26 DUPG    1       0.078   3.063  -8.398  1.00  0.00      DUPG
+ATOM     45  H6R DUPG    1       0.780   2.634  -9.144  1.00  0.00      DUPG
+ATOM     46  H6S DUPG    1       0.188   4.169  -8.395  1.00  0.00      DUPG
+ATOM     47  C27 DUPG    1      -1.407   2.920  -8.941  1.00  0.00      DUPG
+ATOM     48  H7R DUPG    1      -1.464   3.895  -9.472  1.00  0.00      DUPG
+ATOM     49  H7S DUPG    1      -2.183   2.786  -8.157  1.00  0.00      DUPG
+ATOM     50  C28 DUPG    1      -1.494   1.803 -10.039  1.00  0.00      DUPG
+ATOM     51  H8R DUPG    1      -1.292   0.780  -9.656  1.00  0.00      DUPG
+ATOM     52  H8S DUPG    1      -0.717   1.875 -10.831  1.00  0.00      DUPG
+[ C3A ]
+ATOM     53  C29 DUPG    1      -2.761   1.862 -10.836  1.00  0.00      DUPG
+ATOM     54  H9R DUPG    1      -3.005   2.910 -11.113  1.00  0.00      DUPG
+ATOM     55  H9S DUPG    1      -3.576   1.481 -10.184  1.00  0.00      DUPG
+ATOM     56 C210 DUPG    1      -2.917   1.020 -12.155  1.00  0.00      DUPG
+ATOM     57 H10R DUPG    1      -2.321   1.502 -12.958  1.00  0.00      DUPG
+ATOM     58 H10S DUPG    1      -3.990   0.973 -12.438  1.00  0.00      DUPG
+ATOM     59 C211 DUPG    1      -2.640  -0.491 -12.026  1.00  0.00      DUPG
+ATOM     60 H11R DUPG    1      -3.320  -0.898 -11.248  1.00  0.00      DUPG
+ATOM     61 H11S DUPG    1      -1.561  -0.534 -11.765  1.00  0.00      DUPG
+ATOM     62 C212 DUPG    1      -2.782  -1.330 -13.351  1.00  0.00      DUPG
+ATOM     63 H12R DUPG    1      -2.015  -0.994 -14.081  1.00  0.00      DUPG
+ATOM     64 H12S DUPG    1      -2.678  -2.400 -13.072  1.00  0.00      DUPG
+ATOM     65 H12T DUPG    1      -3.771  -1.238 -13.848  1.00  0.00      DUPG
+[ C1B ]
+ATOM     66  C32 DUPG    1       3.937  -0.679  -7.917  1.00  0.00      DUPG
+ATOM     67  H2X DUPG    1       4.765  -1.420  -7.911  1.00  0.00      DUPG
+ATOM     68  H2Y DUPG    1       4.457   0.251  -7.601  1.00  0.00      DUPG
+ATOM     69  C33 DUPG    1       3.111  -0.401  -9.119  1.00  0.00      DUPG
+ATOM     70  H3X DUPG    1       2.332   0.357  -8.887  1.00  0.00      DUPG
+ATOM     71  H3Y DUPG    1       2.735  -1.393  -9.449  1.00  0.00      DUPG
+ATOM     72  C34 DUPG    1       3.774   0.174 -10.400  1.00  0.00      DUPG
+ATOM     73  H4X DUPG    1       4.640  -0.462 -10.684  1.00  0.00      DUPG
+ATOM     74  H4Y DUPG    1       4.117   1.183 -10.085  1.00  0.00      DUPG
+[ C2B ]
+ATOM     75  C35 DUPG    1       2.791   0.382 -11.509  1.00  0.00      DUPG
+ATOM     76  H5X DUPG    1       1.977   0.960 -11.021  1.00  0.00      DUPG
+ATOM     77  H5Y DUPG    1       2.573  -0.645 -11.872  1.00  0.00      DUPG
+ATOM     78  C36 DUPG    1       3.236   1.254 -12.767  1.00  0.00      DUPG
+ATOM     79  H6X DUPG    1       4.225   0.882 -13.111  1.00  0.00      DUPG
+ATOM     80  H6Y DUPG    1       3.281   2.331 -12.496  1.00  0.00      DUPG
+ATOM     81  C37 DUPG    1       2.215   1.284 -13.902  1.00  0.00      DUPG
+ATOM     82  H7X DUPG    1       1.348   1.977 -13.862  1.00  0.00      DUPG
+ATOM     83  H7Y DUPG    1       1.736   0.287 -14.007  1.00  0.00      DUPG
+ATOM     84  C38 DUPG    1       2.919   1.728 -15.258  1.00  0.00      DUPG
+ATOM     85  H8X DUPG    1       3.645   0.947 -15.567  1.00  0.00      DUPG
+ATOM     86  H8Y DUPG    1       3.513   2.612 -14.942  1.00  0.00      DUPG
+[ C3B ]
+ATOM     87  C39 DUPG    1       1.980   2.235 -16.329  1.00  0.00      DUPG
+ATOM     88  H9X DUPG    1       2.521   2.387 -17.288  1.00  0.00      DUPG
+ATOM     89  H9Y DUPG    1       1.548   3.216 -16.034  1.00  0.00      DUPG
+ATOM     90 C310 DUPG    1       0.819   1.293 -16.598  1.00  0.00      DUPG
+ATOM     91 H10X DUPG    1       1.036   0.264 -16.241  1.00  0.00      DUPG
+ATOM     92 H10Y DUPG    1       0.740   1.279 -17.706  1.00  0.00      DUPG
+ATOM     93 C311 DUPG    1      -0.553   1.763 -16.033  1.00  0.00      DUPG
+ATOM     94 H11X DUPG    1      -0.589   2.814 -16.392  1.00  0.00      DUPG
+ATOM     95 H11Y DUPG    1      -0.621   1.759 -14.924  1.00  0.00      DUPG
+ATOM     96 C312 DUPG    1      -1.732   1.069 -16.636  1.00  0.00      DUPG
+ATOM     97 H12X DUPG    1      -1.755   0.024 -16.258  1.00  0.00      DUPG
+ATOM     98 H12Y DUPG    1      -1.515   0.892 -17.711  1.00  0.00      DUPG
+ATOM     99 H12Z DUPG    1      -2.677   1.649 -16.575  1.00  0.00      DUPG
+END

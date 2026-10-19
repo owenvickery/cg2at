@@ -1,0 +1,132 @@
+[ CNO ]
+ATOM      1  N   DYPS    1       1.637   0.300   1.995  1.00  0.00      DYPS
+ATOM      2  HN1 DYPS    1       2.055   0.962   1.310  1.00  0.00      DYPS
+ATOM      3  HN2 DYPS    1       0.890   0.830   2.487  1.00  0.00      DYPS
+ATOM      4  HN3 DYPS    1       2.309  -0.118   2.670  1.00  0.00      DYPS
+ATOM      5  C12 DYPS    1       1.145  -0.811   1.341  1.00  0.00      DYPS
+ATOM      6 H12A DYPS    1       2.004  -1.283   0.887  1.00  0.00      DYPS
+ATOM      7  C13 DYPS    1       0.445  -1.849   2.298  1.00  0.00      DYPS
+ATOM      8 O13A DYPS    1       0.884  -1.813   3.480  1.00  0.00      DYPS
+ATOM      9 O13B DYPS    1      -0.141  -2.837   1.860  1.00  0.00      DYPS
+ATOM     10  C11 DYPS    1       0.161  -0.301   0.262  1.00  0.00      DYPS
+ATOM     11 H11A DYPS    1      -0.698   0.182   0.773  1.00  0.00      DYPS
+ATOM     12 H11B DYPS    1      -0.160  -1.206  -0.297  1.00  0.00      DYPS
+[ PO4 ]
+ATOM     13  P   DYPS    1      -0.091   1.246  -1.801  1.00  0.00      DYPS
+ATOM     14  O13 DYPS    1      -0.334   2.621  -1.495  1.00  0.00      DYPS
+ATOM     15  O14 DYPS    1       0.515   0.964  -3.105  1.00  0.00      DYPS
+ATOM     16  O12 DYPS    1       0.820   0.628  -0.615  1.00  0.00      DYPS
+ATOM     17  O11 DYPS    1      -1.418   0.488  -1.648  1.00  0.00      DYPS
+[ GL1 ]
+ATOM     18  C1  DYPS    1      -2.135  -0.102  -2.721  1.00  0.00      DYPS
+ATOM     19  HA  DYPS    1      -1.926   0.491  -3.637  1.00  0.00      DYPS
+ATOM     20  HB  DYPS    1      -3.228  -0.034  -2.529  1.00  0.00      DYPS
+ATOM     21  C2  DYPS    1      -1.742  -1.586  -3.132  1.00  0.00      DYPS
+ATOM     22  HS  DYPS    1      -2.356  -2.247  -2.484  1.00  0.00      DYPS
+ATOM     23  O21 DYPS    1      -0.352  -1.677  -2.871  1.00  0.00      DYPS
+ATOM     24  C21 DYPS    1       0.376  -2.828  -2.783  1.00  0.00      DYPS
+ATOM     25  O22 DYPS    1       0.008  -3.967  -2.857  1.00  0.00      DYPS
+[ GL2 ]
+ATOM     26  C3  DYPS    1      -2.101  -1.953  -4.630  1.00  0.00      DYPS
+ATOM     27  HX  DYPS    1      -3.202  -2.099  -4.670  1.00  0.00      DYPS
+ATOM     28  HY  DYPS    1      -1.679  -2.950  -4.879  1.00  0.00      DYPS
+ATOM     29  O31 DYPS    1      -1.560  -0.963  -5.576  1.00  0.00      DYPS
+ATOM     30  C31 DYPS    1      -1.643  -1.153  -6.841  1.00  0.00      DYPS
+ATOM     31  O32 DYPS    1      -2.124  -2.126  -7.453  1.00  0.00      DYPS
+[ C1A ]
+ATOM     32  C22 DYPS    1       1.841  -2.398  -2.673  1.00  0.00      DYPS
+ATOM     33  H2R DYPS    1       2.240  -3.158  -1.967  1.00  0.00      DYPS
+ATOM     34  H2S DYPS    1       2.068  -1.385  -2.279  1.00  0.00      DYPS
+ATOM     35  C23 DYPS    1       2.529  -2.542  -4.088  1.00  0.00      DYPS
+ATOM     36  H3R DYPS    1       2.139  -3.430  -4.629  1.00  0.00      DYPS
+ATOM     37  H3S DYPS    1       3.632  -2.607  -3.977  1.00  0.00      DYPS
+ATOM     38  C24 DYPS    1       2.151  -1.449  -5.092  1.00  0.00      DYPS
+ATOM     39  H4R DYPS    1       2.246  -0.437  -4.642  1.00  0.00      DYPS
+ATOM     40  H4S DYPS    1       1.074  -1.537  -5.350  1.00  0.00      DYPS
+[ C2A ]
+ATOM     41  C25 DYPS    1       2.946  -1.591  -6.465  1.00  0.00      DYPS
+ATOM     42  H5R DYPS    1       2.520  -0.884  -7.208  1.00  0.00      DYPS
+ATOM     43  H5S DYPS    1       2.862  -2.619  -6.877  1.00  0.00      DYPS
+ATOM     44  C26 DYPS    1       4.413  -1.229  -6.436  1.00  0.00      DYPS
+ATOM     45  H6R DYPS    1       4.768  -1.173  -7.488  1.00  0.00      DYPS
+ATOM     46  H6S DYPS    1       5.048  -2.094  -6.148  1.00  0.00      DYPS
+ATOM     47  C27 DYPS    1       4.818   0.192  -5.811  1.00  0.00      DYPS
+ATOM     48  H7R DYPS    1       5.875   0.055  -5.498  1.00  0.00      DYPS
+ATOM     49  H7S DYPS    1       4.192   0.281  -4.898  1.00  0.00      DYPS
+ATOM     50  C28 DYPS    1       4.723   1.331  -6.834  1.00  0.00      DYPS
+ATOM     51  H8R DYPS    1       4.953   0.983  -7.864  1.00  0.00      DYPS
+ATOM     52  H8S DYPS    1       5.447   2.134  -6.579  1.00  0.00      DYPS
+[ D3A ]
+ATOM     53  C29 DYPS    1       3.252   1.826  -6.642  1.00  0.00      DYPS
+ATOM     54  H9R DYPS    1       3.037   2.180  -5.623  1.00  0.00      DYPS
+ATOM     55 C210 DYPS    1       2.300   1.949  -7.558  1.00  0.00      DYPS
+ATOM     56 H10R DYPS    1       1.271   2.229  -7.288  1.00  0.00      DYPS
+ATOM     57 C211 DYPS    1       2.452   1.675  -9.072  1.00  0.00      DYPS
+ATOM     58 H11R DYPS    1       1.847   0.831  -9.468  1.00  0.00      DYPS
+ATOM     59 H11S DYPS    1       3.479   1.383  -9.379  1.00  0.00      DYPS
+ATOM     60 C212 DYPS    1       1.818   2.861  -9.861  1.00  0.00      DYPS
+ATOM     61 H12R DYPS    1       2.415   3.751  -9.568  1.00  0.00      DYPS
+ATOM     62 H12S DYPS    1       0.809   3.179  -9.524  1.00  0.00      DYPS
+[ C4A ]
+ATOM     63 C213 DYPS    1       1.788   2.686 -11.383  1.00  0.00      DYPS
+ATOM     64 H13R DYPS    1       1.033   1.898 -11.595  1.00  0.00      DYPS
+ATOM     65 H13S DYPS    1       2.738   2.308 -11.816  1.00  0.00      DYPS
+ATOM     66 C214 DYPS    1       1.609   4.004 -12.246  1.00  0.00      DYPS
+ATOM     67 H14R DYPS    1       2.391   4.728 -11.932  1.00  0.00      DYPS
+ATOM     68 H14S DYPS    1       0.574   4.381 -12.103  1.00  0.00      DYPS
+ATOM     69 C215 DYPS    1       1.634   3.576 -13.715  1.00  0.00      DYPS
+ATOM     70 H15R DYPS    1       0.986   2.682 -13.836  1.00  0.00      DYPS
+ATOM     71 H15S DYPS    1       2.624   3.103 -13.884  1.00  0.00      DYPS
+ATOM     72 C216 DYPS    1       1.315   4.643 -14.713  1.00  0.00      DYPS
+ATOM     73 H16R DYPS    1       1.253   4.291 -15.765  1.00  0.00      DYPS
+ATOM     74 H16S DYPS    1       0.327   5.104 -14.498  1.00  0.00      DYPS
+ATOM     75 H16T DYPS    1       2.011   5.509 -14.687  1.00  0.00      DYPS
+[ C1B ]
+ATOM     76  C32 DYPS    1      -0.927   0.047  -7.611  1.00  0.00      DYPS
+ATOM     77  H2X DYPS    1       0.008  -0.322  -8.086  1.00  0.00      DYPS
+ATOM     78  H2Y DYPS    1      -0.705   0.884  -6.915  1.00  0.00      DYPS
+ATOM     79  C33 DYPS    1      -1.830   0.564  -8.774  1.00  0.00      DYPS
+ATOM     80  H3X DYPS    1      -1.899   1.673  -8.757  1.00  0.00      DYPS
+ATOM     81  H3Y DYPS    1      -2.899   0.264  -8.749  1.00  0.00      DYPS
+ATOM     82  C34 DYPS    1      -1.333   0.246 -10.187  1.00  0.00      DYPS
+ATOM     83  H4X DYPS    1      -1.122  -0.844 -10.246  1.00  0.00      DYPS
+ATOM     84  H4Y DYPS    1      -0.364   0.768 -10.337  1.00  0.00      DYPS
+[ C2B ]
+ATOM     85  C35 DYPS    1      -2.437   0.658 -11.147  1.00  0.00      DYPS
+ATOM     86  H5X DYPS    1      -2.741   1.726 -11.107  1.00  0.00      DYPS
+ATOM     87  H5Y DYPS    1      -3.369   0.184 -10.770  1.00  0.00      DYPS
+ATOM     88  C36 DYPS    1      -1.975   0.299 -12.544  1.00  0.00      DYPS
+ATOM     89  H6X DYPS    1      -1.531  -0.717 -12.615  1.00  0.00      DYPS
+ATOM     90  H6Y DYPS    1      -1.285   1.106 -12.871  1.00  0.00      DYPS
+ATOM     91  C37 DYPS    1      -3.103   0.170 -13.613  1.00  0.00      DYPS
+ATOM     92  H7X DYPS    1      -3.813   1.006 -13.433  1.00  0.00      DYPS
+ATOM     93  H7Y DYPS    1      -3.622  -0.793 -13.419  1.00  0.00      DYPS
+ATOM     94  C38 DYPS    1      -2.629   0.184 -15.089  1.00  0.00      DYPS
+ATOM     95  H8X DYPS    1      -3.611   0.160 -15.608  1.00  0.00      DYPS
+ATOM     96  H8Y DYPS    1      -2.089  -0.740 -15.387  1.00  0.00      DYPS
+[ D3B ]
+ATOM     97  C39 DYPS    1      -1.881   1.366 -15.643  1.00  0.00      DYPS
+ATOM     98  H9X DYPS    1      -2.485   2.260 -15.860  1.00  0.00      DYPS
+ATOM     99 C310 DYPS    1      -0.559   1.526 -15.798  1.00  0.00      DYPS
+ATOM    100 H10X DYPS    1      -0.154   2.363 -16.386  1.00  0.00      DYPS
+ATOM    101 C311 DYPS    1       0.476   0.498 -15.429  1.00  0.00      DYPS
+ATOM    102 H11X DYPS    1       0.244   0.125 -14.408  1.00  0.00      DYPS
+ATOM    103 H11Y DYPS    1       1.513   0.884 -15.328  1.00  0.00      DYPS
+ATOM    104 C312 DYPS    1       0.740  -0.659 -16.381  1.00  0.00      DYPS
+ATOM    105 H12X DYPS    1       1.275  -0.374 -17.313  1.00  0.00      DYPS
+ATOM    106 H12Y DYPS    1      -0.288  -1.039 -16.561  1.00  0.00      DYPS
+[ C4B ]
+ATOM    107 C313 DYPS    1       1.618  -1.730 -15.671  1.00  0.00      DYPS
+ATOM    108 H13X DYPS    1       1.104  -2.006 -14.725  1.00  0.00      DYPS
+ATOM    109 H13Y DYPS    1       2.622  -1.343 -15.392  1.00  0.00      DYPS
+ATOM    110 C314 DYPS    1       1.858  -3.018 -16.523  1.00  0.00      DYPS
+ATOM    111 H14X DYPS    1       2.487  -3.706 -15.918  1.00  0.00      DYPS
+ATOM    112 H14Y DYPS    1       2.411  -2.793 -17.460  1.00  0.00      DYPS
+ATOM    113 C315 DYPS    1       0.633  -3.799 -16.947  1.00  0.00      DYPS
+ATOM    114 H15X DYPS    1      -0.224  -3.163 -17.258  1.00  0.00      DYPS
+ATOM    115 H15Y DYPS    1       0.325  -4.557 -16.196  1.00  0.00      DYPS
+ATOM    116 C316 DYPS    1       0.946  -4.579 -18.232  1.00  0.00      DYPS
+ATOM    117 H16X DYPS    1       1.193  -3.876 -19.056  1.00  0.00      DYPS
+ATOM    118 H16Y DYPS    1       1.728  -5.354 -18.082  1.00  0.00      DYPS
+ATOM    119 H16Z DYPS    1       0.078  -5.217 -18.502  1.00  0.00      DYPS
+END

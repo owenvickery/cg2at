@@ -1,0 +1,143 @@
+[ COH ]
+ATOM      1  O1  XCER    1      -0.028   0.728   1.763  1.00  0.00      XCER
+ATOM      2  HO1 XCER    1      -0.264   0.582   2.682  1.00  0.00      XCER
+ATOM      3  C1S XCER    1       0.209  -0.532   1.129  1.00  0.00      XCER
+ATOM      4  H1S XCER    1       1.122  -0.849   1.677  1.00  0.00      XCER
+ATOM      5  H1T XCER    1      -0.579  -1.305   1.260  1.00  0.00      XCER
+[ OH1 ]
+ATOM      6  C2S XCER    1       0.667  -0.306  -0.351  1.00  0.00      XCER
+ATOM      7  H2S XCER    1       1.313  -1.168  -0.625  1.00  0.00      XCER
+ATOM      8  C3S XCER    1      -0.502  -0.258  -1.243  1.00  0.00      XCER
+ATOM      9  H3S XCER    1      -1.137   0.576  -0.876  1.00  0.00      XCER
+ATOM     10  O3  XCER    1      -1.215  -1.483  -1.211  1.00  0.00      XCER
+ATOM     11  HO3 XCER    1      -0.508  -2.018  -0.842  1.00  0.00      XCER
+[ AM2 ]
+ATOM     12  NF  XCER    1       1.439   0.942  -0.390  1.00  0.00      XCER
+ATOM     13  HNF XCER    1       1.044   1.711  -0.886  1.00  0.00      XCER
+ATOM     14  C1F XCER    1       2.641   1.086   0.249  1.00  0.00      XCER
+ATOM     15  OF  XCER    1       3.082   0.334   1.128  1.00  0.00      XCER
+[ T1A ]
+ATOM     16  C4S XCER    1      -0.048  -0.033  -2.651  1.00  0.00      XCER
+ATOM     17  H4S XCER    1      -0.282   0.991  -2.977  1.00  0.00      XCER
+ATOM     18  C5S XCER    1       0.653  -0.861  -3.495  1.00  0.00      XCER
+ATOM     19  H5S XCER    1       0.873  -1.913  -3.259  1.00  0.00      XCER
+ATOM     20  C6S XCER    1       1.044  -0.494  -4.892  1.00  0.00      XCER
+ATOM     21  H6S XCER    1       2.075  -0.827  -5.135  1.00  0.00      XCER
+ATOM     22  H6T XCER    1       1.176   0.603  -5.006  1.00  0.00      XCER
+[ C2A ]
+ATOM     23  C7S XCER    1       0.253  -1.087  -6.154  1.00  0.00      XCER
+ATOM     24  H7S XCER    1      -0.845  -0.977  -6.022  1.00  0.00      XCER
+ATOM     25  H7T XCER    1       0.579  -2.140  -6.296  1.00  0.00      XCER
+ATOM     26  C8S XCER    1       0.753  -0.348  -7.404  1.00  0.00      XCER
+ATOM     27  H8S XCER    1       1.863  -0.384  -7.440  1.00  0.00      XCER
+ATOM     28  H8T XCER    1       0.413   0.696  -7.233  1.00  0.00      XCER
+ATOM     29  C9S XCER    1       0.134  -0.947  -8.696  1.00  0.00      XCER
+ATOM     30  H9S XCER    1      -0.969  -0.825  -8.749  1.00  0.00      XCER
+ATOM     31  H9T XCER    1       0.479  -2.000  -8.767  1.00  0.00      XCER
+ATOM     32 C10S XCER    1       0.601  -0.187  -9.918  1.00  0.00      XCER
+ATOM     33 H10S XCER    1       1.687  -0.406  -9.830  1.00  0.00      XCER
+ATOM     34 H10T XCER    1       0.618   0.921  -9.847  1.00  0.00      XCER
+[ C3A ]
+ATOM     35 C11S XCER    1      -0.001  -0.692 -11.244  1.00  0.00      XCER
+ATOM     36 H11S XCER    1      -1.043  -0.309 -11.227  1.00  0.00      XCER
+ATOM     37 H11T XCER    1      -0.068  -1.799 -11.314  1.00  0.00      XCER
+ATOM     38 C12S XCER    1       0.685  -0.107 -12.499  1.00  0.00      XCER
+ATOM     39 H12S XCER    1       1.774  -0.098 -12.281  1.00  0.00      XCER
+ATOM     40 H12T XCER    1       0.475   0.983 -12.542  1.00  0.00      XCER
+ATOM     41 C13S XCER    1       0.482  -0.947 -13.775  1.00  0.00      XCER
+ATOM     42 H13S XCER    1      -0.599  -1.202 -13.820  1.00  0.00      XCER
+ATOM     43 H13T XCER    1       1.032  -1.909 -13.692  1.00  0.00      XCER
+ATOM     44 C14S XCER    1       0.909  -0.381 -15.190  1.00  0.00      XCER
+ATOM     45 H14S XCER    1       2.015  -0.473 -15.226  1.00  0.00      XCER
+ATOM     46 H14T XCER    1       0.623   0.693 -15.214  1.00  0.00      XCER
+[ C4A ]
+ATOM     47 C15S XCER    1       0.303  -1.121 -16.359  1.00  0.00      XCER
+ATOM     48 H15S XCER    1      -0.790  -0.920 -16.339  1.00  0.00      XCER
+ATOM     49 H15T XCER    1       0.351  -2.231 -16.372  1.00  0.00      XCER
+ATOM     50 C16S XCER    1       0.826  -0.574 -17.750  1.00  0.00      XCER
+ATOM     51 H16S XCER    1       1.864  -0.944 -17.613  1.00  0.00      XCER
+ATOM     52 H16T XCER    1       0.937   0.514 -17.945  1.00  0.00      XCER
+ATOM     53 C17S XCER    1       0.365  -1.380 -19.032  1.00  0.00      XCER
+ATOM     54 H17S XCER    1      -0.745  -1.354 -19.038  1.00  0.00      XCER
+ATOM     55 H17T XCER    1       0.722  -2.424 -18.901  1.00  0.00      XCER
+ATOM     56 C18S XCER    1       0.835  -0.955 -20.446  1.00  0.00      XCER
+ATOM     57 H18S XCER    1       0.434   0.025 -20.783  1.00  0.00      XCER
+ATOM     58 H18T XCER    1       0.460  -1.775 -21.094  1.00  0.00      XCER
+ATOM     59 H18U XCER    1       1.939  -0.958 -20.569  1.00  0.00      XCER
+[ C1B ]
+ATOM     60  C2F XCER    1       3.467   2.304  -0.150  1.00  0.00      XCER
+ATOM     61  H2F XCER    1       3.492   2.830   0.828  1.00  0.00      XCER
+ATOM     62  H2G XCER    1       2.900   3.041  -0.758  1.00  0.00      XCER
+ATOM     63  C3F XCER    1       4.852   1.961  -0.744  1.00  0.00      XCER
+ATOM     64  H3F XCER    1       5.408   1.264  -0.081  1.00  0.00      XCER
+ATOM     65  H3G XCER    1       5.532   2.831  -0.868  1.00  0.00      XCER
+ATOM     66  C4F XCER    1       4.786   1.349  -2.120  1.00  0.00      XCER
+ATOM     67  H4F XCER    1       4.309   0.346  -2.134  1.00  0.00      XCER
+ATOM     68  H4G XCER    1       5.854   1.122  -2.326  1.00  0.00      XCER
+[ C2B ]
+ATOM     69  C5F XCER    1       4.193   2.355  -3.261  1.00  0.00      XCER
+ATOM     70  H5F XCER    1       4.646   3.369  -3.282  1.00  0.00      XCER
+ATOM     71  H5G XCER    1       3.096   2.273  -3.105  1.00  0.00      XCER
+ATOM     72  C6F XCER    1       4.659   1.759  -4.615  1.00  0.00      XCER
+ATOM     73  H6F XCER    1       4.463   0.672  -4.500  1.00  0.00      XCER
+ATOM     74  H6G XCER    1       5.755   1.854  -4.773  1.00  0.00      XCER
+ATOM     75  C7F XCER    1       3.971   2.299  -5.798  1.00  0.00      XCER
+ATOM     76  H7F XCER    1       3.980   3.406  -5.703  1.00  0.00      XCER
+ATOM     77  H7G XCER    1       2.912   1.984  -5.679  1.00  0.00      XCER
+ATOM     78  C8F XCER    1       4.417   1.935  -7.257  1.00  0.00      XCER
+ATOM     79  H8F XCER    1       4.744   0.874  -7.308  1.00  0.00      XCER
+ATOM     80  H8G XCER    1       5.265   2.593  -7.542  1.00  0.00      XCER
+[ C3B ]
+ATOM     81  C9F XCER    1       3.356   2.323  -8.364  1.00  0.00      XCER
+ATOM     82  H9F XCER    1       2.463   1.669  -8.268  1.00  0.00      XCER
+ATOM     83  H9G XCER    1       3.739   2.081  -9.379  1.00  0.00      XCER
+ATOM     84 C10F XCER    1       2.840   3.784  -8.382  1.00  0.00      XCER
+ATOM     85 H10F XCER    1       3.686   4.430  -8.702  1.00  0.00      XCER
+ATOM     86 H10G XCER    1       2.528   3.956  -7.330  1.00  0.00      XCER
+ATOM     87 C11F XCER    1       1.780   4.007  -9.420  1.00  0.00      XCER
+ATOM     88 H11F XCER    1       2.012   3.375 -10.304  1.00  0.00      XCER
+ATOM     89 H11G XCER    1       1.857   5.078  -9.705  1.00  0.00      XCER
+ATOM     90 C12F XCER    1       0.336   3.740  -8.907  1.00  0.00      XCER
+ATOM     91 H12F XCER    1       0.182   4.399  -8.026  1.00  0.00      XCER
+ATOM     92 H12G XCER    1       0.098   2.738  -8.491  1.00  0.00      XCER
+[ C4B ]
+ATOM     93 C13F XCER    1      -0.789   4.068  -9.994  1.00  0.00      XCER
+ATOM     94 H13F XCER    1      -0.546   5.057 -10.438  1.00  0.00      XCER
+ATOM     95 H13G XCER    1      -1.733   4.294  -9.453  1.00  0.00      XCER
+ATOM     96 C14F XCER    1      -0.916   2.974 -11.182  1.00  0.00      XCER
+ATOM     97 H14F XCER    1      -1.076   2.011 -10.651  1.00  0.00      XCER
+ATOM     98 H14G XCER    1       0.080   3.116 -11.653  1.00  0.00      XCER
+ATOM     99 C15F XCER    1      -2.037   3.385 -12.229  1.00  0.00      XCER
+ATOM    100 H15F XCER    1      -1.834   4.459 -12.432  1.00  0.00      XCER
+ATOM    101 H15G XCER    1      -3.053   3.207 -11.816  1.00  0.00      XCER
+ATOM    102 C16F XCER    1      -1.880   2.520 -13.544  1.00  0.00      XCER
+ATOM    103 H16F XCER    1      -2.449   1.567 -13.504  1.00  0.00      XCER
+ATOM    104 H16G XCER    1      -0.816   2.204 -13.600  1.00  0.00      XCER
+[ C5B ]
+ATOM    105 C17F XCER    1      -2.355   3.278 -14.790  1.00  0.00      XCER
+ATOM    106 H17F XCER    1      -1.916   4.294 -14.889  1.00  0.00      XCER
+ATOM    107 H17G XCER    1      -3.446   3.478 -14.730  1.00  0.00      XCER
+ATOM    108 C18F XCER    1      -2.033   2.465 -16.097  1.00  0.00      XCER
+ATOM    109 H18F XCER    1      -2.667   1.564 -15.951  1.00  0.00      XCER
+ATOM    110 H18G XCER    1      -0.965   2.173 -16.009  1.00  0.00      XCER
+ATOM    111 C19F XCER    1      -2.443   3.197 -17.393  1.00  0.00      XCER
+ATOM    112 H19F XCER    1      -1.732   4.016 -17.637  1.00  0.00      XCER
+ATOM    113 H19G XCER    1      -3.472   3.613 -17.337  1.00  0.00      XCER
+ATOM    114 C20F XCER    1      -2.448   2.262 -18.567  1.00  0.00      XCER
+ATOM    115 H20F XCER    1      -3.210   1.456 -18.507  1.00  0.00      XCER
+ATOM    116 H20G XCER    1      -1.412   1.866 -18.628  1.00  0.00      XCER
+[ C6B ]
+ATOM    117 C21F XCER    1      -2.639   3.051 -19.901  1.00  0.00      XCER
+ATOM    118 H21F XCER    1      -1.693   3.566 -20.176  1.00  0.00      XCER
+ATOM    119 H21G XCER    1      -3.393   3.824 -19.640  1.00  0.00      XCER
+ATOM    120 C22F XCER    1      -3.031   1.991 -20.984  1.00  0.00      XCER
+ATOM    121 H22F XCER    1      -3.752   1.242 -20.593  1.00  0.00      XCER
+ATOM    122 H22G XCER    1      -2.043   1.545 -21.230  1.00  0.00      XCER
+ATOM    123 C23F XCER    1      -3.675   2.480 -22.291  1.00  0.00      XCER
+ATOM    124 H23F XCER    1      -3.043   3.290 -22.713  1.00  0.00      XCER
+ATOM    125 H23G XCER    1      -4.712   2.863 -22.181  1.00  0.00      XCER
+ATOM    126 C24F XCER    1      -3.924   1.510 -23.393  1.00  0.00      XCER
+ATOM    127 H24F XCER    1      -3.023   1.416 -24.037  1.00  0.00      XCER
+ATOM    128 H24G XCER    1      -4.766   1.922 -23.990  1.00  0.00      XCER
+ATOM    129 H24H XCER    1      -4.193   0.518 -22.972  1.00  0.00      XCER
+END

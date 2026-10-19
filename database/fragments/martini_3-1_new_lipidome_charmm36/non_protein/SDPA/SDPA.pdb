@@ -1,0 +1,137 @@
+[ PO4 ]
+ATOM      1  P   SDPA    1      -0.009  -0.349   0.123  1.00  0.00      SDPA
+ATOM      2  O13 SDPA    1       0.974  -1.248  -0.539  1.00  0.00      SDPA
+ATOM      3  O14 SDPA    1       0.312   0.267   1.426  1.00  0.00      SDPA
+ATOM      4  O12 SDPA    1      -1.262  -1.253   0.491  1.00  0.00      SDPA
+ATOM      5  H12 SDPA    1      -1.080  -2.116   0.870  1.00  0.00      SDPA
+ATOM      6  O11 SDPA    1      -0.595   0.700  -0.882  1.00  0.00      SDPA
+[ GL1 ]
+ATOM      7  C1  SDPA    1      -0.553   2.108  -0.591  1.00  0.00      SDPA
+ATOM      8  HA  SDPA    1       0.226   2.365   0.159  1.00  0.00      SDPA
+ATOM      9  HB  SDPA    1      -1.522   2.519  -0.235  1.00  0.00      SDPA
+ATOM     10  C2  SDPA    1      -0.323   2.882  -1.905  1.00  0.00      SDPA
+ATOM     11  HS  SDPA    1      -0.813   3.869  -1.766  1.00  0.00      SDPA
+ATOM     12  O21 SDPA    1      -1.080   2.276  -2.941  1.00  0.00      SDPA
+ATOM     13  C21 SDPA    1      -2.434   2.171  -2.858  1.00  0.00      SDPA
+ATOM     14  O22 SDPA    1      -3.164   2.652  -2.039  1.00  0.00      SDPA
+[ GL2 ]
+ATOM     15  C3  SDPA    1       1.119   3.022  -2.433  1.00  0.00      SDPA
+ATOM     16  HX  SDPA    1       1.694   2.073  -2.382  1.00  0.00      SDPA
+ATOM     17  HY  SDPA    1       1.817   3.707  -1.907  1.00  0.00      SDPA
+ATOM     18  O31 SDPA    1       1.167   3.686  -3.778  1.00  0.00      SDPA
+ATOM     19  C31 SDPA    1       1.525   2.974  -4.819  1.00  0.00      SDPA
+ATOM     20  O32 SDPA    1       1.773   1.734  -4.787  1.00  0.00      SDPA
+[ D1A ]
+ATOM     21  C22 SDPA    1      -3.048   1.344  -4.023  1.00  0.00      SDPA
+ATOM     22  H2R SDPA    1      -2.922   1.901  -4.977  1.00  0.00      SDPA
+ATOM     23  H2S SDPA    1      -4.136   1.330  -3.800  1.00  0.00      SDPA
+ATOM     24  C23 SDPA    1      -2.484  -0.078  -4.005  1.00  0.00      SDPA
+ATOM     25  H3R SDPA    1      -2.714  -0.435  -2.979  1.00  0.00      SDPA
+ATOM     26  H3S SDPA    1      -1.386  -0.026  -4.164  1.00  0.00      SDPA
+ATOM     27  C24 SDPA    1      -3.283  -0.850  -5.036  1.00  0.00      SDPA
+ATOM     28  H4R SDPA    1      -4.356  -0.674  -5.201  1.00  0.00      SDPA
+ATOM     29  C25 SDPA    1      -2.797  -1.936  -5.773  1.00  0.00      SDPA
+ATOM     30  H5R SDPA    1      -3.572  -2.453  -6.358  1.00  0.00      SDPA
+ATOM     31  C26 SDPA    1      -1.450  -2.595  -5.706  1.00  0.00      SDPA
+ATOM     32  H6R SDPA    1      -1.051  -2.406  -4.687  1.00  0.00      SDPA
+ATOM     33  H6S SDPA    1      -0.722  -2.063  -6.355  1.00  0.00      SDPA
+[ D2A ]
+ATOM     34  C27 SDPA    1      -1.467  -4.070  -5.905  1.00  0.00      SDPA
+ATOM     35  H7R SDPA    1      -1.991  -4.536  -5.058  1.00  0.00      SDPA
+ATOM     36  C28 SDPA    1      -1.001  -4.850  -6.911  1.00  0.00      SDPA
+ATOM     37  H8R SDPA    1      -1.209  -5.929  -6.972  1.00  0.00      SDPA
+ATOM     38  C29 SDPA    1      -0.257  -4.326  -8.214  1.00  0.00      SDPA
+ATOM     39  H9R SDPA    1      -0.776  -3.374  -8.459  1.00  0.00      SDPA
+ATOM     40  H9S SDPA    1      -0.686  -4.988  -8.995  1.00  0.00      SDPA
+ATOM     41 C210 SDPA    1       1.211  -4.154  -8.058  1.00  0.00      SDPA
+ATOM     42 H10R SDPA    1       1.732  -4.113  -7.090  1.00  0.00      SDPA
+[ D3A ]
+ATOM     43 C211 SDPA    1       1.973  -3.734  -9.114  1.00  0.00      SDPA
+ATOM     44 H11R SDPA    1       3.069  -3.676  -9.034  1.00  0.00      SDPA
+ATOM     45 C212 SDPA    1       1.469  -3.429 -10.504  1.00  0.00      SDPA
+ATOM     46 H12R SDPA    1       0.962  -4.324 -10.925  1.00  0.00      SDPA
+ATOM     47 H12S SDPA    1       2.407  -3.609 -11.071  1.00  0.00      SDPA
+ATOM     48 C213 SDPA    1       0.757  -2.096 -10.806  1.00  0.00      SDPA
+ATOM     49 H13R SDPA    1      -0.341  -2.053 -10.742  1.00  0.00      SDPA
+ATOM     50 C214 SDPA    1       1.471  -0.993 -11.248  1.00  0.00      SDPA
+ATOM     51 H14R SDPA    1       0.986  -0.016 -11.390  1.00  0.00      SDPA
+[ D4A ]
+ATOM     52 C215 SDPA    1       2.962  -0.974 -11.482  1.00  0.00      SDPA
+ATOM     53 H15R SDPA    1       3.438  -1.959 -11.676  1.00  0.00      SDPA
+ATOM     54 H15S SDPA    1       3.540  -0.565 -10.625  1.00  0.00      SDPA
+ATOM     55 C216 SDPA    1       3.482  -0.134 -12.596  1.00  0.00      SDPA
+ATOM     56 H16R SDPA    1       3.445   0.944 -12.377  1.00  0.00      SDPA
+ATOM     57 C217 SDPA    1       4.060  -0.576 -13.749  1.00  0.00      SDPA
+ATOM     58 H17R SDPA    1       4.196   0.214 -14.502  1.00  0.00      SDPA
+ATOM     59 C218 SDPA    1       4.219  -2.068 -14.124  1.00  0.00      SDPA
+ATOM     60 H18R SDPA    1       4.468  -2.751 -13.284  1.00  0.00      SDPA
+ATOM     61 H18S SDPA    1       5.170  -2.097 -14.697  1.00  0.00      SDPA
+[ D5A ]
+ATOM     62 C219 SDPA    1       3.140  -2.621 -14.992  1.00  0.00      SDPA
+ATOM     63 H19R SDPA    1       2.420  -3.216 -14.411  1.00  0.00      SDPA
+ATOM     64 C220 SDPA    1       2.998  -2.436 -16.332  1.00  0.00      SDPA
+ATOM     65 H20R SDPA    1       2.188  -2.905 -16.911  1.00  0.00      SDPA
+ATOM     66 C221 SDPA    1       3.963  -1.649 -17.157  1.00  0.00      SDPA
+ATOM     67 H21R SDPA    1       4.305  -0.744 -16.609  1.00  0.00      SDPA
+ATOM     68 H21S SDPA    1       3.353  -1.165 -17.949  1.00  0.00      SDPA
+ATOM     69 C222 SDPA    1       5.006  -2.365 -17.960  1.00  0.00      SDPA
+ATOM     70 H22R SDPA    1       5.902  -2.618 -17.354  1.00  0.00      SDPA
+ATOM     71 H22S SDPA    1       5.275  -1.688 -18.799  1.00  0.00      SDPA
+ATOM     72 H22T SDPA    1       4.530  -3.293 -18.343  1.00  0.00      SDPA
+[ C1B ]
+ATOM     73  C32 SDPA    1       1.369   3.787  -6.054  1.00  0.00      SDPA
+ATOM     74  H2X SDPA    1       2.137   4.589  -6.021  1.00  0.00      SDPA
+ATOM     75  H2Y SDPA    1       0.437   4.387  -5.981  1.00  0.00      SDPA
+ATOM     76  C33 SDPA    1       1.521   3.106  -7.370  1.00  0.00      SDPA
+ATOM     77  H3X SDPA    1       0.677   2.388  -7.451  1.00  0.00      SDPA
+ATOM     78  H3Y SDPA    1       2.535   2.655  -7.422  1.00  0.00      SDPA
+ATOM     79  C34 SDPA    1       1.181   4.071  -8.524  1.00  0.00      SDPA
+ATOM     80  H4X SDPA    1       1.764   5.002  -8.357  1.00  0.00      SDPA
+ATOM     81  H4Y SDPA    1       0.122   4.368  -8.366  1.00  0.00      SDPA
+ATOM     82  C35 SDPA    1       1.217   3.565  -9.970  1.00  0.00      SDPA
+ATOM     83  H5X SDPA    1       0.906   2.499  -9.988  1.00  0.00      SDPA
+ATOM     84  H5Y SDPA    1       2.280   3.607 -10.291  1.00  0.00      SDPA
+ATOM     85  C36 SDPA    1       0.294   4.379 -10.866  1.00  0.00      SDPA
+ATOM     86  H6X SDPA    1       0.679   4.110 -11.873  1.00  0.00      SDPA
+ATOM     87  H6Y SDPA    1       0.560   5.443 -10.686  1.00  0.00      SDPA
+[ C2B ]
+ATOM     88  C37 SDPA    1      -1.247   4.204 -10.654  1.00  0.00      SDPA
+ATOM     89  H7X SDPA    1      -1.674   4.911 -11.397  1.00  0.00      SDPA
+ATOM     90  H7Y SDPA    1      -1.599   4.622  -9.687  1.00  0.00      SDPA
+ATOM     91  C38 SDPA    1      -1.829   2.837 -11.013  1.00  0.00      SDPA
+ATOM     92  H8X SDPA    1      -2.928   2.709 -11.119  1.00  0.00      SDPA
+ATOM     93  H8Y SDPA    1      -1.476   2.068 -10.293  1.00  0.00      SDPA
+ATOM     94  C39 SDPA    1      -1.246   2.223 -12.308  1.00  0.00      SDPA
+ATOM     95  H9X SDPA    1      -0.137   2.285 -12.292  1.00  0.00      SDPA
+ATOM     96  H9Y SDPA    1      -1.504   2.877 -13.169  1.00  0.00      SDPA
+ATOM     97 C310 SDPA    1      -1.682   0.794 -12.682  1.00  0.00      SDPA
+ATOM     98 H10X SDPA    1      -2.793   0.804 -12.683  1.00  0.00      SDPA
+ATOM     99 H10Y SDPA    1      -1.501  -0.002 -11.928  1.00  0.00      SDPA
+[ C3B ]
+ATOM    100 C311 SDPA    1      -1.163   0.284 -14.041  1.00  0.00      SDPA
+ATOM    101 H11X SDPA    1      -1.796  -0.539 -14.436  1.00  0.00      SDPA
+ATOM    102 H11Y SDPA    1      -0.186  -0.233 -13.926  1.00  0.00      SDPA
+ATOM    103 C312 SDPA    1      -0.976   1.363 -15.117  1.00  0.00      SDPA
+ATOM    104 H12X SDPA    1      -0.103   1.949 -14.760  1.00  0.00      SDPA
+ATOM    105 H12Y SDPA    1      -1.845   2.053 -15.179  1.00  0.00      SDPA
+ATOM    106 C313 SDPA    1      -0.712   0.922 -16.484  1.00  0.00      SDPA
+ATOM    107 H13X SDPA    1       0.057   0.130 -16.610  1.00  0.00      SDPA
+ATOM    108 H13Y SDPA    1      -0.373   1.771 -17.117  1.00  0.00      SDPA
+ATOM    109 C314 SDPA    1      -2.022   0.408 -17.162  1.00  0.00      SDPA
+ATOM    110 H14X SDPA    1      -2.694   1.272 -17.352  1.00  0.00      SDPA
+ATOM    111 H14Y SDPA    1      -2.651  -0.394 -16.720  1.00  0.00      SDPA
+[ C4B ]
+ATOM    112 C315 SDPA    1      -1.716  -0.034 -18.594  1.00  0.00      SDPA
+ATOM    113 H15X SDPA    1      -1.012   0.715 -19.015  1.00  0.00      SDPA
+ATOM    114 H15Y SDPA    1      -2.621   0.001 -19.239  1.00  0.00      SDPA
+ATOM    115 C316 SDPA    1      -1.198  -1.463 -18.492  1.00  0.00      SDPA
+ATOM    116 H16X SDPA    1      -1.992  -2.043 -17.974  1.00  0.00      SDPA
+ATOM    117 H16Y SDPA    1      -0.319  -1.580 -17.822  1.00  0.00      SDPA
+ATOM    118 C317 SDPA    1      -1.010  -2.059 -19.906  1.00  0.00      SDPA
+ATOM    119 H17X SDPA    1      -0.160  -1.536 -20.395  1.00  0.00      SDPA
+ATOM    120 H17Y SDPA    1      -1.957  -1.946 -20.477  1.00  0.00      SDPA
+ATOM    121 C318 SDPA    1      -0.752  -3.588 -19.949  1.00  0.00      SDPA
+ATOM    122 H18X SDPA    1      -1.611  -4.104 -19.471  1.00  0.00      SDPA
+ATOM    123 H18Y SDPA    1       0.157  -3.918 -19.401  1.00  0.00      SDPA
+ATOM    124 H18Z SDPA    1      -0.641  -3.885 -21.014  1.00  0.00      SDPA
+END

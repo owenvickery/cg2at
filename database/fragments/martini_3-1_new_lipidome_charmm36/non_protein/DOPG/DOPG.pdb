@@ -1,0 +1,144 @@
+[ GL0 ]
+ATOM      1  C13 DOPG    1      -2.951   0.983   0.532  1.00  0.00      DOPG
+ATOM      2 H13A DOPG    1      -2.785   1.572  -0.396  1.00  0.00      DOPG
+ATOM      3 H13B DOPG    1      -4.034   0.997   0.778  1.00  0.00      DOPG
+ATOM      4  OC3 DOPG    1      -2.167   1.565   1.575  1.00  0.00      DOPG
+ATOM      5  HO3 DOPG    1      -1.262   1.373   1.319  1.00  0.00      DOPG
+ATOM      6  C12 DOPG    1      -2.700  -0.519   0.267  1.00  0.00      DOPG
+ATOM      7 H12A DOPG    1      -3.499  -0.914  -0.400  1.00  0.00      DOPG
+ATOM      8  OC2 DOPG    1      -2.775  -1.197   1.520  1.00  0.00      DOPG
+ATOM      9  HO2 DOPG    1      -3.500  -0.713   1.939  1.00  0.00      DOPG
+ATOM     10  C11 DOPG    1      -1.367  -0.742  -0.381  1.00  0.00      DOPG
+ATOM     11 H11A DOPG    1      -1.359   0.014  -1.196  1.00  0.00      DOPG
+ATOM     12 H11B DOPG    1      -1.348  -1.787  -0.759  1.00  0.00      DOPG
+[ PO4 ]
+ATOM     13  P   DOPG    1       1.232  -0.263  -0.020  1.00  0.00      DOPG
+ATOM     14  O13 DOPG    1       1.831  -1.546  -0.356  1.00  0.00      DOPG
+ATOM     15  O14 DOPG    1       1.803   0.627   0.963  1.00  0.00      DOPG
+ATOM     16  O12 DOPG    1      -0.254  -0.460   0.506  1.00  0.00      DOPG
+ATOM     17  O11 DOPG    1       1.051   0.572  -1.274  1.00  0.00      DOPG
+[ GL1 ]
+ATOM     18  C1  DOPG    1       0.730   1.979  -1.313  1.00  0.00      DOPG
+ATOM     19  HA  DOPG    1       1.327   2.461  -0.510  1.00  0.00      DOPG
+ATOM     20  HB  DOPG    1      -0.324   2.101  -0.982  1.00  0.00      DOPG
+ATOM     21  C2  DOPG    1       0.936   2.617  -2.709  1.00  0.00      DOPG
+ATOM     22  HS  DOPG    1       0.681   3.683  -2.522  1.00  0.00      DOPG
+ATOM     23  O21 DOPG    1       0.118   1.981  -3.643  1.00  0.00      DOPG
+ATOM     24  C21 DOPG    1      -1.131   2.202  -3.651  1.00  0.00      DOPG
+ATOM     25  O22 DOPG    1      -1.785   2.801  -2.792  1.00  0.00      DOPG
+[ GL2 ]
+ATOM     26  C3  DOPG    1       2.474   2.501  -3.136  1.00  0.00      DOPG
+ATOM     27  HX  DOPG    1       2.789   1.458  -2.920  1.00  0.00      DOPG
+ATOM     28  HY  DOPG    1       3.051   3.138  -2.431  1.00  0.00      DOPG
+ATOM     29  O31 DOPG    1       2.671   2.981  -4.500  1.00  0.00      DOPG
+ATOM     30  C31 DOPG    1       2.717   2.040  -5.411  1.00  0.00      DOPG
+ATOM     31  O32 DOPG    1       2.500   0.831  -5.252  1.00  0.00      DOPG
+[ C1A ]
+ATOM     32  C22 DOPG    1      -1.611   1.654  -5.026  1.00  0.00      DOPG
+ATOM     33  H2R DOPG    1      -1.090   2.215  -5.831  1.00  0.00      DOPG
+ATOM     34  H2S DOPG    1      -2.692   1.883  -5.140  1.00  0.00      DOPG
+ATOM     35  C23 DOPG    1      -1.401   0.111  -5.248  1.00  0.00      DOPG
+ATOM     36  H3R DOPG    1      -2.051  -0.420  -4.520  1.00  0.00      DOPG
+ATOM     37  H3S DOPG    1      -0.388  -0.108  -4.848  1.00  0.00      DOPG
+ATOM     38  C24 DOPG    1      -1.476  -0.422  -6.712  1.00  0.00      DOPG
+ATOM     39  H4R DOPG    1      -1.098  -1.465  -6.655  1.00  0.00      DOPG
+ATOM     40  H4S DOPG    1      -0.666   0.124  -7.241  1.00  0.00      DOPG
+ATOM     41  C25 DOPG    1      -2.755  -0.384  -7.566  1.00  0.00      DOPG
+ATOM     42  H5R DOPG    1      -3.557  -0.803  -6.922  1.00  0.00      DOPG
+ATOM     43  H5S DOPG    1      -2.502  -1.113  -8.365  1.00  0.00      DOPG
+ATOM     44  C26 DOPG    1      -3.146   0.991  -8.162  1.00  0.00      DOPG
+ATOM     45  H6R DOPG    1      -2.243   1.624  -8.292  1.00  0.00      DOPG
+ATOM     46  H6S DOPG    1      -3.780   1.597  -7.479  1.00  0.00      DOPG
+[ D2A ]
+ATOM     47  C27 DOPG    1      -4.012   0.890  -9.495  1.00  0.00      DOPG
+ATOM     48  H7R DOPG    1      -5.022   0.458  -9.330  1.00  0.00      DOPG
+ATOM     49  H7S DOPG    1      -3.416   0.199 -10.129  1.00  0.00      DOPG
+ATOM     50  C28 DOPG    1      -4.218   2.320 -10.139  1.00  0.00      DOPG
+ATOM     51  H8R DOPG    1      -4.725   3.019  -9.440  1.00  0.00      DOPG
+ATOM     52  H8S DOPG    1      -4.886   2.086 -10.996  1.00  0.00      DOPG
+ATOM     53  C29 DOPG    1      -2.873   2.931 -10.605  1.00  0.00      DOPG
+ATOM     54  H9R DOPG    1      -2.114   2.955  -9.809  1.00  0.00      DOPG
+ATOM     55 C210 DOPG    1      -2.547   3.408 -11.830  1.00  0.00      DOPG
+ATOM     56 H10R DOPG    1      -1.576   3.925 -11.826  1.00  0.00      DOPG
+[ C3A ]
+ATOM     57 C211 DOPG    1      -3.453   3.503 -13.020  1.00  0.00      DOPG
+ATOM     58 H11R DOPG    1      -3.761   4.566 -13.124  1.00  0.00      DOPG
+ATOM     59 H11S DOPG    1      -4.433   2.988 -12.930  1.00  0.00      DOPG
+ATOM     60 C212 DOPG    1      -2.658   3.039 -14.269  1.00  0.00      DOPG
+ATOM     61 H12R DOPG    1      -1.884   3.771 -14.584  1.00  0.00      DOPG
+ATOM     62 H12S DOPG    1      -3.402   3.122 -15.090  1.00  0.00      DOPG
+ATOM     63 C213 DOPG    1      -2.248   1.565 -14.229  1.00  0.00      DOPG
+ATOM     64 H13R DOPG    1      -3.115   1.044 -13.769  1.00  0.00      DOPG
+ATOM     65 H13S DOPG    1      -1.422   1.382 -13.509  1.00  0.00      DOPG
+ATOM     66 C214 DOPG    1      -1.942   0.803 -15.520  1.00  0.00      DOPG
+ATOM     67 H14R DOPG    1      -1.553   1.550 -16.245  1.00  0.00      DOPG
+ATOM     68 H14S DOPG    1      -2.932   0.693 -16.013  1.00  0.00      DOPG
+[ C4A ]
+ATOM     69 C215 DOPG    1      -1.218  -0.577 -15.247  1.00  0.00      DOPG
+ATOM     70 H15R DOPG    1      -1.936  -1.023 -14.525  1.00  0.00      DOPG
+ATOM     71 H15S DOPG    1      -0.213  -0.412 -14.803  1.00  0.00      DOPG
+ATOM     72 C216 DOPG    1      -1.095  -1.548 -16.441  1.00  0.00      DOPG
+ATOM     73 H16R DOPG    1      -0.908  -2.580 -16.074  1.00  0.00      DOPG
+ATOM     74 H16S DOPG    1      -0.156  -1.281 -16.972  1.00  0.00      DOPG
+ATOM     75 C217 DOPG    1      -2.299  -1.374 -17.395  1.00  0.00      DOPG
+ATOM     76 H17R DOPG    1      -2.632  -0.351 -17.672  1.00  0.00      DOPG
+ATOM     77 H17S DOPG    1      -3.163  -1.753 -16.807  1.00  0.00      DOPG
+ATOM     78 C218 DOPG    1      -2.195  -2.192 -18.649  1.00  0.00      DOPG
+ATOM     79 H18R DOPG    1      -1.393  -1.832 -19.329  1.00  0.00      DOPG
+ATOM     80 H18S DOPG    1      -3.080  -1.995 -19.292  1.00  0.00      DOPG
+ATOM     81 H18T DOPG    1      -1.975  -3.274 -18.524  1.00  0.00      DOPG
+[ C1B ]
+ATOM     82  C32 DOPG    1       3.172   2.629  -6.740  1.00  0.00      DOPG
+ATOM     83  H2X DOPG    1       2.602   3.562  -6.937  1.00  0.00      DOPG
+ATOM     84  H2Y DOPG    1       4.157   3.126  -6.610  1.00  0.00      DOPG
+ATOM     85  C33 DOPG    1       3.302   1.606  -7.809  1.00  0.00      DOPG
+ATOM     86  H3X DOPG    1       3.763   0.641  -7.508  1.00  0.00      DOPG
+ATOM     87  H3Y DOPG    1       3.979   2.171  -8.485  1.00  0.00      DOPG
+ATOM     88  C34 DOPG    1       1.894   1.347  -8.540  1.00  0.00      DOPG
+ATOM     89  H4X DOPG    1       1.380   0.735  -7.768  1.00  0.00      DOPG
+ATOM     90  H4Y DOPG    1       1.272   2.237  -8.775  1.00  0.00      DOPG
+ATOM     91  C35 DOPG    1       1.942   0.664  -9.908  1.00  0.00      DOPG
+ATOM     92  H5X DOPG    1       2.635  -0.188  -9.744  1.00  0.00      DOPG
+ATOM     93  H5Y DOPG    1       2.452   1.290 -10.671  1.00  0.00      DOPG
+ATOM     94  C36 DOPG    1       0.602   0.207 -10.532  1.00  0.00      DOPG
+ATOM     95  H6X DOPG    1       0.224  -0.644  -9.926  1.00  0.00      DOPG
+ATOM     96  H6Y DOPG    1      -0.062   1.096 -10.492  1.00  0.00      DOPG
+[ D2B ]
+ATOM     97  C37 DOPG    1       0.745  -0.220 -11.973  1.00  0.00      DOPG
+ATOM     98  H7X DOPG    1      -0.273  -0.595 -12.210  1.00  0.00      DOPG
+ATOM     99  H7Y DOPG    1       0.968   0.669 -12.602  1.00  0.00      DOPG
+ATOM    100  C38 DOPG    1       1.896  -1.282 -12.120  1.00  0.00      DOPG
+ATOM    101  H8X DOPG    1       2.885  -0.805 -11.954  1.00  0.00      DOPG
+ATOM    102  H8Y DOPG    1       1.792  -2.084 -11.358  1.00  0.00      DOPG
+ATOM    103  C39 DOPG    1       1.756  -1.968 -13.474  1.00  0.00      DOPG
+ATOM    104  H9X DOPG    1       0.890  -2.647 -13.466  1.00  0.00      DOPG
+ATOM    105 C310 DOPG    1       2.534  -1.751 -14.525  1.00  0.00      DOPG
+ATOM    106 H10X DOPG    1       2.376  -2.487 -15.328  1.00  0.00      DOPG
+[ C3B ]
+ATOM    107 C311 DOPG    1       3.665  -0.752 -14.606  1.00  0.00      DOPG
+ATOM    108 H11X DOPG    1       3.806  -0.176 -13.668  1.00  0.00      DOPG
+ATOM    109 H11Y DOPG    1       4.615  -1.225 -14.937  1.00  0.00      DOPG
+ATOM    110 C312 DOPG    1       3.319   0.181 -15.809  1.00  0.00      DOPG
+ATOM    111 H12X DOPG    1       3.391  -0.380 -16.765  1.00  0.00      DOPG
+ATOM    112 H12Y DOPG    1       2.278   0.565 -15.755  1.00  0.00      DOPG
+ATOM    113 C313 DOPG    1       4.270   1.382 -15.933  1.00  0.00      DOPG
+ATOM    114 H13X DOPG    1       3.949   2.195 -15.247  1.00  0.00      DOPG
+ATOM    115 H13Y DOPG    1       5.212   0.989 -15.495  1.00  0.00      DOPG
+ATOM    116 C314 DOPG    1       4.330   2.005 -17.320  1.00  0.00      DOPG
+ATOM    117 H14X DOPG    1       4.941   2.933 -17.292  1.00  0.00      DOPG
+ATOM    118 H14Y DOPG    1       4.963   1.253 -17.837  1.00  0.00      DOPG
+[ C4B ]
+ATOM    119 C315 DOPG    1       3.083   2.174 -18.155  1.00  0.00      DOPG
+ATOM    120 H15X DOPG    1       2.490   1.246 -18.301  1.00  0.00      DOPG
+ATOM    121 H15Y DOPG    1       3.439   2.517 -19.151  1.00  0.00      DOPG
+ATOM    122 C316 DOPG    1       2.090   3.269 -17.734  1.00  0.00      DOPG
+ATOM    123 H16X DOPG    1       1.741   2.983 -16.719  1.00  0.00      DOPG
+ATOM    124 H16Y DOPG    1       2.624   4.244 -17.741  1.00  0.00      DOPG
+ATOM    125 C317 DOPG    1       0.821   3.340 -18.675  1.00  0.00      DOPG
+ATOM    126 H17X DOPG    1       0.497   2.279 -18.609  1.00  0.00      DOPG
+ATOM    127 H17Y DOPG    1       1.150   3.527 -19.720  1.00  0.00      DOPG
+ATOM    128 C318 DOPG    1      -0.198   4.384 -18.252  1.00  0.00      DOPG
+ATOM    129 H18X DOPG    1      -1.099   4.366 -18.902  1.00  0.00      DOPG
+ATOM    130 H18Y DOPG    1      -0.441   4.067 -17.215  1.00  0.00      DOPG
+ATOM    131 H18Z DOPG    1       0.295   5.379 -18.240  1.00  0.00      DOPG
+END

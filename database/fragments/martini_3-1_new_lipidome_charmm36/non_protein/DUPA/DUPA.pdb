@@ -1,0 +1,98 @@
+[ PO4 ]
+ATOM      1  P   DUPA    1      -0.134   0.203   0.216  1.00  0.00      DUPA
+ATOM      2  O13 DUPA    1       1.016  -0.228   1.034  1.00  0.00      DUPA
+ATOM      3  O14 DUPA    1      -0.767   1.543   0.362  1.00  0.00      DUPA
+ATOM      4  O12 DUPA    1      -1.346  -0.843   0.493  1.00  0.00      DUPA
+ATOM      5  H12 DUPA    1      -2.178  -0.549   0.871  1.00  0.00      DUPA
+ATOM      6  O11 DUPA    1       0.185  -0.025  -1.340  1.00  0.00      DUPA
+[ GL1 ]
+ATOM      7  C1  DUPA    1       0.352  -1.378  -1.815  1.00  0.00      DUPA
+ATOM      8  HA  DUPA    1      -0.667  -1.722  -2.094  1.00  0.00      DUPA
+ATOM      9  HB  DUPA    1       0.761  -2.062  -1.040  1.00  0.00      DUPA
+ATOM     10  C2  DUPA    1       1.329  -1.464  -2.991  1.00  0.00      DUPA
+ATOM     11  HS  DUPA    1       2.368  -1.357  -2.613  1.00  0.00      DUPA
+ATOM     12  O21 DUPA    1       1.049  -0.413  -4.019  1.00  0.00      DUPA
+ATOM     13  C21 DUPA    1       1.955  -0.081  -4.755  1.00  0.00      DUPA
+ATOM     14  O22 DUPA    1       3.110  -0.466  -4.820  1.00  0.00      DUPA
+[ GL2 ]
+ATOM     15  C3  DUPA    1       1.317  -2.932  -3.629  1.00  0.00      DUPA
+ATOM     16  HX  DUPA    1       1.112  -3.585  -2.754  1.00  0.00      DUPA
+ATOM     17  HY  DUPA    1       2.274  -3.213  -4.118  1.00  0.00      DUPA
+ATOM     18  O31 DUPA    1       0.200  -3.005  -4.475  1.00  0.00      DUPA
+ATOM     19  C31 DUPA    1       0.499  -3.096  -5.789  1.00  0.00      DUPA
+ATOM     20  O32 DUPA    1       1.552  -3.437  -6.280  1.00  0.00      DUPA
+[ C1A ]
+ATOM     21  C22 DUPA    1       1.349   0.846  -5.863  1.00  0.00      DUPA
+ATOM     22  H2R DUPA    1       1.708   1.859  -5.578  1.00  0.00      DUPA
+ATOM     23  H2S DUPA    1       0.248   0.977  -5.794  1.00  0.00      DUPA
+ATOM     24  C23 DUPA    1       1.791   0.445  -7.249  1.00  0.00      DUPA
+ATOM     25  H3R DUPA    1       1.737  -0.659  -7.356  1.00  0.00      DUPA
+ATOM     26  H3S DUPA    1       2.838   0.791  -7.390  1.00  0.00      DUPA
+ATOM     27  C24 DUPA    1       0.851   1.185  -8.335  1.00  0.00      DUPA
+ATOM     28  H4R DUPA    1       0.624   2.219  -7.998  1.00  0.00      DUPA
+ATOM     29  H4S DUPA    1      -0.102   0.634  -8.485  1.00  0.00      DUPA
+[ C2A ]
+ATOM     30  C25 DUPA    1       1.577   1.233  -9.662  1.00  0.00      DUPA
+ATOM     31  H5R DUPA    1       2.460   1.785  -9.275  1.00  0.00      DUPA
+ATOM     32  H5S DUPA    1       0.929   1.791 -10.372  1.00  0.00      DUPA
+ATOM     33  C26 DUPA    1       1.907  -0.076 -10.283  1.00  0.00      DUPA
+ATOM     34  H6R DUPA    1       1.082  -0.364 -10.970  1.00  0.00      DUPA
+ATOM     35  H6S DUPA    1       1.995  -0.811  -9.455  1.00  0.00      DUPA
+ATOM     36  C27 DUPA    1       3.246   0.112 -11.074  1.00  0.00      DUPA
+ATOM     37  H7R DUPA    1       3.596  -0.933 -11.216  1.00  0.00      DUPA
+ATOM     38  H7S DUPA    1       3.963   0.611 -10.388  1.00  0.00      DUPA
+ATOM     39  C28 DUPA    1       3.124   0.950 -12.326  1.00  0.00      DUPA
+ATOM     40  H8R DUPA    1       4.179   0.912 -12.671  1.00  0.00      DUPA
+ATOM     41  H8S DUPA    1       3.036   2.044 -12.152  1.00  0.00      DUPA
+[ C3A ]
+ATOM     42  C29 DUPA    1       2.134   0.364 -13.362  1.00  0.00      DUPA
+ATOM     43  H9R DUPA    1       1.967   0.901 -14.321  1.00  0.00      DUPA
+ATOM     44  H9S DUPA    1       1.133   0.246 -12.895  1.00  0.00      DUPA
+ATOM     45 C210 DUPA    1       2.454  -1.000 -13.872  1.00  0.00      DUPA
+ATOM     46 H10R DUPA    1       3.498  -1.017 -14.253  1.00  0.00      DUPA
+ATOM     47 H10S DUPA    1       2.384  -1.788 -13.092  1.00  0.00      DUPA
+ATOM     48 C211 DUPA    1       1.493  -1.308 -15.099  1.00  0.00      DUPA
+ATOM     49 H11R DUPA    1       1.920  -0.641 -15.878  1.00  0.00      DUPA
+ATOM     50 H11S DUPA    1       0.467  -1.061 -14.749  1.00  0.00      DUPA
+ATOM     51 C212 DUPA    1       1.496  -2.702 -15.641  1.00  0.00      DUPA
+ATOM     52 H12R DUPA    1       0.596  -2.692 -16.293  1.00  0.00      DUPA
+ATOM     53 H12S DUPA    1       1.313  -3.468 -14.858  1.00  0.00      DUPA
+ATOM     54 H12T DUPA    1       2.416  -2.964 -16.206  1.00  0.00      DUPA
+[ C1B ]
+ATOM     55  C32 DUPA    1      -0.714  -2.581  -6.590  1.00  0.00      DUPA
+ATOM     56  H2X DUPA    1      -0.838  -1.478  -6.555  1.00  0.00      DUPA
+ATOM     57  H2Y DUPA    1      -1.717  -2.944  -6.276  1.00  0.00      DUPA
+ATOM     58  C33 DUPA    1      -0.511  -2.914  -8.065  1.00  0.00      DUPA
+ATOM     59  H3X DUPA    1      -0.543  -4.013  -8.223  1.00  0.00      DUPA
+ATOM     60  H3Y DUPA    1       0.522  -2.660  -8.387  1.00  0.00      DUPA
+ATOM     61  C34 DUPA    1      -1.599  -2.277  -8.946  1.00  0.00      DUPA
+ATOM     62  H4X DUPA    1      -1.572  -1.167  -8.912  1.00  0.00      DUPA
+ATOM     63  H4Y DUPA    1      -2.578  -2.643  -8.571  1.00  0.00      DUPA
+[ C2B ]
+ATOM     64  C35 DUPA    1      -1.286  -2.611 -10.423  1.00  0.00      DUPA
+ATOM     65  H5X DUPA    1      -1.178  -3.710 -10.542  1.00  0.00      DUPA
+ATOM     66  H5Y DUPA    1      -0.359  -2.036 -10.635  1.00  0.00      DUPA
+ATOM     67  C36 DUPA    1      -2.347  -2.068 -11.360  1.00  0.00      DUPA
+ATOM     68  H6X DUPA    1      -2.827  -1.140 -10.983  1.00  0.00      DUPA
+ATOM     69  H6Y DUPA    1      -3.168  -2.798 -11.195  1.00  0.00      DUPA
+ATOM     70  C37 DUPA    1      -1.821  -1.968 -12.861  1.00  0.00      DUPA
+ATOM     71  H7X DUPA    1      -1.655  -3.045 -13.079  1.00  0.00      DUPA
+ATOM     72  H7Y DUPA    1      -0.881  -1.387 -12.978  1.00  0.00      DUPA
+ATOM     73  C38 DUPA    1      -2.888  -1.380 -13.788  1.00  0.00      DUPA
+ATOM     74  H8X DUPA    1      -3.850  -1.923 -13.672  1.00  0.00      DUPA
+ATOM     75  H8Y DUPA    1      -2.658  -1.608 -14.851  1.00  0.00      DUPA
+[ C3B ]
+ATOM     76  C39 DUPA    1      -3.208   0.085 -13.760  1.00  0.00      DUPA
+ATOM     77  H9X DUPA    1      -3.574   0.463 -12.782  1.00  0.00      DUPA
+ATOM     78  H9Y DUPA    1      -3.886   0.255 -14.624  1.00  0.00      DUPA
+ATOM     79 C310 DUPA    1      -1.909   0.880 -14.172  1.00  0.00      DUPA
+ATOM     80 H10X DUPA    1      -1.429   0.330 -15.009  1.00  0.00      DUPA
+ATOM     81 H10Y DUPA    1      -1.152   0.727 -13.373  1.00  0.00      DUPA
+ATOM     82 C311 DUPA    1      -2.213   2.280 -14.666  1.00  0.00      DUPA
+ATOM     83 H11X DUPA    1      -2.966   2.774 -14.015  1.00  0.00      DUPA
+ATOM     84 H11Y DUPA    1      -2.782   2.131 -15.609  1.00  0.00      DUPA
+ATOM     85 C312 DUPA    1      -0.983   3.135 -14.997  1.00  0.00      DUPA
+ATOM     86 H12X DUPA    1      -0.446   2.663 -15.847  1.00  0.00      DUPA
+ATOM     87 H12Y DUPA    1      -0.279   3.256 -14.147  1.00  0.00      DUPA
+ATOM     88 H12Z DUPA    1      -1.376   4.099 -15.385  1.00  0.00      DUPA
+END

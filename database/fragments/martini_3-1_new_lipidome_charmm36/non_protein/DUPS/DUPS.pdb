@@ -1,0 +1,110 @@
+[ CNO ]
+ATOM      1  N   DUPS    1      -1.498   1.885   2.299  1.00  0.00      DUPS
+ATOM      2  HN1 DUPS    1      -2.496   2.027   2.556  1.00  0.00      DUPS
+ATOM      3  HN2 DUPS    1      -0.873   1.516   3.043  1.00  0.00      DUPS
+ATOM      4  HN3 DUPS    1      -1.252   2.811   1.895  1.00  0.00      DUPS
+ATOM      5  C12 DUPS    1      -1.380   0.980   1.187  1.00  0.00      DUPS
+ATOM      6 H12A DUPS    1      -1.850   0.039   1.434  1.00  0.00      DUPS
+ATOM      7  C13 DUPS    1      -2.056   1.438  -0.185  1.00  0.00      DUPS
+ATOM      8 O13A DUPS    1      -2.712   2.503  -0.180  1.00  0.00      DUPS
+ATOM      9 O13B DUPS    1      -2.056   0.699  -1.154  1.00  0.00      DUPS
+ATOM     10  C11 DUPS    1       0.221   0.755   0.955  1.00  0.00      DUPS
+ATOM     11 H11A DUPS    1       0.715   0.365   1.871  1.00  0.00      DUPS
+ATOM     12 H11B DUPS    1       0.699   1.702   0.627  1.00  0.00      DUPS
+[ PO4 ]
+ATOM     13  P   DUPS    1       1.735  -0.827  -0.555  1.00  0.00      DUPS
+ATOM     14  O13 DUPS    1       1.588  -1.789  -1.681  1.00  0.00      DUPS
+ATOM     15  O14 DUPS    1       2.411  -1.350   0.709  1.00  0.00      DUPS
+ATOM     16  O12 DUPS    1       0.341  -0.268  -0.038  1.00  0.00      DUPS
+ATOM     17  O11 DUPS    1       2.536   0.367  -1.160  1.00  0.00      DUPS
+[ GL1 ]
+ATOM     18  C1  DUPS    1       1.937   1.274  -2.048  1.00  0.00      DUPS
+ATOM     19  HA  DUPS    1       2.517   2.221  -2.089  1.00  0.00      DUPS
+ATOM     20  HB  DUPS    1       0.912   1.554  -1.722  1.00  0.00      DUPS
+ATOM     21  C2  DUPS    1       1.724   0.738  -3.520  1.00  0.00      DUPS
+ATOM     22  HS  DUPS    1       1.088  -0.171  -3.471  1.00  0.00      DUPS
+ATOM     23  O21 DUPS    1       3.045   0.532  -4.060  1.00  0.00      DUPS
+ATOM     24  C21 DUPS    1       2.991  -0.355  -5.085  1.00  0.00      DUPS
+ATOM     25  O22 DUPS    1       2.041  -0.911  -5.561  1.00  0.00      DUPS
+[ GL2 ]
+ATOM     26  C3  DUPS    1       0.985   1.680  -4.392  1.00  0.00      DUPS
+ATOM     27  HX  DUPS    1      -0.047   1.991  -4.121  1.00  0.00      DUPS
+ATOM     28  HY  DUPS    1       0.884   1.169  -5.373  1.00  0.00      DUPS
+ATOM     29  O31 DUPS    1       1.734   2.872  -4.434  1.00  0.00      DUPS
+ATOM     30  C31 DUPS    1       1.457   3.906  -5.148  1.00  0.00      DUPS
+ATOM     31  O32 DUPS    1       2.191   4.896  -5.235  1.00  0.00      DUPS
+[ C1A ]
+ATOM     32  C22 DUPS    1       4.428  -0.388  -5.657  1.00  0.00      DUPS
+ATOM     33  H2R DUPS    1       4.933  -1.308  -5.292  1.00  0.00      DUPS
+ATOM     34  H2S DUPS    1       5.095   0.389  -5.227  1.00  0.00      DUPS
+ATOM     35  C23 DUPS    1       4.491  -0.313  -7.175  1.00  0.00      DUPS
+ATOM     36  H3R DUPS    1       3.886  -1.155  -7.574  1.00  0.00      DUPS
+ATOM     37  H3S DUPS    1       5.543  -0.446  -7.507  1.00  0.00      DUPS
+ATOM     38  C24 DUPS    1       4.068   0.998  -7.937  1.00  0.00      DUPS
+ATOM     39  H4R DUPS    1       4.655   1.855  -7.543  1.00  0.00      DUPS
+ATOM     40  H4S DUPS    1       3.014   1.079  -7.597  1.00  0.00      DUPS
+[ C2A ]
+ATOM     41  C25 DUPS    1       3.992   1.006  -9.463  1.00  0.00      DUPS
+ATOM     42  H5R DUPS    1       5.014   0.955  -9.896  1.00  0.00      DUPS
+ATOM     43  H5S DUPS    1       3.580   2.009  -9.706  1.00  0.00      DUPS
+ATOM     44  C26 DUPS    1       3.150  -0.071 -10.177  1.00  0.00      DUPS
+ATOM     45  H6R DUPS    1       2.130  -0.122  -9.741  1.00  0.00      DUPS
+ATOM     46  H6S DUPS    1       3.726  -0.999  -9.973  1.00  0.00      DUPS
+ATOM     47  C27 DUPS    1       2.969   0.135 -11.700  1.00  0.00      DUPS
+ATOM     48  H7R DUPS    1       3.993   0.135 -12.132  1.00  0.00      DUPS
+ATOM     49  H7S DUPS    1       2.400   1.082 -11.819  1.00  0.00      DUPS
+ATOM     50  C28 DUPS    1       2.056  -0.992 -12.310  1.00  0.00      DUPS
+ATOM     51  H8R DUPS    1       1.865  -0.933 -13.403  1.00  0.00      DUPS
+ATOM     52  H8S DUPS    1       1.048  -0.807 -11.881  1.00  0.00      DUPS
+[ C3A ]
+ATOM     53  C29 DUPS    1       2.564  -2.411 -12.076  1.00  0.00      DUPS
+ATOM     54  H9R DUPS    1       2.044  -2.645 -11.123  1.00  0.00      DUPS
+ATOM     55  H9S DUPS    1       3.667  -2.428 -11.944  1.00  0.00      DUPS
+ATOM     56 C210 DUPS    1       2.332  -3.286 -13.274  1.00  0.00      DUPS
+ATOM     57 H10R DUPS    1       2.827  -4.269 -13.122  1.00  0.00      DUPS
+ATOM     58 H10S DUPS    1       2.742  -2.887 -14.226  1.00  0.00      DUPS
+ATOM     59 C211 DUPS    1       0.889  -3.600 -13.673  1.00  0.00      DUPS
+ATOM     60 H11R DUPS    1       0.779  -4.123 -14.647  1.00  0.00      DUPS
+ATOM     61 H11S DUPS    1       0.428  -2.591 -13.738  1.00  0.00      DUPS
+ATOM     62 C212 DUPS    1       0.005  -4.330 -12.689  1.00  0.00      DUPS
+ATOM     63 H12R DUPS    1       0.460  -5.291 -12.368  1.00  0.00      DUPS
+ATOM     64 H12S DUPS    1      -1.013  -4.521 -13.091  1.00  0.00      DUPS
+ATOM     65 H12T DUPS    1      -0.172  -3.768 -11.746  1.00  0.00      DUPS
+[ C1B ]
+ATOM     66  C32 DUPS    1      -0.001   3.776  -5.774  1.00  0.00      DUPS
+ATOM     67  H2X DUPS    1      -0.027   2.894  -6.449  1.00  0.00      DUPS
+ATOM     68  H2Y DUPS    1      -0.668   3.658  -4.893  1.00  0.00      DUPS
+ATOM     69  C33 DUPS    1      -0.342   5.007  -6.699  1.00  0.00      DUPS
+ATOM     70  H3X DUPS    1       0.076   5.913  -6.212  1.00  0.00      DUPS
+ATOM     71  H3Y DUPS    1      -1.443   5.092  -6.821  1.00  0.00      DUPS
+ATOM     72  C34 DUPS    1       0.266   4.849  -8.124  1.00  0.00      DUPS
+ATOM     73  H4X DUPS    1       1.342   4.669  -7.912  1.00  0.00      DUPS
+ATOM     74  H4Y DUPS    1       0.108   5.720  -8.795  1.00  0.00      DUPS
+[ C2B ]
+ATOM     75  C35 DUPS    1      -0.435   3.774  -8.980  1.00  0.00      DUPS
+ATOM     76  H5X DUPS    1      -1.521   4.012  -8.965  1.00  0.00      DUPS
+ATOM     77  H5Y DUPS    1      -0.285   2.789  -8.489  1.00  0.00      DUPS
+ATOM     78  C36 DUPS    1       0.177   3.441 -10.415  1.00  0.00      DUPS
+ATOM     79  H6X DUPS    1       1.279   3.331 -10.326  1.00  0.00      DUPS
+ATOM     80  H6Y DUPS    1       0.170   4.360 -11.039  1.00  0.00      DUPS
+ATOM     81  C37 DUPS    1      -0.390   2.192 -11.248  1.00  0.00      DUPS
+ATOM     82  H7X DUPS    1      -0.327   1.181 -10.793  1.00  0.00      DUPS
+ATOM     83  H7Y DUPS    1       0.286   2.095 -12.124  1.00  0.00      DUPS
+ATOM     84  C38 DUPS    1      -1.899   2.352 -11.810  1.00  0.00      DUPS
+ATOM     85  H8X DUPS    1      -1.803   3.240 -12.470  1.00  0.00      DUPS
+ATOM     86  H8Y DUPS    1      -2.568   2.487 -10.934  1.00  0.00      DUPS
+[ C3B ]
+ATOM     87  C39 DUPS    1      -2.526   1.174 -12.529  1.00  0.00      DUPS
+ATOM     88  H9X DUPS    1      -3.594   1.450 -12.661  1.00  0.00      DUPS
+ATOM     89  H9Y DUPS    1      -2.626   0.346 -11.796  1.00  0.00      DUPS
+ATOM     90 C310 DUPS    1      -1.973   0.787 -13.954  1.00  0.00      DUPS
+ATOM     91 H10X DUPS    1      -1.013   0.254 -13.788  1.00  0.00      DUPS
+ATOM     92 H10Y DUPS    1      -1.907   1.673 -14.621  1.00  0.00      DUPS
+ATOM     93 C311 DUPS    1      -3.028  -0.119 -14.679  1.00  0.00      DUPS
+ATOM     94 H11X DUPS    1      -3.994   0.419 -14.790  1.00  0.00      DUPS
+ATOM     95 H11Y DUPS    1      -3.246  -0.989 -14.023  1.00  0.00      DUPS
+ATOM     96 C312 DUPS    1      -2.516  -0.520 -16.058  1.00  0.00      DUPS
+ATOM     97 H12X DUPS    1      -3.050  -1.354 -16.562  1.00  0.00      DUPS
+ATOM     98 H12Y DUPS    1      -1.422  -0.705 -16.112  1.00  0.00      DUPS
+ATOM     99 H12Z DUPS    1      -2.587   0.358 -16.734  1.00  0.00      DUPS
+END

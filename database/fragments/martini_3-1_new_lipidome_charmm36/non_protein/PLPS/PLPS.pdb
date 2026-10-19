@@ -1,0 +1,138 @@
+[ CNO ]
+ATOM      1  N   PLPS    1      -0.979  -0.323   2.237  1.00  0.00      PLPS
+ATOM      2  HN1 PLPS    1      -1.605   0.326   1.719  1.00  0.00      PLPS
+ATOM      3  HN2 PLPS    1      -1.217  -1.319   2.058  1.00  0.00      PLPS
+ATOM      4  HN3 PLPS    1      -1.066  -0.239   3.270  1.00  0.00      PLPS
+ATOM      5  C12 PLPS    1       0.366  -0.005   1.825  1.00  0.00      PLPS
+ATOM      6 H12A PLPS    1       0.476   1.031   2.108  1.00  0.00      PLPS
+ATOM      7  C13 PLPS    1       1.556  -0.828   2.400  1.00  0.00      PLPS
+ATOM      8 O13A PLPS    1       1.235  -1.686   3.278  1.00  0.00      PLPS
+ATOM      9 O13B PLPS    1       2.694  -0.757   1.829  1.00  0.00      PLPS
+ATOM     10  C11 PLPS    1       0.314  -0.113   0.251  1.00  0.00      PLPS
+ATOM     11 H11A PLPS    1       0.183  -1.130  -0.175  1.00  0.00      PLPS
+ATOM     12 H11B PLPS    1       1.322   0.128  -0.149  1.00  0.00      PLPS
+[ PO4 ]
+ATOM     13  P   PLPS    1      -0.864   0.871  -1.858  1.00  0.00      PLPS
+ATOM     14  O13 PLPS    1      -0.390   2.089  -2.428  1.00  0.00      PLPS
+ATOM     15  O14 PLPS    1      -0.283  -0.386  -2.396  1.00  0.00      PLPS
+ATOM     16  O12 PLPS    1      -0.627   0.820  -0.274  1.00  0.00      PLPS
+ATOM     17  O11 PLPS    1      -2.372   0.861  -2.102  1.00  0.00      PLPS
+[ GL1 ]
+ATOM     18  C1  PLPS    1      -2.892  -0.203  -2.818  1.00  0.00      PLPS
+ATOM     19  HA  PLPS    1      -4.003  -0.193  -2.801  1.00  0.00      PLPS
+ATOM     20  HB  PLPS    1      -2.623  -1.168  -2.337  1.00  0.00      PLPS
+ATOM     21  C2  PLPS    1      -2.613  -0.235  -4.412  1.00  0.00      PLPS
+ATOM     22  HS  PLPS    1      -1.644  -0.758  -4.561  1.00  0.00      PLPS
+ATOM     23  O21 PLPS    1      -2.702   1.113  -4.972  1.00  0.00      PLPS
+ATOM     24  C21 PLPS    1      -1.629   1.523  -5.651  1.00  0.00      PLPS
+ATOM     25  O22 PLPS    1      -0.527   1.069  -5.523  1.00  0.00      PLPS
+[ GL2 ]
+ATOM     26  C3  PLPS    1      -3.739  -1.175  -5.057  1.00  0.00      PLPS
+ATOM     27  HX  PLPS    1      -3.603  -2.159  -4.560  1.00  0.00      PLPS
+ATOM     28  HY  PLPS    1      -4.816  -0.981  -4.867  1.00  0.00      PLPS
+ATOM     29  O31 PLPS    1      -3.547  -1.253  -6.509  1.00  0.00      PLPS
+ATOM     30  C31 PLPS    1      -4.199  -0.377  -7.298  1.00  0.00      PLPS
+ATOM     31  O32 PLPS    1      -5.019   0.489  -6.965  1.00  0.00      PLPS
+[ C1A ]
+ATOM     32  C22 PLPS    1      -1.929   2.666  -6.601  1.00  0.00      PLPS
+ATOM     33  H2R PLPS    1      -2.771   2.431  -7.287  1.00  0.00      PLPS
+ATOM     34  H2S PLPS    1      -2.266   3.411  -5.850  1.00  0.00      PLPS
+ATOM     35  C23 PLPS    1      -0.739   3.219  -7.439  1.00  0.00      PLPS
+ATOM     36  H3R PLPS    1       0.152   3.302  -6.779  1.00  0.00      PLPS
+ATOM     37  H3S PLPS    1      -1.056   4.245  -7.724  1.00  0.00      PLPS
+ATOM     38  C24 PLPS    1      -0.452   2.457  -8.770  1.00  0.00      PLPS
+ATOM     39  H4R PLPS    1      -1.402   2.452  -9.346  1.00  0.00      PLPS
+ATOM     40  H4S PLPS    1      -0.163   1.431  -8.456  1.00  0.00      PLPS
+ATOM     41  C25 PLPS    1       0.644   3.088  -9.634  1.00  0.00      PLPS
+ATOM     42  H5R PLPS    1       1.571   2.837  -9.077  1.00  0.00      PLPS
+ATOM     43  H5S PLPS    1       0.589   4.198  -9.622  1.00  0.00      PLPS
+ATOM     44  C26 PLPS    1       0.679   2.673 -11.141  1.00  0.00      PLPS
+ATOM     45  H6R PLPS    1      -0.166   3.118 -11.708  1.00  0.00      PLPS
+ATOM     46  H6S PLPS    1       0.532   1.574 -11.063  1.00  0.00      PLPS
+[ D2A ]
+ATOM     47  C27 PLPS    1       1.974   2.960 -11.928  1.00  0.00      PLPS
+ATOM     48  H7R PLPS    1       1.968   4.065 -12.044  1.00  0.00      PLPS
+ATOM     49  H7S PLPS    1       1.865   2.605 -12.975  1.00  0.00      PLPS
+ATOM     50  C28 PLPS    1       3.307   2.395 -11.410  1.00  0.00      PLPS
+ATOM     51  H8R PLPS    1       3.542   2.833 -10.417  1.00  0.00      PLPS
+ATOM     52  H8S PLPS    1       4.180   2.676 -12.037  1.00  0.00      PLPS
+ATOM     53  C29 PLPS    1       3.249   0.926 -11.279  1.00  0.00      PLPS
+ATOM     54  H9R PLPS    1       2.775   0.660 -10.323  1.00  0.00      PLPS
+ATOM     55 C210 PLPS    1       3.631  -0.017 -12.094  1.00  0.00      PLPS
+ATOM     56 H10R PLPS    1       3.610  -1.038 -11.686  1.00  0.00      PLPS
+[ D3A ]
+ATOM     57 C211 PLPS    1       4.179   0.087 -13.452  1.00  0.00      PLPS
+ATOM     58 H11R PLPS    1       5.149  -0.449 -13.388  1.00  0.00      PLPS
+ATOM     59 H11S PLPS    1       4.435   1.132 -13.731  1.00  0.00      PLPS
+ATOM     60 C212 PLPS    1       3.293  -0.591 -14.474  1.00  0.00      PLPS
+ATOM     61 H12R PLPS    1       3.026  -1.607 -14.148  1.00  0.00      PLPS
+ATOM     62 C213 PLPS    1       2.909  -0.197 -15.665  1.00  0.00      PLPS
+ATOM     63 H13R PLPS    1       2.197  -0.846 -16.197  1.00  0.00      PLPS
+ATOM     64 C214 PLPS    1       3.201   1.102 -16.341  1.00  0.00      PLPS
+ATOM     65 H14R PLPS    1       3.523   0.903 -17.385  1.00  0.00      PLPS
+ATOM     66 H14S PLPS    1       4.162   1.457 -15.911  1.00  0.00      PLPS
+[ C4A ]
+ATOM     67 C215 PLPS    1       2.134   2.217 -16.270  1.00  0.00      PLPS
+ATOM     68 H15R PLPS    1       2.333   2.882 -17.137  1.00  0.00      PLPS
+ATOM     69 H15S PLPS    1       2.289   2.903 -15.410  1.00  0.00      PLPS
+ATOM     70 C216 PLPS    1       0.608   1.740 -16.273  1.00  0.00      PLPS
+ATOM     71 H16R PLPS    1       0.368   0.951 -17.017  1.00  0.00      PLPS
+ATOM     72 H16S PLPS    1       0.016   2.603 -16.648  1.00  0.00      PLPS
+ATOM     73 C217 PLPS    1       0.005   1.398 -14.947  1.00  0.00      PLPS
+ATOM     74 H17R PLPS    1       0.192   2.294 -14.318  1.00  0.00      PLPS
+ATOM     75 H17S PLPS    1       0.587   0.573 -14.484  1.00  0.00      PLPS
+ATOM     76 C218 PLPS    1      -1.464   1.065 -14.911  1.00  0.00      PLPS
+ATOM     77 H18R PLPS    1      -1.746   1.050 -13.837  1.00  0.00      PLPS
+ATOM     78 H18S PLPS    1      -1.730   0.033 -15.226  1.00  0.00      PLPS
+ATOM     79 H18T PLPS    1      -2.147   1.747 -15.461  1.00  0.00      PLPS
+[ C1B ]
+ATOM     80  C32 PLPS    1      -3.802  -0.694  -8.734  1.00  0.00      PLPS
+ATOM     81  H2X PLPS    1      -4.140   0.169  -9.347  1.00  0.00      PLPS
+ATOM     82  H2Y PLPS    1      -4.414  -1.597  -8.944  1.00  0.00      PLPS
+ATOM     83  C33 PLPS    1      -2.288  -0.872  -8.880  1.00  0.00      PLPS
+ATOM     84  H3X PLPS    1      -2.016  -1.810  -8.351  1.00  0.00      PLPS
+ATOM     85  H3Y PLPS    1      -1.836  -0.083  -8.242  1.00  0.00      PLPS
+ATOM     86  C34 PLPS    1      -1.806  -0.779 -10.315  1.00  0.00      PLPS
+ATOM     87  H4X PLPS    1      -1.497   0.278 -10.466  1.00  0.00      PLPS
+ATOM     88  H4Y PLPS    1      -2.727  -0.980 -10.903  1.00  0.00      PLPS
+[ C2B ]
+ATOM     89  C35 PLPS    1      -0.753  -1.864 -10.780  1.00  0.00      PLPS
+ATOM     90  H5X PLPS    1      -1.251  -2.837 -10.581  1.00  0.00      PLPS
+ATOM     91  H5Y PLPS    1       0.187  -1.805 -10.189  1.00  0.00      PLPS
+ATOM     92  C36 PLPS    1      -0.384  -1.635 -12.262  1.00  0.00      PLPS
+ATOM     93  H6X PLPS    1       0.084  -0.628 -12.238  1.00  0.00      PLPS
+ATOM     94  H6Y PLPS    1      -1.375  -1.567 -12.760  1.00  0.00      PLPS
+ATOM     95  C37 PLPS    1       0.457  -2.684 -12.956  1.00  0.00      PLPS
+ATOM     96  H7X PLPS    1       1.334  -2.865 -12.298  1.00  0.00      PLPS
+ATOM     97  H7Y PLPS    1       0.682  -2.262 -13.958  1.00  0.00      PLPS
+ATOM     98  C38 PLPS    1      -0.171  -4.107 -13.108  1.00  0.00      PLPS
+ATOM     99  H8X PLPS    1      -1.150  -4.045 -13.629  1.00  0.00      PLPS
+ATOM    100  H8Y PLPS    1      -0.295  -4.561 -12.102  1.00  0.00      PLPS
+[ C3B ]
+ATOM    101  C39 PLPS    1       0.873  -5.037 -13.797  1.00  0.00      PLPS
+ATOM    102  H9X PLPS    1       0.451  -6.063 -13.843  1.00  0.00      PLPS
+ATOM    103  H9Y PLPS    1       1.795  -5.043 -13.177  1.00  0.00      PLPS
+ATOM    104 C310 PLPS    1       1.061  -4.621 -15.262  1.00  0.00      PLPS
+ATOM    105 H10X PLPS    1       1.526  -3.612 -15.277  1.00  0.00      PLPS
+ATOM    106 H10Y PLPS    1       0.074  -4.686 -15.767  1.00  0.00      PLPS
+ATOM    107 C311 PLPS    1       2.030  -5.518 -16.097  1.00  0.00      PLPS
+ATOM    108 H11X PLPS    1       1.596  -6.541 -16.081  1.00  0.00      PLPS
+ATOM    109 H11Y PLPS    1       3.027  -5.492 -15.608  1.00  0.00      PLPS
+ATOM    110 C312 PLPS    1       2.036  -5.073 -17.568  1.00  0.00      PLPS
+ATOM    111 H12X PLPS    1       1.056  -5.127 -18.088  1.00  0.00      PLPS
+ATOM    112 H12Y PLPS    1       2.682  -5.836 -18.052  1.00  0.00      PLPS
+[ C4B ]
+ATOM    113 C313 PLPS    1       2.744  -3.768 -17.843  1.00  0.00      PLPS
+ATOM    114 H13X PLPS    1       3.724  -3.717 -17.323  1.00  0.00      PLPS
+ATOM    115 H13Y PLPS    1       2.086  -3.037 -17.326  1.00  0.00      PLPS
+ATOM    116 C314 PLPS    1       2.784  -3.483 -19.333  1.00  0.00      PLPS
+ATOM    117 H14X PLPS    1       1.794  -3.092 -19.650  1.00  0.00      PLPS
+ATOM    118 H14Y PLPS    1       2.882  -4.473 -19.827  1.00  0.00      PLPS
+ATOM    119 C315 PLPS    1       3.817  -2.432 -19.763  1.00  0.00      PLPS
+ATOM    120 H15X PLPS    1       3.600  -2.233 -20.835  1.00  0.00      PLPS
+ATOM    121 H15Y PLPS    1       4.816  -2.864 -19.538  1.00  0.00      PLPS
+ATOM    122 C316 PLPS    1       3.742  -1.045 -19.217  1.00  0.00      PLPS
+ATOM    123 H16X PLPS    1       2.728  -0.590 -19.223  1.00  0.00      PLPS
+ATOM    124 H16Y PLPS    1       4.176  -1.055 -18.195  1.00  0.00      PLPS
+ATOM    125 H16Z PLPS    1       4.380  -0.419 -19.877  1.00  0.00      PLPS
+END

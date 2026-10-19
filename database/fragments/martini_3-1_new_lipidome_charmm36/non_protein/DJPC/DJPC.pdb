@@ -1,0 +1,103 @@
+[ NC3 ]
+ATOM      1  N   DJPC    1      -0.092   0.801   2.563  1.00  0.00      DJPC
+ATOM      2  C12 DJPC    1       0.179   1.594   1.275  1.00  0.00      DJPC
+ATOM      3 H12A DJPC    1       1.159   1.332   0.876  1.00  0.00      DJPC
+ATOM      4 H12B DJPC    1       0.192   2.632   1.563  1.00  0.00      DJPC
+ATOM      5  C13 DJPC    1      -1.546   0.870   2.926  1.00  0.00      DJPC
+ATOM      6 H13A DJPC    1      -1.769   0.292   3.812  1.00  0.00      DJPC
+ATOM      7 H13B DJPC    1      -2.169   0.500   2.111  1.00  0.00      DJPC
+ATOM      8 H13C DJPC    1      -1.818   1.896   3.116  1.00  0.00      DJPC
+ATOM      9  C14 DJPC    1       0.706   1.375   3.691  1.00  0.00      DJPC
+ATOM     10 H14A DJPC    1       0.451   0.837   4.595  1.00  0.00      DJPC
+ATOM     11 H14B DJPC    1       0.505   2.426   3.837  1.00  0.00      DJPC
+ATOM     12 H14C DJPC    1       1.769   1.252   3.515  1.00  0.00      DJPC
+ATOM     13  C15 DJPC    1       0.334  -0.633   2.465  1.00  0.00      DJPC
+ATOM     14 H15A DJPC    1       1.415  -0.709   2.391  1.00  0.00      DJPC
+ATOM     15 H15B DJPC    1      -0.085  -1.106   1.580  1.00  0.00      DJPC
+ATOM     16 H15C DJPC    1       0.017  -1.183   3.339  1.00  0.00      DJPC
+ATOM     17  C11 DJPC    1      -0.817   1.536   0.082  1.00  0.00      DJPC
+ATOM     18 H11A DJPC    1      -0.481   2.195  -0.759  1.00  0.00      DJPC
+ATOM     19 H11B DJPC    1      -1.798   1.956   0.387  1.00  0.00      DJPC
+[ PO4 ]
+ATOM     20  P   DJPC    1       0.045  -0.483  -1.305  1.00  0.00      DJPC
+ATOM     21  O13 DJPC    1      -0.623  -1.693  -1.884  1.00  0.00      DJPC
+ATOM     22  O14 DJPC    1       1.290  -0.674  -0.567  1.00  0.00      DJPC
+ATOM     23  O12 DJPC    1      -1.014   0.202  -0.348  1.00  0.00      DJPC
+ATOM     24  O11 DJPC    1       0.269   0.612  -2.447  1.00  0.00      DJPC
+[ GL1 ]
+ATOM     25  C1  DJPC    1      -0.087   0.235  -3.783  1.00  0.00      DJPC
+ATOM     26  HA  DJPC    1      -1.171  -0.027  -3.819  1.00  0.00      DJPC
+ATOM     27  HB  DJPC    1       0.496  -0.667  -4.083  1.00  0.00      DJPC
+ATOM     28  C2  DJPC    1       0.187   1.371  -4.826  1.00  0.00      DJPC
+ATOM     29  HS  DJPC    1       1.270   1.615  -4.745  1.00  0.00      DJPC
+ATOM     30  O21 DJPC    1      -0.648   2.497  -4.477  1.00  0.00      DJPC
+ATOM     31  C21 DJPC    1      -0.214   3.742  -4.723  1.00  0.00      DJPC
+ATOM     32  O22 DJPC    1       0.795   4.073  -5.163  1.00  0.00      DJPC
+[ GL2 ]
+ATOM     33  C3  DJPC    1      -0.134   0.895  -6.288  1.00  0.00      DJPC
+ATOM     34  HX  DJPC    1       0.067   1.719  -7.009  1.00  0.00      DJPC
+ATOM     35  HY  DJPC    1      -1.229   0.708  -6.354  1.00  0.00      DJPC
+ATOM     36  O31 DJPC    1       0.560  -0.336  -6.619  1.00  0.00      DJPC
+ATOM     37  C31 DJPC    1       1.623  -0.189  -7.425  1.00  0.00      DJPC
+ATOM     38  O32 DJPC    1       1.947   0.795  -7.983  1.00  0.00      DJPC
+[ C1A ]
+ATOM     39  C22 DJPC    1      -1.410   4.684  -4.367  1.00  0.00      DJPC
+ATOM     40  H2R DJPC    1      -1.089   5.733  -4.543  1.00  0.00      DJPC
+ATOM     41  H2S DJPC    1      -1.655   4.572  -3.292  1.00  0.00      DJPC
+ATOM     42  C23 DJPC    1      -2.667   4.365  -5.210  1.00  0.00      DJPC
+ATOM     43  H3R DJPC    1      -3.537   4.865  -4.732  1.00  0.00      DJPC
+ATOM     44  H3S DJPC    1      -2.868   3.270  -5.242  1.00  0.00      DJPC
+ATOM     45  C24 DJPC    1      -2.598   4.925  -6.632  1.00  0.00      DJPC
+ATOM     46  H4R DJPC    1      -2.282   5.986  -6.536  1.00  0.00      DJPC
+ATOM     47  H4S DJPC    1      -3.608   4.939  -7.095  1.00  0.00      DJPC
+ATOM     48  C25 DJPC    1      -1.637   4.116  -7.513  1.00  0.00      DJPC
+ATOM     49  H5R DJPC    1      -1.740   3.033  -7.264  1.00  0.00      DJPC
+ATOM     50  H5S DJPC    1      -0.616   4.475  -7.262  1.00  0.00      DJPC
+ATOM     51  C26 DJPC    1      -1.851   4.287  -9.018  1.00  0.00      DJPC
+ATOM     52  H6R DJPC    1      -1.795   5.373  -9.249  1.00  0.00      DJPC
+ATOM     53  H6S DJPC    1      -2.865   3.899  -9.261  1.00  0.00      DJPC
+[ C2A ]
+ATOM     54  C27 DJPC    1      -0.849   3.536  -9.913  1.00  0.00      DJPC
+ATOM     55  H7R DJPC    1      -0.969   2.444  -9.739  1.00  0.00      DJPC
+ATOM     56  H7S DJPC    1      -1.136   3.725 -10.974  1.00  0.00      DJPC
+ATOM     57  C28 DJPC    1       0.616   3.927  -9.661  1.00  0.00      DJPC
+ATOM     58  H8R DJPC    1       0.732   5.035  -9.630  1.00  0.00      DJPC
+ATOM     59  H8S DJPC    1       0.938   3.551  -8.662  1.00  0.00      DJPC
+ATOM     60  C29 DJPC    1       1.571   3.464 -10.769  1.00  0.00      DJPC
+ATOM     61  H9R DJPC    1       1.303   4.066 -11.662  1.00  0.00      DJPC
+ATOM     62  H9S DJPC    1       1.404   2.387 -11.007  1.00  0.00      DJPC
+ATOM     63 C210 DJPC    1       3.017   3.774 -10.381  1.00  0.00      DJPC
+ATOM     64 H10R DJPC    1       3.401   3.136  -9.552  1.00  0.00      DJPC
+ATOM     65 H10S DJPC    1       2.925   4.679  -9.787  1.00  0.00      DJPC
+ATOM     66 H10T DJPC    1       3.592   4.566 -10.892  1.00  0.00      DJPC
+[ C1B ]
+ATOM     67  C32 DJPC    1       2.409  -1.520  -7.482  1.00  0.00      DJPC
+ATOM     68  H2X DJPC    1       2.947  -1.637  -6.522  1.00  0.00      DJPC
+ATOM     69  H2Y DJPC    1       3.178  -1.389  -8.276  1.00  0.00      DJPC
+ATOM     70  C33 DJPC    1       1.551  -2.788  -7.718  1.00  0.00      DJPC
+ATOM     71  H3X DJPC    1       0.628  -2.806  -7.102  1.00  0.00      DJPC
+ATOM     72  H3Y DJPC    1       2.145  -3.645  -7.323  1.00  0.00      DJPC
+ATOM     73  C34 DJPC    1       1.258  -3.009  -9.213  1.00  0.00      DJPC
+ATOM     74  H4X DJPC    1       1.010  -4.073  -9.418  1.00  0.00      DJPC
+ATOM     75  H4Y DJPC    1       2.188  -2.752  -9.774  1.00  0.00      DJPC
+ATOM     76  C35 DJPC    1       0.147  -2.125  -9.800  1.00  0.00      DJPC
+ATOM     77  H5X DJPC    1       0.541  -1.090  -9.743  1.00  0.00      DJPC
+ATOM     78  H5Y DJPC    1      -0.783  -2.172  -9.189  1.00  0.00      DJPC
+ATOM     79  C36 DJPC    1      -0.194  -2.482 -11.262  1.00  0.00      DJPC
+ATOM     80  H6X DJPC    1      -0.667  -3.491 -11.246  1.00  0.00      DJPC
+ATOM     81  H6Y DJPC    1       0.743  -2.572 -11.854  1.00  0.00      DJPC
+[ C2B ]
+ATOM     82  C37 DJPC    1      -1.125  -1.464 -11.953  1.00  0.00      DJPC
+ATOM     83  H7X DJPC    1      -2.067  -1.406 -11.366  1.00  0.00      DJPC
+ATOM     84  H7Y DJPC    1      -1.414  -1.820 -12.967  1.00  0.00      DJPC
+ATOM     85  C38 DJPC    1      -0.502  -0.061 -12.146  1.00  0.00      DJPC
+ATOM     86  H8X DJPC    1       0.402  -0.149 -12.790  1.00  0.00      DJPC
+ATOM     87  H8Y DJPC    1      -0.161   0.324 -11.160  1.00  0.00      DJPC
+ATOM     88  C39 DJPC    1      -1.462   0.974 -12.778  1.00  0.00      DJPC
+ATOM     89  H9X DJPC    1      -0.938   1.953 -12.891  1.00  0.00      DJPC
+ATOM     90  H9Y DJPC    1      -2.276   1.149 -12.036  1.00  0.00      DJPC
+ATOM     91 C310 DJPC    1      -2.065   0.595 -14.158  1.00  0.00      DJPC
+ATOM     92 H10X DJPC    1      -2.766   1.423 -14.418  1.00  0.00      DJPC
+ATOM     93 H10Y DJPC    1      -2.659  -0.197 -14.621  1.00  0.00      DJPC
+ATOM     94 H10Z DJPC    1      -2.455  -0.319 -13.662  1.00  0.00      DJPC
+END

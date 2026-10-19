@@ -1,0 +1,126 @@
+[ PO4 ]
+ATOM      1  P   PLPA    1      -0.142  -0.107   0.452  1.00  0.00      PLPA
+ATOM      2  O13 PLPA    1       0.063  -1.425   1.076  1.00  0.00      PLPA
+ATOM      3  O14 PLPA    1      -1.428   0.566   0.494  1.00  0.00      PLPA
+ATOM      4  O12 PLPA    1       0.890   0.931   1.117  1.00  0.00      PLPA
+ATOM      5  H12 PLPA    1       0.617   1.212   1.993  1.00  0.00      PLPA
+ATOM      6  O11 PLPA    1       0.412  -0.178  -1.018  1.00  0.00      PLPA
+[ GL1 ]
+ATOM      7  C1  PLPA    1       0.064  -1.209  -1.853  1.00  0.00      PLPA
+ATOM      8  HA  PLPA    1      -0.957  -1.630  -1.731  1.00  0.00      PLPA
+ATOM      9  HB  PLPA    1       0.932  -1.902  -1.863  1.00  0.00      PLPA
+ATOM     10  C2  PLPA    1       0.100  -0.701  -3.361  1.00  0.00      PLPA
+ATOM     11  HS  PLPA    1      -0.029  -1.551  -4.065  1.00  0.00      PLPA
+ATOM     12  O21 PLPA    1       1.336  -0.111  -3.742  1.00  0.00      PLPA
+ATOM     13  C21 PLPA    1       2.312  -0.940  -4.079  1.00  0.00      PLPA
+ATOM     14  O22 PLPA    1       2.175  -2.164  -4.218  1.00  0.00      PLPA
+[ GL2 ]
+ATOM     15  C3  PLPA    1      -1.143   0.266  -3.437  1.00  0.00      PLPA
+ATOM     16  HX  PLPA    1      -2.116  -0.259  -3.335  1.00  0.00      PLPA
+ATOM     17  HY  PLPA    1      -1.190   0.917  -2.538  1.00  0.00      PLPA
+ATOM     18  O31 PLPA    1      -1.099   1.198  -4.531  1.00  0.00      PLPA
+ATOM     19  C31 PLPA    1      -1.610   0.732  -5.682  1.00  0.00      PLPA
+ATOM     20  O32 PLPA    1      -2.092  -0.380  -5.878  1.00  0.00      PLPA
+[ C1A ]
+ATOM     21  C22 PLPA    1       3.600  -0.172  -4.388  1.00  0.00      PLPA
+ATOM     22  H2R PLPA    1       3.556   0.860  -3.979  1.00  0.00      PLPA
+ATOM     23  H2S PLPA    1       4.371  -0.778  -3.867  1.00  0.00      PLPA
+ATOM     24  C23 PLPA    1       3.807  -0.260  -5.809  1.00  0.00      PLPA
+ATOM     25  H3R PLPA    1       3.925  -1.298  -6.187  1.00  0.00      PLPA
+ATOM     26  H3S PLPA    1       4.713   0.311  -6.103  1.00  0.00      PLPA
+ATOM     27  C24 PLPA    1       2.774   0.493  -6.651  1.00  0.00      PLPA
+ATOM     28  H4R PLPA    1       2.872   1.580  -6.443  1.00  0.00      PLPA
+ATOM     29  H4S PLPA    1       1.739   0.247  -6.330  1.00  0.00      PLPA
+ATOM     30  C25 PLPA    1       2.984   0.262  -8.159  1.00  0.00      PLPA
+ATOM     31  H5R PLPA    1       3.273  -0.789  -8.375  1.00  0.00      PLPA
+ATOM     32  H5S PLPA    1       3.920   0.763  -8.486  1.00  0.00      PLPA
+ATOM     33  C26 PLPA    1       1.810   0.620  -9.011  1.00  0.00      PLPA
+ATOM     34  H6R PLPA    1       1.385   1.518  -8.515  1.00  0.00      PLPA
+ATOM     35  H6S PLPA    1       1.005  -0.140  -9.105  1.00  0.00      PLPA
+[ D2A ]
+ATOM     36  C27 PLPA    1       2.009   1.174 -10.399  1.00  0.00      PLPA
+ATOM     37  H7R PLPA    1       2.680   2.060 -10.382  1.00  0.00      PLPA
+ATOM     38  H7S PLPA    1       0.963   1.466 -10.631  1.00  0.00      PLPA
+ATOM     39  C28 PLPA    1       2.457   0.221 -11.610  1.00  0.00      PLPA
+ATOM     40  H8R PLPA    1       3.525  -0.044 -11.462  1.00  0.00      PLPA
+ATOM     41  H8S PLPA    1       2.345   0.837 -12.528  1.00  0.00      PLPA
+ATOM     42  C29 PLPA    1       1.759  -1.106 -11.587  1.00  0.00      PLPA
+ATOM     43  H9R PLPA    1       1.937  -1.708 -10.684  1.00  0.00      PLPA
+ATOM     44 C210 PLPA    1       1.057  -1.597 -12.571  1.00  0.00      PLPA
+ATOM     45 H10R PLPA    1       0.606  -2.580 -12.367  1.00  0.00      PLPA
+[ D3A ]
+ATOM     46 C211 PLPA    1       0.771  -0.989 -13.930  1.00  0.00      PLPA
+ATOM     47 H11R PLPA    1       1.215   0.022 -14.046  1.00  0.00      PLPA
+ATOM     48 H11S PLPA    1      -0.277  -0.703 -14.160  1.00  0.00      PLPA
+ATOM     49 C212 PLPA    1       1.205  -1.862 -15.042  1.00  0.00      PLPA
+ATOM     50 H12R PLPA    1       1.079  -2.942 -14.872  1.00  0.00      PLPA
+ATOM     51 C213 PLPA    1       2.020  -1.475 -16.117  1.00  0.00      PLPA
+ATOM     52 H13R PLPA    1       2.461  -2.279 -16.725  1.00  0.00      PLPA
+ATOM     53 C214 PLPA    1       2.643  -0.198 -16.481  1.00  0.00      PLPA
+ATOM     54 H14R PLPA    1       3.749  -0.143 -16.570  1.00  0.00      PLPA
+ATOM     55 H14S PLPA    1       2.544   0.636 -15.754  1.00  0.00      PLPA
+[ C4A ]
+ATOM     56 C215 PLPA    1       2.277   0.606 -17.790  1.00  0.00      PLPA
+ATOM     57 H15R PLPA    1       2.758   1.604 -17.865  1.00  0.00      PLPA
+ATOM     58 H15S PLPA    1       1.204   0.893 -17.833  1.00  0.00      PLPA
+ATOM     59 C216 PLPA    1       2.671  -0.079 -19.155  1.00  0.00      PLPA
+ATOM     60 H16R PLPA    1       2.037  -0.983 -19.282  1.00  0.00      PLPA
+ATOM     61 H16S PLPA    1       3.729  -0.416 -19.138  1.00  0.00      PLPA
+ATOM     62 C217 PLPA    1       2.636   0.824 -20.455  1.00  0.00      PLPA
+ATOM     63 H17R PLPA    1       2.986   0.229 -21.325  1.00  0.00      PLPA
+ATOM     64 H17S PLPA    1       3.254   1.710 -20.191  1.00  0.00      PLPA
+ATOM     65 C218 PLPA    1       1.353   1.500 -20.826  1.00  0.00      PLPA
+ATOM     66 H18R PLPA    1       0.733   0.703 -21.289  1.00  0.00      PLPA
+ATOM     67 H18S PLPA    1       1.460   2.312 -21.577  1.00  0.00      PLPA
+ATOM     68 H18T PLPA    1       0.786   2.006 -20.016  1.00  0.00      PLPA
+[ C1B ]
+ATOM     69  C32 PLPA    1      -1.580   1.835  -6.742  1.00  0.00      PLPA
+ATOM     70  H2X PLPA    1      -0.568   2.257  -6.919  1.00  0.00      PLPA
+ATOM     71  H2Y PLPA    1      -2.283   2.625  -6.401  1.00  0.00      PLPA
+ATOM     72  C33 PLPA    1      -2.020   1.212  -8.080  1.00  0.00      PLPA
+ATOM     73  H3X PLPA    1      -3.032   0.754  -8.097  1.00  0.00      PLPA
+ATOM     74  H3Y PLPA    1      -1.439   0.309  -8.367  1.00  0.00      PLPA
+ATOM     75  C34 PLPA    1      -1.944   2.249  -9.175  1.00  0.00      PLPA
+ATOM     76  H4X PLPA    1      -0.940   2.724  -9.144  1.00  0.00      PLPA
+ATOM     77  H4Y PLPA    1      -2.687   3.047  -8.962  1.00  0.00      PLPA
+[ C2B ]
+ATOM     78  C35 PLPA    1      -2.128   1.592 -10.532  1.00  0.00      PLPA
+ATOM     79  H5X PLPA    1      -3.185   1.311 -10.731  1.00  0.00      PLPA
+ATOM     80  H5Y PLPA    1      -1.438   0.722 -10.532  1.00  0.00      PLPA
+ATOM     81  C36 PLPA    1      -1.709   2.580 -11.628  1.00  0.00      PLPA
+ATOM     82  H6X PLPA    1      -0.612   2.761 -11.611  1.00  0.00      PLPA
+ATOM     83  H6Y PLPA    1      -2.308   3.490 -11.410  1.00  0.00      PLPA
+ATOM     84  C37 PLPA    1      -2.141   2.078 -13.009  1.00  0.00      PLPA
+ATOM     85  H7X PLPA    1      -3.246   1.969 -12.988  1.00  0.00      PLPA
+ATOM     86  H7Y PLPA    1      -1.759   1.048 -13.172  1.00  0.00      PLPA
+ATOM     87  C38 PLPA    1      -1.632   2.980 -14.172  1.00  0.00      PLPA
+ATOM     88  H8X PLPA    1      -0.521   3.015 -14.200  1.00  0.00      PLPA
+ATOM     89  H8Y PLPA    1      -2.006   4.022 -14.260  1.00  0.00      PLPA
+[ C3B ]
+ATOM     90  C39 PLPA    1      -2.154   2.442 -15.576  1.00  0.00      PLPA
+ATOM     91  H9X PLPA    1      -1.931   3.110 -16.434  1.00  0.00      PLPA
+ATOM     92  H9Y PLPA    1      -3.264   2.488 -15.553  1.00  0.00      PLPA
+ATOM     93 C310 PLPA    1      -1.728   0.959 -15.857  1.00  0.00      PLPA
+ATOM     94 H10X PLPA    1      -2.164   0.211 -15.160  1.00  0.00      PLPA
+ATOM     95 H10Y PLPA    1      -0.663   0.802 -15.583  1.00  0.00      PLPA
+ATOM     96 C311 PLPA    1      -2.163   0.544 -17.207  1.00  0.00      PLPA
+ATOM     97 H11X PLPA    1      -1.562   1.167 -17.903  1.00  0.00      PLPA
+ATOM     98 H11Y PLPA    1      -3.257   0.646 -17.375  1.00  0.00      PLPA
+ATOM     99 C312 PLPA    1      -1.860  -0.879 -17.649  1.00  0.00      PLPA
+ATOM    100 H12X PLPA    1      -2.447  -1.565 -17.002  1.00  0.00      PLPA
+ATOM    101 H12Y PLPA    1      -0.780  -1.106 -17.520  1.00  0.00      PLPA
+[ C4B ]
+ATOM    102 C313 PLPA    1      -2.134  -1.251 -19.130  1.00  0.00      PLPA
+ATOM    103 H13X PLPA    1      -1.780  -2.292 -19.289  1.00  0.00      PLPA
+ATOM    104 H13Y PLPA    1      -1.567  -0.556 -19.786  1.00  0.00      PLPA
+ATOM    105 C314 PLPA    1      -3.578  -1.316 -19.556  1.00  0.00      PLPA
+ATOM    106 H14X PLPA    1      -4.138  -1.496 -18.614  1.00  0.00      PLPA
+ATOM    107 H14Y PLPA    1      -3.545  -2.214 -20.209  1.00  0.00      PLPA
+ATOM    108 C315 PLPA    1      -4.088  -0.080 -20.184  1.00  0.00      PLPA
+ATOM    109 H15X PLPA    1      -4.082   0.796 -19.500  1.00  0.00      PLPA
+ATOM    110 H15Y PLPA    1      -5.156  -0.190 -20.469  1.00  0.00      PLPA
+ATOM    111 C316 PLPA    1      -3.343   0.255 -21.492  1.00  0.00      PLPA
+ATOM    112 H16X PLPA    1      -3.804   1.080 -22.076  1.00  0.00      PLPA
+ATOM    113 H16Y PLPA    1      -2.284   0.534 -21.305  1.00  0.00      PLPA
+ATOM    114 H16Z PLPA    1      -3.304  -0.674 -22.099  1.00  0.00      PLPA
+END

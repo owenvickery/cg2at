@@ -1,0 +1,136 @@
+[ NH3 ]
+ATOM      1  N   YOPE    1      -1.233  -1.617   3.050  1.00  0.00      YOPE
+ATOM      2  HN1 YOPE    1      -0.279  -1.371   2.717  1.00  0.00      YOPE
+ATOM      3  HN2 YOPE    1      -1.286  -1.589   4.088  1.00  0.00      YOPE
+ATOM      4  HN3 YOPE    1      -1.477  -2.569   2.707  1.00  0.00      YOPE
+ATOM      5  C12 YOPE    1      -1.980  -0.522   2.304  1.00  0.00      YOPE
+ATOM      6 H12A YOPE    1      -1.614   0.423   2.758  1.00  0.00      YOPE
+ATOM      7 H12B YOPE    1      -3.075  -0.585   2.483  1.00  0.00      YOPE
+ATOM      8  C11 YOPE    1      -1.490  -0.440   0.823  1.00  0.00      YOPE
+ATOM      9 H11A YOPE    1      -1.861   0.504   0.371  1.00  0.00      YOPE
+ATOM     10 H11B YOPE    1      -1.955  -1.281   0.265  1.00  0.00      YOPE
+[ PO4 ]
+ATOM     11  P   YOPE    1       0.496   0.009  -0.799  1.00  0.00      YOPE
+ATOM     12  O13 YOPE    1       1.813  -0.684  -0.967  1.00  0.00      YOPE
+ATOM     13  O14 YOPE    1       0.463   1.438  -0.880  1.00  0.00      YOPE
+ATOM     14  O12 YOPE    1      -0.090  -0.465   0.566  1.00  0.00      YOPE
+ATOM     15  O11 YOPE    1      -0.574  -0.461  -1.853  1.00  0.00      YOPE
+[ GL1 ]
+ATOM     16  C1  YOPE    1      -0.691   0.164  -3.099  1.00  0.00      YOPE
+ATOM     17  HA  YOPE    1      -0.255   1.184  -3.158  1.00  0.00      YOPE
+ATOM     18  HB  YOPE    1      -1.755   0.194  -3.414  1.00  0.00      YOPE
+ATOM     19  C2  YOPE    1       0.103  -0.623  -4.269  1.00  0.00      YOPE
+ATOM     20  HS  YOPE    1       1.108  -0.170  -4.407  1.00  0.00      YOPE
+ATOM     21  O21 YOPE    1      -0.552  -0.584  -5.532  1.00  0.00      YOPE
+ATOM     22  C21 YOPE    1      -0.484   0.529  -6.212  1.00  0.00      YOPE
+ATOM     23  O22 YOPE    1      -0.040   1.616  -5.805  1.00  0.00      YOPE
+[ GL2 ]
+ATOM     24  C3  YOPE    1       0.290  -2.140  -3.941  1.00  0.00      YOPE
+ATOM     25  HX  YOPE    1      -0.715  -2.420  -3.558  1.00  0.00      YOPE
+ATOM     26  HY  YOPE    1       1.006  -2.354  -3.119  1.00  0.00      YOPE
+ATOM     27  O31 YOPE    1       0.562  -3.028  -4.945  1.00  0.00      YOPE
+ATOM     28  C31 YOPE    1       1.595  -2.943  -5.751  1.00  0.00      YOPE
+ATOM     29  O32 YOPE    1       2.496  -2.086  -5.659  1.00  0.00      YOPE
+[ C1A ]
+ATOM     30  C22 YOPE    1      -0.780   0.345  -7.716  1.00  0.00      YOPE
+ATOM     31  H2R YOPE    1       0.203  -0.013  -8.090  1.00  0.00      YOPE
+ATOM     32  H2S YOPE    1      -1.028   1.287  -8.250  1.00  0.00      YOPE
+ATOM     33  C23 YOPE    1      -1.746  -0.698  -8.165  1.00  0.00      YOPE
+ATOM     34  H3R YOPE    1      -2.786  -0.369  -7.953  1.00  0.00      YOPE
+ATOM     35  H3S YOPE    1      -1.682  -1.700  -7.689  1.00  0.00      YOPE
+ATOM     36  C24 YOPE    1      -1.548  -0.811  -9.769  1.00  0.00      YOPE
+ATOM     37  H4R YOPE    1      -0.487  -1.109  -9.912  1.00  0.00      YOPE
+ATOM     38  H4S YOPE    1      -1.767   0.156 -10.270  1.00  0.00      YOPE
+ATOM     39  C25 YOPE    1      -2.479  -1.771 -10.281  1.00  0.00      YOPE
+ATOM     40  H5R YOPE    1      -3.516  -1.373 -10.260  1.00  0.00      YOPE
+ATOM     41  H5S YOPE    1      -2.523  -2.689  -9.657  1.00  0.00      YOPE
+ATOM     42  C26 YOPE    1      -2.194  -2.348 -11.691  1.00  0.00      YOPE
+ATOM     43  H6R YOPE    1      -3.144  -2.782 -12.069  1.00  0.00      YOPE
+ATOM     44  H6S YOPE    1      -1.509  -3.194 -11.470  1.00  0.00      YOPE
+[ D2A ]
+ATOM     45  C27 YOPE    1      -1.594  -1.409 -12.741  1.00  0.00      YOPE
+ATOM     46  H7R YOPE    1      -1.565  -1.917 -13.729  1.00  0.00      YOPE
+ATOM     47  H7S YOPE    1      -0.531  -1.196 -12.498  1.00  0.00      YOPE
+ATOM     48  C28 YOPE    1      -2.431  -0.127 -13.011  1.00  0.00      YOPE
+ATOM     49  H8R YOPE    1      -1.893   0.618 -13.636  1.00  0.00      YOPE
+ATOM     50  H8S YOPE    1      -2.717   0.485 -12.129  1.00  0.00      YOPE
+ATOM     51  C29 YOPE    1      -3.680  -0.397 -13.753  1.00  0.00      YOPE
+ATOM     52  H9R YOPE    1      -4.650  -0.541 -13.256  1.00  0.00      YOPE
+ATOM     53 C210 YOPE    1      -3.680  -0.437 -15.110  1.00  0.00      YOPE
+ATOM     54 H10R YOPE    1      -4.543  -0.931 -15.581  1.00  0.00      YOPE
+[ C3A ]
+ATOM     55 C211 YOPE    1      -2.490  -0.233 -16.093  1.00  0.00      YOPE
+ATOM     56 H11R YOPE    1      -2.461  -0.930 -16.958  1.00  0.00      YOPE
+ATOM     57 H11S YOPE    1      -1.526  -0.458 -15.587  1.00  0.00      YOPE
+ATOM     58 C212 YOPE    1      -2.295   1.228 -16.520  1.00  0.00      YOPE
+ATOM     59 H12R YOPE    1      -2.179   1.835 -15.597  1.00  0.00      YOPE
+ATOM     60 H12S YOPE    1      -3.219   1.618 -16.998  1.00  0.00      YOPE
+ATOM     61 C213 YOPE    1      -1.174   1.625 -17.518  1.00  0.00      YOPE
+ATOM     62 H13R YOPE    1      -0.293   0.964 -17.372  1.00  0.00      YOPE
+ATOM     63 H13S YOPE    1      -0.990   2.721 -17.498  1.00  0.00      YOPE
+ATOM     64 C214 YOPE    1      -1.589   1.556 -19.000  1.00  0.00      YOPE
+ATOM     65 H14R YOPE    1      -0.748   2.033 -19.547  1.00  0.00      YOPE
+ATOM     66 H14S YOPE    1      -2.439   2.271 -18.970  1.00  0.00      YOPE
+[ C4A ]
+ATOM     67 C215 YOPE    1      -1.980   0.167 -19.582  1.00  0.00      YOPE
+ATOM     68 H15R YOPE    1      -1.737  -0.024 -20.649  1.00  0.00      YOPE
+ATOM     69 H15S YOPE    1      -1.466  -0.665 -19.055  1.00  0.00      YOPE
+ATOM     70 C216 YOPE    1      -3.469  -0.118 -19.571  1.00  0.00      YOPE
+ATOM     71 H16R YOPE    1      -4.118   0.674 -20.003  1.00  0.00      YOPE
+ATOM     72 H16S YOPE    1      -3.797  -0.224 -18.515  1.00  0.00      YOPE
+ATOM     73 C217 YOPE    1      -3.881  -1.422 -20.300  1.00  0.00      YOPE
+ATOM     74 H17R YOPE    1      -4.783  -1.771 -19.754  1.00  0.00      YOPE
+ATOM     75 H17S YOPE    1      -2.973  -2.054 -20.193  1.00  0.00      YOPE
+ATOM     76 C218 YOPE    1      -4.225  -1.285 -21.793  1.00  0.00      YOPE
+ATOM     77 H18R YOPE    1      -5.105  -0.607 -21.805  1.00  0.00      YOPE
+ATOM     78 H18S YOPE    1      -4.521  -2.235 -22.286  1.00  0.00      YOPE
+ATOM     79 H18T YOPE    1      -3.363  -0.961 -22.414  1.00  0.00      YOPE
+[ C1B ]
+ATOM     80  C32 YOPE    1       1.567  -4.145  -6.791  1.00  0.00      YOPE
+ATOM     81  H2X YOPE    1       2.288  -4.963  -6.583  1.00  0.00      YOPE
+ATOM     82  H2Y YOPE    1       0.609  -4.707  -6.744  1.00  0.00      YOPE
+ATOM     83  C33 YOPE    1       1.794  -3.682  -8.286  1.00  0.00      YOPE
+ATOM     84  H3X YOPE    1       1.029  -2.884  -8.390  1.00  0.00      YOPE
+ATOM     85  H3Y YOPE    1       1.449  -4.496  -8.958  1.00  0.00      YOPE
+ATOM     86  C34 YOPE    1       3.232  -3.214  -8.579  1.00  0.00      YOPE
+ATOM     87  H4X YOPE    1       3.477  -2.478  -7.784  1.00  0.00      YOPE
+ATOM     88  H4Y YOPE    1       3.914  -4.088  -8.504  1.00  0.00      YOPE
+[ C2B ]
+ATOM     89  C35 YOPE    1       3.385  -2.524  -9.945  1.00  0.00      YOPE
+ATOM     90  H5X YOPE    1       2.570  -1.768  -9.958  1.00  0.00      YOPE
+ATOM     91  H5Y YOPE    1       3.252  -3.251 -10.774  1.00  0.00      YOPE
+ATOM     92  C36 YOPE    1       4.719  -1.806 -10.214  1.00  0.00      YOPE
+ATOM     93  H6X YOPE    1       5.492  -2.455  -9.750  1.00  0.00      YOPE
+ATOM     94  H6Y YOPE    1       4.943  -1.674 -11.294  1.00  0.00      YOPE
+ATOM     95  C37 YOPE    1       4.789  -0.353  -9.634  1.00  0.00      YOPE
+ATOM     96  H7X YOPE    1       4.344  -0.326  -8.616  1.00  0.00      YOPE
+ATOM     97  H7Y YOPE    1       5.879  -0.136  -9.642  1.00  0.00      YOPE
+ATOM     98  C38 YOPE    1       3.980   0.731 -10.438  1.00  0.00      YOPE
+ATOM     99  H8X YOPE    1       2.937   0.371 -10.574  1.00  0.00      YOPE
+ATOM    100  H8Y YOPE    1       3.940   1.679  -9.860  1.00  0.00      YOPE
+[ D3B ]
+ATOM    101  C39 YOPE    1       4.673   1.025 -11.783  1.00  0.00      YOPE
+ATOM    102  H9X YOPE    1       5.701   1.349 -11.564  1.00  0.00      YOPE
+ATOM    103 C310 YOPE    1       4.312   0.699 -13.053  1.00  0.00      YOPE
+ATOM    104 H10X YOPE    1       4.988   0.975 -13.875  1.00  0.00      YOPE
+ATOM    105 C311 YOPE    1       3.065  -0.062 -13.520  1.00  0.00      YOPE
+ATOM    106 H11X YOPE    1       2.313  -0.313 -12.742  1.00  0.00      YOPE
+ATOM    107 H11Y YOPE    1       2.494   0.581 -14.223  1.00  0.00      YOPE
+ATOM    108 C312 YOPE    1       3.333  -1.402 -14.235  1.00  0.00      YOPE
+ATOM    109 H12X YOPE    1       4.028  -1.948 -13.562  1.00  0.00      YOPE
+ATOM    110 H12Y YOPE    1       3.758  -1.309 -15.256  1.00  0.00      YOPE
+[ C4B ]
+ATOM    111 C313 YOPE    1       2.080  -2.228 -14.457  1.00  0.00      YOPE
+ATOM    112 H13X YOPE    1       1.830  -2.596 -13.438  1.00  0.00      YOPE
+ATOM    113 H13Y YOPE    1       1.304  -1.505 -14.789  1.00  0.00      YOPE
+ATOM    114 C314 YOPE    1       2.080  -3.470 -15.399  1.00  0.00      YOPE
+ATOM    115 H14X YOPE    1       2.822  -4.163 -14.948  1.00  0.00      YOPE
+ATOM    116 H14Y YOPE    1       2.599  -3.168 -16.334  1.00  0.00      YOPE
+ATOM    117 C315 YOPE    1       0.719  -4.184 -15.486  1.00  0.00      YOPE
+ATOM    118 H15X YOPE    1       0.943  -5.152 -15.984  1.00  0.00      YOPE
+ATOM    119 H15Y YOPE    1       0.273  -4.331 -14.479  1.00  0.00      YOPE
+ATOM    120 C316 YOPE    1      -0.343  -3.410 -16.303  1.00  0.00      YOPE
+ATOM    121 H16X YOPE    1      -1.264  -4.031 -16.322  1.00  0.00      YOPE
+ATOM    122 H16Y YOPE    1      -0.515  -2.432 -15.805  1.00  0.00      YOPE
+ATOM    123 H16Z YOPE    1      -0.098  -3.150 -17.355  1.00  0.00      YOPE
+END

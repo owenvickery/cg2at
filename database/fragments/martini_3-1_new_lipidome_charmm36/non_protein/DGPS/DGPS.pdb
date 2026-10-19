@@ -1,0 +1,158 @@
+[ CNO ]
+ATOM      1  N   DGPS    1       0.131   0.977  -2.419  1.00  0.00      DGPS
+ATOM      2  HN1 DGPS    1       0.597   1.497  -3.190  1.00  0.00      DGPS
+ATOM      3  HN2 DGPS    1       0.567   0.053  -2.225  1.00  0.00      DGPS
+ATOM      4  HN3 DGPS    1      -0.864   0.797  -2.663  1.00  0.00      DGPS
+ATOM      5  C12 DGPS    1       0.225   1.708  -1.112  1.00  0.00      DGPS
+ATOM      6 H12A DGPS    1       1.265   1.987  -1.192  1.00  0.00      DGPS
+ATOM      7  C13 DGPS    1      -0.570   2.975  -1.035  1.00  0.00      DGPS
+ATOM      8 O13A DGPS    1      -1.312   3.267  -1.998  1.00  0.00      DGPS
+ATOM      9 O13B DGPS    1      -0.307   3.701  -0.042  1.00  0.00      DGPS
+ATOM     10  C11 DGPS    1      -0.245   0.775   0.069  1.00  0.00      DGPS
+ATOM     11 H11A DGPS    1      -1.353   0.758  -0.017  1.00  0.00      DGPS
+ATOM     12 H11B DGPS    1       0.217   1.265   0.952  1.00  0.00      DGPS
+[ PO4 ]
+ATOM     13  P   DGPS    1      -0.259  -1.595   1.004  1.00  0.00      DGPS
+ATOM     14  O13 DGPS    1       0.001  -1.037   2.328  1.00  0.00      DGPS
+ATOM     15  O14 DGPS    1      -1.694  -1.789   0.691  1.00  0.00      DGPS
+ATOM     16  O12 DGPS    1       0.251  -0.597  -0.013  1.00  0.00      DGPS
+ATOM     17  O11 DGPS    1       0.649  -2.914   0.753  1.00  0.00      DGPS
+[ GL1 ]
+ATOM     18  C1  DGPS    1       0.829  -3.255  -0.594  1.00  0.00      DGPS
+ATOM     19  HA  DGPS    1       0.329  -2.629  -1.364  1.00  0.00      DGPS
+ATOM     20  HB  DGPS    1       0.468  -4.286  -0.798  1.00  0.00      DGPS
+ATOM     21  C2  DGPS    1       2.346  -3.172  -1.039  1.00  0.00      DGPS
+ATOM     22  HS  DGPS    1       3.038  -3.349  -0.189  1.00  0.00      DGPS
+ATOM     23  O21 DGPS    1       2.700  -1.908  -1.646  1.00  0.00      DGPS
+ATOM     24  C21 DGPS    1       3.972  -1.584  -1.728  1.00  0.00      DGPS
+ATOM     25  O22 DGPS    1       4.884  -2.316  -1.549  1.00  0.00      DGPS
+[ GL2 ]
+ATOM     26  C3  DGPS    1       2.651  -4.341  -2.022  1.00  0.00      DGPS
+ATOM     27  HX  DGPS    1       2.446  -5.215  -1.367  1.00  0.00      DGPS
+ATOM     28  HY  DGPS    1       3.735  -4.466  -2.230  1.00  0.00      DGPS
+ATOM     29  O31 DGPS    1       1.751  -4.272  -3.227  1.00  0.00      DGPS
+ATOM     30  C31 DGPS    1       2.311  -3.688  -4.343  1.00  0.00      DGPS
+ATOM     31  O32 DGPS    1       3.401  -3.115  -4.410  1.00  0.00      DGPS
+[ C1A ]
+ATOM     32  C22 DGPS    1       3.866  -0.068  -1.892  1.00  0.00      DGPS
+ATOM     33  H2R DGPS    1       4.550   0.496  -1.223  1.00  0.00      DGPS
+ATOM     34  H2S DGPS    1       2.891   0.446  -1.752  1.00  0.00      DGPS
+ATOM     35  C23 DGPS    1       4.247   0.371  -3.319  1.00  0.00      DGPS
+ATOM     36  H3R DGPS    1       3.566  -0.139  -4.034  1.00  0.00      DGPS
+ATOM     37  H3S DGPS    1       5.277   0.060  -3.596  1.00  0.00      DGPS
+ATOM     38  C24 DGPS    1       3.963   1.837  -3.513  1.00  0.00      DGPS
+ATOM     39  H4R DGPS    1       4.507   2.211  -2.620  1.00  0.00      DGPS
+ATOM     40  H4S DGPS    1       2.898   2.144  -3.426  1.00  0.00      DGPS
+[ C2A ]
+ATOM     41  C25 DGPS    1       4.557   2.404  -4.844  1.00  0.00      DGPS
+ATOM     42  H5R DGPS    1       5.666   2.356  -4.796  1.00  0.00      DGPS
+ATOM     43  H5S DGPS    1       4.257   3.472  -4.908  1.00  0.00      DGPS
+ATOM     44  C26 DGPS    1       4.125   1.702  -6.139  1.00  0.00      DGPS
+ATOM     45  H6R DGPS    1       4.383   0.641  -5.933  1.00  0.00      DGPS
+ATOM     46  H6S DGPS    1       4.788   1.926  -7.002  1.00  0.00      DGPS
+ATOM     47  C27 DGPS    1       2.646   1.578  -6.524  1.00  0.00      DGPS
+ATOM     48  H7R DGPS    1       2.298   2.578  -6.863  1.00  0.00      DGPS
+ATOM     49  H7S DGPS    1       2.003   1.320  -5.656  1.00  0.00      DGPS
+ATOM     50  C28 DGPS    1       2.422   0.518  -7.655  1.00  0.00      DGPS
+ATOM     51  H8R DGPS    1       2.505  -0.440  -7.099  1.00  0.00      DGPS
+ATOM     52  H8S DGPS    1       3.216   0.711  -8.407  1.00  0.00      DGPS
+[ D3A ]
+ATOM     53  C29 DGPS    1       1.080   0.586  -8.462  1.00  0.00      DGPS
+ATOM     54  H9R DGPS    1       1.204  -0.258  -9.174  1.00  0.00      DGPS
+ATOM     55  H9S DGPS    1       0.890   1.528  -9.020  1.00  0.00      DGPS
+ATOM     56 C210 DGPS    1      -0.152   0.351  -7.604  1.00  0.00      DGPS
+ATOM     57 H10R DGPS    1      -0.122   1.216  -6.908  1.00  0.00      DGPS
+ATOM     58 H10S DGPS    1       0.041  -0.669  -7.208  1.00  0.00      DGPS
+ATOM     59 C211 DGPS    1      -1.529   0.319  -8.303  1.00  0.00      DGPS
+ATOM     60 H11R DGPS    1      -2.221  -0.416  -7.867  1.00  0.00      DGPS
+ATOM     61 C212 DGPS    1      -2.042   1.153  -9.173  1.00  0.00      DGPS
+ATOM     62 H12R DGPS    1      -3.037   0.963  -9.602  1.00  0.00      DGPS
+[ C4A ]
+ATOM     63 C213 DGPS    1      -1.416   2.494  -9.786  1.00  0.00      DGPS
+ATOM     64 H13R DGPS    1      -0.676   2.975  -9.112  1.00  0.00      DGPS
+ATOM     65 H13S DGPS    1      -2.234   3.217  -9.991  1.00  0.00      DGPS
+ATOM     66 C214 DGPS    1      -0.701   2.259 -11.155  1.00  0.00      DGPS
+ATOM     67 H14R DGPS    1       0.070   1.487 -10.949  1.00  0.00      DGPS
+ATOM     68 H14S DGPS    1      -0.080   3.142 -11.417  1.00  0.00      DGPS
+ATOM     69 C215 DGPS    1      -1.802   1.973 -12.240  1.00  0.00      DGPS
+ATOM     70 H15R DGPS    1      -2.618   2.665 -11.942  1.00  0.00      DGPS
+ATOM     71 H15S DGPS    1      -2.258   0.961 -12.283  1.00  0.00      DGPS
+ATOM     72 C216 DGPS    1      -1.281   2.318 -13.600  1.00  0.00      DGPS
+ATOM     73 H16R DGPS    1      -0.486   1.621 -13.943  1.00  0.00      DGPS
+ATOM     74 H16S DGPS    1      -0.816   3.327 -13.585  1.00  0.00      DGPS
+[ C5A ]
+ATOM     75 C217 DGPS    1      -2.327   2.263 -14.683  1.00  0.00      DGPS
+ATOM     76 H17R DGPS    1      -2.998   3.138 -14.547  1.00  0.00      DGPS
+ATOM     77 H17S DGPS    1      -2.922   1.326 -14.647  1.00  0.00      DGPS
+ATOM     78 C218 DGPS    1      -1.847   2.262 -16.183  1.00  0.00      DGPS
+ATOM     79 H18R DGPS    1      -1.057   1.500 -16.356  1.00  0.00      DGPS
+ATOM     80 H18S DGPS    1      -1.465   3.290 -16.361  1.00  0.00      DGPS
+ATOM     81 C219 DGPS    1      -3.044   1.933 -17.139  1.00  0.00      DGPS
+ATOM     82 H19R DGPS    1      -3.981   2.479 -16.897  1.00  0.00      DGPS
+ATOM     83 H19S DGPS    1      -3.332   0.860 -17.147  1.00  0.00      DGPS
+ATOM     84 C220 DGPS    1      -2.819   2.356 -18.567  1.00  0.00      DGPS
+ATOM     85 H20R DGPS    1      -3.830   2.409 -19.025  1.00  0.00      DGPS
+ATOM     86 H20S DGPS    1      -2.527   3.427 -18.579  1.00  0.00      DGPS
+ATOM     87 H20T DGPS    1      -2.042   1.822 -19.155  1.00  0.00      DGPS
+[ C1B ]
+ATOM     88  C32 DGPS    1       1.238  -3.755  -5.338  1.00  0.00      DGPS
+ATOM     89  H2X DGPS    1       0.713  -2.776  -5.354  1.00  0.00      DGPS
+ATOM     90  H2Y DGPS    1       0.518  -4.598  -5.259  1.00  0.00      DGPS
+ATOM     91  C33 DGPS    1       1.921  -4.074  -6.702  1.00  0.00      DGPS
+ATOM     92  H3X DGPS    1       2.637  -4.924  -6.689  1.00  0.00      DGPS
+ATOM     93  H3Y DGPS    1       2.478  -3.178  -7.049  1.00  0.00      DGPS
+ATOM     94  C34 DGPS    1       0.980  -4.352  -7.902  1.00  0.00      DGPS
+ATOM     95  H4X DGPS    1       0.499  -3.388  -8.171  1.00  0.00      DGPS
+ATOM     96  H4Y DGPS    1       0.271  -5.084  -7.460  1.00  0.00      DGPS
+[ C2B ]
+ATOM     97  C35 DGPS    1       1.765  -4.936  -9.114  1.00  0.00      DGPS
+ATOM     98  H5X DGPS    1       2.164  -5.906  -8.749  1.00  0.00      DGPS
+ATOM     99  H5Y DGPS    1       2.694  -4.342  -9.248  1.00  0.00      DGPS
+ATOM    100  C36 DGPS    1       1.025  -5.192 -10.456  1.00  0.00      DGPS
+ATOM    101  H6X DGPS    1       0.128  -5.820 -10.270  1.00  0.00      DGPS
+ATOM    102  H6Y DGPS    1       1.743  -5.739 -11.104  1.00  0.00      DGPS
+ATOM    103  C37 DGPS    1       0.516  -3.916 -11.090  1.00  0.00      DGPS
+ATOM    104  H7X DGPS    1       1.436  -3.364 -11.376  1.00  0.00      DGPS
+ATOM    105  H7Y DGPS    1       0.000  -3.263 -10.354  1.00  0.00      DGPS
+ATOM    106  C38 DGPS    1      -0.301  -4.060 -12.391  1.00  0.00      DGPS
+ATOM    107  H8X DGPS    1      -1.217  -4.675 -12.260  1.00  0.00      DGPS
+ATOM    108  H8Y DGPS    1       0.280  -4.715 -13.076  1.00  0.00      DGPS
+[ D3B ]
+ATOM    109  C39 DGPS    1      -0.526  -2.751 -13.035  1.00  0.00      DGPS
+ATOM    110  H9X DGPS    1       0.428  -2.182 -13.032  1.00  0.00      DGPS
+ATOM    111  H9Y DGPS    1      -1.159  -2.054 -12.446  1.00  0.00      DGPS
+ATOM    112 C310 DGPS    1      -1.225  -2.779 -14.409  1.00  0.00      DGPS
+ATOM    113 H10X DGPS    1      -1.534  -1.749 -14.689  1.00  0.00      DGPS
+ATOM    114 H10Y DGPS    1      -2.139  -3.381 -14.213  1.00  0.00      DGPS
+ATOM    115 C311 DGPS    1      -0.392  -3.427 -15.536  1.00  0.00      DGPS
+ATOM    116 H11X DGPS    1       0.019  -4.444 -15.449  1.00  0.00      DGPS
+ATOM    117 C312 DGPS    1       0.142  -2.744 -16.545  1.00  0.00      DGPS
+ATOM    118 H12X DGPS    1       0.659  -3.223 -17.389  1.00  0.00      DGPS
+[ C4B ]
+ATOM    119 C313 DGPS    1       0.003  -1.254 -16.755  1.00  0.00      DGPS
+ATOM    120 H13X DGPS    1       0.955  -0.871 -17.180  1.00  0.00      DGPS
+ATOM    121 H13Y DGPS    1      -0.187  -0.642 -15.848  1.00  0.00      DGPS
+ATOM    122 C314 DGPS    1      -1.131  -0.950 -17.835  1.00  0.00      DGPS
+ATOM    123 H14X DGPS    1      -0.990   0.125 -18.075  1.00  0.00      DGPS
+ATOM    124 H14Y DGPS    1      -2.134  -1.064 -17.371  1.00  0.00      DGPS
+ATOM    125 C315 DGPS    1      -1.050  -1.707 -19.166  1.00  0.00      DGPS
+ATOM    126 H15X DGPS    1      -1.940  -1.524 -19.805  1.00  0.00      DGPS
+ATOM    127 H15Y DGPS    1      -1.180  -2.784 -18.927  1.00  0.00      DGPS
+ATOM    128 C316 DGPS    1       0.240  -1.535 -20.046  1.00  0.00      DGPS
+ATOM    129 H16X DGPS    1       1.147  -1.185 -19.507  1.00  0.00      DGPS
+ATOM    130 H16Y DGPS    1      -0.050  -0.860 -20.879  1.00  0.00      DGPS
+[ C5B ]
+ATOM    131 C317 DGPS    1       0.530  -2.883 -20.753  1.00  0.00      DGPS
+ATOM    132 H17X DGPS    1      -0.421  -3.035 -21.307  1.00  0.00      DGPS
+ATOM    133 H17Y DGPS    1       0.775  -3.601 -19.941  1.00  0.00      DGPS
+ATOM    134 C318 DGPS    1       1.751  -2.804 -21.697  1.00  0.00      DGPS
+ATOM    135 H18X DGPS    1       2.756  -2.737 -21.228  1.00  0.00      DGPS
+ATOM    136 H18Y DGPS    1       1.648  -1.921 -22.363  1.00  0.00      DGPS
+ATOM    137 C319 DGPS    1       1.970  -4.069 -22.659  1.00  0.00      DGPS
+ATOM    138 H19X DGPS    1       2.197  -4.914 -21.974  1.00  0.00      DGPS
+ATOM    139 H19Y DGPS    1       2.832  -3.815 -23.312  1.00  0.00      DGPS
+ATOM    140 C320 DGPS    1       0.836  -4.479 -23.539  1.00  0.00      DGPS
+ATOM    141 H20X DGPS    1      -0.126  -4.462 -22.983  1.00  0.00      DGPS
+ATOM    142 H20Y DGPS    1       0.632  -3.703 -24.307  1.00  0.00      DGPS
+ATOM    143 H20Z DGPS    1       0.997  -5.366 -24.188  1.00  0.00      DGPS
+END

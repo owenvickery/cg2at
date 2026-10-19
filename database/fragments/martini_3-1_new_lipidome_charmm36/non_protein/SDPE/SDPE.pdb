@@ -1,0 +1,147 @@
+[ NH3 ]
+ATOM      1  N   SDPE    1       3.123  -1.326  -0.294  1.00  0.00      SDPE
+ATOM      2  HN1 SDPE    1       4.123  -1.182  -0.540  1.00  0.00      SDPE
+ATOM      3  HN2 SDPE    1       2.778  -0.811   0.541  1.00  0.00      SDPE
+ATOM      4  HN3 SDPE    1       2.852  -2.324  -0.189  1.00  0.00      SDPE
+ATOM      5  C12 SDPE    1       2.289  -0.732  -1.462  1.00  0.00      SDPE
+ATOM      6 H12A SDPE    1       2.847  -1.077  -2.358  1.00  0.00      SDPE
+ATOM      7 H12B SDPE    1       2.350   0.376  -1.407  1.00  0.00      SDPE
+ATOM      8  C11 SDPE    1       0.843  -1.256  -1.286  1.00  0.00      SDPE
+ATOM      9 H11A SDPE    1       0.843  -2.367  -1.321  1.00  0.00      SDPE
+ATOM     10 H11B SDPE    1       0.175  -0.998  -2.135  1.00  0.00      SDPE
+[ PO4 ]
+ATOM     11  P   SDPE    1      -0.342   0.422   0.280  1.00  0.00      SDPE
+ATOM     12  O13 SDPE    1       0.742   1.369   0.526  1.00  0.00      SDPE
+ATOM     13  O14 SDPE    1      -1.454   0.319   1.283  1.00  0.00      SDPE
+ATOM     14  O12 SDPE    1       0.253  -1.012  -0.036  1.00  0.00      SDPE
+ATOM     15  O11 SDPE    1      -1.076   0.928  -1.046  1.00  0.00      SDPE
+[ GL1 ]
+ATOM     16  C1  SDPE    1      -1.509   2.291  -1.100  1.00  0.00      SDPE
+ATOM     17  HA  SDPE    1      -1.119   2.849  -0.223  1.00  0.00      SDPE
+ATOM     18  HB  SDPE    1      -2.617   2.323  -1.183  1.00  0.00      SDPE
+ATOM     19  C2  SDPE    1      -0.961   2.935  -2.327  1.00  0.00      SDPE
+ATOM     20  HS  SDPE    1      -1.224   4.013  -2.370  1.00  0.00      SDPE
+ATOM     21  O21 SDPE    1      -1.540   2.238  -3.412  1.00  0.00      SDPE
+ATOM     22  C21 SDPE    1      -2.712   2.451  -3.849  1.00  0.00      SDPE
+ATOM     23  O22 SDPE    1      -3.525   3.250  -3.406  1.00  0.00      SDPE
+[ GL2 ]
+ATOM     24  C3  SDPE    1       0.587   2.909  -2.475  1.00  0.00      SDPE
+ATOM     25  HX  SDPE    1       1.009   1.883  -2.421  1.00  0.00      SDPE
+ATOM     26  HY  SDPE    1       1.010   3.417  -1.582  1.00  0.00      SDPE
+ATOM     27  O31 SDPE    1       0.925   3.579  -3.609  1.00  0.00      SDPE
+ATOM     28  C31 SDPE    1       1.148   2.796  -4.640  1.00  0.00      SDPE
+ATOM     29  O32 SDPE    1       1.098   1.555  -4.708  1.00  0.00      SDPE
+[ D1A ]
+ATOM     30  C22 SDPE    1      -2.940   1.599  -5.056  1.00  0.00      SDPE
+ATOM     31  H2R SDPE    1      -3.145   2.272  -5.915  1.00  0.00      SDPE
+ATOM     32  H2S SDPE    1      -3.857   0.979  -4.950  1.00  0.00      SDPE
+ATOM     33  C23 SDPE    1      -1.747   0.717  -5.488  1.00  0.00      SDPE
+ATOM     34  H3R SDPE    1      -1.399   0.251  -4.542  1.00  0.00      SDPE
+ATOM     35  H3S SDPE    1      -1.029   1.376  -6.023  1.00  0.00      SDPE
+ATOM     36  C24 SDPE    1      -2.161  -0.405  -6.468  1.00  0.00      SDPE
+ATOM     37  H4R SDPE    1      -2.774  -1.177  -5.980  1.00  0.00      SDPE
+ATOM     38  C25 SDPE    1      -1.844  -0.550  -7.808  1.00  0.00      SDPE
+ATOM     39  H5R SDPE    1      -2.332  -1.424  -8.264  1.00  0.00      SDPE
+ATOM     40  C26 SDPE    1      -1.052   0.211  -8.781  1.00  0.00      SDPE
+ATOM     41  H6R SDPE    1      -1.198   1.290  -8.558  1.00  0.00      SDPE
+ATOM     42  H6S SDPE    1      -1.615   0.033  -9.722  1.00  0.00      SDPE
+[ D2A ]
+ATOM     43  C27 SDPE    1       0.422  -0.159  -9.081  1.00  0.00      SDPE
+ATOM     44  H7R SDPE    1       1.125   0.030  -8.257  1.00  0.00      SDPE
+ATOM     45  C28 SDPE    1       0.823  -0.519 -10.302  1.00  0.00      SDPE
+ATOM     46  H8R SDPE    1       1.847  -0.881 -10.474  1.00  0.00      SDPE
+ATOM     47  C29 SDPE    1      -0.092  -0.603 -11.509  1.00  0.00      SDPE
+ATOM     48  H9R SDPE    1       0.609  -0.368 -12.339  1.00  0.00      SDPE
+ATOM     49  H9S SDPE    1      -0.969   0.079 -11.514  1.00  0.00      SDPE
+ATOM     50 C210 SDPE    1      -0.607  -2.017 -11.626  1.00  0.00      SDPE
+ATOM     51 H10R SDPE    1      -0.851  -2.434 -10.637  1.00  0.00      SDPE
+[ D3A ]
+ATOM     52 C211 SDPE    1      -0.844  -2.776 -12.722  1.00  0.00      SDPE
+ATOM     53 H11R SDPE    1      -1.220  -3.791 -12.522  1.00  0.00      SDPE
+ATOM     54 C212 SDPE    1      -0.591  -2.345 -14.181  1.00  0.00      SDPE
+ATOM     55 H12R SDPE    1      -0.484  -1.249 -14.323  1.00  0.00      SDPE
+ATOM     56 H12S SDPE    1      -1.456  -2.662 -14.803  1.00  0.00      SDPE
+ATOM     57 C213 SDPE    1       0.734  -3.068 -14.603  1.00  0.00      SDPE
+ATOM     58 H13R SDPE    1       0.665  -4.145 -14.389  1.00  0.00      SDPE
+ATOM     59 C214 SDPE    1       1.834  -2.519 -15.162  1.00  0.00      SDPE
+ATOM     60 H14R SDPE    1       2.706  -3.141 -15.414  1.00  0.00      SDPE
+[ D4A ]
+ATOM     61 C215 SDPE    1       1.937  -1.086 -15.575  1.00  0.00      SDPE
+ATOM     62 H15R SDPE    1       1.141  -0.431 -15.161  1.00  0.00      SDPE
+ATOM     63 H15S SDPE    1       1.853  -0.836 -16.654  1.00  0.00      SDPE
+ATOM     64 C216 SDPE    1       3.170  -0.455 -14.962  1.00  0.00      SDPE
+ATOM     65 H16R SDPE    1       3.641  -0.944 -14.096  1.00  0.00      SDPE
+ATOM     66 C217 SDPE    1       3.859   0.611 -15.473  1.00  0.00      SDPE
+ATOM     67 H17R SDPE    1       4.787   0.985 -15.017  1.00  0.00      SDPE
+ATOM     68 C218 SDPE    1       3.437   1.316 -16.753  1.00  0.00      SDPE
+ATOM     69 H18R SDPE    1       3.765   0.759 -17.657  1.00  0.00      SDPE
+ATOM     70 H18S SDPE    1       4.015   2.262 -16.822  1.00  0.00      SDPE
+[ D5A ]
+ATOM     71 C219 SDPE    1       1.987   1.845 -16.905  1.00  0.00      SDPE
+ATOM     72 H19R SDPE    1       1.288   1.623 -16.085  1.00  0.00      SDPE
+ATOM     73 C220 SDPE    1       1.590   2.630 -17.970  1.00  0.00      SDPE
+ATOM     74 H20R SDPE    1       0.536   2.908 -18.118  1.00  0.00      SDPE
+ATOM     75 C221 SDPE    1       2.564   3.097 -19.081  1.00  0.00      SDPE
+ATOM     76 H21R SDPE    1       3.508   3.438 -18.604  1.00  0.00      SDPE
+ATOM     77 H21S SDPE    1       2.138   4.045 -19.474  1.00  0.00      SDPE
+ATOM     78 C222 SDPE    1       2.661   2.069 -20.154  1.00  0.00      SDPE
+ATOM     79 H22R SDPE    1       3.219   2.494 -21.016  1.00  0.00      SDPE
+ATOM     80 H22S SDPE    1       1.687   1.763 -20.592  1.00  0.00      SDPE
+ATOM     81 H22T SDPE    1       3.151   1.197 -19.670  1.00  0.00      SDPE
+[ C1B ]
+ATOM     82  C32 SDPE    1       1.442   3.696  -5.836  1.00  0.00      SDPE
+ATOM     83  H2X SDPE    1       2.520   3.959  -5.779  1.00  0.00      SDPE
+ATOM     84  H2Y SDPE    1       0.847   4.634  -5.820  1.00  0.00      SDPE
+ATOM     85  C33 SDPE    1       1.187   3.079  -7.251  1.00  0.00      SDPE
+ATOM     86  H3X SDPE    1       0.178   2.619  -7.329  1.00  0.00      SDPE
+ATOM     87  H3Y SDPE    1       1.948   2.285  -7.409  1.00  0.00      SDPE
+ATOM     88  C34 SDPE    1       1.450   4.061  -8.432  1.00  0.00      SDPE
+ATOM     89  H4X SDPE    1       2.558   4.061  -8.515  1.00  0.00      SDPE
+ATOM     90  H4Y SDPE    1       1.000   5.057  -8.233  1.00  0.00      SDPE
+ATOM     91  C35 SDPE    1       0.982   3.631  -9.835  1.00  0.00      SDPE
+ATOM     92  H5X SDPE    1       1.381   2.641 -10.143  1.00  0.00      SDPE
+ATOM     93  H5Y SDPE    1       1.350   4.462 -10.473  1.00  0.00      SDPE
+ATOM     94  C36 SDPE    1      -0.462   3.898 -10.172  1.00  0.00      SDPE
+ATOM     95  H6X SDPE    1      -0.822   4.891  -9.829  1.00  0.00      SDPE
+ATOM     96  H6Y SDPE    1      -1.177   3.257  -9.613  1.00  0.00      SDPE
+[ C2B ]
+ATOM     97  C37 SDPE    1      -0.781   4.011 -11.681  1.00  0.00      SDPE
+ATOM     98  H7X SDPE    1      -0.117   4.763 -12.160  1.00  0.00      SDPE
+ATOM     99  H7Y SDPE    1      -1.773   4.491 -11.825  1.00  0.00      SDPE
+ATOM    100  C38 SDPE    1      -0.821   2.658 -12.501  1.00  0.00      SDPE
+ATOM    101  H8X SDPE    1      -1.576   1.911 -12.175  1.00  0.00      SDPE
+ATOM    102  H8Y SDPE    1       0.142   2.136 -12.684  1.00  0.00      SDPE
+ATOM    103  C39 SDPE    1      -1.212   2.949 -13.988  1.00  0.00      SDPE
+ATOM    104  H9X SDPE    1      -0.432   3.643 -14.368  1.00  0.00      SDPE
+ATOM    105  H9Y SDPE    1      -2.189   3.477 -13.954  1.00  0.00      SDPE
+ATOM    106 C310 SDPE    1      -1.411   1.623 -14.810  1.00  0.00      SDPE
+ATOM    107 H10X SDPE    1      -2.030   0.824 -14.349  1.00  0.00      SDPE
+ATOM    108 H10Y SDPE    1      -0.371   1.238 -14.878  1.00  0.00      SDPE
+[ C3B ]
+ATOM    109 C311 SDPE    1      -1.918   1.896 -16.268  1.00  0.00      SDPE
+ATOM    110 H11X SDPE    1      -1.087   2.359 -16.843  1.00  0.00      SDPE
+ATOM    111 H11Y SDPE    1      -2.764   2.614 -16.220  1.00  0.00      SDPE
+ATOM    112 C312 SDPE    1      -2.397   0.698 -17.144  1.00  0.00      SDPE
+ATOM    113 H12X SDPE    1      -2.702   1.036 -18.157  1.00  0.00      SDPE
+ATOM    114 H12Y SDPE    1      -3.300   0.233 -16.694  1.00  0.00      SDPE
+ATOM    115 C313 SDPE    1      -1.320  -0.416 -17.167  1.00  0.00      SDPE
+ATOM    116 H13X SDPE    1      -0.944  -0.712 -16.165  1.00  0.00      SDPE
+ATOM    117 H13Y SDPE    1      -0.412  -0.026 -17.675  1.00  0.00      SDPE
+ATOM    118 C314 SDPE    1      -1.782  -1.610 -18.004  1.00  0.00      SDPE
+ATOM    119 H14X SDPE    1      -2.012  -1.140 -18.985  1.00  0.00      SDPE
+ATOM    120 H14Y SDPE    1      -2.643  -2.018 -17.434  1.00  0.00      SDPE
+[ C4B ]
+ATOM    121 C315 SDPE    1      -0.882  -2.818 -18.187  1.00  0.00      SDPE
+ATOM    122 H15X SDPE    1      -1.466  -3.760 -18.118  1.00  0.00      SDPE
+ATOM    123 H15Y SDPE    1      -0.236  -2.834 -17.284  1.00  0.00      SDPE
+ATOM    124 C316 SDPE    1       0.137  -2.715 -19.375  1.00  0.00      SDPE
+ATOM    125 H16X SDPE    1       0.677  -1.746 -19.320  1.00  0.00      SDPE
+ATOM    126 H16Y SDPE    1      -0.429  -2.669 -20.330  1.00  0.00      SDPE
+ATOM    127 C317 SDPE    1       1.175  -3.846 -19.325  1.00  0.00      SDPE
+ATOM    128 H17X SDPE    1       0.714  -4.845 -19.174  1.00  0.00      SDPE
+ATOM    129 H17Y SDPE    1       1.780  -3.792 -18.394  1.00  0.00      SDPE
+ATOM    130 C318 SDPE    1       2.194  -3.946 -20.453  1.00  0.00      SDPE
+ATOM    131 H18X SDPE    1       2.804  -4.845 -20.221  1.00  0.00      SDPE
+ATOM    132 H18Y SDPE    1       2.918  -3.104 -20.487  1.00  0.00      SDPE
+ATOM    133 H18Z SDPE    1       1.649  -4.062 -21.414  1.00  0.00      SDPE
+END

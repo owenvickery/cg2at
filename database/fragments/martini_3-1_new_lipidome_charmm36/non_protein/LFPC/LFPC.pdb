@@ -1,0 +1,145 @@
+[ NC3 ]
+ATOM      1  N   LFPC    1       1.127  -1.422  -1.458  1.00  0.00      LFPC
+ATOM      2  C12 LFPC    1      -0.393  -1.302  -1.401  1.00  0.00      LFPC
+ATOM      3 H12A LFPC    1      -0.836  -2.123  -1.948  1.00  0.00      LFPC
+ATOM      4 H12B LFPC    1      -0.670  -0.382  -1.912  1.00  0.00      LFPC
+ATOM      5  C13 LFPC    1       1.678  -2.463  -0.529  1.00  0.00      LFPC
+ATOM      6 H13A LFPC    1       2.721  -2.245  -0.323  1.00  0.00      LFPC
+ATOM      7 H13B LFPC    1       1.151  -2.427   0.421  1.00  0.00      LFPC
+ATOM      8 H13C LFPC    1       1.619  -3.458  -0.943  1.00  0.00      LFPC
+ATOM      9  C14 LFPC    1       1.707  -0.101  -1.033  1.00  0.00      LFPC
+ATOM     10 H14A LFPC    1       2.778  -0.056  -1.105  1.00  0.00      LFPC
+ATOM     11 H14B LFPC    1       1.265   0.727  -1.577  1.00  0.00      LFPC
+ATOM     12 H14C LFPC    1       1.430   0.083   0.014  1.00  0.00      LFPC
+ATOM     13  C15 LFPC    1       1.541  -1.771  -2.848  1.00  0.00      LFPC
+ATOM     14 H15A LFPC    1       0.812  -2.436  -3.296  1.00  0.00      LFPC
+ATOM     15 H15B LFPC    1       2.492  -2.287  -2.829  1.00  0.00      LFPC
+ATOM     16 H15C LFPC    1       1.629  -0.884  -3.462  1.00  0.00      LFPC
+ATOM     17  C11 LFPC    1      -1.090  -1.257  -0.018  1.00  0.00      LFPC
+ATOM     18 H11A LFPC    1      -2.146  -0.915  -0.153  1.00  0.00      LFPC
+ATOM     19 H11B LFPC    1      -1.140  -2.297   0.371  1.00  0.00      LFPC
+[ PO4 ]
+ATOM     20  P   LFPC    1      -0.736   1.072   1.181  1.00  0.00      LFPC
+ATOM     21  O13 LFPC    1       0.539   1.769   1.440  1.00  0.00      LFPC
+ATOM     22  O14 LFPC    1      -1.821   1.156   2.176  1.00  0.00      LFPC
+ATOM     23  O12 LFPC    1      -0.388  -0.454   0.919  1.00  0.00      LFPC
+ATOM     24  O11 LFPC    1      -1.267   1.550  -0.240  1.00  0.00      LFPC
+[ GL1 ]
+ATOM     25  C1  LFPC    1      -1.737   2.897  -0.419  1.00  0.00      LFPC
+ATOM     26  HA  LFPC    1      -1.137   3.646   0.154  1.00  0.00      LFPC
+ATOM     27  HB  LFPC    1      -2.787   2.972  -0.049  1.00  0.00      LFPC
+ATOM     28  C2  LFPC    1      -1.744   3.295  -1.934  1.00  0.00      LFPC
+ATOM     29  HS  LFPC    1      -2.465   4.136  -2.079  1.00  0.00      LFPC
+ATOM     30  O21 LFPC    1      -2.077   2.153  -2.745  1.00  0.00      LFPC
+ATOM     31  C21 LFPC    1      -3.345   1.797  -2.707  1.00  0.00      LFPC
+ATOM     32  O22 LFPC    1      -4.262   2.440  -2.231  1.00  0.00      LFPC
+[ GL2 ]
+ATOM     33  C3  LFPC    1      -0.358   3.809  -2.421  1.00  0.00      LFPC
+ATOM     34  HX  LFPC    1       0.377   3.041  -2.086  1.00  0.00      LFPC
+ATOM     35  HY  LFPC    1      -0.105   4.760  -1.907  1.00  0.00      LFPC
+ATOM     36  O31 LFPC    1      -0.347   4.051  -3.853  1.00  0.00      LFPC
+ATOM     37  C31 LFPC    1       0.686   3.540  -4.525  1.00  0.00      LFPC
+ATOM     38  O32 LFPC    1       1.527   2.803  -4.077  1.00  0.00      LFPC
+[ C1A ]
+ATOM     39  C22 LFPC    1      -3.496   0.425  -3.375  1.00  0.00      LFPC
+ATOM     40  H2R LFPC    1      -4.209  -0.148  -2.744  1.00  0.00      LFPC
+ATOM     41  H2S LFPC    1      -2.526  -0.108  -3.378  1.00  0.00      LFPC
+ATOM     42  C23 LFPC    1      -4.095   0.522  -4.798  1.00  0.00      LFPC
+ATOM     43  H3R LFPC    1      -4.901   1.291  -4.809  1.00  0.00      LFPC
+ATOM     44  H3S LFPC    1      -4.569  -0.457  -5.039  1.00  0.00      LFPC
+ATOM     45  C24 LFPC    1      -3.065   0.850  -5.891  1.00  0.00      LFPC
+ATOM     46  H4R LFPC    1      -2.214   0.135  -5.858  1.00  0.00      LFPC
+ATOM     47  H4S LFPC    1      -2.661   1.867  -5.689  1.00  0.00      LFPC
+ATOM     48  C25 LFPC    1      -3.662   0.816  -7.307  1.00  0.00      LFPC
+ATOM     49  H5R LFPC    1      -4.678   1.272  -7.307  1.00  0.00      LFPC
+ATOM     50  H5S LFPC    1      -3.775  -0.243  -7.632  1.00  0.00      LFPC
+ATOM     51  C26 LFPC    1      -2.808   1.571  -8.338  1.00  0.00      LFPC
+ATOM     52  H6R LFPC    1      -1.785   1.140  -8.353  1.00  0.00      LFPC
+ATOM     53  H6S LFPC    1      -2.734   2.636  -8.026  1.00  0.00      LFPC
+[ D2A ]
+ATOM     54  C27 LFPC    1      -3.420   1.458  -9.742  1.00  0.00      LFPC
+ATOM     55  H7R LFPC    1      -4.353   2.061  -9.785  1.00  0.00      LFPC
+ATOM     56  H7S LFPC    1      -3.700   0.387  -9.877  1.00  0.00      LFPC
+ATOM     57  C28 LFPC    1      -2.496   1.818 -10.922  1.00  0.00      LFPC
+ATOM     58  H8R LFPC    1      -3.059   1.613 -11.862  1.00  0.00      LFPC
+ATOM     59  H8S LFPC    1      -1.637   1.110 -10.912  1.00  0.00      LFPC
+ATOM     60  C29 LFPC    1      -2.033   3.250 -10.939  1.00  0.00      LFPC
+ATOM     61  H9R LFPC    1      -2.711   3.982 -10.472  1.00  0.00      LFPC
+ATOM     62 C210 LFPC    1      -0.892   3.681 -11.504  1.00  0.00      LFPC
+ATOM     63 H10R LFPC    1      -0.668   4.758 -11.522  1.00  0.00      LFPC
+[ D3A ]
+ATOM     64 C211 LFPC    1       0.088   2.839 -12.277  1.00  0.00      LFPC
+ATOM     65 H11R LFPC    1       0.047   1.761 -12.005  1.00  0.00      LFPC
+ATOM     66 H11S LFPC    1       1.129   3.157 -12.038  1.00  0.00      LFPC
+ATOM     67 C212 LFPC    1      -0.261   3.021 -13.743  1.00  0.00      LFPC
+ATOM     68 H12R LFPC    1      -1.035   2.325 -14.111  1.00  0.00      LFPC
+ATOM     69 C213 LFPC    1       0.194   3.998 -14.540  1.00  0.00      LFPC
+ATOM     70 H13R LFPC    1       0.848   4.773 -14.104  1.00  0.00      LFPC
+ATOM     71 C214 LFPC    1      -0.126   4.194 -16.009  1.00  0.00      LFPC
+ATOM     72 H14R LFPC    1      -0.724   5.126 -16.148  1.00  0.00      LFPC
+ATOM     73 H14S LFPC    1      -0.774   3.375 -16.397  1.00  0.00      LFPC
+[ D4A ]
+ATOM     74 C215 LFPC    1       1.145   4.313 -16.849  1.00  0.00      LFPC
+ATOM     75 H15R LFPC    1       1.785   3.519 -16.394  1.00  0.00      LFPC
+ATOM     76 C216 LFPC    1       1.093   4.152 -18.152  1.00  0.00      LFPC
+ATOM     77 H16R LFPC    1       1.970   4.571 -18.693  1.00  0.00      LFPC
+ATOM     78 C217 LFPC    1       0.925   2.737 -18.692  1.00  0.00      LFPC
+ATOM     79 H17R LFPC    1       0.036   2.264 -18.212  1.00  0.00      LFPC
+ATOM     80 H17S LFPC    1       1.805   2.131 -18.386  1.00  0.00      LFPC
+ATOM     81 C218 LFPC    1       0.771   2.615 -20.212  1.00  0.00      LFPC
+ATOM     82 H18R LFPC    1       1.719   2.872 -20.732  1.00  0.00      LFPC
+ATOM     83 H18S LFPC    1      -0.035   3.275 -20.600  1.00  0.00      LFPC
+ATOM     84 H18T LFPC    1       0.512   1.566 -20.483  1.00  0.00      LFPC
+[ C1B ]
+ATOM     85  C32 LFPC    1       0.707   4.133  -5.946  1.00  0.00      LFPC
+ATOM     86  H2X LFPC    1       0.134   5.082  -5.944  1.00  0.00      LFPC
+ATOM     87  H2Y LFPC    1       1.765   4.361  -6.189  1.00  0.00      LFPC
+ATOM     88  C33 LFPC    1       0.122   3.201  -7.026  1.00  0.00      LFPC
+ATOM     89  H3X LFPC    1       0.019   3.771  -7.980  1.00  0.00      LFPC
+ATOM     90  H3Y LFPC    1      -0.897   2.872  -6.730  1.00  0.00      LFPC
+ATOM     91  C34 LFPC    1       0.992   1.982  -7.337  1.00  0.00      LFPC
+ATOM     92  H4X LFPC    1       0.352   1.291  -7.929  1.00  0.00      LFPC
+ATOM     93  H4Y LFPC    1       1.303   1.447  -6.414  1.00  0.00      LFPC
+ATOM     94  C35 LFPC    1       2.222   2.316  -8.192  1.00  0.00      LFPC
+ATOM     95  H5X LFPC    1       2.900   3.019  -7.660  1.00  0.00      LFPC
+ATOM     96  H5Y LFPC    1       1.871   2.832  -9.116  1.00  0.00      LFPC
+ATOM     97  C36 LFPC    1       3.001   1.052  -8.584  1.00  0.00      LFPC
+ATOM     98  H6X LFPC    1       3.810   1.350  -9.286  1.00  0.00      LFPC
+ATOM     99  H6Y LFPC    1       3.482   0.624  -7.677  1.00  0.00      LFPC
+[ D2B ]
+ATOM    100  C37 LFPC    1       2.101  -0.020  -9.229  1.00  0.00      LFPC
+ATOM    101  H7X LFPC    1       1.453  -0.476  -8.446  1.00  0.00      LFPC
+ATOM    102  H7Y LFPC    1       1.427   0.481  -9.961  1.00  0.00      LFPC
+ATOM    103  C38 LFPC    1       2.853  -1.160  -9.936  1.00  0.00      LFPC
+ATOM    104  H8X LFPC    1       2.097  -1.880 -10.323  1.00  0.00      LFPC
+ATOM    105  H8Y LFPC    1       3.463  -1.716  -9.190  1.00  0.00      LFPC
+ATOM    106  C39 LFPC    1       3.723  -0.663 -11.061  1.00  0.00      LFPC
+ATOM    107  H9X LFPC    1       4.776  -0.495 -10.787  1.00  0.00      LFPC
+ATOM    108 C310 LFPC    1       3.317  -0.379 -12.315  1.00  0.00      LFPC
+ATOM    109 H10X LFPC    1       4.073  -0.035 -13.036  1.00  0.00      LFPC
+[ D3B ]
+ATOM    110 C311 LFPC    1       1.901  -0.449 -12.859  1.00  0.00      LFPC
+ATOM    111 H11X LFPC    1       1.657   0.554 -13.270  1.00  0.00      LFPC
+ATOM    112 H11Y LFPC    1       1.173  -0.609 -12.034  1.00  0.00      LFPC
+ATOM    113 C312 LFPC    1       1.636  -1.456 -13.952  1.00  0.00      LFPC
+ATOM    114 H12X LFPC    1       0.702  -2.029 -13.821  1.00  0.00      LFPC
+ATOM    115 C313 LFPC    1       2.132  -1.366 -15.197  1.00  0.00      LFPC
+ATOM    116 H13X LFPC    1       2.530  -0.380 -15.472  1.00  0.00      LFPC
+ATOM    117 C314 LFPC    1       1.757  -2.221 -16.382  1.00  0.00      LFPC
+ATOM    118 H14X LFPC    1       1.786  -3.307 -16.116  1.00  0.00      LFPC
+ATOM    119 H14Y LFPC    1       0.711  -1.979 -16.658  1.00  0.00      LFPC
+[ C4B ]
+ATOM    120 C315 LFPC    1       2.632  -2.034 -17.656  1.00  0.00      LFPC
+ATOM    121 H15X LFPC    1       2.378  -2.857 -18.362  1.00  0.00      LFPC
+ATOM    122 H15Y LFPC    1       3.711  -2.145 -17.408  1.00  0.00      LFPC
+ATOM    123 C316 LFPC    1       2.400  -0.693 -18.384  1.00  0.00      LFPC
+ATOM    124 H16X LFPC    1       1.311  -0.525 -18.532  1.00  0.00      LFPC
+ATOM    125 H16Y LFPC    1       2.776   0.119 -17.722  1.00  0.00      LFPC
+ATOM    126 C317 LFPC    1       3.131  -0.532 -19.736  1.00  0.00      LFPC
+ATOM    127 H17X LFPC    1       3.228   0.565 -19.921  1.00  0.00      LFPC
+ATOM    128 H17Y LFPC    1       4.160  -0.942 -19.642  1.00  0.00      LFPC
+ATOM    129 C318 LFPC    1       2.437  -1.134 -20.966  1.00  0.00      LFPC
+ATOM    130 H18X LFPC    1       2.324  -2.233 -20.867  1.00  0.00      LFPC
+ATOM    131 H18Y LFPC    1       1.432  -0.682 -21.107  1.00  0.00      LFPC
+ATOM    132 H18Z LFPC    1       3.029  -0.931 -21.887  1.00  0.00      LFPC
+END

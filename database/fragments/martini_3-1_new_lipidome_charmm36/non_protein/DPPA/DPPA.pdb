@@ -1,0 +1,124 @@
+[ PO4 ]
+ATOM      1  P   DPPA    1      -0.058  -0.061   0.301  1.00  0.00      DPPA
+ATOM      2  O13 DPPA    1      -0.521   1.206   0.865  1.00  0.00      DPPA
+ATOM      3  O14 DPPA    1      -0.970  -0.685  -0.695  1.00  0.00      DPPA
+ATOM      4  O12 DPPA    1       0.208  -1.048   1.537  1.00  0.00      DPPA
+ATOM      5  H12 DPPA    1       0.003  -1.983   1.470  1.00  0.00      DPPA
+ATOM      6  O11 DPPA    1       1.389   0.137  -0.289  1.00  0.00      DPPA
+[ GL1 ]
+ATOM      7  C1  DPPA    1       1.723   1.364  -0.963  1.00  0.00      DPPA
+ATOM      8  HA  DPPA    1       2.823   1.473  -1.079  1.00  0.00      DPPA
+ATOM      9  HB  DPPA    1       1.260   2.249  -0.477  1.00  0.00      DPPA
+ATOM     10  C2  DPPA    1       1.265   1.347  -2.443  1.00  0.00      DPPA
+ATOM     11  HS  DPPA    1       0.203   1.669  -2.381  1.00  0.00      DPPA
+ATOM     12  O21 DPPA    1       1.300   0.001  -2.922  1.00  0.00      DPPA
+ATOM     13  C21 DPPA    1       0.268  -0.279  -3.741  1.00  0.00      DPPA
+ATOM     14  O22 DPPA    1      -0.684   0.430  -4.045  1.00  0.00      DPPA
+[ GL2 ]
+ATOM     15  C3  DPPA    1       2.130   2.337  -3.321  1.00  0.00      DPPA
+ATOM     16  HX  DPPA    1       3.166   1.942  -3.249  1.00  0.00      DPPA
+ATOM     17  HY  DPPA    1       2.136   3.385  -2.953  1.00  0.00      DPPA
+ATOM     18  O31 DPPA    1       1.708   2.251  -4.690  1.00  0.00      DPPA
+ATOM     19  C31 DPPA    1       2.409   3.033  -5.480  1.00  0.00      DPPA
+ATOM     20  O32 DPPA    1       3.282   3.764  -5.227  1.00  0.00      DPPA
+[ C1A ]
+ATOM     21  C22 DPPA    1       0.697  -1.602  -4.360  1.00  0.00      DPPA
+ATOM     22  H2R DPPA    1       0.690  -2.409  -3.595  1.00  0.00      DPPA
+ATOM     23  H2S DPPA    1       1.738  -1.589  -4.748  1.00  0.00      DPPA
+ATOM     24  C23 DPPA    1      -0.204  -1.915  -5.619  1.00  0.00      DPPA
+ATOM     25  H3R DPPA    1       0.101  -1.298  -6.492  1.00  0.00      DPPA
+ATOM     26  H3S DPPA    1      -1.297  -1.809  -5.453  1.00  0.00      DPPA
+ATOM     27  C24 DPPA    1      -0.029  -3.316  -6.087  1.00  0.00      DPPA
+ATOM     28  H4R DPPA    1      -0.374  -4.043  -5.321  1.00  0.00      DPPA
+ATOM     29  H4S DPPA    1       1.026  -3.586  -6.307  1.00  0.00      DPPA
+[ C2A ]
+ATOM     30  C25 DPPA    1      -0.869  -3.713  -7.387  1.00  0.00      DPPA
+ATOM     31  H5R DPPA    1      -1.694  -2.971  -7.452  1.00  0.00      DPPA
+ATOM     32  H5S DPPA    1      -1.330  -4.714  -7.239  1.00  0.00      DPPA
+ATOM     33  C26 DPPA    1      -0.162  -3.550  -8.688  1.00  0.00      DPPA
+ATOM     34  H6R DPPA    1       0.729  -4.205  -8.799  1.00  0.00      DPPA
+ATOM     35  H6S DPPA    1       0.387  -2.594  -8.829  1.00  0.00      DPPA
+ATOM     36  C27 DPPA    1      -1.067  -3.697  -9.839  1.00  0.00      DPPA
+ATOM     37  H7R DPPA    1      -1.902  -2.974  -9.716  1.00  0.00      DPPA
+ATOM     38  H7S DPPA    1      -1.634  -4.649  -9.767  1.00  0.00      DPPA
+ATOM     39  C28 DPPA    1      -0.424  -3.585 -11.290  1.00  0.00      DPPA
+ATOM     40  H8R DPPA    1      -1.235  -3.710 -12.038  1.00  0.00      DPPA
+ATOM     41  H8S DPPA    1       0.365  -4.365 -11.356  1.00  0.00      DPPA
+[ C3A ]
+ATOM     42  C29 DPPA    1       0.334  -2.239 -11.665  1.00  0.00      DPPA
+ATOM     43  H9R DPPA    1       1.024  -2.047 -10.817  1.00  0.00      DPPA
+ATOM     44  H9S DPPA    1      -0.397  -1.410 -11.773  1.00  0.00      DPPA
+ATOM     45 C210 DPPA    1       1.167  -2.267 -12.959  1.00  0.00      DPPA
+ATOM     46 H10R DPPA    1       1.437  -3.324 -13.169  1.00  0.00      DPPA
+ATOM     47 H10S DPPA    1       2.135  -1.734 -12.836  1.00  0.00      DPPA
+ATOM     48 C211 DPPA    1       0.409  -1.875 -14.296  1.00  0.00      DPPA
+ATOM     49 H11R DPPA    1       0.230  -0.782 -14.215  1.00  0.00      DPPA
+ATOM     50 H11S DPPA    1      -0.602  -2.311 -14.151  1.00  0.00      DPPA
+ATOM     51 C212 DPPA    1       1.112  -2.235 -15.597  1.00  0.00      DPPA
+ATOM     52 H12R DPPA    1       1.143  -3.320 -15.837  1.00  0.00      DPPA
+ATOM     53 H12S DPPA    1       2.180  -2.044 -15.356  1.00  0.00      DPPA
+[ C4A ]
+ATOM     54 C213 DPPA    1       0.458  -1.381 -16.656  1.00  0.00      DPPA
+ATOM     55 H13R DPPA    1       0.542  -0.293 -16.447  1.00  0.00      DPPA
+ATOM     56 H13S DPPA    1      -0.623  -1.631 -16.594  1.00  0.00      DPPA
+ATOM     57 C214 DPPA    1       1.063  -1.628 -18.044  1.00  0.00      DPPA
+ATOM     58 H14R DPPA    1       2.155  -1.429 -18.101  1.00  0.00      DPPA
+ATOM     59 H14S DPPA    1       0.523  -1.034 -18.811  1.00  0.00      DPPA
+ATOM     60 C215 DPPA    1       0.983  -3.045 -18.495  1.00  0.00      DPPA
+ATOM     61 H15R DPPA    1       1.576  -3.693 -17.815  1.00  0.00      DPPA
+ATOM     62 H15S DPPA    1       1.499  -3.201 -19.466  1.00  0.00      DPPA
+ATOM     63 C216 DPPA    1      -0.370  -3.617 -18.671  1.00  0.00      DPPA
+ATOM     64 H16R DPPA    1      -0.955  -3.459 -17.740  1.00  0.00      DPPA
+ATOM     65 H16S DPPA    1      -0.482  -4.658 -19.041  1.00  0.00      DPPA
+ATOM     66 H16T DPPA    1      -0.958  -2.950 -19.337  1.00  0.00      DPPA
+[ C1B ]
+ATOM     67  C32 DPPA    1       1.886   2.792  -6.888  1.00  0.00      DPPA
+ATOM     68  H2X DPPA    1       2.291   3.504  -7.639  1.00  0.00      DPPA
+ATOM     69  H2Y DPPA    1       0.776   2.824  -6.898  1.00  0.00      DPPA
+ATOM     70  C33 DPPA    1       2.355   1.354  -7.236  1.00  0.00      DPPA
+ATOM     71  H3X DPPA    1       2.225   0.656  -6.382  1.00  0.00      DPPA
+ATOM     72  H3Y DPPA    1       3.449   1.357  -7.431  1.00  0.00      DPPA
+ATOM     73  C34 DPPA    1       1.869   0.686  -8.496  1.00  0.00      DPPA
+ATOM     74  H4X DPPA    1       0.848   0.268  -8.370  1.00  0.00      DPPA
+ATOM     75  H4Y DPPA    1       2.527  -0.198  -8.636  1.00  0.00      DPPA
+[ C2B ]
+ATOM     76  C35 DPPA    1       2.042   1.534  -9.819  1.00  0.00      DPPA
+ATOM     77  H5X DPPA    1       2.621   0.915 -10.538  1.00  0.00      DPPA
+ATOM     78  H5Y DPPA    1       2.679   2.432  -9.668  1.00  0.00      DPPA
+ATOM     79  C36 DPPA    1       0.664   2.096 -10.388  1.00  0.00      DPPA
+ATOM     80  H6X DPPA    1       0.955   2.779 -11.215  1.00  0.00      DPPA
+ATOM     81  H6Y DPPA    1       0.360   2.787  -9.572  1.00  0.00      DPPA
+ATOM     82  C37 DPPA    1      -0.323   1.120 -10.874  1.00  0.00      DPPA
+ATOM     83  H7X DPPA    1      -0.521   0.383 -10.068  1.00  0.00      DPPA
+ATOM     84  H7Y DPPA    1       0.161   0.603 -11.730  1.00  0.00      DPPA
+ATOM     85  C38 DPPA    1      -1.618   1.725 -11.445  1.00  0.00      DPPA
+ATOM     86  H8X DPPA    1      -2.059   2.252 -10.573  1.00  0.00      DPPA
+ATOM     87  H8Y DPPA    1      -2.231   0.828 -11.680  1.00  0.00      DPPA
+[ C3B ]
+ATOM     88  C39 DPPA    1      -1.549   2.551 -12.618  1.00  0.00      DPPA
+ATOM     89  H9X DPPA    1      -1.032   1.964 -13.407  1.00  0.00      DPPA
+ATOM     90  H9Y DPPA    1      -0.853   3.410 -12.508  1.00  0.00      DPPA
+ATOM     91 C310 DPPA    1      -2.913   2.944 -13.267  1.00  0.00      DPPA
+ATOM     92 H10X DPPA    1      -2.935   3.903 -13.828  1.00  0.00      DPPA
+ATOM     93 H10Y DPPA    1      -3.546   3.095 -12.367  1.00  0.00      DPPA
+ATOM     94 C311 DPPA    1      -3.650   1.911 -14.159  1.00  0.00      DPPA
+ATOM     95 H11X DPPA    1      -4.716   2.201 -14.274  1.00  0.00      DPPA
+ATOM     96 H11Y DPPA    1      -3.772   0.927 -13.658  1.00  0.00      DPPA
+ATOM     97 C312 DPPA    1      -2.966   1.540 -15.442  1.00  0.00      DPPA
+ATOM     98 H12X DPPA    1      -2.016   0.979 -15.322  1.00  0.00      DPPA
+ATOM     99 H12Y DPPA    1      -2.612   2.388 -16.067  1.00  0.00      DPPA
+[ C4B ]
+ATOM    100 C313 DPPA    1      -3.870   0.602 -16.327  1.00  0.00      DPPA
+ATOM    101 H13X DPPA    1      -3.350   0.512 -17.305  1.00  0.00      DPPA
+ATOM    102 H13Y DPPA    1      -4.829   1.153 -16.437  1.00  0.00      DPPA
+ATOM    103 C314 DPPA    1      -4.054  -0.812 -15.847  1.00  0.00      DPPA
+ATOM    104 H14X DPPA    1      -4.407  -0.787 -14.793  1.00  0.00      DPPA
+ATOM    105 H14Y DPPA    1      -3.067  -1.298 -15.690  1.00  0.00      DPPA
+ATOM    106 C315 DPPA    1      -5.071  -1.552 -16.753  1.00  0.00      DPPA
+ATOM    107 H15X DPPA    1      -6.025  -0.983 -16.761  1.00  0.00      DPPA
+ATOM    108 H15Y DPPA    1      -5.364  -2.538 -16.334  1.00  0.00      DPPA
+ATOM    109 C316 DPPA    1      -4.664  -1.836 -18.218  1.00  0.00      DPPA
+ATOM    110 H16X DPPA    1      -4.571  -0.924 -18.845  1.00  0.00      DPPA
+ATOM    111 H16Y DPPA    1      -5.463  -2.461 -18.670  1.00  0.00      DPPA
+ATOM    112 H16Z DPPA    1      -3.649  -2.282 -18.301  1.00  0.00      DPPA
+END

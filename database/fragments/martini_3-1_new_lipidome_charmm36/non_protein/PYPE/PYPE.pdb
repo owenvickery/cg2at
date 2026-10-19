@@ -1,0 +1,132 @@
+[ NH3 ]
+ATOM      1  N   PYPE    1       0.589   2.541   1.689  1.00  0.00      PYPE
+ATOM      2  HN1 PYPE    1       0.636   3.449   2.193  1.00  0.00      PYPE
+ATOM      3  HN2 PYPE    1       1.026   1.751   2.205  1.00  0.00      PYPE
+ATOM      4  HN3 PYPE    1       1.096   2.658   0.788  1.00  0.00      PYPE
+ATOM      5  C12 PYPE    1      -0.832   2.188   1.342  1.00  0.00      PYPE
+ATOM      6 H12A PYPE    1      -1.257   2.893   0.596  1.00  0.00      PYPE
+ATOM      7 H12B PYPE    1      -1.331   2.396   2.313  1.00  0.00      PYPE
+ATOM      8  C11 PYPE    1      -1.001   0.707   0.819  1.00  0.00      PYPE
+ATOM      9 H11A PYPE    1      -2.087   0.499   0.709  1.00  0.00      PYPE
+ATOM     10 H11B PYPE    1      -0.643   0.046   1.637  1.00  0.00      PYPE
+[ PO4 ]
+ATOM     11  P   PYPE    1       0.444  -0.660  -0.822  1.00  0.00      PYPE
+ATOM     12  O13 PYPE    1       1.044  -1.318   0.327  1.00  0.00      PYPE
+ATOM     13  O14 PYPE    1       1.419  -0.225  -1.844  1.00  0.00      PYPE
+ATOM     14  O12 PYPE    1      -0.264   0.654  -0.395  1.00  0.00      PYPE
+ATOM     15  O11 PYPE    1      -0.716  -1.630  -1.381  1.00  0.00      PYPE
+[ GL1 ]
+ATOM     16  C1  PYPE    1      -1.456  -1.200  -2.565  1.00  0.00      PYPE
+ATOM     17  HA  PYPE    1      -1.300  -0.175  -2.964  1.00  0.00      PYPE
+ATOM     18  HB  PYPE    1      -2.547  -1.314  -2.384  1.00  0.00      PYPE
+ATOM     19  C2  PYPE    1      -1.080  -2.141  -3.803  1.00  0.00      PYPE
+ATOM     20  HS  PYPE    1      -1.009  -3.203  -3.485  1.00  0.00      PYPE
+ATOM     21  O21 PYPE    1       0.107  -1.530  -4.298  1.00  0.00      PYPE
+ATOM     22  C21 PYPE    1       1.026  -2.370  -4.720  1.00  0.00      PYPE
+ATOM     23  O22 PYPE    1       0.890  -3.607  -4.728  1.00  0.00      PYPE
+[ GL2 ]
+ATOM     24  C3  PYPE    1      -2.200  -2.080  -4.925  1.00  0.00      PYPE
+ATOM     25  HX  PYPE    1      -3.179  -2.336  -4.467  1.00  0.00      PYPE
+ATOM     26  HY  PYPE    1      -2.121  -2.860  -5.712  1.00  0.00      PYPE
+ATOM     27  O31 PYPE    1      -2.330  -0.780  -5.500  1.00  0.00      PYPE
+ATOM     28  C31 PYPE    1      -3.320  -0.610  -6.369  1.00  0.00      PYPE
+ATOM     29  O32 PYPE    1      -4.203  -1.425  -6.679  1.00  0.00      PYPE
+[ C1A ]
+ATOM     30  C22 PYPE    1       2.216  -1.675  -5.349  1.00  0.00      PYPE
+ATOM     31  H2R PYPE    1       3.072  -1.998  -4.720  1.00  0.00      PYPE
+ATOM     32  H2S PYPE    1       2.167  -0.591  -5.111  1.00  0.00      PYPE
+ATOM     33  C23 PYPE    1       2.463  -2.064  -6.790  1.00  0.00      PYPE
+ATOM     34  H3R PYPE    1       1.932  -1.276  -7.366  1.00  0.00      PYPE
+ATOM     35  H3S PYPE    1       1.896  -2.994  -7.006  1.00  0.00      PYPE
+ATOM     36  C24 PYPE    1       3.860  -2.127  -7.273  1.00  0.00      PYPE
+ATOM     37  H4R PYPE    1       4.350  -2.878  -6.617  1.00  0.00      PYPE
+ATOM     38  H4S PYPE    1       4.362  -1.186  -6.963  1.00  0.00      PYPE
+[ C2A ]
+ATOM     39  C25 PYPE    1       4.036  -2.434  -8.783  1.00  0.00      PYPE
+ATOM     40  H5R PYPE    1       4.084  -3.528  -8.967  1.00  0.00      PYPE
+ATOM     41  H5S PYPE    1       5.031  -2.084  -9.131  1.00  0.00      PYPE
+ATOM     42  C26 PYPE    1       2.949  -1.844  -9.775  1.00  0.00      PYPE
+ATOM     43  H6R PYPE    1       2.990  -0.734  -9.747  1.00  0.00      PYPE
+ATOM     44  H6S PYPE    1       1.923  -2.173  -9.505  1.00  0.00      PYPE
+ATOM     45  C27 PYPE    1       3.221  -2.460 -11.147  1.00  0.00      PYPE
+ATOM     46  H7R PYPE    1       2.814  -3.492 -11.076  1.00  0.00      PYPE
+ATOM     47  H7S PYPE    1       4.323  -2.542 -11.255  1.00  0.00      PYPE
+ATOM     48  C28 PYPE    1       2.670  -1.708 -12.288  1.00  0.00      PYPE
+ATOM     49  H8R PYPE    1       2.953  -0.636 -12.212  1.00  0.00      PYPE
+ATOM     50  H8S PYPE    1       1.564  -1.708 -12.188  1.00  0.00      PYPE
+[ D3A ]
+ATOM     51  C29 PYPE    1       3.110  -2.275 -13.614  1.00  0.00      PYPE
+ATOM     52  H9R PYPE    1       3.149  -3.373 -13.666  1.00  0.00      PYPE
+ATOM     53 C210 PYPE    1       3.517  -1.528 -14.665  1.00  0.00      PYPE
+ATOM     54 H10R PYPE    1       3.785  -2.041 -15.600  1.00  0.00      PYPE
+ATOM     55 C211 PYPE    1       3.674  -0.011 -14.748  1.00  0.00      PYPE
+ATOM     56 H11R PYPE    1       4.682   0.224 -14.343  1.00  0.00      PYPE
+ATOM     57 H11S PYPE    1       2.936   0.451 -14.058  1.00  0.00      PYPE
+ATOM     58 C212 PYPE    1       3.421   0.582 -16.164  1.00  0.00      PYPE
+ATOM     59 H12R PYPE    1       4.095  -0.013 -16.817  1.00  0.00      PYPE
+ATOM     60 H12S PYPE    1       3.643   1.669 -16.122  1.00  0.00      PYPE
+[ C4A ]
+ATOM     61 C213 PYPE    1       1.990   0.447 -16.767  1.00  0.00      PYPE
+ATOM     62 H13R PYPE    1       1.284   1.112 -16.225  1.00  0.00      PYPE
+ATOM     63 H13S PYPE    1       1.591  -0.590 -16.774  1.00  0.00      PYPE
+ATOM     64 C214 PYPE    1       2.007   0.833 -18.277  1.00  0.00      PYPE
+ATOM     65 H14R PYPE    1       2.516   0.090 -18.927  1.00  0.00      PYPE
+ATOM     66 H14S PYPE    1       2.576   1.787 -18.258  1.00  0.00      PYPE
+ATOM     67 C215 PYPE    1       0.661   1.061 -18.969  1.00  0.00      PYPE
+ATOM     68 H15R PYPE    1       0.061   1.830 -18.437  1.00  0.00      PYPE
+ATOM     69 H15S PYPE    1       0.131   0.088 -19.047  1.00  0.00      PYPE
+ATOM     70 C216 PYPE    1       0.862   1.483 -20.436  1.00  0.00      PYPE
+ATOM     71 H16R PYPE    1       1.527   0.819 -21.029  1.00  0.00      PYPE
+ATOM     72 H16S PYPE    1      -0.120   1.575 -20.948  1.00  0.00      PYPE
+ATOM     73 H16T PYPE    1       1.430   2.436 -20.381  1.00  0.00      PYPE
+[ C1B ]
+ATOM     74  C32 PYPE    1      -3.092   0.909  -6.710  1.00  0.00      PYPE
+ATOM     75  H2X PYPE    1      -2.017   1.052  -6.954  1.00  0.00      PYPE
+ATOM     76  H2Y PYPE    1      -3.490   1.489  -5.850  1.00  0.00      PYPE
+ATOM     77  C33 PYPE    1      -4.065   1.178  -7.911  1.00  0.00      PYPE
+ATOM     78  H3X PYPE    1      -5.104   1.176  -7.518  1.00  0.00      PYPE
+ATOM     79  H3Y PYPE    1      -3.943   0.304  -8.586  1.00  0.00      PYPE
+ATOM     80  C34 PYPE    1      -3.722   2.456  -8.669  1.00  0.00      PYPE
+ATOM     81  H4X PYPE    1      -2.661   2.526  -8.991  1.00  0.00      PYPE
+ATOM     82  H4Y PYPE    1      -3.839   3.276  -7.929  1.00  0.00      PYPE
+[ C2B ]
+ATOM     83  C35 PYPE    1      -4.686   2.766  -9.873  1.00  0.00      PYPE
+ATOM     84  H5X PYPE    1      -4.707   3.874  -9.943  1.00  0.00      PYPE
+ATOM     85  H5Y PYPE    1      -5.682   2.333  -9.637  1.00  0.00      PYPE
+ATOM     86  C36 PYPE    1      -4.300   2.210 -11.258  1.00  0.00      PYPE
+ATOM     87  H6X PYPE    1      -5.151   2.466 -11.924  1.00  0.00      PYPE
+ATOM     88  H6Y PYPE    1      -4.303   1.100 -11.200  1.00  0.00      PYPE
+ATOM     89  C37 PYPE    1      -2.964   2.637 -11.792  1.00  0.00      PYPE
+ATOM     90  H7X PYPE    1      -2.169   2.380 -11.059  1.00  0.00      PYPE
+ATOM     91  H7Y PYPE    1      -3.001   3.737 -11.640  1.00  0.00      PYPE
+ATOM     92  C38 PYPE    1      -2.655   2.087 -13.213  1.00  0.00      PYPE
+ATOM     93  H8X PYPE    1      -1.820   2.630 -13.705  1.00  0.00      PYPE
+ATOM     94  H8Y PYPE    1      -3.525   2.226 -13.890  1.00  0.00      PYPE
+[ C3B ]
+ATOM     95  C39 PYPE    1      -2.399   0.573 -13.132  1.00  0.00      PYPE
+ATOM     96  H9X PYPE    1      -3.355   0.058 -12.895  1.00  0.00      PYPE
+ATOM     97  H9Y PYPE    1      -1.694   0.331 -12.308  1.00  0.00      PYPE
+ATOM     98 C310 PYPE    1      -1.946   0.024 -14.452  1.00  0.00      PYPE
+ATOM     99 H10X PYPE    1      -1.339   0.750 -15.034  1.00  0.00      PYPE
+ATOM    100 H10Y PYPE    1      -2.837  -0.175 -15.084  1.00  0.00      PYPE
+ATOM    101 C311 PYPE    1      -1.239  -1.299 -14.269  1.00  0.00      PYPE
+ATOM    102 H11X PYPE    1      -1.759  -1.841 -13.450  1.00  0.00      PYPE
+ATOM    103 H11Y PYPE    1      -0.224  -0.980 -13.948  1.00  0.00      PYPE
+ATOM    104 C312 PYPE    1      -1.172  -2.151 -15.466  1.00  0.00      PYPE
+ATOM    105 H12X PYPE    1      -0.925  -1.598 -16.397  1.00  0.00      PYPE
+ATOM    106 H12Y PYPE    1      -2.125  -2.700 -15.622  1.00  0.00      PYPE
+[ C4B ]
+ATOM    107 C313 PYPE    1      -0.136  -3.244 -15.159  1.00  0.00      PYPE
+ATOM    108 H13X PYPE    1      -0.553  -3.816 -14.303  1.00  0.00      PYPE
+ATOM    109 H13Y PYPE    1       0.741  -2.743 -14.696  1.00  0.00      PYPE
+ATOM    110 C314 PYPE    1       0.172  -4.202 -16.357  1.00  0.00      PYPE
+ATOM    111 H14X PYPE    1      -0.684  -4.458 -17.017  1.00  0.00      PYPE
+ATOM    112 H14Y PYPE    1       0.618  -5.145 -15.974  1.00  0.00      PYPE
+ATOM    113 C315 PYPE    1       1.187  -3.439 -17.334  1.00  0.00      PYPE
+ATOM    114 H15X PYPE    1       0.689  -2.521 -17.714  1.00  0.00      PYPE
+ATOM    115 H15Y PYPE    1       2.021  -3.022 -16.729  1.00  0.00      PYPE
+ATOM    116 C316 PYPE    1       1.682  -4.283 -18.542  1.00  0.00      PYPE
+ATOM    117 H16X PYPE    1       2.683  -3.885 -18.813  1.00  0.00      PYPE
+ATOM    118 H16Y PYPE    1       0.892  -4.261 -19.323  1.00  0.00      PYPE
+ATOM    119 H16Z PYPE    1       1.823  -5.303 -18.123  1.00  0.00      PYPE
+END

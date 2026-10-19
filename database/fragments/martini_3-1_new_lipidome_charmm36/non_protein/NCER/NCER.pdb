@@ -1,0 +1,141 @@
+[ COH ]
+ATOM      1  O1  NCER    1       0.384   1.390   1.390  1.00  0.00      NCER
+ATOM      2  HO1 NCER    1       1.329   1.416   1.220  1.00  0.00      NCER
+ATOM      3  C1S NCER    1      -0.099   0.087   1.043  1.00  0.00      NCER
+ATOM      4  H1S NCER    1       0.413  -0.653   1.695  1.00  0.00      NCER
+ATOM      5  H1T NCER    1      -1.186   0.046   1.271  1.00  0.00      NCER
+[ OH1 ]
+ATOM      6  C2S NCER    1       0.326  -0.081  -0.503  1.00  0.00      NCER
+ATOM      7  H2S NCER    1       0.878  -1.037  -0.629  1.00  0.00      NCER
+ATOM      8  C3S NCER    1      -1.018  -0.151  -1.316  1.00  0.00      NCER
+ATOM      9  H3S NCER    1      -1.727   0.657  -1.034  1.00  0.00      NCER
+ATOM     10  O3  NCER    1      -1.695  -1.366  -0.895  1.00  0.00      NCER
+ATOM     11  HO3 NCER    1      -1.055  -1.805  -0.330  1.00  0.00      NCER
+[ AM2 ]
+ATOM     12  NF  NCER    1       1.116   0.992  -1.066  1.00  0.00      NCER
+ATOM     13  HNF NCER    1       0.748   1.897  -0.870  1.00  0.00      NCER
+ATOM     14  C1F NCER    1       2.116   0.880  -2.014  1.00  0.00      NCER
+ATOM     15  OF  NCER    1       2.821  -0.114  -2.106  1.00  0.00      NCER
+[ T1A ]
+ATOM     16  C4S NCER    1      -0.771  -0.122  -2.800  1.00  0.00      NCER
+ATOM     17  H4S NCER    1      -0.535   0.860  -3.234  1.00  0.00      NCER
+ATOM     18  C5S NCER    1      -0.637  -1.141  -3.699  1.00  0.00      NCER
+ATOM     19  H5S NCER    1      -0.677  -2.184  -3.351  1.00  0.00      NCER
+ATOM     20  C6S NCER    1      -0.333  -0.804  -5.121  1.00  0.00      NCER
+ATOM     21  H6S NCER    1       0.760  -0.996  -5.170  1.00  0.00      NCER
+ATOM     22  H6T NCER    1      -0.383   0.285  -5.334  1.00  0.00      NCER
+[ C2A ]
+ATOM     23  C7S NCER    1      -1.000  -1.700  -6.103  1.00  0.00      NCER
+ATOM     24  H7S NCER    1      -2.091  -1.790  -5.912  1.00  0.00      NCER
+ATOM     25  H7T NCER    1      -0.614  -2.742  -6.116  1.00  0.00      NCER
+ATOM     26  C8S NCER    1      -0.680  -1.276  -7.545  1.00  0.00      NCER
+ATOM     27  H8S NCER    1       0.410  -1.107  -7.682  1.00  0.00      NCER
+ATOM     28  H8T NCER    1      -1.226  -0.313  -7.635  1.00  0.00      NCER
+ATOM     29  C9S NCER    1      -1.322  -2.159  -8.587  1.00  0.00      NCER
+ATOM     30  H9S NCER    1      -2.387  -2.270  -8.289  1.00  0.00      NCER
+ATOM     31  H9T NCER    1      -0.842  -3.154  -8.474  1.00  0.00      NCER
+ATOM     32 C10S NCER    1      -1.228  -1.703  -9.964  1.00  0.00      NCER
+ATOM     33 H10S NCER    1      -0.192  -1.385 -10.209  1.00  0.00      NCER
+ATOM     34 H10T NCER    1      -1.929  -0.856 -10.121  1.00  0.00      NCER
+[ C3A ]
+ATOM     35 C11S NCER    1      -1.595  -2.678 -11.085  1.00  0.00      NCER
+ATOM     36 H11S NCER    1      -2.700  -2.701 -10.966  1.00  0.00      NCER
+ATOM     37 H11T NCER    1      -1.220  -3.677 -10.776  1.00  0.00      NCER
+ATOM     38 C12S NCER    1      -1.195  -2.189 -12.506  1.00  0.00      NCER
+ATOM     39 H12S NCER    1      -0.108  -1.964 -12.547  1.00  0.00      NCER
+ATOM     40 H12T NCER    1      -1.708  -1.208 -12.603  1.00  0.00      NCER
+ATOM     41 C13S NCER    1      -1.539  -3.036 -13.759  1.00  0.00      NCER
+ATOM     42 H13S NCER    1      -2.643  -3.147 -13.808  1.00  0.00      NCER
+ATOM     43 H13T NCER    1      -1.102  -4.055 -13.700  1.00  0.00      NCER
+ATOM     44 C14S NCER    1      -0.933  -2.470 -15.083  1.00  0.00      NCER
+ATOM     45 H14S NCER    1       0.143  -2.598 -14.837  1.00  0.00      NCER
+ATOM     46 H14T NCER    1      -1.253  -1.409 -15.158  1.00  0.00      NCER
+[ C4A ]
+ATOM     47 C15S NCER    1      -1.276  -3.253 -16.343  1.00  0.00      NCER
+ATOM     48 H15S NCER    1      -2.370  -3.445 -16.333  1.00  0.00      NCER
+ATOM     49 H15T NCER    1      -0.819  -4.266 -16.311  1.00  0.00      NCER
+ATOM     50 C16S NCER    1      -0.778  -2.542 -17.553  1.00  0.00      NCER
+ATOM     51 H16S NCER    1       0.305  -2.414 -17.340  1.00  0.00      NCER
+ATOM     52 H16T NCER    1      -1.215  -1.525 -17.646  1.00  0.00      NCER
+ATOM     53 C17S NCER    1      -1.063  -3.134 -18.944  1.00  0.00      NCER
+ATOM     54 H17S NCER    1      -2.165  -3.205 -19.071  1.00  0.00      NCER
+ATOM     55 H17T NCER    1      -0.708  -4.181 -19.054  1.00  0.00      NCER
+ATOM     56 C18S NCER    1      -0.401  -2.378 -20.171  1.00  0.00      NCER
+ATOM     57 H18S NCER    1       0.640  -2.746 -20.295  1.00  0.00      NCER
+ATOM     58 H18T NCER    1      -0.336  -1.275 -20.052  1.00  0.00      NCER
+ATOM     59 H18U NCER    1      -0.896  -2.585 -21.144  1.00  0.00      NCER
+[ C1B ]
+ATOM     60  C2F NCER    1       2.279   2.180  -2.751  1.00  0.00      NCER
+ATOM     61  H2F NCER    1       2.832   2.779  -1.996  1.00  0.00      NCER
+ATOM     62  H2G NCER    1       1.251   2.565  -2.921  1.00  0.00      NCER
+ATOM     63  C3F NCER    1       3.023   1.895  -4.016  1.00  0.00      NCER
+ATOM     64  H3F NCER    1       2.516   1.044  -4.519  1.00  0.00      NCER
+ATOM     65  H3G NCER    1       4.062   1.538  -3.845  1.00  0.00      NCER
+ATOM     66  C4F NCER    1       3.109   3.172  -4.805  1.00  0.00      NCER
+ATOM     67  H4F NCER    1       4.056   3.719  -4.614  1.00  0.00      NCER
+ATOM     68  H4G NCER    1       2.270   3.803  -4.442  1.00  0.00      NCER
+[ C2B ]
+ATOM     69  C5F NCER    1       3.241   2.966  -6.340  1.00  0.00      NCER
+ATOM     70  H5F NCER    1       3.922   2.128  -6.603  1.00  0.00      NCER
+ATOM     71  H5G NCER    1       3.558   3.968  -6.702  1.00  0.00      NCER
+ATOM     72  C6F NCER    1       1.814   2.596  -6.899  1.00  0.00      NCER
+ATOM     73  H6F NCER    1       1.099   3.434  -6.753  1.00  0.00      NCER
+ATOM     74  H6G NCER    1       1.375   1.762  -6.311  1.00  0.00      NCER
+ATOM     75  C7F NCER    1       1.782   2.356  -8.381  1.00  0.00      NCER
+ATOM     76  H7F NCER    1       2.063   3.334  -8.825  1.00  0.00      NCER
+ATOM     77  H7G NCER    1       0.701   2.270  -8.623  1.00  0.00      NCER
+ATOM     78  C8F NCER    1       2.591   1.132  -8.875  1.00  0.00      NCER
+ATOM     79  H8F NCER    1       2.180   0.279  -8.294  1.00  0.00      NCER
+ATOM     80  H8G NCER    1       3.649   1.386  -8.649  1.00  0.00      NCER
+[ C3B ]
+ATOM     81  C9F NCER    1       2.482   0.980 -10.376  1.00  0.00      NCER
+ATOM     82  H9F NCER    1       2.959   1.866 -10.846  1.00  0.00      NCER
+ATOM     83  H9G NCER    1       1.424   0.957 -10.715  1.00  0.00      NCER
+ATOM     84 C10F NCER    1       3.267  -0.135 -10.962  1.00  0.00      NCER
+ATOM     85 H10F NCER    1       3.026  -1.032 -10.353  1.00  0.00      NCER
+ATOM     86 H10G NCER    1       4.369   0.000 -10.993  1.00  0.00      NCER
+ATOM     87 C11F NCER    1       2.879  -0.505 -12.398  1.00  0.00      NCER
+ATOM     88 H11F NCER    1       1.772  -0.551 -12.327  1.00  0.00      NCER
+ATOM     89 H11G NCER    1       3.111  -1.571 -12.609  1.00  0.00      NCER
+ATOM     90 C12F NCER    1       3.271   0.456 -13.505  1.00  0.00      NCER
+ATOM     91 H12F NCER    1       4.350   0.695 -13.613  1.00  0.00      NCER
+ATOM     92 H12G NCER    1       2.761   1.440 -13.426  1.00  0.00      NCER
+[ D4B ]
+ATOM     93 C13F NCER    1       2.771  -0.154 -14.876  1.00  0.00      NCER
+ATOM     94 H13F NCER    1       1.683  -0.315 -14.714  1.00  0.00      NCER
+ATOM     95 H13G NCER    1       3.212  -1.166 -15.007  1.00  0.00      NCER
+ATOM     96 C14F NCER    1       3.004   0.692 -16.084  1.00  0.00      NCER
+ATOM     97 H14F NCER    1       2.799   0.108 -17.006  1.00  0.00      NCER
+ATOM     98 H14G NCER    1       4.049   1.057 -16.187  1.00  0.00      NCER
+ATOM     99 C15F NCER    1       2.227   1.984 -16.107  1.00  0.00      NCER
+ATOM    100 H15F NCER    1       2.568   2.867 -15.547  1.00  0.00      NCER
+ATOM    101 C16F NCER    1       1.121   2.190 -16.815  1.00  0.00      NCER
+ATOM    102 H16F NCER    1       0.604   3.156 -16.712  1.00  0.00      NCER
+[ C5B ]
+ATOM    103 C17F NCER    1       0.403   1.226 -17.757  1.00  0.00      NCER
+ATOM    104 H17F NCER    1      -0.681   1.328 -17.537  1.00  0.00      NCER
+ATOM    105 H17G NCER    1       0.556   0.138 -17.588  1.00  0.00      NCER
+ATOM    106 C18F NCER    1       0.505   1.603 -19.144  1.00  0.00      NCER
+ATOM    107 H18F NCER    1      -0.059   2.540 -19.342  1.00  0.00      NCER
+ATOM    108 H18G NCER    1      -0.073   0.868 -19.743  1.00  0.00      NCER
+ATOM    109 C19F NCER    1       1.970   1.582 -19.716  1.00  0.00      NCER
+ATOM    110 H19F NCER    1       2.453   0.656 -19.338  1.00  0.00      NCER
+ATOM    111 H19G NCER    1       2.513   2.447 -19.279  1.00  0.00      NCER
+ATOM    112 C20F NCER    1       2.165   1.505 -21.267  1.00  0.00      NCER
+ATOM    113 H20F NCER    1       1.764   0.545 -21.658  1.00  0.00      NCER
+ATOM    114 H20G NCER    1       3.266   1.385 -21.345  1.00  0.00      NCER
+[ C6B ]
+ATOM    115 C21F NCER    1       1.542   2.720 -22.012  1.00  0.00      NCER
+ATOM    116 H21F NCER    1       2.011   3.692 -21.747  1.00  0.00      NCER
+ATOM    117 H21G NCER    1       0.454   2.780 -21.795  1.00  0.00      NCER
+ATOM    118 C22F NCER    1       1.922   2.708 -23.575  1.00  0.00      NCER
+ATOM    119 H22F NCER    1       3.031   2.771 -23.571  1.00  0.00      NCER
+ATOM    120 H22G NCER    1       1.466   3.596 -24.063  1.00  0.00      NCER
+ATOM    121 C23F NCER    1       1.567   1.327 -24.293  1.00  0.00      NCER
+ATOM    122 H23F NCER    1       0.468   1.164 -24.313  1.00  0.00      NCER
+ATOM    123 H23G NCER    1       2.013   0.482 -23.725  1.00  0.00      NCER
+ATOM    124 C24F NCER    1       2.056   1.307 -25.747  1.00  0.00      NCER
+ATOM    125 H24F NCER    1       3.153   1.128 -25.767  1.00  0.00      NCER
+ATOM    126 H24G NCER    1       1.922   2.326 -26.167  1.00  0.00      NCER
+ATOM    127 H24H NCER    1       1.482   0.556 -26.329  1.00  0.00      NCER
+END

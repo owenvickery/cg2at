@@ -1,0 +1,145 @@
+[ NC3 ]
+ATOM      1  N   PLPC    1      -1.409   2.007  -0.929  1.00  0.00      PLPC
+ATOM      2  C12 PLPC    1      -1.973   0.585  -0.808  1.00  0.00      PLPC
+ATOM      3  C13 PLPC    1      -0.317   2.110  -1.911  1.00  0.00      PLPC
+ATOM      4  C14 PLPC    1      -2.564   2.892  -1.426  1.00  0.00      PLPC
+ATOM      5  C15 PLPC    1      -0.854   2.495   0.396  1.00  0.00      PLPC
+ATOM      6 H12A PLPC    1      -2.501   0.449  -1.740  1.00  0.00      PLPC
+ATOM      7 H12B PLPC    1      -2.656   0.483   0.022  1.00  0.00      PLPC
+ATOM      8 H13A PLPC    1       0.522   1.657  -1.403  1.00  0.00      PLPC
+ATOM      9 H13B PLPC    1      -0.498   1.605  -2.849  1.00  0.00      PLPC
+ATOM     10 H13C PLPC    1       0.091   3.091  -2.101  1.00  0.00      PLPC
+ATOM     11 H14A PLPC    1      -3.313   2.845  -0.650  1.00  0.00      PLPC
+ATOM     12 H14B PLPC    1      -2.030   3.824  -1.536  1.00  0.00      PLPC
+ATOM     13 H14C PLPC    1      -2.963   2.512  -2.355  1.00  0.00      PLPC
+ATOM     14 H15A PLPC    1      -1.573   2.337   1.186  1.00  0.00      PLPC
+ATOM     15 H15B PLPC    1      -0.034   1.852   0.679  1.00  0.00      PLPC
+ATOM     16 H15C PLPC    1      -0.438   3.487   0.296  1.00  0.00      PLPC
+ATOM     17  C11 PLPC    1      -0.898  -0.455  -0.618  1.00  0.00      PLPC
+ATOM     18 H11A PLPC    1      -0.167  -0.394  -1.452  1.00  0.00      PLPC
+ATOM     19 H11B PLPC    1      -1.390  -1.439  -0.464  1.00  0.00      PLPC
+[ PO4 ]
+ATOM     20  P   PLPC    1       1.120  -1.178   0.777  1.00  0.00      PLPC
+ATOM     21  O13 PLPC    1       2.243  -0.398   0.279  1.00  0.00      PLPC
+ATOM     22  O14 PLPC    1       1.199  -1.525   2.219  1.00  0.00      PLPC
+ATOM     23  O12 PLPC    1      -0.194  -0.342   0.557  1.00  0.00      PLPC
+ATOM     24  O11 PLPC    1       0.958  -2.520  -0.089  1.00  0.00      PLPC
+[ GL1 ]
+ATOM     25  C1  PLPC    1       2.130  -3.109  -0.698  1.00  0.00      PLPC
+ATOM     26  HA  PLPC    1       2.017  -4.180  -0.425  1.00  0.00      PLPC
+ATOM     27  HB  PLPC    1       3.114  -2.672  -0.424  1.00  0.00      PLPC
+ATOM     28  C2  PLPC    1       2.031  -3.078  -2.274  1.00  0.00      PLPC
+ATOM     29  HS  PLPC    1       2.797  -3.760  -2.703  1.00  0.00      PLPC
+ATOM     30  O21 PLPC    1       2.046  -1.707  -2.746  1.00  0.00      PLPC
+ATOM     31  C21 PLPC    1       3.210  -1.183  -2.993  1.00  0.00      PLPC
+ATOM     32  O22 PLPC    1       4.300  -1.681  -2.723  1.00  0.00      PLPC
+[ GL2 ]
+ATOM     33  C3  PLPC    1       0.647  -3.730  -2.799  1.00  0.00      PLPC
+ATOM     34  HX  PLPC    1       0.897  -4.809  -2.892  1.00  0.00      PLPC
+ATOM     35  HY  PLPC    1      -0.172  -3.564  -2.067  1.00  0.00      PLPC
+ATOM     36  O31 PLPC    1       0.285  -3.259  -4.102  1.00  0.00      PLPC
+ATOM     37  C31 PLPC    1      -0.824  -3.655  -4.698  1.00  0.00      PLPC
+ATOM     38  O32 PLPC    1      -1.659  -4.406  -4.121  1.00  0.00      PLPC
+[ C1A ]
+ATOM     39  C22 PLPC    1       2.990   0.337  -3.362  1.00  0.00      PLPC
+ATOM     40  H2R PLPC    1       2.047   0.683  -2.888  1.00  0.00      PLPC
+ATOM     41  H2S PLPC    1       3.814   0.950  -2.940  1.00  0.00      PLPC
+ATOM     42  C23 PLPC    1       2.864   0.545  -4.922  1.00  0.00      PLPC
+ATOM     43  H3R PLPC    1       2.116  -0.219  -5.227  1.00  0.00      PLPC
+ATOM     44  H3S PLPC    1       3.638   0.087  -5.574  1.00  0.00      PLPC
+ATOM     45  C24 PLPC    1       2.520   1.938  -5.540  1.00  0.00      PLPC
+ATOM     46  H4R PLPC    1       2.381   1.776  -6.630  1.00  0.00      PLPC
+ATOM     47  H4S PLPC    1       3.301   2.721  -5.435  1.00  0.00      PLPC
+ATOM     48  C25 PLPC    1       1.290   2.482  -4.868  1.00  0.00      PLPC
+ATOM     49  H5R PLPC    1       1.603   2.660  -3.817  1.00  0.00      PLPC
+ATOM     50  H5S PLPC    1       0.529   1.679  -4.760  1.00  0.00      PLPC
+ATOM     51  C26 PLPC    1       0.711   3.766  -5.412  1.00  0.00      PLPC
+ATOM     52  H6R PLPC    1       1.477   4.508  -5.723  1.00  0.00      PLPC
+ATOM     53  H6S PLPC    1       0.126   4.333  -4.657  1.00  0.00      PLPC
+[ D2A ]
+ATOM     54  C27 PLPC    1      -0.159   3.571  -6.722  1.00  0.00      PLPC
+ATOM     55  H7R PLPC    1       0.576   3.250  -7.491  1.00  0.00      PLPC
+ATOM     56  H7S PLPC    1      -0.418   4.645  -6.835  1.00  0.00      PLPC
+ATOM     57  C28 PLPC    1      -1.430   2.706  -6.556  1.00  0.00      PLPC
+ATOM     58  H8R PLPC    1      -2.122   3.150  -7.302  1.00  0.00      PLPC
+ATOM     59  H8S PLPC    1      -1.801   2.851  -5.518  1.00  0.00      PLPC
+ATOM     60  C29 PLPC    1      -1.190   1.244  -6.795  1.00  0.00      PLPC
+ATOM     61  H9R PLPC    1      -1.016   0.602  -5.919  1.00  0.00      PLPC
+ATOM     62 C210 PLPC    1      -1.076   0.728  -8.025  1.00  0.00      PLPC
+ATOM     63 H10R PLPC    1      -0.775  -0.317  -8.191  1.00  0.00      PLPC
+[ D3A ]
+ATOM     64 C211 PLPC    1      -1.136   1.442  -9.389  1.00  0.00      PLPC
+ATOM     65 H11R PLPC    1      -1.538   2.469  -9.259  1.00  0.00      PLPC
+ATOM     66 H11S PLPC    1      -1.655   0.813 -10.144  1.00  0.00      PLPC
+ATOM     67 C212 PLPC    1       0.377   1.523  -9.808  1.00  0.00      PLPC
+ATOM     68 H12R PLPC    1       1.106   0.865  -9.312  1.00  0.00      PLPC
+ATOM     69 C213 PLPC    1       0.844   2.495 -10.648  1.00  0.00      PLPC
+ATOM     70 H13R PLPC    1       1.887   2.563 -10.990  1.00  0.00      PLPC
+ATOM     71 C214 PLPC    1      -0.008   3.623 -11.252  1.00  0.00      PLPC
+ATOM     72 H14R PLPC    1       0.303   4.600 -10.825  1.00  0.00      PLPC
+ATOM     73 H14S PLPC    1      -1.084   3.500 -11.002  1.00  0.00      PLPC
+[ C4A ]
+ATOM     74 C215 PLPC    1       0.095   3.776 -12.860  1.00  0.00      PLPC
+ATOM     75 H15R PLPC    1       1.065   4.275 -13.071  1.00  0.00      PLPC
+ATOM     76 H15S PLPC    1      -0.771   4.425 -13.113  1.00  0.00      PLPC
+ATOM     77 C216 PLPC    1       0.069   2.511 -13.784  1.00  0.00      PLPC
+ATOM     78 H16R PLPC    1      -0.817   1.907 -13.493  1.00  0.00      PLPC
+ATOM     79 H16S PLPC    1       1.033   1.967 -13.680  1.00  0.00      PLPC
+ATOM     80 C217 PLPC    1       0.071   2.712 -15.289  1.00  0.00      PLPC
+ATOM     81 H17R PLPC    1       0.222   1.748 -15.820  1.00  0.00      PLPC
+ATOM     82 H17S PLPC    1       0.980   3.285 -15.572  1.00  0.00      PLPC
+ATOM     83 C218 PLPC    1      -1.121   3.439 -15.785  1.00  0.00      PLPC
+ATOM     84 H18R PLPC    1      -1.046   4.467 -15.370  1.00  0.00      PLPC
+ATOM     85 H18S PLPC    1      -2.069   2.962 -15.454  1.00  0.00      PLPC
+ATOM     86 H18T PLPC    1      -1.040   3.506 -16.891  1.00  0.00      PLPC
+[ C1B ]
+ATOM     87  C32 PLPC    1      -0.963  -3.127  -6.086  1.00  0.00      PLPC
+ATOM     88  H2X PLPC    1      -0.363  -2.195  -6.160  1.00  0.00      PLPC
+ATOM     89  H2Y PLPC    1      -2.041  -2.958  -6.296  1.00  0.00      PLPC
+ATOM     90  C33 PLPC    1      -0.480  -4.166  -7.153  1.00  0.00      PLPC
+ATOM     91  H3X PLPC    1      -0.893  -5.186  -7.000  1.00  0.00      PLPC
+ATOM     92  H3Y PLPC    1       0.625  -4.229  -7.064  1.00  0.00      PLPC
+ATOM     93  C34 PLPC    1      -0.519  -3.778  -8.635  1.00  0.00      PLPC
+ATOM     94  H4X PLPC    1      -1.517  -3.347  -8.864  1.00  0.00      PLPC
+ATOM     95  H4Y PLPC    1      -0.443  -4.740  -9.186  1.00  0.00      PLPC
+[ C2B ]
+ATOM     96  C35 PLPC    1       0.567  -2.794  -9.013  1.00  0.00      PLPC
+ATOM     97  H5X PLPC    1       1.552  -3.249  -8.770  1.00  0.00      PLPC
+ATOM     98  H5Y PLPC    1       0.560  -1.888  -8.371  1.00  0.00      PLPC
+ATOM     99  C36 PLPC    1       0.733  -2.369 -10.495  1.00  0.00      PLPC
+ATOM    100  H6X PLPC    1       0.010  -1.566 -10.751  1.00  0.00      PLPC
+ATOM    101  H6Y PLPC    1       0.603  -3.221 -11.196  1.00  0.00      PLPC
+ATOM    102  C37 PLPC    1       2.101  -1.655 -10.866  1.00  0.00      PLPC
+ATOM    103  H7X PLPC    1       2.970  -2.346 -10.841  1.00  0.00      PLPC
+ATOM    104  H7Y PLPC    1       2.286  -0.870 -10.102  1.00  0.00      PLPC
+ATOM    105  C38 PLPC    1       2.189  -1.050 -12.274  1.00  0.00      PLPC
+ATOM    106  H8X PLPC    1       1.408  -0.263 -12.337  1.00  0.00      PLPC
+ATOM    107  H8Y PLPC    1       1.936  -1.899 -12.944  1.00  0.00      PLPC
+[ C3B ]
+ATOM    108  C39 PLPC    1       3.477  -0.369 -12.749  1.00  0.00      PLPC
+ATOM    109  H9X PLPC    1       4.380  -0.901 -12.379  1.00  0.00      PLPC
+ATOM    110  H9Y PLPC    1       3.516   0.646 -12.297  1.00  0.00      PLPC
+ATOM    111 C310 PLPC    1       3.520  -0.211 -14.203  1.00  0.00      PLPC
+ATOM    112 H10X PLPC    1       4.151   0.653 -14.504  1.00  0.00      PLPC
+ATOM    113 H10Y PLPC    1       2.518  -0.050 -14.656  1.00  0.00      PLPC
+ATOM    114 C311 PLPC    1       3.970  -1.518 -14.939  1.00  0.00      PLPC
+ATOM    115 H11X PLPC    1       3.157  -2.256 -14.775  1.00  0.00      PLPC
+ATOM    116 H11Y PLPC    1       4.942  -1.757 -14.455  1.00  0.00      PLPC
+ATOM    117 C312 PLPC    1       4.269  -1.372 -16.451  1.00  0.00      PLPC
+ATOM    118 H12X PLPC    1       4.711  -2.344 -16.760  1.00  0.00      PLPC
+ATOM    119 H12Y PLPC    1       5.048  -0.582 -16.511  1.00  0.00      PLPC
+[ C4B ]
+ATOM    120 C313 PLPC    1       3.110  -1.006 -17.404  1.00  0.00      PLPC
+ATOM    121 H13X PLPC    1       3.383  -0.243 -18.164  1.00  0.00      PLPC
+ATOM    122 H13Y PLPC    1       2.316  -0.446 -16.866  1.00  0.00      PLPC
+ATOM    123 C314 PLPC    1       2.380  -2.172 -18.271  1.00  0.00      PLPC
+ATOM    124 H14X PLPC    1       3.098  -2.677 -18.952  1.00  0.00      PLPC
+ATOM    125 H14Y PLPC    1       1.578  -1.719 -18.892  1.00  0.00      PLPC
+ATOM    126 C315 PLPC    1       1.704  -3.291 -17.401  1.00  0.00      PLPC
+ATOM    127 H15X PLPC    1       2.372  -4.041 -16.928  1.00  0.00      PLPC
+ATOM    128 H15Y PLPC    1       1.202  -3.968 -18.125  1.00  0.00      PLPC
+ATOM    129 C316 PLPC    1       0.677  -2.778 -16.393  1.00  0.00      PLPC
+ATOM    130 H16X PLPC    1       0.047  -3.668 -16.178  1.00  0.00      PLPC
+ATOM    131 H16Y PLPC    1       0.977  -2.363 -15.407  1.00  0.00      PLPC
+ATOM    132 H16Z PLPC    1      -0.012  -2.054 -16.877  1.00  0.00      PLPC
+END

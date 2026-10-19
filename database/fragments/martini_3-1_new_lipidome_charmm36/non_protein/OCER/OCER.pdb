@@ -1,0 +1,121 @@
+[ COH ]
+ATOM      1  O1  OCER    1      -1.545  -1.553   0.640  1.00  0.00      OCER
+ATOM      2  HO1 OCER    1      -0.728  -2.056   0.643  1.00  0.00      OCER
+ATOM      3  C1S OCER    1      -1.334  -0.152   0.580  1.00  0.00      OCER
+ATOM      4  H1S OCER    1      -2.303   0.390   0.610  1.00  0.00      OCER
+ATOM      5  H1T OCER    1      -0.779   0.103   1.508  1.00  0.00      OCER
+[ OH1 ]
+ATOM      6  C2S OCER    1      -0.621   0.340  -0.720  1.00  0.00      OCER
+ATOM      7  H2S OCER    1      -1.028   1.349  -0.945  1.00  0.00      OCER
+ATOM      8  C3S OCER    1       0.872   0.411  -0.425  1.00  0.00      OCER
+ATOM      9  H3S OCER    1       1.189  -0.610  -0.126  1.00  0.00      OCER
+ATOM     10  O3  OCER    1       1.149   1.322   0.595  1.00  0.00      OCER
+ATOM     11  HO3 OCER    1       0.316   1.177   1.050  1.00  0.00      OCER
+[ AM2 ]
+ATOM     12  NF  OCER    1      -0.879  -0.504  -1.914  1.00  0.00      OCER
+ATOM     13  HNF OCER    1      -0.084  -1.044  -2.179  1.00  0.00      OCER
+ATOM     14  C1F OCER    1      -2.099  -0.543  -2.365  1.00  0.00      OCER
+ATOM     15  OF  OCER    1      -2.984   0.002  -1.733  1.00  0.00      OCER
+[ T1A ]
+ATOM     16  C4S OCER    1       1.696   0.830  -1.653  1.00  0.00      OCER
+ATOM     17  H4S OCER    1       1.315   1.615  -2.323  1.00  0.00      OCER
+ATOM     18  C5S OCER    1       2.846   0.330  -2.106  1.00  0.00      OCER
+ATOM     19  H5S OCER    1       3.237  -0.569  -1.608  1.00  0.00      OCER
+ATOM     20  C6S OCER    1       3.565   0.840  -3.312  1.00  0.00      OCER
+ATOM     21  H6S OCER    1       4.207   1.664  -2.933  1.00  0.00      OCER
+ATOM     22  H6T OCER    1       2.868   1.156  -4.118  1.00  0.00      OCER
+[ C2A ]
+ATOM     23  C7S OCER    1       4.555  -0.133  -3.893  1.00  0.00      OCER
+ATOM     24  H7S OCER    1       5.333  -0.363  -3.134  1.00  0.00      OCER
+ATOM     25  H7T OCER    1       5.067   0.144  -4.839  1.00  0.00      OCER
+ATOM     26  C8S OCER    1       3.773  -1.446  -4.347  1.00  0.00      OCER
+ATOM     27  H8S OCER    1       2.850  -1.689  -3.778  1.00  0.00      OCER
+ATOM     28  H8T OCER    1       4.553  -2.236  -4.312  1.00  0.00      OCER
+ATOM     29  C9S OCER    1       3.111  -1.350  -5.786  1.00  0.00      OCER
+ATOM     30  H9S OCER    1       3.829  -1.172  -6.614  1.00  0.00      OCER
+ATOM     31  H9T OCER    1       2.425  -0.483  -5.897  1.00  0.00      OCER
+ATOM     32 C10S OCER    1       2.283  -2.579  -6.192  1.00  0.00      OCER
+ATOM     33 H10S OCER    1       1.428  -2.690  -5.491  1.00  0.00      OCER
+ATOM     34 H10T OCER    1       2.808  -3.549  -6.065  1.00  0.00      OCER
+[ C3A ]
+ATOM     35 C11S OCER    1       1.654  -2.540  -7.589  1.00  0.00      OCER
+ATOM     36 H11S OCER    1       2.198  -1.892  -8.309  1.00  0.00      OCER
+ATOM     37 H11T OCER    1       0.667  -2.038  -7.498  1.00  0.00      OCER
+ATOM     38 C12S OCER    1       1.478  -3.940  -8.330  1.00  0.00      OCER
+ATOM     39 H12S OCER    1       0.795  -4.592  -7.744  1.00  0.00      OCER
+ATOM     40 H12T OCER    1       2.460  -4.430  -8.499  1.00  0.00      OCER
+ATOM     41 C13S OCER    1       0.670  -3.773  -9.638  1.00  0.00      OCER
+ATOM     42 H13S OCER    1      -0.177  -3.073  -9.471  1.00  0.00      OCER
+ATOM     43 H13T OCER    1       0.211  -4.760  -9.858  1.00  0.00      OCER
+ATOM     44 C14S OCER    1       1.422  -3.410 -10.880  1.00  0.00      OCER
+ATOM     45 H14S OCER    1       2.338  -4.015 -10.706  1.00  0.00      OCER
+ATOM     46 H14T OCER    1       1.590  -2.313 -10.841  1.00  0.00      OCER
+[ C4A ]
+ATOM     47 C15S OCER    1       0.667  -3.777 -12.121  1.00  0.00      OCER
+ATOM     48 H15S OCER    1      -0.135  -3.043 -12.352  1.00  0.00      OCER
+ATOM     49 H15T OCER    1       0.298  -4.825 -12.114  1.00  0.00      OCER
+ATOM     50 C16S OCER    1       1.538  -3.835 -13.434  1.00  0.00      OCER
+ATOM     51 H16S OCER    1       2.127  -4.776 -13.446  1.00  0.00      OCER
+ATOM     52 H16T OCER    1       2.114  -2.905 -13.629  1.00  0.00      OCER
+ATOM     53 C17S OCER    1       0.752  -3.831 -14.772  1.00  0.00      OCER
+ATOM     54 H17S OCER    1       0.007  -3.007 -14.781  1.00  0.00      OCER
+ATOM     55 H17T OCER    1       0.232  -4.811 -14.839  1.00  0.00      OCER
+ATOM     56 C18S OCER    1       1.608  -3.870 -16.043  1.00  0.00      OCER
+ATOM     57 H18S OCER    1       0.891  -4.056 -16.871  1.00  0.00      OCER
+ATOM     58 H18T OCER    1       2.393  -4.654 -15.985  1.00  0.00      OCER
+ATOM     59 H18U OCER    1       2.053  -2.891 -16.322  1.00  0.00      OCER
+[ C1B ]
+ATOM     60  C2F OCER    1      -2.286  -1.467  -3.525  1.00  0.00      OCER
+ATOM     61  H2F OCER    1      -2.437  -2.520  -3.206  1.00  0.00      OCER
+ATOM     62  H2G OCER    1      -1.486  -1.464  -4.297  1.00  0.00      OCER
+ATOM     63  C3F OCER    1      -3.531  -1.111  -4.360  1.00  0.00      OCER
+ATOM     64  H3F OCER    1      -4.273  -1.266  -3.547  1.00  0.00      OCER
+ATOM     65  H3G OCER    1      -3.880  -1.823  -5.139  1.00  0.00      OCER
+ATOM     66  C4F OCER    1      -3.580   0.377  -4.800  1.00  0.00      OCER
+ATOM     67  H4F OCER    1      -2.763   0.940  -4.300  1.00  0.00      OCER
+ATOM     68  H4G OCER    1      -4.482   0.921  -4.445  1.00  0.00      OCER
+ATOM     69  C5F OCER    1      -3.337   0.653  -6.306  1.00  0.00      OCER
+ATOM     70  H5F OCER    1      -3.141   1.739  -6.438  1.00  0.00      OCER
+ATOM     71  H5G OCER    1      -4.158   0.243  -6.932  1.00  0.00      OCER
+ATOM     72  C6F OCER    1      -2.096  -0.108  -6.768  1.00  0.00      OCER
+ATOM     73  H6F OCER    1      -2.167  -1.215  -6.699  1.00  0.00      OCER
+ATOM     74  H6G OCER    1      -1.123   0.309  -6.430  1.00  0.00      OCER
+[ C2B ]
+ATOM     75  C7F OCER    1      -2.058  -0.106  -8.302  1.00  0.00      OCER
+ATOM     76  H7F OCER    1      -3.143  -0.180  -8.530  1.00  0.00      OCER
+ATOM     77  H7G OCER    1      -1.430  -0.979  -8.583  1.00  0.00      OCER
+ATOM     78  C8F OCER    1      -1.659   1.267  -8.975  1.00  0.00      OCER
+ATOM     79  H8F OCER    1      -2.476   2.003  -8.815  1.00  0.00      OCER
+ATOM     80  H8G OCER    1      -1.809   1.075 -10.059  1.00  0.00      OCER
+ATOM     81  C9F OCER    1      -0.350   1.882  -8.449  1.00  0.00      OCER
+ATOM     82  H9F OCER    1      -0.475   2.715  -7.740  1.00  0.00      OCER
+ATOM     83 C10F OCER    1       0.856   1.356  -8.803  1.00  0.00      OCER
+ATOM     84 H10F OCER    1       1.729   1.962  -8.520  1.00  0.00      OCER
+[ D3B ]
+ATOM     85 C11F OCER    1       1.165   0.214  -9.674  1.00  0.00      OCER
+ATOM     86 H11F OCER    1       0.309  -0.480  -9.534  1.00  0.00      OCER
+ATOM     87 H11G OCER    1       2.138  -0.200  -9.331  1.00  0.00      OCER
+ATOM     88 C12F OCER    1       1.088   0.483 -11.198  1.00  0.00      OCER
+ATOM     89 H12F OCER    1       0.067   0.761 -11.536  1.00  0.00      OCER
+ATOM     90 H12G OCER    1       1.389  -0.481 -11.661  1.00  0.00      OCER
+ATOM     91 C13F OCER    1       2.189   1.514 -11.681  1.00  0.00      OCER
+ATOM     92 H13F OCER    1       3.184   1.026 -11.600  1.00  0.00      OCER
+ATOM     93 H13G OCER    1       2.097   2.389 -11.003  1.00  0.00      OCER
+ATOM     94 C14F OCER    1       1.857   2.093 -13.061  1.00  0.00      OCER
+ATOM     95 H14F OCER    1       2.676   2.826 -13.222  1.00  0.00      OCER
+ATOM     96 H14G OCER    1       0.874   2.583 -12.899  1.00  0.00      OCER
+[ C4B ]
+ATOM     97 C15F OCER    1       1.691   1.156 -14.267  1.00  0.00      OCER
+ATOM     98 H15F OCER    1       1.530   1.905 -15.071  1.00  0.00      OCER
+ATOM     99 H15G OCER    1       0.786   0.547 -14.056  1.00  0.00      OCER
+ATOM    100 C16F OCER    1       2.876   0.301 -14.530  1.00  0.00      OCER
+ATOM    101 H16F OCER    1       2.983  -0.423 -13.694  1.00  0.00      OCER
+ATOM    102 H16G OCER    1       3.799   0.854 -14.252  1.00  0.00      OCER
+ATOM    103 C17F OCER    1       2.984  -0.320 -15.942  1.00  0.00      OCER
+ATOM    104 H17F OCER    1       1.970  -0.737 -16.120  1.00  0.00      OCER
+ATOM    105 H17G OCER    1       3.775  -1.097 -16.014  1.00  0.00      OCER
+ATOM    106 C18F OCER    1       3.195   0.882 -16.892  1.00  0.00      OCER
+ATOM    107 H18F OCER    1       4.162   1.383 -16.673  1.00  0.00      OCER
+ATOM    108 H18G OCER    1       2.349   1.599 -16.956  1.00  0.00      OCER
+ATOM    109 H18H OCER    1       3.272   0.433 -17.906  1.00  0.00      OCER
+END
