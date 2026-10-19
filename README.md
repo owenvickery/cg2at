@@ -1,9 +1,16 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPL_v3-blue)](https://www.gnu.org/licenses/gpl-3.0.html)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/owenvickery/cg2at.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/owenvickery/cg2at/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/owenvickery/cg2at.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/owenvickery/cg2at/context:python)
+[![codecov](https://codecov.io/gh/owenvickery/cg2at/branch/master/graph/badge.svg)](https://codecov.io/gh/owenvickery/cg2at)
+[![Github Releases](https://img.shields.io/github/v/release/owenvickery/cg2at)](https://github.com/owenvickery/cg2at/releases)
+[![Anaconda-Server Badge](https://anaconda.org/stansfeld_rg/cg2at/badges/latest_release_date.svg)](https://anaconda.org/stansfeld_rg/cg2at)
+[![Anaconda-Server Badge](https://anaconda.org/stansfeld_rg/cg2at/badges/installer/conda.svg)](https://conda.anaconda.org/stansfeld_rg)
+[![Anaconda-Server Badge](https://anaconda.org/stansfeld_rg/cg2at/badges/downloads.svg)](https://anaconda.org/stansfeld_rg/cg2at)
 
 <p align="center">
                                    <b>**CG2AT v2 README**</b>
 </p>
-If you are using CG2AT2 please acknowledge by using the following citation:
+If you are using CG2AT2 please acknowledge me (Dr Owen Vickery) and use the following citation.
 
 Vickery ON, Stansfeld PJ. 
 
@@ -13,40 +20,24 @@ J Chem Theory Comput. 2021 Oct 12;17(10):6472-6482.
 
 doi: 10.1021/acs.jctc.1c00295
 
-CG2AT2 was written by Owen Vickery (https://github.com/owenvickery/cg2at). This version also includes the improvements developed in CG2AT-lite (https://github.com/pstansfeld/cg2at-lite), including support for the next-generation Martini 3 protein model and trajectory-guided dihedral restraints contributed by Hafez Razmazma.
-
 
 <p align="center">
                                    <b>**CG2AT2 OVERVIEW**</b>
 </p>
 
-CG2AT2 is a fragment based conversion of Coarse-Grained systems (e.g. Martini) to an atomistic resolution. CG2AT2 generates a selection of outputs for allowing further refinements and analysis via atomistic simulations. 
+CG2AT2 is a fragment based conversion of coarse grain systems (e.g. martini) to atomistic. CG2AT2 generates a selection of outputs for allowing further refinements and analysis via atomistic simulations. 
 
-CG2AT2 has been designed for ease of use, where for the majority of users need only supply the coordinate file of the Coarse-Grained system and the original atomistic file for the protein. CG2AT2 will then provide all the files required to run the further atomistic simulations. 
+CG2AT2 has been designed for ease of use, where for the majority of users need only supply the coordinate file of the coarsegrain system and the original atomisitc file. CG2AT2 will then provide all the files required to run the further atomistic simulation. 
 
 <p align="center">
                                    <b>**INSTALL**</b>
 </p>
 
-CG2AT2 can be installed with pip directly from GitHub. This installs the <b>cg2at</b> command together with the full force field and fragment database (~155 MB).
-
-<pre>
-pip install git+https://github.com/pstansfeld/cg2at
-</pre>
-
-To also install the optional dependencies for trajectory-guided dihedral restraints (-refine, cg2at_refine and traj_dih_guide):
-
-<pre>
-pip install "cg2at[refine] @ git+https://github.com/pstansfeld/cg2at"
-</pre>
-
-From a local copy of the repository, <b>pip install .</b> does the same. Note that the "cg2at" package on PyPI is an unrelated project, so install from GitHub as above rather than with "pip install cg2at".
-
-CG2AT2 is also available via CONDA:
+The best method to get a copy of CG2AT2 is via CONDA which will install the latest version of CG2AT2 including any missing packages already not installed. 
 
 conda install -c stansfeld_rg cg2at
 
-However, CG2AT2 does not require compilation and can be downloaded, ready to run from either Github or Zenodo, and run with ./cg2at from the downloaded folder.
+However, CG2AT2 does not require any real install and can be downloaded ready to run from either github or zenodo,
 
 The addition of CG2AT to the system PATH is advisable for ease of use.
 
@@ -60,19 +51,14 @@ export PATH="path_to_CG2AT2:$PATH"
                                      
 Software:
 
-- Python v3.9 or higher
+- Python v3 or higher
 - GROMACS > v5
 
 
 Non standard python modules:
 
-- Numpy (>= 1.26.4)
+- Numpy
 - Scipy
-
-Optional python modules (only needed for -refine, cg2at_refine and traj_dih_guide):
-
-- MDAnalysis (>= 2.0)
-- matplotlib
 
 Standard modules included in base python install (ubuntu 18):
 
@@ -80,6 +66,7 @@ Standard modules included in base python install (ubuntu 18):
 - copy
 - datetime
 - difflib
+- distutils
 - glob
 - math
 - multiprocessing
@@ -109,6 +96,7 @@ OPTIONAL
 - -loc        (str)
 - -o          ['all', 'align', 'de_novo', 'none']
 - -group      (e.g. 0,1 2,3 or all or chain)
+- -npcus      (int)
 - -mod        (True/False)
 - -sf         (float)(default=0.9)
 - -cys        (float)
@@ -131,13 +119,6 @@ OPTIONAL
 - -silent     (True/False)
 - -posre      (str) 
 - -compare    (str) 
-- -refine     (str) (CG trajectory, e.g. xtc)
-- -refine_top (str) 
-- -refine_step, -refine_b, -refine_e, -refine_kmax, -refine_sigma, -refine_tdc, -refine_dphi, -refine_nvt
-
-DEPRECATED
-
-- -ncpus      (int) (no effect, GROMACS steps now run serially)
 
 <p align="center">
                                    <b>**Fragment based fitting**</b>
@@ -191,7 +172,7 @@ However, the quality of the conversion is improved if you can provide the starti
 
 e.g.
 <pre>
-    cg2at -c cg_input.gro -a atomistic_input.gro
+    python cg2at.py -c cg_input.gro -a atomistic_input.gro
 </pre>
 
 The atomistic segments are then aligned to the coarsegrain initially by sequence. The atomistic foles can be supplied in a single or multiple files 
@@ -324,24 +305,12 @@ If you know in advance which settings you wish to use, these can be supplied by 
 
 - w   (str) water model         e.g. tip3p
 - fg  (str) fragment databases  e.g. martini_2-2_charmm36
-- ff  (str) forcefield          e.g. charmm36-cg2at
+- ff  (str) forcefield          e.g. charmm36-jul2017
 
 example input.
 
 <pre>
-    cg2at -c cg_input.pdb -a atomistic_input.pdb -w tip3p -fg martini_3-0_charmm36 -ff charmm36-cg2at
-</pre>
-
-Use <b>cg2at -info</b> to list every force field and fragment library in your database (AMBER, CHARMM36, OPLS-AA and SLIPIDS force fields are included).
-
-<p align="center">
-                                   <b>**Martini 3 next-generation protein model**</b>
-</p>
-
-The fragment library martini_3-2_nextgen_protein_charmm36 supports the new Martini 3 protein model with an explicit N, CA, C and O backbone. Proteins built with the original Martini 3 model (a single BB bead per residue) are still converted with martini_3-0_charmm36.
-
-<pre>
-    cg2at -c cg_input.gro -a atomistic_input.pdb -fg martini_3-2_nextgen_protein_charmm36 martini_3-0_charmm36 -ff charmm36-cg2at -w tip3p
+    python cg2at.py -c cg_input.pdb -a atomistic_input.pdb -w tip3p -fg martini_2-2_charmm36 -ff charmm36-jul2017-update 
 </pre>
 
 <p align="center">
@@ -492,19 +461,21 @@ CG2AT2 will by default create a new directory each time it is run (CG2AT_timesta
 
 If CG2AT2 fails a somepoint you can fix the offending error in the structure and you can rerun CG2AT2, which will pick up from where it left off.  
 
-The location can be a relative or an absolute path.
-
 e.g.
 <pre>
 <b>-loc CG2AT</b>
-<b>-loc /scratch/user/CG2AT_run1</b>
 </pre>
 
 <p align="center">
                                    <b>Number of CPUS</b>
 </p>
 
-The ncpus flag is deprecated and has no effect. pdb2gmx and the minimisations are now run serially (mdrun -ntmpi 1), which avoids GROMACS threading conflicts.
+CG2AT by default will attempt to parallise everything over 8 cores, this can be overridden with the ncpus flag.
+
+e.g.
+<pre>
+<b>-ncpus 4</b>
+</pre>
 
 <p align="center">
                                    <b>Modular vs group</b>
@@ -558,7 +529,7 @@ Interactively choose termini
                                    <b>PBC box resizing</b>
 </p>
 
-For the moment CG2AT2 only allows PBC box resizing for cubic boxes. The box flag controls the final box size and is measured in Angstroms. If you wish to shrink the box on selected axises replace the box vector with 0.
+For the moment CG2AT2 only allows PBC box resizing for cubic boxs. The box flag controls the final box size and is measured in Angstroms. If you wish to shrink the box on selected axises replace the box vector with 0.
 
 <pre>
 Change box size to 100, 100, 100
@@ -578,7 +549,7 @@ This is useful if you have two versions of GROMACS installed e.g. gmx and gmx_mo
 
 <pre>
 to use gmx_mod
-<b>-gmx gmx_mod</b>
+<b>-gromacs gmx_mod</b>
 </pre>
 
 <p align="center">
@@ -596,27 +567,12 @@ To prevent the cleanup and retain all the temporary files use the messy flag.
                                    <b>Distance restraint matrix</b>
 </p>
 
-If you supply a atomistic file to CG2AT2, a distance restraint matrix is generated for the protein backbone hydrogen bond network. With the disre flag this network is overlaid on the de_novo conversion during the NVT simulation. This generally has minimal effect on the structure however improves the orientation of the backbone atoms.
+If you supply a atomistic file to CG2AT2, a distance restraint matrix will be generated for the protein backbone hydrogen bond network. This network is overlay on the de_novo conversion during the NVT simulation. This generally has minimal effect on the structure however improves the orientation of the backbone atoms.
 
-The restraints are off by default and are only applied when the disre flag is given and an atomistic file is supplied (-a).
+This can be switched off using the disre flag.
 <pre>
 <b>-disre</b>
 </pre>
-
-<p align="center">
-                                   <b>Trajectory-guided dihedral restraints</b>
-</p>
-
-For proteins built with the Martini 3 next-generation model (explicit N, CA, C, O backbone), the backbone phi/psi distributions from a CG trajectory can be used to restrain the de novo NVT. Each dihedral is scored by its Trajectory Dihedral Confidence (TDC); well-defined dihedrals are restrained, broad ones are left free. This method was developed by Hafez Razmazma.
-
-This requires the optional dependencies (MDAnalysis and matplotlib, see INSTALL) and -o all or -o de_novo.
-<pre>
-<b>-refine cg_trajectory.xtc -refine_top cg_topology.tpr</b>
-</pre>
-
-The trajectory frames used (-refine_step, -refine_b, -refine_e), the restraint strength and threshold (-refine_kmax, -refine_sigma, -refine_tdc, -refine_dphi) and the length of the restrained NVT (-refine_nvt) can be adjusted, see <b>cg2at -h</b>. A Ramachandran quality report is written to FINAL.
-
-The same analysis is available as standalone post-processing tools for a finished CG2AT2 run: <b>cg2at_refine</b> and <b>traj_dih_guide</b> (use -h for options).
 
 <p align="center">
                                    <b>Atom overlap checker</b>
@@ -774,7 +730,7 @@ For non protein residues you can create a position restraint file which is appli
 cg2at can create a posres file for the molecule with the flag "-posre"
 
 <pre>
-cg2at -posre POPE -fg martini_2-2_charmm36
+cg2at -posre POPE.pdb -fg martini_2-2_charm36
 </pre>
 
 In the case of solvent. each water type is contained within the bead folder e.g solvent/W/TIP3P.pdb, solvent/W/SPCE.pdb

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
-import os
-import copy
+import os, sys
 import numpy as np
+import math
 import gen, g_var, at_mod
-from exceptions import CG2ATError
 
 
 
@@ -46,7 +45,7 @@ def read_solvent_conversion(cg_residue_type,cg_residues):
                         sol_p_bead = int(atom['resid_ori'])
             return sol_p_bead, sol_p_bead*len(cg_residues)
     
-    raise CG2ATError('There is an issue with the solvent recalculation')
+    sys.exit('There is an issue with the solvent recalculation')
 
 def at_np_solvent(cg_residue_type,cg_residues):   
     atomistic_fragments={}  #### residue dictionary
@@ -54,18 +53,10 @@ def at_np_solvent(cg_residue_type,cg_residues):
     residue_type={}
     residue_type_mass={}
     atomistic_fragments_list = []
-    # Fragment location and template are constant for all copies of the same
-    # residue type — look them up once before the loop.
-    frag_location = gen.fragment_location(cg_residue_type)
-    frag_template, frag_mass_template = at_mod.get_atomistic(frag_location, cg_residue_type)
-
-    total = len(cg_residues)
     for cg_resid, cg_residue in enumerate(cg_residues):
-        gen.print_progress('Converting ' + cg_residue_type, cg_resid + 1, total)
-        atomistic_fragments[cg_resid] = {}
-        # Deep-copy the template so each residue gets an independent, mutable copy.
-        residue_type[cg_residue_type] = copy.deepcopy(frag_template)
-        residue_type_mass[cg_residue_type] = copy.deepcopy(frag_mass_template)
+        atomistic_fragments[cg_resid]={}
+        frag_location=gen.fragment_location(cg_residue_type) ### get fragment location from database
+        residue_type[cg_residue_type], residue_type_mass[cg_residue_type] = at_mod.get_atomistic(frag_location, cg_residue_type)
         for group in residue_type[cg_residue_type]:
             center, at_frag_centers, cg_frag_centers, group_fit = at_mod.rigid_fit(residue_type[cg_residue_type][group], 
                                                                                     residue_type_mass[cg_residue_type], 
@@ -81,7 +72,6 @@ def at_np_solvent(cg_residue_type,cg_residues):
             chiral = at_mod.get_chiral_non_carbonyl(atomistic_fragments[cg_resid])
             atomistic_fragments[cg_resid] = at_mod.correct_chiral_atoms(atomistic_fragments[cg_resid], chiral)            
         atomistic_fragments_list, sol_p_bead =  sort_np_dictionary(atomistic_fragments[cg_resid], atomistic_fragments_list)
-    gen.finish_progress('Converting ' + cg_residue_type, total)
     if cg_residue_type in g_var.sol_residues:
         return atomistic_fragments_list, sol_p_bead*len(cg_residues)
     else:

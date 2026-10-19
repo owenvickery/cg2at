@@ -3,31 +3,22 @@
 import os, sys
 import numpy as np
 import math
+from distutils.dir_util import copy_tree
 import multiprocessing as mp
-import shutil
-from shutil import copyfile, copytree
-from functools import lru_cache
+import distutils.spawn
+from shutil import copyfile
 import glob
 import re
 import copy
 import ntpath
-from typing import Optional
 import g_var
-from exceptions import CG2ATError, InputError, TopologyError, FragmentNotFoundError, GromacsError
 
-# Former force field names accepted by -ff.  In CG2AT-lite charmm36-jul2022 was
-# renamed charmm36-cg2at; the full CG2AT database still ships a real
-# charmm36-jul2022.ff, which is always matched first, so the alias is only a
-# fallback for databases that lack it.
-FORCEFIELD_ALIASES = {'charmm36-jul2022': 'charmm36-cg2at'}
 
-def check_alternate_resname(resname: str) -> str:
+def check_alternate_resname(resname):
     if resname in g_var.alt_res_name:
-        return g_var.alt_res_name[resname]
+        return  g_var.alt_res_name[resname]
     elif resname not in g_var.res_top:
-        raise TopologyError(
-            f'The residue {resname} cannot be found in the topology or alternate resnames'
-        )
+        sys.exit('The residue '+resname+' cannot be found in the topology or alternate resnames')
     else:
         return resname
 
@@ -45,23 +36,18 @@ def forcefield_selection(test=False):
                 folder_copy_and_check(g_var.args.ff, g_var.final_dir+g_var.forcefield)
                 g_var.opt['ff'] = g_var.forcefield
                 if not test:
-                    print('\nYou have chosen to use your own force field: '+g_var.forcefield+' in '+g_var.forcefield_location)
+                    print('\nYou have chosen to use your own forcefield: '+g_var.forcefield+' in '+g_var.forcefield_location)
             elif path_leaf(g_var.args.ff)[1]+'.ff' in g_var.forcefield_available:
                 forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.args.ff)[1]+'.ff')
             elif path_leaf(g_var.args.ff)[1] in g_var.forcefield_available:
                 forcefield_number = g_var.forcefield_available.index(path_leaf(g_var.args.ff)[1])
-            elif FORCEFIELD_ALIASES.get(path_leaf(g_var.args.ff)[1].replace('.ff', ''), '')+'.ff' in g_var.forcefield_available:
-                new_name = FORCEFIELD_ALIASES[path_leaf(g_var.args.ff)[1].replace('.ff', '')]
-                forcefield_number = g_var.forcefield_available.index(new_name+'.ff')
-                if not test:
-                    print('\nForce field '+g_var.args.ff+' is provided as '+new_name)
             else:
-                print('Cannot find force field: '+g_var.args.ff+'  please select one from below\n')   
+                print('Cannot find forcefield: '+g_var.args.ff+'  please select one from below\n')   
         if 'forcefield_number' not in locals() and g_var.forcefield == '':
-            forcefield_number = database_selection(g_var.forcefield_available, 'force fields', test)    
+            forcefield_number = database_selection(g_var.forcefield_available, 'forcefields', test)    
         if g_var.forcefield == '':
             if not test:
-                print('\nYou have selected the force field: '+g_var.forcefield_available[forcefield_number].split('.')[0])
+                print('\nYou have selected the forcefield: '+g_var.forcefield_available[forcefield_number].split('.')[0])
             folder_copy_and_check(g_var.database_dir+'/forcefields/'+g_var.forcefield_available[forcefield_number], g_var.final_dir+g_var.forcefield_available[forcefield_number])
             g_var.forcefield_location, g_var.forcefield=g_var.database_dir+'forcefields/', g_var.forcefield_available[forcefield_number]
             g_var.opt['ff'] = g_var.forcefield_available[forcefield_number]
@@ -160,17 +146,22 @@ def fragment_selection(test=False):
     fetch_residues(frag_location, g_var.fragments_available, fragment_number, test)
 
 def correct_number_cpus():
-    if g_var.args.ncpus is not None:
-        print('\nWARNING: -ncpus is deprecated and has no effect. '
-              'pdb2gmx/minimisation now runs serially to avoid GROMACS threading conflicts.')
-    # ncpus is kept in g_var.opt for any legacy code that reads it,
-    # but it no longer controls parallelism.
-    g_var.opt['ncpus'] = 1
+    if g_var.args.ncpus != None:
+        if g_var.args.ncpus > mp.cpu_count():
+            print('you have selected to use more CPU cores than are available: '+str(g_var.args.ncpus))
+            print('defaulting to the maximum number of cores: '+str(mp.cpu_count()))
+            g_var.args.ncpus = mp.cpu_count()
+    else:
+        if mp.cpu_count() >= 8:
+            g_var.args.ncpus = 8
+        else:
+            g_var.args.ncpus = mp.cpu_count()
+    g_var.opt['ncpus'] = g_var.args.ncpus
 
-def check_input_flag() -> None:
+def check_input_flag():
     if g_var.get_forcefield and g_var.args.c is None:
         g_var.parser.print_help(sys.stderr)
-        raise InputError('\nError: the following arguments are required: -c\n')
+        sys.exit('\nError: the following arguments are required: -c\n')
 
 def path_leaf(path):
     head, tail = ntpath.split(path)
@@ -180,22 +171,24 @@ def path_leaf(path):
         return path.replace(tail, ''), tail
 
 ### finds gromacs installation
-def find_gromacs() -> None:
-    gmx_name = g_var.args.gmx if g_var.args.gmx is not None else 'gmx'
-    g_var.args.gmx = shutil.which(gmx_name)
-    if g_var.args.gmx is None:
-        gmxbin = os.environ.get("GMXBIN")
-        if gmxbin is not None:
-            for _root, _dirs, files in os.walk(gmxbin):
+def find_gromacs():
+    if g_var.args.gmx != None:
+        g_var.args.gmx=distutils.spawn.find_executable(g_var.args.gmx)
+    else:
+        g_var.args.gmx=distutils.spawn.find_executable('gmx')
+    if g_var.args.gmx is None or type(g_var.args.gmx) != str:
+        if os.environ.get("GMXBIN") != None:
+            for root, dirs, files in os.walk(os.environ.get("GMXBIN")):
                 for file_name in files:
                     if file_name.startswith('gmx') and file_name.islower() and '.' not in file_name:
-                        found = shutil.which(file_name)
-                        if isinstance(found, str):
-                            g_var.args.gmx = found
+                        g_var.args.gmx=distutils.spawn.find_executable(file_name)
+                        if type(g_var.args.gmx) == str and g_var.args.gmx != None :
                             break
+                        else:
+                            g_var.args.gmx=None
                 break
         if g_var.args.gmx is None:
-            raise GromacsError('Cannot find gromacs installation')
+            sys.exit('Cannot find gromacs installation')
     g_var.opt['gmx'] = g_var.args.gmx
 
 def trunc_coord(xyz):
@@ -211,36 +204,16 @@ def trunc_coord(xyz):
             xyz_new.append(coord)
     return xyz_new[0],xyz_new[1],xyz_new[2]
 
-def calculate_distance(p1, p2) -> float:
+def calculate_distance(p1, p2):
     return np.sqrt(((p1[0]-p2[0])**2)+((p1[1]-p2[1])**2)+((p1[2]-p2[2])**2))
 
-def file_copy_and_check(file_in: str, file_out: str) -> None:
+def file_copy_and_check(file_in,file_out):
     if not os.path.exists(file_out) and os.path.exists(file_in):
         copyfile(file_in, file_out)
 
-
-def print_progress(label: str, current: int, total: int, width: int = 40) -> None:
-    """Print an inline progress bar that overwrites itself each call.
-
-    Example output:
-        pdb2gmx/minimisation  [=========>          ]  12/25  48%
-    """
-    if total == 0:
-        return
-    filled = int(width * current / total)
-    bar = '=' * filled + '>' + ' ' * (width - filled - 1) if filled < width else '=' * width
-    pct = int(100 * current / total)
-    print(f'\r{label}  [{bar}]  {current}/{total}  {pct}%', end='', flush=True)
-
-
-def finish_progress(label: str, total: int, width: int = 40) -> None:
-    """Print the completed state of a progress bar and move to a new line."""
-    bar = '=' * width
-    print(f'\r{label}  [{bar}]  {total}/{total}  100%')
-
-def folder_copy_and_check(folder_in: str, folder_out: str) -> None:
+def folder_copy_and_check(folder_in,folder_out):
     if not os.path.exists(folder_out):
-        copytree(folder_in, folder_out)
+        copy_tree(folder_in, folder_out)
 
 def flags_used():
     print('\nAll variables supplied have been saved in : \n'+g_var.input_directory+'script_inputs.dat')
@@ -251,7 +224,7 @@ def flags_used():
             if var != 'input':
                 scr_input.write('{0:9}{1:15}\n'.format(var,str(g_var.opt[var])))
 
-def is_hydrogen(atom: str) -> bool:
+def is_hydrogen(atom):
     if str.isdigit(atom[0]) and atom[1] != 'H':
         return False
     elif not str.isdigit(atom[0]) and not atom.startswith('H'):
@@ -295,7 +268,7 @@ def sort_swap_group():
             if re.split(':', swap)[1].split(',') is not type(int):
                 res_e = re.split(':', swap)[1].split(',')
             else:
-                raise InputError('swap layout is not correct')
+                sys.exit('swap layout is not correct')
             
             if len(res_s) == len(res_e):
                 res_range, res_id = split_swap(swap)
@@ -310,7 +283,7 @@ def sort_swap_group():
                 g_var.swap_dict[res_s[0]][res_s[0]+':'+res_e[0]]['resid']=res_id
                 g_var.swap_dict[res_s[0]][res_s[0]+':'+res_e[0]]['range']=res_range
             else:
-                raise InputError('The length of your swap groups do not match')
+                sys.exit('The length of your swap groups do not match')
         
 def print_swap_residues():
     if g_var.args.swap != None:
@@ -351,10 +324,10 @@ def new_box_vec(box_vec, box):
     box_vec = g_var.box_line%(float(box_vec_values[0]), float(box_vec_values[1]), float(box_vec_values[2]), float(box_vec_split[3]), float(box_vec_split[4]),float(box_vec_split[5]))
     return box_vec, np.array(box_shift)
 
-def strip_header(line: str) -> str:
+def strip_header(line):
     line_new = line.replace('[','').split(']', 1)[0]
     if len(line_new.split())>1 or len(line_new.split())==0:
-        raise TopologyError('There is a issue in one of the fragment headers: \n'+line)
+        sys.exit('There is a issue in one of the fragment headers: \n'+line)
     return line_new.strip()
 
 def topology_header(line, topology, location):
@@ -371,9 +344,8 @@ def sep_fragments_topology(residue, location):
     topology = copy.deepcopy(g_var.topology)
     if os.path.exists(location+'.top'):
         with open(location+'.top', 'r') as top_input:
-            topology_function = None
             for line_nr, line in enumerate(top_input.readlines()):
-                if not line.startswith('#') and not line.lstrip().startswith(';') and len(line) > 0:
+                if not line.startswith('#') and len(line) > 0:
                     if line.startswith('['):
                         topology_function = topology_header(line, topology, location)
                     else:
@@ -427,7 +399,7 @@ def sort_alternate_residues(line_sep, residue):
         if alt_res not in g_var.alt_res_name:
             g_var.alt_res_name[alt_res] = residue
         else:
-            raise TopologyError('The alternate residue name: \"'+alt_res+'\" already corresponds to: \"'+
+            sys.exit('The alternate residue name: \"'+alt_res+'\" already corresponds to: \"'+
                      g_var.alt_res_name[alt_res]+'\"')
 
 def sort_hydration(line_sep, residue):
@@ -462,7 +434,7 @@ def get_fragment_topology(residue, location):
                 line_sep = pdbatom(line)
                 grouped_atoms[group_temp][bead].append(line_sep['atom_number'])
             if 'bead' not in locals():
-                raise InputError('error reading: '+location)
+                sys.exit('error reading:\n'+location)
             ### return backbone info for each aminoacid residue
             if bead in g_var.res_top[residue]['CONNECT']:
                 if line.startswith('ATOM'):
@@ -549,7 +521,7 @@ def fetch_atom_masses(forcefield_loc):
                     line_sep = line.split()       
                     at_mass[line_sep[0]]=line_sep[1] 
     else:
-        raise TopologyError('cannot find atomtypes.dat in the force field: '+forcefield_loc)
+        sys.exit('cannot find atomtypes.dat in the forcefield: '+forcefield_loc)
     return at_mass
 
 def fetch_atoms_water_ion(forcefield_loc, at_mass_p):
@@ -618,14 +590,14 @@ def fetch_bond_info(residue, rtp, at_mass, location):
                                 break
             # if 'atoms' not in locals():
             #     print('Issue finding information for residue: ',residue)
-            #     raise TopologyError('There is an issue with: '+rtp_file)
+            #     sys.exit('There is a issue with: \n'+rtp_file)
         if len(heavy_dict) > 0:
             break
     if 'atoms' not in locals():
         print('Issue finding information for residue: ',residue)
-        raise TopologyError('There is an issue with: '+rtp_file)
+        sys.exit('There is a issue with: \n'+rtp_file)
     if not residue_present:
-        raise TopologyError('cannot find topology information for: '+residue)
+        sys.exit('cannot find topology information for: '+residue)
     bond_dict=np.array(bond_dict)
     hydrogen = {}
     heavy_bond = {}
@@ -688,19 +660,13 @@ def add_to_topology_list(bond_1, bond_2, top_list, dict1, dict2, conversion, res
             top_list[bond[0]].append(bond[1])
     return top_list, amide_hydrogen
 
-@lru_cache(maxsize=None)
-def fragment_location(residue: str) -> str:
-    """Return the path to the fragment PDB for *residue*.
-
-    Result is cached so the filesystem is only searched once per residue name
-    regardless of how many copies of that residue exist in the system.
-    """
-    for res_type in [g_var.np_directories, g_var.p_directories, g_var.mod_directories,
-                     g_var.o_directories, g_var.sol_directories, g_var.ion_directories]:
+def fragment_location(residue):  
+#### runs through dirctories looking for the atomistic fragments returns the correct location
+    for res_type in [g_var.np_directories, g_var.p_directories, g_var.mod_directories, g_var.o_directories, g_var.sol_directories, g_var.ion_directories]:
         for directory in range(len(res_type)):
-            if os.path.exists(res_type[directory][0] + residue + '/' + swap_to_solvent(residue) + '.pdb'):
-                return res_type[directory][0] + residue + '/' + swap_to_solvent(residue) + '.pdb'
-    raise FragmentNotFoundError('Cannot find fragment: ' + residue + '/' + swap_to_solvent(residue) + '.pdb')
+            if os.path.exists(res_type[directory][0]+residue+'/'+swap_to_solvent(residue)+'.pdb'):
+                return res_type[directory][0]+residue+'/'+swap_to_solvent(residue)+'.pdb'            
+    sys.exit('Cannot find fragment: '+residue+'/'+swap_to_solvent(residue)+'.pdb')
 
 
 def read_database_directories():
@@ -712,7 +678,8 @@ def read_database_directories():
                 available_provided = [x for x in sorted(dirs) if not x.startswith('_')]
                 break
         else:
-            raise CG2ATError('no '+directory_type+' found')
+            sys.exit('no '+directory_type+' found')
+            available_provided=[]
         available_provided_database.append(available_provided)
     g_var.forcefield_available, g_var.fragments_available = available_provided_database[0], available_provided_database[1]
 
@@ -733,8 +700,7 @@ def ask_database(provided, selection_type, test=False):
     while True:
         try:
             if len(provided)==1:
-                print('\nOnly one ' + selection_type[:-1] + ' database found, using it automatically.')
-                number = 0
+                print('\nOnly 1 '+selection_type[:-1]+' database is currently available, therefore you have no choice but to accept the following choice.')
                 return number
         #### if asking about fragments accept a list of libraries 
             if selection_type=='fragments': 
@@ -746,20 +712,20 @@ def ask_database(provided, selection_type, test=False):
                     return True
         #### if forcefield only accept one selection
             else:
-                number = int(input('\nplease select a force field: '))
+                number = int(input('\nplease select a forcefield: '))
                 if number < len(provided):
                     return number
                 elif test:
                     return True
         except KeyboardInterrupt:
-            raise KeyboardInterrupt
+            sys.exit('\nInterrupted')
         except BaseException:
             if test:
                 return True
             print("Oops!  That was a invalid choice")
             attempt+=1
             if attempt > 3:
-                raise InputError('Too many invalid choices')
+                sys.exit('Too many invalid choices')
 
 def fetch_frag_number(fragments_available, test=False):
     fragment_number = []
@@ -770,8 +736,6 @@ def fetch_frag_number(fragments_available, test=False):
             elif not g_var.args.info:
                 print('Cannot find fragment library: '+frag+' please select library from below\n')
                 fragment_number += database_selection(fragments_available, 'fragments', test).tolist()
-    elif g_var.args.info:
-        return []   ## -info without -fg: just list the libraries, no prompt
     else:
         fragment_number = database_selection(fragments_available, 'fragments', test)
     if len(fragment_number) > 0:
@@ -779,7 +743,7 @@ def fetch_frag_number(fragments_available, test=False):
     else:
         if g_var.args.info:
             return []
-        raise InputError('no fragment databases selected')
+        sys.exit('no fragment databases selected')
 
 def add_to_list(root, dirs, list_to_add, residues):
     list_to_add.append([])
@@ -824,8 +788,7 @@ def fetch_residues(frag_dir, fragments_available_prov, fragment_number, test=Fal
                         add_to_list(root, dirs, g_var.sol_directories, g_var.sol_residues)
                     break
             else:
-                if g_var.args.v >= 1:
-                    print('No ' + directory_type[1:-1] + ' fragments found in ' + location + ' (optional)')
+                print('Cannot find fragments for: ', directory_type[1:-1] )
     
 
 def print_water_selection(water):
@@ -847,12 +810,12 @@ def ask_for_water_model(water):
             if number < len(water):
                 return water[number]
         except KeyboardInterrupt:
-            raise KeyboardInterrupt
+            sys.exit('\nInterrupted')
         except BaseException:
             print("Oops!  That was a invalid choice")
             attempt+=1
             if attempt > 3:
-                raise InputError('Too many invalid choices')
+                sys.exit('Too many invalid choices')
 
 def check_water_molecules(test=False):
     water_info=[]        
@@ -875,9 +838,6 @@ def check_water_molecules(test=False):
         else:
             if g_var.args.w in water:
                 print('\nYou have selected the water model: '+g_var.args.w)
-            elif len(water) == 1:
-                g_var.args.w = water[0]
-                print('\nOnly one water model found, using it automatically: '+g_var.args.w)
             else:
                 print(print_water_selection(g_var.water))
                 g_var.args.w = ask_for_water_model(g_var.water)
@@ -933,11 +893,11 @@ def pdbatom(line):
         return dict([('atom_number',int(line[7:11].replace(" ", ""))),('atom_name',str(line[12:16]).replace(" ", "")),('residue_name',str(line[16:21]).replace(" ", "")),\
             ('chain',line[21]),('residue_id',int(line[22:26])), ('x',float(line[30:38])),('y',float(line[38:46])),('z',float(line[46:54]))])
     except BaseException:
-        raise InputError('pdb line is wrong: '+line) 
+        sys.exit('\npdb line is wrong:\t'+line) 
 
 def create_pdb(file_name):
     pdb_output = open(file_name, 'w')
-    pdb_output.write('TITLE     GENERATED BY CG2AT\nREMARK    CG2AT2 atomistic conversion\n\
+    pdb_output.write('TITLE     GENERATED BY CG2AT\nREMARK    Please don\'t explode\nREMARK    Good luck\n\
 '+g_var.box_vec+'MODEL        1\n')
     return pdb_output
 
@@ -1001,27 +961,25 @@ def print_script_timings():
         print('\nAll script timings have been saved in: \n'+g_var.final_dir+'script_timings.dat\n')
 
 def cg2at_header():
-    print('\n{0:^90}\n'.format('CG2AT2 is a fragment based conversion of coarse-grained to atomistic.'))
-    print('{0:^90}\n'.format('CG2AT2 version: ' + g_var.VERSION))
-    print('{0:^90}\n'.format('Last updated : ' + str(g_var.script_update)))
-    print('{0:^90}'.format('Written by Owen Vickery  |  Project leader Phillip Stansfeld'))
-    print('{0:^90}'.format('Contact: phillip.stansfeld@warwick.ac.uk'))
-    print('{0:^90}'.format('School of Life Sciences, University of Warwick, Coventry, CV4 7AL, UK'))
-    print('\n{0:^90}'.format('Please cite:'))
-    print('{0:^90}\n{1:^90}\n{2:^90}\n{3:^90}\n{4:^90}\n{5:-<90}'.format(
-        'CG2AT2: an Enhanced Fragment-Based Approach for Serial Multi-scale Molecular Dynamics Simulations',
-        'Owen N. Vickery and Phillip J. Stansfeld',
-        'Journal of Chemical Theory and Computation, 2021, 17 (10), 6472-6482',
-        'DOI: 10.1021/acs.jctc.1c00295',
-        '', ''))
-    print('{0:^90}'.format('File locations'))
-    print('\n{0:^90}'.format('Executable: ' + g_var.opt['input'].split()[0]))
-    print('{0:^90}'.format('Database:   ' + g_var.database_dir))
+    print('\n{0:^90}\n'.format('CG2AT2 is a fragment based conversion of coarsegrain to atomistic.'))
+    print('{0:^90}\n'.format('CG2AT2 version: '+str(g_var.version)))
+    print('{0:^90}\n'.format('Last updated : '+str(g_var.script_update)))
+    print('{0:^90}'.format('CG2AT2 is written by Owen Vickery'))
+    print('{0:^90}'.format('Project leader Phillip Stansfeld'))
+    print('\n{0:^90}\n{1:^90}'.format('Contact email address:','cg2at2@gmail.com'))
+    print('\n{0:^90}\n{1:^90}\n{2:^90}\n{3:-<90}'.format('Address:','School of Life Sciences, University of Warwick,','Gibbet Hill Road, Coventry, CV4 7AL, UK', ''))
+    print('{0:^90}'.format('Please email me any new residues for the database!'))
+    print('\n{0:^90}\n{1:^90}'.format('If you are using this script please acknowledge me (Dr Owen Vickery)','and cite the following:'))    
+    print('\n{0:^90}\n{1:^90}\n{2:^90}\n{3:^90}\n{4:^90}\n{5:^90}'.format('CG2AT2: an Enhanced Fragment-Based Approach for ','Serial Multi-scale Molecular Dynamics Simulations',\
+        'Owen N. Vickery and Phillip J. Stansfeld','Journal of Chemical Theory and Computation','2021 17 (10), 6472-6482','DOI: 10.1021/acs.jctc.1c00295'))
+    print('\n{0:-<90}\n{1:^90}'.format('', 'File locations'))
+    print('\n{0:^90}'.format('Executable: '+g_var.opt['input'].split()[0]))
+    print('{0:^90}'.format('Database locations: '+g_var.database_dir))
     print('{0:^90}\n\n{1:-<90}'.format('Script locations: '+g_var.scripts_dir, ''))
 
 def database_information():
     
-    to_print = '\n{0:^90}\n{1:-<90}\n\n'.format('The available force fields within your database are (flag -ff):', '')
+    to_print = '\n{0:^90}\n{1:-<90}\n\n'.format('The available forcefields within your database are (flag -ff):', '')
     for forcefields in g_var.forcefield_available:
         to_print += '{0:^90}\n'.format(forcefields)
     to_print += '\n\n{0:^90}\n{1:-<90}\n\n'.format('The available fragment libraries within your database are (flag -fg):', '')
@@ -1029,7 +987,7 @@ def database_information():
         to_print += '{0:^90}\n'.format(fragments)   
     if g_var.args.fg != None :
         to_print = fragments_in_use(to_print)
-    sys.exit(to_print)
+    sys.exit(to_print+'\n\"If all else fails, immortality can always be assured by spectacular error.\" (John Kenneth Galbraith)\n')
 
 def fragments_in_use(to_print=''):
     protein_directories=[]
@@ -1066,19 +1024,19 @@ def fragments_in_use(to_print=''):
 
 def write_system_components():
     to_write = '\n{:-<100}\n'.format('')
-    to_write += '{0:^100}\n'.format('Conversion complete')
+    to_write += '{0:^100}\n'.format('Script has completed, time for a beer')
     to_write += '\n{0:^10}{1:^25}\n'.format('molecules','number')
     to_write += '{0:^10}{1:^25}\n'.format('---------','------')
     for section in g_var.system:
         to_write += '{0:^10}{1:^25}\n'.format(section, g_var.system[section])
     return to_write
 
-def print_sequence_info(sys_type: str) -> str:
+def print_sequnce_info(sys_type):
     sequence_info = [g_var.seq_cg[sys_type], g_var.seq_at[sys_type]] if g_var.user_at_input and sys_type == 'PROTEIN' else [g_var.seq_cg[sys_type]]
     to_print = ''
     for rep_val, rep in enumerate(sequence_info):
         if rep_val == 0 and len(rep) != 0:
-            to_print += 'Summary of coarse-grained '+sys_type+' chains\n'
+            to_print += 'Summary of coarsegrain '+sys_type+' chains\n'
         elif rep_val > 0 and len(rep) != 0:
             to_print += '\nSummary of atomistic '+sys_type+' chains\n'
         else:
@@ -1117,7 +1075,6 @@ def print_to_100_char(list_to_print, to_print):
     return to_print
 
 def print_sequnce_info_header(rep_val, rep, to_print, counter, index):
-    # NOTE: renamed to print_sequence_info_header below; alias retained for compatibility
     if rep_val == 0:
         to_print += '\nCG chain: '+str(index)+'\n'
     else:
@@ -1135,9 +1092,3 @@ def print_sequnce_info_header(rep_val, rep, to_print, counter, index):
                 rep[index] = ['-']*int(seq_range[0])+rep[index]
             counter = 0
     return rep, to_print, counter
-
-
-# ---------------------------------------------------------------------------
-# Backward-compatibility aliases for renamed functions (fix typos in names)
-# ---------------------------------------------------------------------------
-print_sequnce_info = print_sequence_info  # original name had a typo
