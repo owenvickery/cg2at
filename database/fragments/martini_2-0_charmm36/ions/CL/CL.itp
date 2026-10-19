@@ -1,0 +1,13 @@
+[ moleculetype ]
+; molname	nrexcl
+CL		1
+
+[ atoms ]
+; id	at type		res nr	residu name at name  cg nr	charge	 
+1		CLA			1		CL			CL		 1		-1	 
+#ifdef POSRES_CL
+[ position_restraints ]
+;  i funct       fcx        fcy        fcz
+   1    1       1000       1000       1000
+#endif
+
