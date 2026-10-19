@@ -371,8 +371,9 @@ def sep_fragments_topology(residue, location):
     topology = copy.deepcopy(g_var.topology)
     if os.path.exists(location+'.top'):
         with open(location+'.top', 'r') as top_input:
+            topology_function = None
             for line_nr, line in enumerate(top_input.readlines()):
-                if not line.startswith('#') and len(line) > 0:
+                if not line.startswith('#') and not line.lstrip().startswith(';') and len(line) > 0:
                     if line.startswith('['):
                         topology_function = topology_header(line, topology, location)
                     else:
