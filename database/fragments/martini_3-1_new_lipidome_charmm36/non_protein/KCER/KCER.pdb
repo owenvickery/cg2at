@@ -1,0 +1,130 @@
+[ COH ]
+ATOM      1  O1  KCER    1      -1.362   0.549   1.143  1.00  0.00      KCER
+ATOM      2  HO1 KCER    1      -1.688   1.360   0.745  1.00  0.00      KCER
+ATOM      3  C1S KCER    1      -0.012   0.528   0.919  1.00  0.00      KCER
+ATOM      4  H1S KCER    1       0.303  -0.394   1.453  1.00  0.00      KCER
+ATOM      5  H1T KCER    1       0.312   1.463   1.426  1.00  0.00      KCER
+[ OH1 ]
+ATOM      6  C2S KCER    1       0.282   0.657  -0.617  1.00  0.00      KCER
+ATOM      7  H2S KCER    1       1.199   1.283  -0.663  1.00  0.00      KCER
+ATOM      8  C3S KCER    1       0.489  -0.692  -1.293  1.00  0.00      KCER
+ATOM      9  H3S KCER    1      -0.535  -1.115  -1.380  1.00  0.00      KCER
+ATOM     10  O3  KCER    1       1.260  -1.568  -0.558  1.00  0.00      KCER
+ATOM     11  HO3 KCER    1       1.425  -1.241   0.330  1.00  0.00      KCER
+[ AM2 ]
+ATOM     12  NF  KCER    1      -0.707   1.323  -1.366  1.00  0.00      KCER
+ATOM     13  HNF KCER    1      -1.294   0.955  -2.083  1.00  0.00      KCER
+ATOM     14  C1F KCER    1      -0.867   2.664  -1.252  1.00  0.00      KCER
+ATOM     15  OF  KCER    1      -0.045   3.348  -0.628  1.00  0.00      KCER
+[ T1A ]
+ATOM     16  C4S KCER    1       1.122  -0.428  -2.693  1.00  0.00      KCER
+ATOM     17  H4S KCER    1       2.196  -0.191  -2.726  1.00  0.00      KCER
+ATOM     18  C5S KCER    1       0.554  -0.608  -3.920  1.00  0.00      KCER
+ATOM     19  H5S KCER    1      -0.497  -0.930  -3.968  1.00  0.00      KCER
+ATOM     20  C6S KCER    1       1.072  -0.407  -5.334  1.00  0.00      KCER
+ATOM     21  H6S KCER    1       2.167  -0.224  -5.374  1.00  0.00      KCER
+ATOM     22  H6T KCER    1       0.594   0.539  -5.668  1.00  0.00      KCER
+[ C2A ]
+ATOM     23  C7S KCER    1       0.688  -1.513  -6.477  1.00  0.00      KCER
+ATOM     24  H7S KCER    1      -0.391  -1.741  -6.345  1.00  0.00      KCER
+ATOM     25  H7T KCER    1       1.307  -2.401  -6.229  1.00  0.00      KCER
+ATOM     26  C8S KCER    1       1.062  -1.024  -7.856  1.00  0.00      KCER
+ATOM     27  H8S KCER    1       2.109  -0.657  -7.903  1.00  0.00      KCER
+ATOM     28  H8T KCER    1       0.552  -0.071  -8.115  1.00  0.00      KCER
+ATOM     29  C9S KCER    1       0.571  -2.001  -8.915  1.00  0.00      KCER
+ATOM     30  H9S KCER    1      -0.513  -2.236  -8.861  1.00  0.00      KCER
+ATOM     31  H9T KCER    1       1.024  -3.015  -8.958  1.00  0.00      KCER
+ATOM     32 C10S KCER    1       0.942  -1.362 -10.217  1.00  0.00      KCER
+ATOM     33 H10S KCER    1       0.817  -2.078 -11.057  1.00  0.00      KCER
+ATOM     34 H10T KCER    1       2.029  -1.147 -10.130  1.00  0.00      KCER
+[ C3A ]
+ATOM     35 C11S KCER    1       0.157  -0.053 -10.635  1.00  0.00      KCER
+ATOM     36 H11S KCER    1       0.605   0.839 -10.148  1.00  0.00      KCER
+ATOM     37 H11T KCER    1      -0.917  -0.142 -10.366  1.00  0.00      KCER
+ATOM     38 C12S KCER    1       0.225   0.223 -12.117  1.00  0.00      KCER
+ATOM     39 H12S KCER    1      -0.243   1.208 -12.330  1.00  0.00      KCER
+ATOM     40 H12T KCER    1      -0.152  -0.654 -12.686  1.00  0.00      KCER
+ATOM     41 C13S KCER    1       1.687   0.331 -12.628  1.00  0.00      KCER
+ATOM     42 H13S KCER    1       2.241  -0.617 -12.453  1.00  0.00      KCER
+ATOM     43 H13T KCER    1       2.227   1.078 -12.007  1.00  0.00      KCER
+ATOM     44 C14S KCER    1       1.915   0.814 -14.079  1.00  0.00      KCER
+ATOM     45 H14S KCER    1       2.956   0.513 -14.320  1.00  0.00      KCER
+ATOM     46 H14T KCER    1       1.890   1.924 -14.060  1.00  0.00      KCER
+[ C4A ]
+ATOM     47 C15S KCER    1       0.854   0.254 -15.079  1.00  0.00      KCER
+ATOM     48 H15S KCER    1      -0.162   0.677 -14.932  1.00  0.00      KCER
+ATOM     49 H15T KCER    1       0.770  -0.818 -14.802  1.00  0.00      KCER
+ATOM     50 C16S KCER    1       1.228   0.293 -16.609  1.00  0.00      KCER
+ATOM     51 H16S KCER    1       2.333   0.181 -16.654  1.00  0.00      KCER
+ATOM     52 H16T KCER    1       1.090   1.290 -17.079  1.00  0.00      KCER
+ATOM     53 C17S KCER    1       0.434  -0.664 -17.463  1.00  0.00      KCER
+ATOM     54 H17S KCER    1      -0.663  -0.566 -17.320  1.00  0.00      KCER
+ATOM     55 H17T KCER    1       0.685  -1.688 -17.112  1.00  0.00      KCER
+ATOM     56 C18S KCER    1       0.771  -0.685 -18.942  1.00  0.00      KCER
+ATOM     57 H18S KCER    1       1.868  -0.636 -19.117  1.00  0.00      KCER
+ATOM     58 H18T KCER    1       0.439   0.209 -19.511  1.00  0.00      KCER
+ATOM     59 H18U KCER    1       0.477  -1.666 -19.374  1.00  0.00      KCER
+[ C1B ]
+ATOM     60  C2F KCER    1      -2.188   3.150  -1.780  1.00  0.00      KCER
+ATOM     61  H2F KCER    1      -2.607   3.894  -1.069  1.00  0.00      KCER
+ATOM     62  H2G KCER    1      -2.942   2.338  -1.852  1.00  0.00      KCER
+ATOM     63  C3F KCER    1      -2.204   3.870  -3.154  1.00  0.00      KCER
+ATOM     64  H3F KCER    1      -1.495   4.725  -3.165  1.00  0.00      KCER
+ATOM     65  H3G KCER    1      -3.228   4.183  -3.452  1.00  0.00      KCER
+ATOM     66  C4F KCER    1      -1.744   2.889  -4.269  1.00  0.00      KCER
+ATOM     67  H4F KCER    1      -2.274   1.929  -4.086  1.00  0.00      KCER
+ATOM     68  H4G KCER    1      -0.657   2.660  -4.304  1.00  0.00      KCER
+[ C2B ]
+ATOM     69  C5F KCER    1      -2.030   3.433  -5.734  1.00  0.00      KCER
+ATOM     70  H5F KCER    1      -1.075   3.790  -6.176  1.00  0.00      KCER
+ATOM     71  H5G KCER    1      -2.773   4.255  -5.661  1.00  0.00      KCER
+ATOM     72  C6F KCER    1      -2.509   2.351  -6.735  1.00  0.00      KCER
+ATOM     73  H6F KCER    1      -3.302   1.706  -6.298  1.00  0.00      KCER
+ATOM     74  H6G KCER    1      -1.632   1.689  -6.896  1.00  0.00      KCER
+ATOM     75  C7F KCER    1      -2.922   2.799  -8.107  1.00  0.00      KCER
+ATOM     76  H7F KCER    1      -2.182   3.407  -8.670  1.00  0.00      KCER
+ATOM     77  H7G KCER    1      -3.855   3.364  -7.900  1.00  0.00      KCER
+ATOM     78  C8F KCER    1      -3.195   1.555  -8.977  1.00  0.00      KCER
+ATOM     79  H8F KCER    1      -3.985   1.018  -8.410  1.00  0.00      KCER
+ATOM     80  H8G KCER    1      -2.327   0.862  -8.944  1.00  0.00      KCER
+[ C3B ]
+ATOM     81  C9F KCER    1      -3.802   1.941 -10.344  1.00  0.00      KCER
+ATOM     82  H9F KCER    1      -4.558   2.748 -10.238  1.00  0.00      KCER
+ATOM     83  H9G KCER    1      -4.263   1.074 -10.863  1.00  0.00      KCER
+ATOM     84 C10F KCER    1      -2.724   2.348 -11.453  1.00  0.00      KCER
+ATOM     85 H10F KCER    1      -3.158   1.947 -12.393  1.00  0.00      KCER
+ATOM     86 H10G KCER    1      -1.744   1.886 -11.211  1.00  0.00      KCER
+ATOM     87 C11F KCER    1      -2.516   3.842 -11.547  1.00  0.00      KCER
+ATOM     88 H11F KCER    1      -2.215   4.216 -10.545  1.00  0.00      KCER
+ATOM     89 H11G KCER    1      -3.464   4.315 -11.882  1.00  0.00      KCER
+ATOM     90 C12F KCER    1      -1.380   4.155 -12.445  1.00  0.00      KCER
+ATOM     91 H12F KCER    1      -0.500   3.566 -12.111  1.00  0.00      KCER
+ATOM     92 H12G KCER    1      -1.246   5.257 -12.399  1.00  0.00      KCER
+[ C4B ]
+ATOM     93 C13F KCER    1      -1.608   3.880 -13.871  1.00  0.00      KCER
+ATOM     94 H13F KCER    1      -2.525   4.410 -14.206  1.00  0.00      KCER
+ATOM     95 H13G KCER    1      -1.668   2.780 -14.011  1.00  0.00      KCER
+ATOM     96 C14F KCER    1      -0.461   4.451 -14.801  1.00  0.00      KCER
+ATOM     97 H14F KCER    1       0.500   4.075 -14.388  1.00  0.00      KCER
+ATOM     98 H14G KCER    1      -0.444   5.556 -14.911  1.00  0.00      KCER
+ATOM     99 C15F KCER    1      -0.443   3.976 -16.322  1.00  0.00      KCER
+ATOM    100 H15F KCER    1      -1.249   4.381 -16.972  1.00  0.00      KCER
+ATOM    101 H15G KCER    1      -0.531   2.868 -16.343  1.00  0.00      KCER
+ATOM    102 C16F KCER    1       0.875   4.426 -17.105  1.00  0.00      KCER
+ATOM    103 H16F KCER    1       1.708   3.892 -16.600  1.00  0.00      KCER
+ATOM    104 H16G KCER    1       0.932   5.535 -17.077  1.00  0.00      KCER
+[ C5B ]
+ATOM    105 C17F KCER    1       0.875   4.089 -18.679  1.00  0.00      KCER
+ATOM    106 H17F KCER    1       0.086   4.551 -19.310  1.00  0.00      KCER
+ATOM    107 H17G KCER    1       0.714   3.021 -18.941  1.00  0.00      KCER
+ATOM    108 C18F KCER    1       2.188   4.668 -19.311  1.00  0.00      KCER
+ATOM    109 H18F KCER    1       3.072   4.249 -18.784  1.00  0.00      KCER
+ATOM    110 H18G KCER    1       2.206   5.769 -19.163  1.00  0.00      KCER
+ATOM    111 C19F KCER    1       2.307   4.383 -20.838  1.00  0.00      KCER
+ATOM    112 H19F KCER    1       3.368   4.589 -21.098  1.00  0.00      KCER
+ATOM    113 H19G KCER    1       1.773   5.195 -21.377  1.00  0.00      KCER
+ATOM    114 C20F KCER    1       2.028   2.985 -21.313  1.00  0.00      KCER
+ATOM    115 H20F KCER    1       0.949   2.767 -21.163  1.00  0.00      KCER
+ATOM    116 H20G KCER    1       2.533   2.293 -20.605  1.00  0.00      KCER
+ATOM    117 H20H KCER    1       2.416   2.774 -22.332  1.00  0.00      KCER
+END

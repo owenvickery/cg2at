@@ -1,0 +1,132 @@
+[ PO4 ]
+ATOM      1  P   DOPA    1      -0.014   0.141   0.355  1.00  0.00      DOPA
+ATOM      2  O13 DOPA    1      -0.292   1.610   0.428  1.00  0.00      DOPA
+ATOM      3  O14 DOPA    1       0.732  -0.428   1.499  1.00  0.00      DOPA
+ATOM      4  O12 DOPA    1      -1.480  -0.648   0.226  1.00  0.00      DOPA
+ATOM      5  H12 DOPA    1      -1.848  -0.863  -0.634  1.00  0.00      DOPA
+ATOM      6  O11 DOPA    1       0.714  -0.092  -1.104  1.00  0.00      DOPA
+[ GL1 ]
+ATOM      7  C1  DOPA    1       0.022   0.512  -2.236  1.00  0.00      DOPA
+ATOM      8  HA  DOPA    1      -0.550   1.444  -2.043  1.00  0.00      DOPA
+ATOM      9  HB  DOPA    1      -0.726  -0.210  -2.628  1.00  0.00      DOPA
+ATOM     10  C2  DOPA    1       1.052   0.770  -3.353  1.00  0.00      DOPA
+ATOM     11  HS  DOPA    1       1.263   1.860  -3.388  1.00  0.00      DOPA
+ATOM     12  O21 DOPA    1       0.573   0.264  -4.619  1.00  0.00      DOPA
+ATOM     13  C21 DOPA    1      -0.458   0.902  -5.170  1.00  0.00      DOPA
+ATOM     14  O22 DOPA    1      -0.990   1.945  -4.804  1.00  0.00      DOPA
+[ GL2 ]
+ATOM     15  C3  DOPA    1       2.476   0.195  -3.125  1.00  0.00      DOPA
+ATOM     16  HX  DOPA    1       2.276  -0.893  -3.233  1.00  0.00      DOPA
+ATOM     17  HY  DOPA    1       2.871   0.330  -2.096  1.00  0.00      DOPA
+ATOM     18  O31 DOPA    1       3.319   0.578  -4.235  1.00  0.00      DOPA
+ATOM     19  C31 DOPA    1       3.822   1.806  -4.121  1.00  0.00      DOPA
+ATOM     20  O32 DOPA    1       3.696   2.451  -3.110  1.00  0.00      DOPA
+[ C1A ]
+ATOM     21  C22 DOPA    1      -0.798   0.154  -6.448  1.00  0.00      DOPA
+ATOM     22  H2R DOPA    1      -1.802   0.416  -6.846  1.00  0.00      DOPA
+ATOM     23  H2S DOPA    1      -0.934  -0.907  -6.148  1.00  0.00      DOPA
+ATOM     24  C23 DOPA    1       0.254   0.331  -7.563  1.00  0.00      DOPA
+ATOM     25  H3R DOPA    1       1.316   0.166  -7.280  1.00  0.00      DOPA
+ATOM     26  H3S DOPA    1       0.191   1.321  -8.063  1.00  0.00      DOPA
+ATOM     27  C24 DOPA    1      -0.090  -0.574  -8.714  1.00  0.00      DOPA
+ATOM     28  H4R DOPA    1      -1.183  -0.559  -8.912  1.00  0.00      DOPA
+ATOM     29  H4S DOPA    1       0.283  -1.556  -8.351  1.00  0.00      DOPA
+ATOM     30  C25 DOPA    1       0.710  -0.427  -9.940  1.00  0.00      DOPA
+ATOM     31  H5R DOPA    1       1.785  -0.708  -9.923  1.00  0.00      DOPA
+ATOM     32  H5S DOPA    1       0.586   0.628 -10.264  1.00  0.00      DOPA
+ATOM     33  C26 DOPA    1       0.093  -1.214 -11.147  1.00  0.00      DOPA
+ATOM     34  H6R DOPA    1      -0.077  -2.282 -10.894  1.00  0.00      DOPA
+ATOM     35  H6S DOPA    1       0.845  -1.140 -11.961  1.00  0.00      DOPA
+[ D2A ]
+ATOM     36  C27 DOPA    1      -1.291  -0.809 -11.660  1.00  0.00      DOPA
+ATOM     37  H7R DOPA    1      -1.450   0.280 -11.811  1.00  0.00      DOPA
+ATOM     38  H7S DOPA    1      -1.927  -1.188 -10.832  1.00  0.00      DOPA
+ATOM     39  C28 DOPA    1      -1.777  -1.622 -12.911  1.00  0.00      DOPA
+ATOM     40  H8R DOPA    1      -1.047  -1.421 -13.724  1.00  0.00      DOPA
+ATOM     41  H8S DOPA    1      -2.761  -1.206 -13.214  1.00  0.00      DOPA
+ATOM     42  C29 DOPA    1      -1.746  -3.143 -12.683  1.00  0.00      DOPA
+ATOM     43  H9R DOPA    1      -1.524  -3.503 -11.668  1.00  0.00      DOPA
+ATOM     44 C210 DOPA    1      -2.001  -4.102 -13.613  1.00  0.00      DOPA
+ATOM     45 H10R DOPA    1      -1.933  -5.145 -13.269  1.00  0.00      DOPA
+[ C3A ]
+ATOM     46 C211 DOPA    1      -2.339  -3.971 -15.083  1.00  0.00      DOPA
+ATOM     47 H11R DOPA    1      -2.887  -3.015 -15.225  1.00  0.00      DOPA
+ATOM     48 H11S DOPA    1      -3.059  -4.756 -15.401  1.00  0.00      DOPA
+ATOM     49 C212 DOPA    1      -1.188  -3.999 -16.025  1.00  0.00      DOPA
+ATOM     50 H12R DOPA    1      -1.549  -3.833 -17.062  1.00  0.00      DOPA
+ATOM     51 H12S DOPA    1      -0.625  -4.954 -15.948  1.00  0.00      DOPA
+ATOM     52 C213 DOPA    1       0.063  -3.090 -15.732  1.00  0.00      DOPA
+ATOM     53 H13R DOPA    1       0.441  -3.357 -14.722  1.00  0.00      DOPA
+ATOM     54 H13S DOPA    1      -0.298  -2.047 -15.611  1.00  0.00      DOPA
+ATOM     55 C214 DOPA    1       1.269  -3.334 -16.673  1.00  0.00      DOPA
+ATOM     56 H14R DOPA    1       1.397  -4.437 -16.632  1.00  0.00      DOPA
+ATOM     57 H14S DOPA    1       2.284  -2.979 -16.392  1.00  0.00      DOPA
+[ C4A ]
+ATOM     58 C215 DOPA    1       1.061  -2.735 -18.064  1.00  0.00      DOPA
+ATOM     59 H15R DOPA    1       0.078  -3.059 -18.466  1.00  0.00      DOPA
+ATOM     60 H15S DOPA    1       1.792  -3.344 -18.639  1.00  0.00      DOPA
+ATOM     61 C216 DOPA    1       1.358  -1.253 -18.259  1.00  0.00      DOPA
+ATOM     62 H16R DOPA    1       2.290  -1.060 -17.686  1.00  0.00      DOPA
+ATOM     63 H16S DOPA    1       0.637  -0.592 -17.733  1.00  0.00      DOPA
+ATOM     64 C217 DOPA    1       1.282  -0.813 -19.735  1.00  0.00      DOPA
+ATOM     65 H17R DOPA    1       0.950   0.247 -19.746  1.00  0.00      DOPA
+ATOM     66 H17S DOPA    1       0.382  -1.383 -20.052  1.00  0.00      DOPA
+ATOM     67 C218 DOPA    1       2.439  -1.079 -20.748  1.00  0.00      DOPA
+ATOM     68 H18R DOPA    1       2.155  -0.896 -21.807  1.00  0.00      DOPA
+ATOM     69 H18S DOPA    1       2.758  -2.140 -20.676  1.00  0.00      DOPA
+ATOM     70 H18T DOPA    1       3.349  -0.464 -20.578  1.00  0.00      DOPA
+[ C1B ]
+ATOM     71  C32 DOPA    1       4.575   2.220  -5.412  1.00  0.00      DOPA
+ATOM     72  H2X DOPA    1       5.647   1.968  -5.271  1.00  0.00      DOPA
+ATOM     73  H2Y DOPA    1       4.578   3.319  -5.574  1.00  0.00      DOPA
+ATOM     74  C33 DOPA    1       3.884   1.638  -6.666  1.00  0.00      DOPA
+ATOM     75  H3X DOPA    1       2.803   1.864  -6.786  1.00  0.00      DOPA
+ATOM     76  H3Y DOPA    1       4.092   0.555  -6.531  1.00  0.00      DOPA
+ATOM     77  C34 DOPA    1       4.495   2.136  -7.966  1.00  0.00      DOPA
+ATOM     78  H4X DOPA    1       4.371   3.233  -8.094  1.00  0.00      DOPA
+ATOM     79  H4Y DOPA    1       5.570   1.901  -8.120  1.00  0.00      DOPA
+ATOM     80  C35 DOPA    1       3.787   1.485  -9.176  1.00  0.00      DOPA
+ATOM     81  H5X DOPA    1       2.727   1.789  -9.044  1.00  0.00      DOPA
+ATOM     82  H5Y DOPA    1       3.759   0.378  -9.086  1.00  0.00      DOPA
+ATOM     83  C36 DOPA    1       4.299   1.897 -10.561  1.00  0.00      DOPA
+ATOM     84  H6X DOPA    1       3.866   2.858 -10.913  1.00  0.00      DOPA
+ATOM     85  H6Y DOPA    1       5.338   2.214 -10.331  1.00  0.00      DOPA
+[ D2B ]
+ATOM     86  C37 DOPA    1       4.062   0.879 -11.679  1.00  0.00      DOPA
+ATOM     87  H7X DOPA    1       4.618  -0.021 -11.339  1.00  0.00      DOPA
+ATOM     88  H7Y DOPA    1       2.987   0.606 -11.738  1.00  0.00      DOPA
+ATOM     89  C38 DOPA    1       4.626   1.299 -13.077  1.00  0.00      DOPA
+ATOM     90  H8X DOPA    1       4.431   2.383 -13.222  1.00  0.00      DOPA
+ATOM     91  H8Y DOPA    1       5.736   1.312 -13.083  1.00  0.00      DOPA
+ATOM     92  C39 DOPA    1       4.126   0.496 -14.215  1.00  0.00      DOPA
+ATOM     93  H9X DOPA    1       4.868  -0.217 -14.603  1.00  0.00      DOPA
+ATOM     94 C310 DOPA    1       2.873   0.425 -14.648  1.00  0.00      DOPA
+ATOM     95 H10X DOPA    1       2.534  -0.168 -15.510  1.00  0.00      DOPA
+[ C3B ]
+ATOM     96 C311 DOPA    1       1.756   1.208 -14.064  1.00  0.00      DOPA
+ATOM     97 H11X DOPA    1       2.093   2.108 -13.506  1.00  0.00      DOPA
+ATOM     98 H11Y DOPA    1       1.327   0.621 -13.224  1.00  0.00      DOPA
+ATOM     99 C312 DOPA    1       0.540   1.507 -14.965  1.00  0.00      DOPA
+ATOM    100 H12X DOPA    1      -0.447   1.800 -14.547  1.00  0.00      DOPA
+ATOM    101 H12Y DOPA    1       0.248   0.561 -15.469  1.00  0.00      DOPA
+ATOM    102 C313 DOPA    1       0.889   2.505 -16.059  1.00  0.00      DOPA
+ATOM    103 H13X DOPA    1       1.429   3.366 -15.608  1.00  0.00      DOPA
+ATOM    104 H13Y DOPA    1       1.550   1.847 -16.663  1.00  0.00      DOPA
+ATOM    105 C314 DOPA    1      -0.307   2.975 -16.924  1.00  0.00      DOPA
+ATOM    106 H14X DOPA    1      -0.992   3.313 -16.117  1.00  0.00      DOPA
+ATOM    107 H14Y DOPA    1      -0.573   2.009 -17.404  1.00  0.00      DOPA
+[ C4B ]
+ATOM    108 C315 DOPA    1       0.070   3.983 -18.053  1.00  0.00      DOPA
+ATOM    109 H15X DOPA    1      -0.764   3.945 -18.786  1.00  0.00      DOPA
+ATOM    110 H15Y DOPA    1       0.020   4.971 -17.547  1.00  0.00      DOPA
+ATOM    111 C316 DOPA    1       1.407   3.681 -18.779  1.00  0.00      DOPA
+ATOM    112 H16X DOPA    1       1.319   2.751 -19.381  1.00  0.00      DOPA
+ATOM    113 H16Y DOPA    1       2.187   3.691 -17.988  1.00  0.00      DOPA
+ATOM    114 C317 DOPA    1       1.693   4.877 -19.736  1.00  0.00      DOPA
+ATOM    115 H17X DOPA    1       0.738   5.153 -20.230  1.00  0.00      DOPA
+ATOM    116 H17Y DOPA    1       2.157   5.589 -19.019  1.00  0.00      DOPA
+ATOM    117 C318 DOPA    1       2.800   4.677 -20.793  1.00  0.00      DOPA
+ATOM    118 H18X DOPA    1       2.522   3.905 -21.542  1.00  0.00      DOPA
+ATOM    119 H18Y DOPA    1       3.022   5.608 -21.355  1.00  0.00      DOPA
+ATOM    120 H18Z DOPA    1       3.649   4.263 -20.207  1.00  0.00      DOPA
+END

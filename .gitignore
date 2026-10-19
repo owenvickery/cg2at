@@ -2,3 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Packaging
+build/
+dist/
+*.egg-info/

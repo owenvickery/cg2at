@@ -1,0 +1,144 @@
+[ CNO ]
+ATOM      1  N   SLPS    1      -1.213   1.492  -1.643  1.00  0.00      SLPS
+ATOM      2  HN1 SLPS    1      -1.525   2.484  -1.670  1.00  0.00      SLPS
+ATOM      3  HN2 SLPS    1      -0.231   1.282  -1.913  1.00  0.00      SLPS
+ATOM      4  HN3 SLPS    1      -1.796   0.993  -2.344  1.00  0.00      SLPS
+ATOM      5  C12 SLPS    1      -1.551   0.914  -0.302  1.00  0.00      SLPS
+ATOM      6 H12A SLPS    1      -1.012   1.507   0.422  1.00  0.00      SLPS
+ATOM      7  C13 SLPS    1      -3.078   1.027   0.024  1.00  0.00      SLPS
+ATOM      8 O13A SLPS    1      -3.805   1.686  -0.776  1.00  0.00      SLPS
+ATOM      9 O13B SLPS    1      -3.429   0.624   1.153  1.00  0.00      SLPS
+ATOM     10  C11 SLPS    1      -1.165  -0.689  -0.308  1.00  0.00      SLPS
+ATOM     11 H11A SLPS    1      -1.514  -1.065  -1.294  1.00  0.00      SLPS
+ATOM     12 H11B SLPS    1      -1.596  -1.296   0.517  1.00  0.00      SLPS
+[ PO4 ]
+ATOM     13  P   SLPS    1       1.321  -0.687   0.753  1.00  0.00      SLPS
+ATOM     14  O13 SLPS    1       1.271   0.728   1.145  1.00  0.00      SLPS
+ATOM     15  O14 SLPS    1       1.123  -1.725   1.813  1.00  0.00      SLPS
+ATOM     16  O12 SLPS    1       0.292  -0.905  -0.462  1.00  0.00      SLPS
+ATOM     17  O11 SLPS    1       2.605  -1.026  -0.099  1.00  0.00      SLPS
+[ GL1 ]
+ATOM     18  C1  SLPS    1       3.217  -0.003  -0.937  1.00  0.00      SLPS
+ATOM     19  HA  SLPS    1       3.315   0.956  -0.384  1.00  0.00      SLPS
+ATOM     20  HB  SLPS    1       4.277  -0.288  -1.112  1.00  0.00      SLPS
+ATOM     21  C2  SLPS    1       2.448   0.297  -2.289  1.00  0.00      SLPS
+ATOM     22  HS  SLPS    1       1.393   0.507  -2.011  1.00  0.00      SLPS
+ATOM     23  O21 SLPS    1       2.566  -0.810  -3.132  1.00  0.00      SLPS
+ATOM     24  C21 SLPS    1       1.485  -1.146  -3.751  1.00  0.00      SLPS
+ATOM     25  O22 SLPS    1       0.410  -0.644  -3.556  1.00  0.00      SLPS
+[ GL2 ]
+ATOM     26  C3  SLPS    1       3.060   1.499  -3.061  1.00  0.00      SLPS
+ATOM     27  HX  SLPS    1       4.098   1.273  -3.386  1.00  0.00      SLPS
+ATOM     28  HY  SLPS    1       3.114   2.332  -2.327  1.00  0.00      SLPS
+ATOM     29  O31 SLPS    1       2.196   1.815  -4.172  1.00  0.00      SLPS
+ATOM     30  C31 SLPS    1       2.580   1.469  -5.379  1.00  0.00      SLPS
+ATOM     31  O32 SLPS    1       3.596   0.873  -5.716  1.00  0.00      SLPS
+[ C1A ]
+ATOM     32  C22 SLPS    1       1.722  -2.131  -4.858  1.00  0.00      SLPS
+ATOM     33  H2R SLPS    1       2.061  -1.620  -5.785  1.00  0.00      SLPS
+ATOM     34  H2S SLPS    1       2.408  -2.913  -4.470  1.00  0.00      SLPS
+ATOM     35  C23 SLPS    1       0.312  -2.734  -5.141  1.00  0.00      SLPS
+ATOM     36  H3R SLPS    1      -0.342  -1.910  -5.496  1.00  0.00      SLPS
+ATOM     37  H3S SLPS    1      -0.249  -2.943  -4.205  1.00  0.00      SLPS
+ATOM     38  C24 SLPS    1       0.198  -3.908  -6.194  1.00  0.00      SLPS
+ATOM     39  H4R SLPS    1      -0.827  -4.334  -6.200  1.00  0.00      SLPS
+ATOM     40  H4S SLPS    1       0.774  -4.781  -5.819  1.00  0.00      SLPS
+ATOM     41  C25 SLPS    1       0.511  -3.554  -7.654  1.00  0.00      SLPS
+ATOM     42  H5R SLPS    1       1.482  -3.021  -7.746  1.00  0.00      SLPS
+ATOM     43  H5S SLPS    1      -0.354  -2.927  -7.959  1.00  0.00      SLPS
+ATOM     44  C26 SLPS    1       0.573  -4.920  -8.500  1.00  0.00      SLPS
+ATOM     45  H6R SLPS    1       0.637  -5.724  -7.735  1.00  0.00      SLPS
+ATOM     46  H6S SLPS    1       1.447  -4.854  -9.183  1.00  0.00      SLPS
+[ D2A ]
+ATOM     47  C27 SLPS    1      -0.640  -5.200  -9.420  1.00  0.00      SLPS
+ATOM     48  H7R SLPS    1      -1.423  -5.440  -8.668  1.00  0.00      SLPS
+ATOM     49  H7S SLPS    1      -0.374  -6.069 -10.058  1.00  0.00      SLPS
+ATOM     50  C28 SLPS    1      -1.259  -3.980 -10.172  1.00  0.00      SLPS
+ATOM     51  H8R SLPS    1      -1.670  -3.139  -9.575  1.00  0.00      SLPS
+ATOM     52  H8S SLPS    1      -2.173  -4.481 -10.558  1.00  0.00      SLPS
+ATOM     53  C29 SLPS    1      -0.337  -3.518 -11.228  1.00  0.00      SLPS
+ATOM     54  H9R SLPS    1       0.682  -3.296 -10.876  1.00  0.00      SLPS
+ATOM     55 C210 SLPS    1      -0.559  -3.304 -12.556  1.00  0.00      SLPS
+ATOM     56 H10R SLPS    1       0.153  -2.740 -13.176  1.00  0.00      SLPS
+[ D3A ]
+ATOM     57 C211 SLPS    1      -1.914  -3.485 -13.194  1.00  0.00      SLPS
+ATOM     58 H11R SLPS    1      -2.721  -2.779 -12.905  1.00  0.00      SLPS
+ATOM     59 H11S SLPS    1      -2.286  -4.487 -12.888  1.00  0.00      SLPS
+ATOM     60 C212 SLPS    1      -1.886  -3.668 -14.692  1.00  0.00      SLPS
+ATOM     61 H12R SLPS    1      -2.831  -4.185 -14.915  1.00  0.00      SLPS
+ATOM     62 C213 SLPS    1      -1.225  -3.067 -15.730  1.00  0.00      SLPS
+ATOM     63 H13R SLPS    1      -1.522  -3.387 -16.740  1.00  0.00      SLPS
+ATOM     64 C214 SLPS    1      -0.284  -1.955 -15.708  1.00  0.00      SLPS
+ATOM     65 H14R SLPS    1       0.747  -2.357 -15.617  1.00  0.00      SLPS
+ATOM     66 H14S SLPS    1      -0.261  -1.542 -14.677  1.00  0.00      SLPS
+[ C4A ]
+ATOM     67 C215 SLPS    1      -0.689  -0.837 -16.716  1.00  0.00      SLPS
+ATOM     68 H15R SLPS    1      -0.303   0.095 -16.251  1.00  0.00      SLPS
+ATOM     69 H15S SLPS    1      -1.783  -0.650 -16.776  1.00  0.00      SLPS
+ATOM     70 C216 SLPS    1      -0.017  -1.045 -18.037  1.00  0.00      SLPS
+ATOM     71 H16R SLPS    1      -0.153  -2.057 -18.473  1.00  0.00      SLPS
+ATOM     72 H16S SLPS    1       1.056  -0.841 -17.829  1.00  0.00      SLPS
+ATOM     73 C217 SLPS    1      -0.409   0.033 -19.056  1.00  0.00      SLPS
+ATOM     74 H17R SLPS    1       0.487   0.300 -19.657  1.00  0.00      SLPS
+ATOM     75 H17S SLPS    1      -0.876   0.893 -18.530  1.00  0.00      SLPS
+ATOM     76 C218 SLPS    1      -1.342  -0.519 -20.092  1.00  0.00      SLPS
+ATOM     77 H18R SLPS    1      -0.899  -1.391 -20.618  1.00  0.00      SLPS
+ATOM     78 H18S SLPS    1      -1.496   0.285 -20.843  1.00  0.00      SLPS
+ATOM     79 H18T SLPS    1      -2.374  -0.730 -19.740  1.00  0.00      SLPS
+[ C1B ]
+ATOM     80  C32 SLPS    1       1.623   2.025  -6.453  1.00  0.00      SLPS
+ATOM     81  H2X SLPS    1       2.090   2.879  -6.987  1.00  0.00      SLPS
+ATOM     82  H2Y SLPS    1       0.698   2.403  -5.968  1.00  0.00      SLPS
+ATOM     83  C33 SLPS    1       1.257   1.034  -7.531  1.00  0.00      SLPS
+ATOM     84  H3X SLPS    1       0.829   0.152  -7.008  1.00  0.00      SLPS
+ATOM     85  H3Y SLPS    1       2.048   0.638  -8.203  1.00  0.00      SLPS
+ATOM     86  C34 SLPS    1       0.068   1.498  -8.530  1.00  0.00      SLPS
+ATOM     87  H4X SLPS    1       0.453   2.252  -9.250  1.00  0.00      SLPS
+ATOM     88  H4Y SLPS    1      -0.765   1.859  -7.889  1.00  0.00      SLPS
+ATOM     89  C35 SLPS    1      -0.486   0.328  -9.303  1.00  0.00      SLPS
+ATOM     90  H5X SLPS    1      -1.155  -0.109  -8.532  1.00  0.00      SLPS
+ATOM     91  H5Y SLPS    1       0.277  -0.454  -9.507  1.00  0.00      SLPS
+ATOM     92  C36 SLPS    1      -1.273   0.805 -10.531  1.00  0.00      SLPS
+ATOM     93  H6X SLPS    1      -2.056   1.539 -10.246  1.00  0.00      SLPS
+ATOM     94  H6Y SLPS    1      -1.790  -0.079 -10.963  1.00  0.00      SLPS
+[ C2B ]
+ATOM     95  C37 SLPS    1      -0.513   1.432 -11.718  1.00  0.00      SLPS
+ATOM     96  H7X SLPS    1      -0.063   2.404 -11.422  1.00  0.00      SLPS
+ATOM     97  H7Y SLPS    1      -1.278   1.626 -12.500  1.00  0.00      SLPS
+ATOM     98  C38 SLPS    1       0.713   0.726 -12.210  1.00  0.00      SLPS
+ATOM     99  H8X SLPS    1       0.509  -0.323 -12.515  1.00  0.00      SLPS
+ATOM    100  H8Y SLPS    1       1.454   0.549 -11.403  1.00  0.00      SLPS
+ATOM    101  C39 SLPS    1       1.322   1.590 -13.287  1.00  0.00      SLPS
+ATOM    102  H9X SLPS    1       1.996   2.318 -12.787  1.00  0.00      SLPS
+ATOM    103  H9Y SLPS    1       0.552   2.147 -13.861  1.00  0.00      SLPS
+ATOM    104 C310 SLPS    1       2.237   0.715 -14.192  1.00  0.00      SLPS
+ATOM    105 H10X SLPS    1       1.427   0.132 -14.679  1.00  0.00      SLPS
+ATOM    106 H10Y SLPS    1       2.778   0.015 -13.519  1.00  0.00      SLPS
+[ C3B ]
+ATOM    107 C311 SLPS    1       3.090   1.549 -15.105  1.00  0.00      SLPS
+ATOM    108 H11X SLPS    1       3.815   0.917 -15.663  1.00  0.00      SLPS
+ATOM    109 H11Y SLPS    1       3.794   2.126 -14.469  1.00  0.00      SLPS
+ATOM    110 C312 SLPS    1       2.300   2.415 -16.130  1.00  0.00      SLPS
+ATOM    111 H12X SLPS    1       1.870   3.226 -15.504  1.00  0.00      SLPS
+ATOM    112 H12Y SLPS    1       1.644   1.640 -16.582  1.00  0.00      SLPS
+ATOM    113 C313 SLPS    1       3.121   3.078 -17.277  1.00  0.00      SLPS
+ATOM    114 H13X SLPS    1       3.558   2.319 -17.961  1.00  0.00      SLPS
+ATOM    115 H13Y SLPS    1       3.918   3.692 -16.806  1.00  0.00      SLPS
+ATOM    116 C314 SLPS    1       2.271   3.986 -18.155  1.00  0.00      SLPS
+ATOM    117 H14X SLPS    1       2.977   4.502 -18.840  1.00  0.00      SLPS
+ATOM    118 H14Y SLPS    1       1.837   4.811 -17.551  1.00  0.00      SLPS
+[ C4B ]
+ATOM    119 C315 SLPS    1       1.313   3.175 -19.019  1.00  0.00      SLPS
+ATOM    120 H15X SLPS    1       0.643   2.708 -18.266  1.00  0.00      SLPS
+ATOM    121 H15Y SLPS    1       1.838   2.351 -19.549  1.00  0.00      SLPS
+ATOM    122 C316 SLPS    1       0.431   4.001 -19.977  1.00  0.00      SLPS
+ATOM    123 H16X SLPS    1       1.069   4.264 -20.847  1.00  0.00      SLPS
+ATOM    124 H16Y SLPS    1       0.065   4.889 -19.419  1.00  0.00      SLPS
+ATOM    125 C317 SLPS    1      -0.818   3.166 -20.476  1.00  0.00      SLPS
+ATOM    126 H17X SLPS    1      -1.386   2.962 -19.543  1.00  0.00      SLPS
+ATOM    127 H17Y SLPS    1      -0.332   2.213 -20.775  1.00  0.00      SLPS
+ATOM    128 C318 SLPS    1      -1.724   3.675 -21.630  1.00  0.00      SLPS
+ATOM    129 H18X SLPS    1      -2.792   3.374 -21.572  1.00  0.00      SLPS
+ATOM    130 H18Y SLPS    1      -1.255   3.251 -22.543  1.00  0.00      SLPS
+ATOM    131 H18Z SLPS    1      -1.739   4.781 -21.529  1.00  0.00      SLPS
+END

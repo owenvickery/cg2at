@@ -3,8 +3,6 @@ ATOM      1  C12 POPI    1       8.329   5.352  64.986  1.00  0.00      MEMB
 ATOM      2  H2  POPI    1       8.800   5.873  64.113  1.00  0.00      MEMB
 ATOM      3  O2  POPI    1       8.650   3.957  64.855  1.00  0.00      MEMB
 ATOM      4  HO2 POPI    1       8.652   3.450  65.674  1.00  0.00      MEMB
-ATOM     21  C11 POPI    1       6.825   5.596  64.923  1.00  0.00      MEMB
-ATOM     22  H1  POPI    1       6.636   6.701  64.977  1.00  0.00      MEMB
 [ C2 ]
 ATOM      5  C13 POPI    1       8.920   5.966  66.250  1.00  0.00      MEMB
 ATOM      6  H3  POPI    1       8.764   7.076  66.221  1.00  0.00      MEMB
@@ -23,6 +21,9 @@ ATOM     17  C16 POPI    1       6.142   5.001  66.151  1.00  0.00      MEMB
 ATOM     18  H6  POPI    1       6.297   3.892  66.151  1.00  0.00      MEMB
 ATOM     19  O6  POPI    1       4.739   5.269  66.162  1.00  0.00      MEMB
 ATOM     20  HO6 POPI    1       4.284   4.454  66.393  1.00  0.00      MEMB
+[ C4 ]  
+ATOM     21  C11 POPI    1       6.825   5.596  64.923  1.00  0.00      MEMB
+ATOM     22  H1  POPI    1       6.636   6.701  64.977  1.00  0.00      MEMB
 [ PO4 ]
 ATOM     23  P   POPI    1       6.207   6.022  62.345  1.00  0.00      MEMB
 ATOM     24  O13 POPI    1       7.566   6.431  61.907  1.00  0.00      MEMB

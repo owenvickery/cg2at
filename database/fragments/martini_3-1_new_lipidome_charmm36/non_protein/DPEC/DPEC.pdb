@@ -1,0 +1,145 @@
+[ NC3 ]
+ATOM      1  N   DPEC    1       1.047   0.535   2.282  1.00  0.00      DPEC
+ATOM      2  C13 DPEC    1       0.175  -0.561   2.818  1.00  0.00      DPEC
+ATOM      3 H13A DPEC    1      -0.782  -0.118   3.051  1.00  0.00      DPEC
+ATOM      4 H13B DPEC    1       0.593  -1.004   3.710  1.00  0.00      DPEC
+ATOM      5 H13C DPEC    1       0.043  -1.318   2.059  1.00  0.00      DPEC
+ATOM      6  C14 DPEC    1       1.311   1.628   3.305  1.00  0.00      DPEC
+ATOM      7 H14A DPEC    1       1.860   2.467   2.903  1.00  0.00      DPEC
+ATOM      8 H14B DPEC    1       1.838   1.254   4.170  1.00  0.00      DPEC
+ATOM      9 H14C DPEC    1       0.301   1.931   3.539  1.00  0.00      DPEC
+ATOM     10  C15 DPEC    1       2.407  -0.002   1.886  1.00  0.00      DPEC
+ATOM     11 H15A DPEC    1       2.169  -0.919   1.368  1.00  0.00      DPEC
+ATOM     12 H15B DPEC    1       2.877  -0.342   2.797  1.00  0.00      DPEC
+ATOM     13 H15C DPEC    1       2.996   0.784   1.438  1.00  0.00      DPEC
+ATOM     14  C11 DPEC    1       0.264   0.507  -0.263  1.00  0.00      DPEC
+ATOM     15 H11A DPEC    1       1.306   0.568  -0.645  1.00  0.00      DPEC
+ATOM     16 H11B DPEC    1      -0.312   1.182  -0.932  1.00  0.00      DPEC
+ATOM     17  C12 DPEC    1       0.365   1.190   1.114  1.00  0.00      DPEC
+ATOM     18 H12A DPEC    1       0.897   2.101   0.883  1.00  0.00      DPEC
+ATOM     19 H12B DPEC    1      -0.599   1.557   1.436  1.00  0.00      DPEC
+[ PO4 ]
+ATOM     20  P   DPEC    1      -0.743  -1.505  -1.544  1.00  0.00      DPEC
+ATOM     21  O13 DPEC    1      -1.743  -0.680  -2.101  1.00  0.00      DPEC
+ATOM     22  O14 DPEC    1      -1.118  -2.892  -1.205  1.00  0.00      DPEC
+ATOM     23  O12 DPEC    1      -0.307  -0.809  -0.189  1.00  0.00      DPEC
+ATOM     24  O11 DPEC    1       0.452  -1.382  -2.502  1.00  0.00      DPEC
+[ ET1 ]
+ATOM     25  C1  DPEC    1       1.708  -1.923  -2.228  1.00  0.00      DPEC
+ATOM     26  HA  DPEC    1       1.661  -2.985  -1.903  1.00  0.00      DPEC
+ATOM     27  HB  DPEC    1       2.154  -1.396  -1.358  1.00  0.00      DPEC
+ATOM     28  C2  DPEC    1       2.673  -1.522  -3.379  1.00  0.00      DPEC
+ATOM     29  HS  DPEC    1       3.589  -1.610  -2.755  1.00  0.00      DPEC
+ATOM     30  O21 DPEC    1       2.492  -0.149  -3.675  1.00  0.00      DPEC
+ATOM     31  C21 DPEC    1       3.639   0.682  -3.441  1.00  0.00      DPEC
+ATOM     32  H1R DPEC    1       4.497   0.178  -3.934  1.00  0.00      DPEC
+ATOM     33  H1S DPEC    1       3.779   0.607  -2.341  1.00  0.00      DPEC
+[ ET2 ]
+ATOM     34  C3  DPEC    1       2.534  -2.460  -4.606  1.00  0.00      DPEC
+ATOM     35  HX  DPEC    1       1.689  -2.007  -5.168  1.00  0.00      DPEC
+ATOM     36  HY  DPEC    1       2.314  -3.508  -4.310  1.00  0.00      DPEC
+ATOM     37  O31 DPEC    1       3.809  -2.441  -5.384  1.00  0.00      DPEC
+ATOM     38  C31 DPEC    1       3.696  -3.330  -6.536  1.00  0.00      DPEC
+ATOM     39  H1X DPEC    1       3.041  -4.201  -6.317  1.00  0.00      DPEC
+ATOM     40  H1Y DPEC    1       4.697  -3.735  -6.796  1.00  0.00      DPEC
+[ C1A ]
+ATOM     41  C22 DPEC    1       3.509   2.095  -4.041  1.00  0.00      DPEC
+ATOM     42  H2R DPEC    1       3.366   1.884  -5.122  1.00  0.00      DPEC
+ATOM     43  H2S DPEC    1       4.536   2.519  -4.023  1.00  0.00      DPEC
+ATOM     44  C23 DPEC    1       2.564   3.071  -3.339  1.00  0.00      DPEC
+ATOM     45  H3R DPEC    1       2.627   3.998  -3.949  1.00  0.00      DPEC
+ATOM     46  H3S DPEC    1       2.891   3.299  -2.302  1.00  0.00      DPEC
+ATOM     47  C24 DPEC    1       1.090   2.546  -3.285  1.00  0.00      DPEC
+ATOM     48  H4R DPEC    1       0.503   3.307  -2.727  1.00  0.00      DPEC
+ATOM     49  H4S DPEC    1       1.016   1.582  -2.738  1.00  0.00      DPEC
+[ C2A ]
+ATOM     50  C25 DPEC    1       0.296   2.352  -4.668  1.00  0.00      DPEC
+ATOM     51  H5R DPEC    1       0.715   1.434  -5.134  1.00  0.00      DPEC
+ATOM     52  H5S DPEC    1       0.437   3.270  -5.277  1.00  0.00      DPEC
+ATOM     53  C26 DPEC    1      -1.233   2.166  -4.500  1.00  0.00      DPEC
+ATOM     54  H6R DPEC    1      -1.708   3.112  -4.160  1.00  0.00      DPEC
+ATOM     55  H6S DPEC    1      -1.480   1.517  -3.632  1.00  0.00      DPEC
+ATOM     56  C27 DPEC    1      -1.945   1.593  -5.705  1.00  0.00      DPEC
+ATOM     57  H7R DPEC    1      -2.130   2.425  -6.418  1.00  0.00      DPEC
+ATOM     58  H7S DPEC    1      -2.952   1.326  -5.319  1.00  0.00      DPEC
+ATOM     59  C28 DPEC    1      -1.220   0.515  -6.418  1.00  0.00      DPEC
+ATOM     60  H8R DPEC    1      -0.870  -0.194  -5.638  1.00  0.00      DPEC
+ATOM     61  H8S DPEC    1      -0.349   0.956  -6.948  1.00  0.00      DPEC
+[ C3A ]
+ATOM     62  C29 DPEC    1      -2.262  -0.103  -7.343  1.00  0.00      DPEC
+ATOM     63  H9R DPEC    1      -2.732   0.803  -7.780  1.00  0.00      DPEC
+ATOM     64  H9S DPEC    1      -2.879  -0.681  -6.622  1.00  0.00      DPEC
+ATOM     65 C210 DPEC    1      -1.653  -1.012  -8.325  1.00  0.00      DPEC
+ATOM     66 H10R DPEC    1      -2.537  -1.616  -8.621  1.00  0.00      DPEC
+ATOM     67 H10S DPEC    1      -0.827  -1.611  -7.885  1.00  0.00      DPEC
+ATOM     68 C211 DPEC    1      -1.180  -0.420  -9.698  1.00  0.00      DPEC
+ATOM     69 H11R DPEC    1      -0.262   0.150  -9.439  1.00  0.00      DPEC
+ATOM     70 H11S DPEC    1      -1.903   0.372  -9.989  1.00  0.00      DPEC
+ATOM     71 C212 DPEC    1      -0.912  -1.409 -10.870  1.00  0.00      DPEC
+ATOM     72 H12R DPEC    1      -1.797  -2.076 -10.945  1.00  0.00      DPEC
+ATOM     73 H12S DPEC    1       0.043  -1.909 -10.601  1.00  0.00      DPEC
+[ C4A ]
+ATOM     74 C213 DPEC    1      -0.760  -0.477 -12.118  1.00  0.00      DPEC
+ATOM     75 H13R DPEC    1       0.031   0.283 -11.937  1.00  0.00      DPEC
+ATOM     76 H13S DPEC    1      -1.735   0.023 -12.302  1.00  0.00      DPEC
+ATOM     77 C214 DPEC    1      -0.192  -1.241 -13.301  1.00  0.00      DPEC
+ATOM     78 H14R DPEC    1      -0.989  -1.765 -13.871  1.00  0.00      DPEC
+ATOM     79 H14S DPEC    1       0.527  -2.014 -12.954  1.00  0.00      DPEC
+ATOM     80 C215 DPEC    1       0.555  -0.373 -14.298  1.00  0.00      DPEC
+ATOM     81 H15R DPEC    1       0.077   0.595 -14.562  1.00  0.00      DPEC
+ATOM     82 H15S DPEC    1       0.536  -0.912 -15.270  1.00  0.00      DPEC
+ATOM     83 C216 DPEC    1       1.988  -0.029 -13.847  1.00  0.00      DPEC
+ATOM     84 H16R DPEC    1       2.642  -0.924 -13.918  1.00  0.00      DPEC
+ATOM     85 H16S DPEC    1       1.982   0.373 -12.811  1.00  0.00      DPEC
+ATOM     86 H16T DPEC    1       2.473   0.681 -14.551  1.00  0.00      DPEC
+[ C1B ]
+ATOM     87  C32 DPEC    1       3.002  -2.657  -7.717  1.00  0.00      DPEC
+ATOM     88  H2X DPEC    1       2.305  -1.835  -7.446  1.00  0.00      DPEC
+ATOM     89  H2Y DPEC    1       2.279  -3.358  -8.187  1.00  0.00      DPEC
+ATOM     90  C33 DPEC    1       3.915  -2.128  -8.787  1.00  0.00      DPEC
+ATOM     91  H3X DPEC    1       3.402  -1.686  -9.668  1.00  0.00      DPEC
+ATOM     92  H3Y DPEC    1       4.351  -2.986  -9.343  1.00  0.00      DPEC
+ATOM     93  C34 DPEC    1       5.021  -1.154  -8.239  1.00  0.00      DPEC
+ATOM     94  H4X DPEC    1       5.579  -0.846  -9.149  1.00  0.00      DPEC
+ATOM     95  H4Y DPEC    1       5.715  -1.585  -7.486  1.00  0.00      DPEC
+[ C2B ]
+ATOM     96  C35 DPEC    1       4.361   0.087  -7.616  1.00  0.00      DPEC
+ATOM     97  H5X DPEC    1       5.124   0.805  -7.247  1.00  0.00      DPEC
+ATOM     98  H5Y DPEC    1       3.628  -0.173  -6.824  1.00  0.00      DPEC
+ATOM     99  C36 DPEC    1       3.553   0.938  -8.648  1.00  0.00      DPEC
+ATOM    100  H6X DPEC    1       2.841   0.317  -9.232  1.00  0.00      DPEC
+ATOM    101  H6Y DPEC    1       4.269   1.300  -9.416  1.00  0.00      DPEC
+ATOM    102  C37 DPEC    1       2.637   2.081  -8.082  1.00  0.00      DPEC
+ATOM    103  H7X DPEC    1       3.323   2.668  -7.434  1.00  0.00      DPEC
+ATOM    104  H7Y DPEC    1       1.878   1.634  -7.406  1.00  0.00      DPEC
+ATOM    105  C38 DPEC    1       1.989   3.033  -9.130  1.00  0.00      DPEC
+ATOM    106  H8X DPEC    1       1.758   2.420 -10.028  1.00  0.00      DPEC
+ATOM    107  H8Y DPEC    1       2.809   3.731  -9.403  1.00  0.00      DPEC
+[ C3B ]
+ATOM    108  C39 DPEC    1       0.766   3.796  -8.641  1.00  0.00      DPEC
+ATOM    109  H9X DPEC    1       1.093   4.371  -7.748  1.00  0.00      DPEC
+ATOM    110  H9Y DPEC    1       0.054   3.060  -8.211  1.00  0.00      DPEC
+ATOM    111 C310 DPEC    1       0.048   4.672  -9.688  1.00  0.00      DPEC
+ATOM    112 H10X DPEC    1       0.645   5.534 -10.054  1.00  0.00      DPEC
+ATOM    113 H10Y DPEC    1      -0.841   5.095  -9.173  1.00  0.00      DPEC
+ATOM    114 C311 DPEC    1      -0.534   3.887 -10.931  1.00  0.00      DPEC
+ATOM    115 H11X DPEC    1      -1.361   3.215 -10.616  1.00  0.00      DPEC
+ATOM    116 H11Y DPEC    1       0.125   3.163 -11.457  1.00  0.00      DPEC
+ATOM    117 C312 DPEC    1      -1.100   4.960 -11.872  1.00  0.00      DPEC
+ATOM    118 H12X DPEC    1      -0.360   5.776 -12.015  1.00  0.00      DPEC
+ATOM    119 H12Y DPEC    1      -2.011   5.354 -11.374  1.00  0.00      DPEC
+[ C4B ]
+ATOM    120 C313 DPEC    1      -1.680   4.398 -13.218  1.00  0.00      DPEC
+ATOM    121 H13X DPEC    1      -2.021   5.207 -13.899  1.00  0.00      DPEC
+ATOM    122 H13Y DPEC    1      -2.546   3.759 -12.942  1.00  0.00      DPEC
+ATOM    123 C314 DPEC    1      -0.808   3.443 -14.000  1.00  0.00      DPEC
+ATOM    124 H14X DPEC    1      -0.304   2.633 -13.430  1.00  0.00      DPEC
+ATOM    125 H14Y DPEC    1       0.019   4.087 -14.367  1.00  0.00      DPEC
+ATOM    126 C315 DPEC    1      -1.443   2.723 -15.314  1.00  0.00      DPEC
+ATOM    127 H15X DPEC    1      -0.759   2.088 -15.917  1.00  0.00      DPEC
+ATOM    128 H15Y DPEC    1      -1.956   3.496 -15.925  1.00  0.00      DPEC
+ATOM    129 C316 DPEC    1      -2.575   1.744 -14.985  1.00  0.00      DPEC
+ATOM    130 H16X DPEC    1      -2.128   0.779 -14.661  1.00  0.00      DPEC
+ATOM    131 H16Y DPEC    1      -3.167   1.468 -15.884  1.00  0.00      DPEC
+ATOM    132 H16Z DPEC    1      -3.305   2.087 -14.221  1.00  0.00      DPEC
+END

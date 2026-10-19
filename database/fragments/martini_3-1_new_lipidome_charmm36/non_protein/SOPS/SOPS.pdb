@@ -1,0 +1,146 @@
+[ CNO ]
+ATOM      1  N   SOPS    1       0.110  -0.747   2.158  1.00  0.00      SOPS
+ATOM      2  HN1 SOPS    1       0.135  -1.413   2.956  1.00  0.00      SOPS
+ATOM      3  HN2 SOPS    1       0.544   0.142   2.478  1.00  0.00      SOPS
+ATOM      4  HN3 SOPS    1      -0.766  -0.718   1.597  1.00  0.00      SOPS
+ATOM      5  C12 SOPS    1       1.015  -1.174   1.099  1.00  0.00      SOPS
+ATOM      6 H12A SOPS    1       2.023  -0.871   1.343  1.00  0.00      SOPS
+ATOM      7  C13 SOPS    1       0.882  -2.713   0.739  1.00  0.00      SOPS
+ATOM      8 O13A SOPS    1       0.020  -3.361   1.393  1.00  0.00      SOPS
+ATOM      9 O13B SOPS    1       1.854  -3.161   0.180  1.00  0.00      SOPS
+ATOM     10  C11 SOPS    1       0.732  -0.357  -0.178  1.00  0.00      SOPS
+ATOM     11 H11A SOPS    1      -0.294  -0.580  -0.541  1.00  0.00      SOPS
+ATOM     12 H11B SOPS    1       1.460  -0.614  -0.976  1.00  0.00      SOPS
+[ PO4 ]
+ATOM     13  P   SOPS    1      -0.158   1.963  -0.531  1.00  0.00      SOPS
+ATOM     14  O13 SOPS    1       0.259   3.416  -0.467  1.00  0.00      SOPS
+ATOM     15  O14 SOPS    1      -1.377   1.562   0.167  1.00  0.00      SOPS
+ATOM     16  O12 SOPS    1       0.951   1.031  -0.046  1.00  0.00      SOPS
+ATOM     17  O11 SOPS    1      -0.335   1.565  -2.023  1.00  0.00      SOPS
+[ GL1 ]
+ATOM     18  C1  SOPS    1      -1.587   1.984  -2.599  1.00  0.00      SOPS
+ATOM     19  HA  SOPS    1      -1.777   3.076  -2.522  1.00  0.00      SOPS
+ATOM     20  HB  SOPS    1      -2.489   1.471  -2.203  1.00  0.00      SOPS
+ATOM     21  C2  SOPS    1      -1.603   1.618  -4.042  1.00  0.00      SOPS
+ATOM     22  HS  SOPS    1      -2.633   1.721  -4.446  1.00  0.00      SOPS
+ATOM     23  O21 SOPS    1      -0.982   0.261  -4.150  1.00  0.00      SOPS
+ATOM     24  C21 SOPS    1      -1.465  -0.442  -5.124  1.00  0.00      SOPS
+ATOM     25  O22 SOPS    1      -2.350  -0.072  -5.890  1.00  0.00      SOPS
+[ GL2 ]
+ATOM     26  C3  SOPS    1      -0.731   2.563  -4.806  1.00  0.00      SOPS
+ATOM     27  HX  SOPS    1       0.346   2.366  -4.620  1.00  0.00      SOPS
+ATOM     28  HY  SOPS    1      -0.847   3.585  -4.388  1.00  0.00      SOPS
+ATOM     29  O31 SOPS    1      -0.977   2.464  -6.221  1.00  0.00      SOPS
+ATOM     30  C31 SOPS    1      -1.972   3.247  -6.619  1.00  0.00      SOPS
+ATOM     31  O32 SOPS    1      -2.616   4.016  -5.936  1.00  0.00      SOPS
+[ C1A ]
+ATOM     32  C22 SOPS    1      -0.785  -1.764  -5.071  1.00  0.00      SOPS
+ATOM     33  H2R SOPS    1      -1.114  -2.408  -5.914  1.00  0.00      SOPS
+ATOM     34  H2S SOPS    1      -0.945  -2.281  -4.101  1.00  0.00      SOPS
+ATOM     35  C23 SOPS    1       0.736  -1.692  -5.244  1.00  0.00      SOPS
+ATOM     36  H3R SOPS    1       1.056  -2.750  -5.141  1.00  0.00      SOPS
+ATOM     37  H3S SOPS    1       1.275  -1.176  -4.421  1.00  0.00      SOPS
+ATOM     38  C24 SOPS    1       1.233  -1.145  -6.613  1.00  0.00      SOPS
+ATOM     39  H4R SOPS    1       1.624  -1.973  -7.243  1.00  0.00      SOPS
+ATOM     40  H4S SOPS    1       0.339  -0.737  -7.131  1.00  0.00      SOPS
+ATOM     41  C25 SOPS    1       2.447  -0.140  -6.497  1.00  0.00      SOPS
+ATOM     42  H5R SOPS    1       2.215   0.691  -5.797  1.00  0.00      SOPS
+ATOM     43  H5S SOPS    1       3.424  -0.632  -6.300  1.00  0.00      SOPS
+ATOM     44  C26 SOPS    1       2.613   0.433  -7.903  1.00  0.00      SOPS
+ATOM     45  H6R SOPS    1       3.624   0.894  -7.893  1.00  0.00      SOPS
+ATOM     46  H6S SOPS    1       2.621  -0.276  -8.759  1.00  0.00      SOPS
+[ D2A ]
+ATOM     47  C27 SOPS    1       1.537   1.467  -8.130  1.00  0.00      SOPS
+ATOM     48  H7R SOPS    1       0.515   1.050  -8.008  1.00  0.00      SOPS
+ATOM     49  H7S SOPS    1       1.732   2.284  -7.403  1.00  0.00      SOPS
+ATOM     50  C28 SOPS    1       1.498   2.153  -9.538  1.00  0.00      SOPS
+ATOM     51  H8R SOPS    1       0.904   3.081  -9.391  1.00  0.00      SOPS
+ATOM     52  H8S SOPS    1       2.519   2.506  -9.797  1.00  0.00      SOPS
+ATOM     53  C29 SOPS    1       0.898   1.188 -10.571  1.00  0.00      SOPS
+ATOM     54  H91 SOPS    1      -0.144   0.854 -10.461  1.00  0.00      SOPS
+ATOM     55 C210 SOPS    1       1.599   0.492 -11.505  1.00  0.00      SOPS
+ATOM     56 H101 SOPS    1       0.986  -0.132 -12.173  1.00  0.00      SOPS
+[ C3A ]
+ATOM     57 C211 SOPS    1       3.093   0.500 -11.620  1.00  0.00      SOPS
+ATOM     58 H11R SOPS    1       3.327  -0.421 -12.196  1.00  0.00      SOPS
+ATOM     59 H11S SOPS    1       3.553   0.358 -10.618  1.00  0.00      SOPS
+ATOM     60 C212 SOPS    1       3.616   1.732 -12.383  1.00  0.00      SOPS
+ATOM     61 H12R SOPS    1       4.724   1.801 -12.433  1.00  0.00      SOPS
+ATOM     62 H12S SOPS    1       3.427   2.573 -11.682  1.00  0.00      SOPS
+ATOM     63 C213 SOPS    1       2.954   2.144 -13.705  1.00  0.00      SOPS
+ATOM     64 H13R SOPS    1       2.819   3.245 -13.658  1.00  0.00      SOPS
+ATOM     65 H13S SOPS    1       1.938   1.695 -13.707  1.00  0.00      SOPS
+ATOM     66 C214 SOPS    1       3.738   1.648 -14.883  1.00  0.00      SOPS
+ATOM     67 H14R SOPS    1       3.860   0.571 -14.641  1.00  0.00      SOPS
+ATOM     68 H14S SOPS    1       4.709   2.185 -14.827  1.00  0.00      SOPS
+[ C4A ]
+ATOM     69 C215 SOPS    1       3.060   2.024 -16.216  1.00  0.00      SOPS
+ATOM     70 H15R SOPS    1       3.074   3.126 -16.364  1.00  0.00      SOPS
+ATOM     71 H15S SOPS    1       1.968   1.821 -16.232  1.00  0.00      SOPS
+ATOM     72 C216 SOPS    1       3.847   1.336 -17.431  1.00  0.00      SOPS
+ATOM     73 H16R SOPS    1       3.974   0.257 -17.197  1.00  0.00      SOPS
+ATOM     74 H16S SOPS    1       4.892   1.714 -17.427  1.00  0.00      SOPS
+ATOM     75 C217 SOPS    1       3.085   1.488 -18.726  1.00  0.00      SOPS
+ATOM     76 H17R SOPS    1       2.972   2.591 -18.804  1.00  0.00      SOPS
+ATOM     77 H17S SOPS    1       2.115   0.953 -18.634  1.00  0.00      SOPS
+ATOM     78 C218 SOPS    1       3.780   0.914 -19.973  1.00  0.00      SOPS
+ATOM     79 H18R SOPS    1       4.744   1.371 -20.285  1.00  0.00      SOPS
+ATOM     80 H18S SOPS    1       3.093   0.909 -20.847  1.00  0.00      SOPS
+ATOM     81 H18T SOPS    1       4.090  -0.143 -19.829  1.00  0.00      SOPS
+[ C1B ]
+ATOM     82  C32 SOPS    1      -2.118   3.120  -8.177  1.00  0.00      SOPS
+ATOM     83  H2X SOPS    1      -1.116   3.114  -8.657  1.00  0.00      SOPS
+ATOM     84  H2Y SOPS    1      -2.627   4.032  -8.557  1.00  0.00      SOPS
+ATOM     85  C33 SOPS    1      -2.908   1.837  -8.485  1.00  0.00      SOPS
+ATOM     86  H3X SOPS    1      -3.958   1.889  -8.126  1.00  0.00      SOPS
+ATOM     87  H3Y SOPS    1      -2.526   0.848  -8.154  1.00  0.00      SOPS
+ATOM     88  C34 SOPS    1      -3.087   1.789 -10.029  1.00  0.00      SOPS
+ATOM     89  H4X SOPS    1      -2.107   2.061 -10.477  1.00  0.00      SOPS
+ATOM     90  H4Y SOPS    1      -3.836   2.458 -10.503  1.00  0.00      SOPS
+ATOM     91  C35 SOPS    1      -3.516   0.356 -10.389  1.00  0.00      SOPS
+ATOM     92  H5X SOPS    1      -4.513   0.224  -9.916  1.00  0.00      SOPS
+ATOM     93  H5Y SOPS    1      -2.911  -0.398  -9.841  1.00  0.00      SOPS
+ATOM     94  C36 SOPS    1      -3.535  -0.039 -11.877  1.00  0.00      SOPS
+ATOM     95  H6X SOPS    1      -4.217   0.607 -12.471  1.00  0.00      SOPS
+ATOM     96  H6Y SOPS    1      -3.950  -1.066 -11.962  1.00  0.00      SOPS
+[ C2B ]
+ATOM     97  C37 SOPS    1      -2.202   0.019 -12.604  1.00  0.00      SOPS
+ATOM     98  H7X SOPS    1      -1.340  -0.479 -12.110  1.00  0.00      SOPS
+ATOM     99  H7Y SOPS    1      -1.839   1.070 -12.595  1.00  0.00      SOPS
+ATOM    100  C38 SOPS    1      -2.182  -0.503 -14.086  1.00  0.00      SOPS
+ATOM    101  H8X SOPS    1      -3.053  -0.123 -14.662  1.00  0.00      SOPS
+ATOM    102  H8Y SOPS    1      -2.189  -1.614 -14.087  1.00  0.00      SOPS
+ATOM    103  C39 SOPS    1      -0.980  -0.045 -14.984  1.00  0.00      SOPS
+ATOM    104  H9X SOPS    1      -0.214  -0.817 -14.755  1.00  0.00      SOPS
+ATOM    105  H9Y SOPS    1      -0.500   0.950 -14.869  1.00  0.00      SOPS
+ATOM    106 C310 SOPS    1      -1.369  -0.344 -16.483  1.00  0.00      SOPS
+ATOM    107 H10X SOPS    1      -2.014   0.523 -16.742  1.00  0.00      SOPS
+ATOM    108 H10Y SOPS    1      -1.977  -1.265 -16.610  1.00  0.00      SOPS
+[ C3B ]
+ATOM    109 C311 SOPS    1      -0.117  -0.417 -17.443  1.00  0.00      SOPS
+ATOM    110 H11X SOPS    1       0.596   0.314 -17.007  1.00  0.00      SOPS
+ATOM    111 H11Y SOPS    1      -0.504  -0.120 -18.441  1.00  0.00      SOPS
+ATOM    112 C312 SOPS    1       0.535  -1.794 -17.322  1.00  0.00      SOPS
+ATOM    113 H12X SOPS    1      -0.231  -2.555 -17.060  1.00  0.00      SOPS
+ATOM    114 H12Y SOPS    1       1.258  -1.728 -16.481  1.00  0.00      SOPS
+ATOM    115 C313 SOPS    1       1.363  -2.339 -18.557  1.00  0.00      SOPS
+ATOM    116 H13X SOPS    1       2.116  -3.087 -18.228  1.00  0.00      SOPS
+ATOM    117 H13Y SOPS    1       1.831  -1.515 -19.135  1.00  0.00      SOPS
+ATOM    118 C314 SOPS    1       0.249  -2.900 -19.588  1.00  0.00      SOPS
+ATOM    119 H14X SOPS    1      -0.738  -2.479 -19.299  1.00  0.00      SOPS
+ATOM    120 H14Y SOPS    1       0.173  -3.967 -19.290  1.00  0.00      SOPS
+[ C4B ]
+ATOM    121 C315 SOPS    1       0.598  -2.632 -21.058  1.00  0.00      SOPS
+ATOM    122 H15X SOPS    1       1.644  -2.276 -21.172  1.00  0.00      SOPS
+ATOM    123 H15Y SOPS    1      -0.087  -1.863 -21.474  1.00  0.00      SOPS
+ATOM    124 C316 SOPS    1       0.358  -3.878 -21.951  1.00  0.00      SOPS
+ATOM    125 H16X SOPS    1      -0.722  -3.980 -22.190  1.00  0.00      SOPS
+ATOM    126 H16Y SOPS    1       0.702  -4.794 -21.424  1.00  0.00      SOPS
+ATOM    127 C317 SOPS    1       0.960  -3.782 -23.331  1.00  0.00      SOPS
+ATOM    128 H17X SOPS    1       0.744  -4.691 -23.933  1.00  0.00      SOPS
+ATOM    129 H17Y SOPS    1       2.062  -3.809 -23.198  1.00  0.00      SOPS
+ATOM    130 C318 SOPS    1       0.585  -2.589 -24.198  1.00  0.00      SOPS
+ATOM    131 H18X SOPS    1      -0.493  -2.653 -24.460  1.00  0.00      SOPS
+ATOM    132 H18Y SOPS    1       1.196  -2.477 -25.118  1.00  0.00      SOPS
+ATOM    133 H18Z SOPS    1       0.671  -1.710 -23.524  1.00  0.00      SOPS
+END

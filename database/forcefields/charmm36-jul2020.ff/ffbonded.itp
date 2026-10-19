@@ -16139,7 +16139,6 @@ CT3		 HS   2		0.233942
        X      NN2     CN3C        X     9   180.000000     0.418400     2
        X      ON4       P4        X     9     0.000000     1.255200     3
 
-
 [ dihedraltypes ]
 ; 'improper' dihedrals 
 ;      i        j        k        l  func         phi0         kphi
@@ -16428,3 +16427,5 @@ CT3		 HS   2		0.233942
      ON1        X        X     CN1A     2     0.000000   334.720000
      HN3        X        X     CN3C     2     0.000000   443.504000
      HN6        X        X     CN3C     2     0.000000   443.504000
+
+

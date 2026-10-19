@@ -1,0 +1,5 @@
+recursive-include database/forcefields *
+recursive-include database/fragments *
+recursive-include database/bin/rama_data *.data
+global-exclude .DS_Store
+global-exclude *.py[cod]

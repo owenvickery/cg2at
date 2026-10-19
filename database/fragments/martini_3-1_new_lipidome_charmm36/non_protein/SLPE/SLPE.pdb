@@ -1,0 +1,142 @@
+[ NH3 ]
+ATOM      1  N   SLPE    1       1.775   2.789   0.059  1.00  0.00      SLPE
+ATOM      2  HN1 SLPE    1       2.445   3.574   0.192  1.00  0.00      SLPE
+ATOM      3  HN2 SLPE    1       1.803   2.387  -0.900  1.00  0.00      SLPE
+ATOM      4  HN3 SLPE    1       0.821   3.196   0.145  1.00  0.00      SLPE
+ATOM      5  C12 SLPE    1       2.004   1.584   0.995  1.00  0.00      SLPE
+ATOM      6 H12A SLPE    1       2.582   1.967   1.862  1.00  0.00      SLPE
+ATOM      7 H12B SLPE    1       2.506   0.878   0.300  1.00  0.00      SLPE
+ATOM      8  C11 SLPE    1       0.662   0.937   1.456  1.00  0.00      SLPE
+ATOM      9 H11A SLPE    1       0.125   1.607   2.161  1.00  0.00      SLPE
+ATOM     10 H11B SLPE    1       1.059   0.102   2.072  1.00  0.00      SLPE
+[ PO4 ]
+ATOM     11  P   SLPE    1      -0.660  -0.962   0.219  1.00  0.00      SLPE
+ATOM     12  O13 SLPE    1       0.583  -1.653  -0.162  1.00  0.00      SLPE
+ATOM     13  O14 SLPE    1      -1.343  -1.513   1.387  1.00  0.00      SLPE
+ATOM     14  O12 SLPE    1      -0.203   0.529   0.456  1.00  0.00      SLPE
+ATOM     15  O11 SLPE    1      -1.678  -0.956  -0.937  1.00  0.00      SLPE
+[ GL1 ]
+ATOM     16  C1  SLPE    1      -2.175   0.346  -1.366  1.00  0.00      SLPE
+ATOM     17  HA  SLPE    1      -3.277   0.271  -1.485  1.00  0.00      SLPE
+ATOM     18  HB  SLPE    1      -2.092   1.102  -0.556  1.00  0.00      SLPE
+ATOM     19  C2  SLPE    1      -1.558   0.865  -2.650  1.00  0.00      SLPE
+ATOM     20  HS  SLPE    1      -1.986   0.264  -3.480  1.00  0.00      SLPE
+ATOM     21  O21 SLPE    1      -0.134   0.730  -2.715  1.00  0.00      SLPE
+ATOM     22  C21 SLPE    1       0.332  -0.501  -3.166  1.00  0.00      SLPE
+ATOM     23  O22 SLPE    1      -0.292  -1.365  -3.700  1.00  0.00      SLPE
+[ GL2 ]
+ATOM     24  C3  SLPE    1      -2.017   2.357  -2.929  1.00  0.00      SLPE
+ATOM     25  HX  SLPE    1      -1.652   2.940  -2.057  1.00  0.00      SLPE
+ATOM     26  HY  SLPE    1      -3.126   2.412  -2.966  1.00  0.00      SLPE
+ATOM     27  O31 SLPE    1      -1.400   2.957  -4.125  1.00  0.00      SLPE
+ATOM     28  C31 SLPE    1      -1.884   2.508  -5.234  1.00  0.00      SLPE
+ATOM     29  O32 SLPE    1      -2.819   1.765  -5.382  1.00  0.00      SLPE
+[ C1A ]
+ATOM     30  C22 SLPE    1       1.788  -0.689  -2.842  1.00  0.00      SLPE
+ATOM     31  H2R SLPE    1       2.201   0.145  -2.235  1.00  0.00      SLPE
+ATOM     32  H2S SLPE    1       1.924  -1.648  -2.297  1.00  0.00      SLPE
+ATOM     33  C23 SLPE    1       2.688  -0.939  -4.098  1.00  0.00      SLPE
+ATOM     34  H3R SLPE    1       2.352  -1.905  -4.532  1.00  0.00      SLPE
+ATOM     35  H3S SLPE    1       3.746  -0.813  -3.780  1.00  0.00      SLPE
+ATOM     36  C24 SLPE    1       2.416   0.051  -5.283  1.00  0.00      SLPE
+ATOM     37  H4R SLPE    1       3.001   0.989  -5.171  1.00  0.00      SLPE
+ATOM     38  H4S SLPE    1       1.355   0.321  -5.470  1.00  0.00      SLPE
+ATOM     39  C25 SLPE    1       2.967  -0.457  -6.662  1.00  0.00      SLPE
+ATOM     40  H5R SLPE    1       2.357  -1.350  -6.916  1.00  0.00      SLPE
+ATOM     41  H5S SLPE    1       4.046  -0.679  -6.519  1.00  0.00      SLPE
+ATOM     42  C26 SLPE    1       2.825   0.733  -7.579  1.00  0.00      SLPE
+ATOM     43  H6R SLPE    1       3.236   1.691  -7.194  1.00  0.00      SLPE
+ATOM     44  H6S SLPE    1       1.769   0.999  -7.802  1.00  0.00      SLPE
+[ D2A ]
+ATOM     45  C27 SLPE    1       3.368   0.545  -8.961  1.00  0.00      SLPE
+ATOM     46  H7R SLPE    1       4.475   0.639  -8.992  1.00  0.00      SLPE
+ATOM     47  H7S SLPE    1       3.192   1.473  -9.546  1.00  0.00      SLPE
+ATOM     48  C28 SLPE    1       2.882  -0.748  -9.728  1.00  0.00      SLPE
+ATOM     49  H8R SLPE    1       3.181  -1.614  -9.098  1.00  0.00      SLPE
+ATOM     50  H8S SLPE    1       3.443  -0.608 -10.676  1.00  0.00      SLPE
+ATOM     51  C29 SLPE    1       1.425  -0.916 -10.008  1.00  0.00      SLPE
+ATOM     52  H9R SLPE    1       0.784  -1.180  -9.154  1.00  0.00      SLPE
+ATOM     53 C210 SLPE    1       0.799  -0.842 -11.178  1.00  0.00      SLPE
+ATOM     54 H10R SLPE    1      -0.292  -0.954 -11.095  1.00  0.00      SLPE
+[ D3A ]
+ATOM     55 C211 SLPE    1       1.324  -0.563 -12.566  1.00  0.00      SLPE
+ATOM     56 H11R SLPE    1       2.259  -1.163 -12.600  1.00  0.00      SLPE
+ATOM     57 H11S SLPE    1       1.570   0.510 -12.714  1.00  0.00      SLPE
+ATOM     58 C212 SLPE    1       0.429  -1.193 -13.629  1.00  0.00      SLPE
+ATOM     59 H12R SLPE    1      -0.264  -2.023 -13.426  1.00  0.00      SLPE
+ATOM     60 C213 SLPE    1       0.555  -0.919 -14.875  1.00  0.00      SLPE
+ATOM     61 H13R SLPE    1      -0.280  -1.212 -15.529  1.00  0.00      SLPE
+ATOM     62 C214 SLPE    1       1.589   0.038 -15.414  1.00  0.00      SLPE
+ATOM     63 H14R SLPE    1       2.529   0.148 -14.832  1.00  0.00      SLPE
+ATOM     64 H14S SLPE    1       1.089   1.028 -15.473  1.00  0.00      SLPE
+[ C4A ]
+ATOM     65 C215 SLPE    1       2.073  -0.318 -16.850  1.00  0.00      SLPE
+ATOM     66 H15R SLPE    1       2.711   0.451 -17.337  1.00  0.00      SLPE
+ATOM     67 H15S SLPE    1       1.212  -0.418 -17.546  1.00  0.00      SLPE
+ATOM     68 C216 SLPE    1       2.754  -1.678 -17.098  1.00  0.00      SLPE
+ATOM     69 H16R SLPE    1       2.178  -2.441 -16.531  1.00  0.00      SLPE
+ATOM     70 H16S SLPE    1       3.816  -1.587 -16.784  1.00  0.00      SLPE
+ATOM     71 C217 SLPE    1       2.608  -2.237 -18.540  1.00  0.00      SLPE
+ATOM     72 H17R SLPE    1       2.938  -1.486 -19.291  1.00  0.00      SLPE
+ATOM     73 H17S SLPE    1       1.543  -2.528 -18.663  1.00  0.00      SLPE
+ATOM     74 C218 SLPE    1       3.477  -3.527 -18.711  1.00  0.00      SLPE
+ATOM     75 H18R SLPE    1       3.294  -4.021 -19.689  1.00  0.00      SLPE
+ATOM     76 H18S SLPE    1       3.199  -4.378 -18.053  1.00  0.00      SLPE
+ATOM     77 H18T SLPE    1       4.570  -3.330 -18.675  1.00  0.00      SLPE
+[ C1B ]
+ATOM     78  C32 SLPE    1      -1.118   3.195  -6.358  1.00  0.00      SLPE
+ATOM     79  H2X SLPE    1      -0.024   3.180  -6.164  1.00  0.00      SLPE
+ATOM     80  H2Y SLPE    1      -1.497   4.238  -6.309  1.00  0.00      SLPE
+ATOM     81  C33 SLPE    1      -1.460   2.494  -7.741  1.00  0.00      SLPE
+ATOM     82  H3X SLPE    1      -2.541   2.635  -7.954  1.00  0.00      SLPE
+ATOM     83  H3Y SLPE    1      -1.274   1.418  -7.539  1.00  0.00      SLPE
+ATOM     84  C34 SLPE    1      -0.652   2.887  -8.996  1.00  0.00      SLPE
+ATOM     85  H4X SLPE    1       0.343   2.394  -9.039  1.00  0.00      SLPE
+ATOM     86  H4Y SLPE    1      -0.518   3.976  -9.175  1.00  0.00      SLPE
+ATOM     87  C35 SLPE    1      -1.313   2.333 -10.238  1.00  0.00      SLPE
+ATOM     88  H5X SLPE    1      -2.290   2.848 -10.359  1.00  0.00      SLPE
+ATOM     89  H5Y SLPE    1      -1.663   1.287 -10.107  1.00  0.00      SLPE
+ATOM     90  C36 SLPE    1      -0.552   2.548 -11.594  1.00  0.00      SLPE
+ATOM     91  H6X SLPE    1       0.438   2.050 -11.521  1.00  0.00      SLPE
+ATOM     92  H6Y SLPE    1      -0.178   3.594 -11.637  1.00  0.00      SLPE
+[ C2B ]
+ATOM     93  C37 SLPE    1      -1.277   2.180 -12.895  1.00  0.00      SLPE
+ATOM     94  H7X SLPE    1      -1.887   1.264 -12.741  1.00  0.00      SLPE
+ATOM     95  H7Y SLPE    1      -0.513   1.924 -13.660  1.00  0.00      SLPE
+ATOM     96  C38 SLPE    1      -2.258   3.228 -13.358  1.00  0.00      SLPE
+ATOM     97  H8X SLPE    1      -1.827   4.233 -13.159  1.00  0.00      SLPE
+ATOM     98  H8Y SLPE    1      -3.119   3.150 -12.661  1.00  0.00      SLPE
+ATOM     99  C39 SLPE    1      -2.942   3.032 -14.722  1.00  0.00      SLPE
+ATOM    100  H9X SLPE    1      -3.800   3.704 -14.935  1.00  0.00      SLPE
+ATOM    101  H9Y SLPE    1      -3.400   2.032 -14.567  1.00  0.00      SLPE
+ATOM    102 C310 SLPE    1      -1.907   3.019 -15.938  1.00  0.00      SLPE
+ATOM    103 H10X SLPE    1      -1.296   2.108 -15.767  1.00  0.00      SLPE
+ATOM    104 H10Y SLPE    1      -1.191   3.868 -15.918  1.00  0.00      SLPE
+[ C3B ]
+ATOM    105 C311 SLPE    1      -2.540   3.021 -17.321  1.00  0.00      SLPE
+ATOM    106 H11X SLPE    1      -2.914   4.044 -17.538  1.00  0.00      SLPE
+ATOM    107 H11Y SLPE    1      -3.484   2.438 -17.396  1.00  0.00      SLPE
+ATOM    108 C312 SLPE    1      -1.653   2.518 -18.492  1.00  0.00      SLPE
+ATOM    109 H12X SLPE    1      -1.255   1.571 -18.070  1.00  0.00      SLPE
+ATOM    110 H12Y SLPE    1      -0.764   3.184 -18.484  1.00  0.00      SLPE
+ATOM    111 C313 SLPE    1      -2.420   2.232 -19.803  1.00  0.00      SLPE
+ATOM    112 H13X SLPE    1      -2.832   3.201 -20.158  1.00  0.00      SLPE
+ATOM    113 H13Y SLPE    1      -3.269   1.565 -19.543  1.00  0.00      SLPE
+ATOM    114 C314 SLPE    1      -1.546   1.445 -20.783  1.00  0.00      SLPE
+ATOM    115 H14X SLPE    1      -1.465   0.519 -20.174  1.00  0.00      SLPE
+ATOM    116 H14Y SLPE    1      -0.497   1.781 -20.926  1.00  0.00      SLPE
+[ C4B ]
+ATOM    117 C315 SLPE    1      -2.214   1.256 -22.168  1.00  0.00      SLPE
+ATOM    118 H15X SLPE    1      -2.018   2.155 -22.791  1.00  0.00      SLPE
+ATOM    119 H15Y SLPE    1      -3.308   1.221 -21.973  1.00  0.00      SLPE
+ATOM    120 C316 SLPE    1      -1.614   0.126 -22.927  1.00  0.00      SLPE
+ATOM    121 H16X SLPE    1      -0.529   0.183 -22.696  1.00  0.00      SLPE
+ATOM    122 H16Y SLPE    1      -1.780   0.345 -24.004  1.00  0.00      SLPE
+ATOM    123 C317 SLPE    1      -2.008  -1.375 -22.803  1.00  0.00      SLPE
+ATOM    124 H17X SLPE    1      -1.846  -1.951 -23.740  1.00  0.00      SLPE
+ATOM    125 H17Y SLPE    1      -3.105  -1.378 -22.629  1.00  0.00      SLPE
+ATOM    126 C318 SLPE    1      -1.264  -2.120 -21.623  1.00  0.00      SLPE
+ATOM    127 H18X SLPE    1      -1.553  -1.847 -20.585  1.00  0.00      SLPE
+ATOM    128 H18Y SLPE    1      -0.174  -1.912 -21.679  1.00  0.00      SLPE
+ATOM    129 H18Z SLPE    1      -1.435  -3.213 -21.727  1.00  0.00      SLPE
+END

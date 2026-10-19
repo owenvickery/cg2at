@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
 import os, sys
+import copy
 import numpy as np
 import itertools
 import math
+from functools import lru_cache
 from scipy.spatial import cKDTree
 import gen, g_var, at_mod_p, read_in, gro
+from exceptions import CG2ATError, InputError, FragmentNotFoundError, TopologyError
 
 
 ### sanity checking
@@ -32,7 +35,7 @@ def sanity_check_atoms(atom_list, res):
 #### checks atom order
     for at_num in range(1, len(atom_list)+1):
         if at_num not in atom_list:
-            sys.exit('atom number '+str(at_num)+' is missing from fragment library: '+res+'\n')
+            raise FragmentNotFoundError('atom number '+str(at_num)+' is missing from fragment library: '+res)
 
 def sanity_check_beads(bead_list, cg, res):
 #### checks if bead is in fragment library
@@ -43,7 +46,7 @@ def sanity_check_beads(bead_list, cg, res):
             if new_bead in bead_list and new_bead not in cg:
                 pass
             else:
-                sys.exit('The bead '+bead+' is missing from the fragment library: '+res+'\n')   
+                raise FragmentNotFoundError('The bead '+bead+' is missing from the fragment library: '+res)   
         bead_list_new.append(bead)
     return bead_list_new
 
@@ -64,7 +67,7 @@ def sanity_check_protein_other(res_type, test=False):
                 if not test:
                     print('There is a issue with residue: '+resname+' '+str(residue+1)+'. If expected ignore this message.' )
                 if res_type != 'OTHER':
-                    sys.exit('number of atomistic fragments: '+str(len(bead_list[resname]))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
+                    raise TopologyError('number of atomistic fragments: '+str(len(bead_list[resname]))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
 
 def sanity_check_solvent(res_type):
     bead_list, atom_list = {},{}
@@ -89,7 +92,7 @@ def sanity_check_non_protein(res_type):
                 fix_atom_wrap(bead_list[res_type], bead_list_cg, res_type, residue)
             else:
                 print('There is a issue with residue: '+res_type+' '+str(residue+1))
-                sys.exit('number of atomistic fragments: '+str(len(bead_list[res_type]))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
+                raise TopologyError('number of atomistic fragments: '+str(len(bead_list[res_type]))+' does not equal number of CG beads: '+str(len(bead_list_cg)))
 
 def sanity_check():
 #### runs through every bead and checks whether it exists
@@ -112,7 +115,7 @@ def fix_atom_wrap(bead_list_frag, bead_list_cg, section, resid):
                 print('There is a issue with residue: '+section+' '+str(resid+1))
                 print('input file list:\n',sorted(bead_list_cg))
                 print('\ncannot find: '+bead+' or '+new_bead+' in fragment list:')
-                sys.exit(sorted(bead_list_frag))
+                raise FragmentNotFoundError('Fragment bead mismatch. Available: '+str(sorted(bead_list_frag)))
 
 #####  Sanity check end
 
@@ -186,7 +189,7 @@ def COM(mass, fragment):
         for bead in fragment:
             print(bead, fragment[bead], '\n')
             print(mass)
-            sys.exit('missing the mass one of the atoms in '+fragment[bead][1]['res_type'])      
+            raise TopologyError('missing the mass one of the atoms in '+fragment[bead][1]['res_type'])      
 
 def rigid_fit(group, frag_mass, resid, cg):
 #### rigid fits group to CG beads
@@ -220,21 +223,29 @@ def overlapping_atoms(tree):
     return overlapped
 
 def check_atom_overlap(coordinates):
-#### creates tree of atom coordinates
+    """Jitter any overlapping atoms until all pairwise distances exceed g_var.args.ov.
+
+    The cKDTree is rebuilt once per pass over all overlaps rather than once
+    per atom move, which gives a significant speedup for large systems.
+    """
     tree = cKDTree(coordinates)
     overlapped = overlapping_atoms(tree)
-#### runs through overlapping atoms and moves atom in a random diection until it is no longer overlapping
     while len(overlapped) > 0:
-        for ndx_val, ndx in enumerate(overlapped):
-            if np.round((ndx_val/len(overlapped))*100,2).is_integer() and len(overlapped) > 30:
-                print('fixing '+str(len(overlapped))+' overlapped atoms: '+str(np.round((ndx_val/len(overlapped))*100,2))+' %', end='\r')
-            xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
-            while len(tree.query_ball_point(xyz_check, r=g_var.args.ov)) > 1:
-                xyz_check = np.array([coordinates[ndx[0]][0]+np.random.uniform(-0.2, 0.2), coordinates[ndx[0]][1]+np.random.uniform(-0.2, 0.2),coordinates[ndx[0]][2]+np.random.uniform(-0.2, 0.2)])
-            coordinates[ndx[0]]=xyz_check
-            tree = cKDTree(coordinates)
         if len(overlapped) > 30:
-            print('{:<100}'.format(''), end='\r')
+            gen.print_progress('Fixing atom overlaps', 0, len(overlapped))
+        for ndx_val, ndx in enumerate(overlapped):
+            if len(overlapped) > 30:
+                gen.print_progress('Fixing atom overlaps', ndx_val + 1, len(overlapped))
+            # Jitter the atom using the current tree for the inner acceptance check.
+            # The tree is intentionally not rebuilt here; we rebuild once per pass below.
+            xyz_check = coordinates[ndx[0]] + np.random.uniform(-0.2, 0.2, 3)
+            while len(tree.query_ball_point(xyz_check, r=g_var.args.ov)) > 1:
+                xyz_check = coordinates[ndx[0]] + np.random.uniform(-0.2, 0.2, 3)
+            coordinates[ndx[0]] = xyz_check
+        # Rebuild tree once per pass now that all atoms in this batch have moved.
+        tree = cKDTree(coordinates)
+        if len(overlapped) > 30:
+            gen.finish_progress('Fixing atom overlaps', len(overlapped))
         overlapped = overlapping_atoms(tree)
     return coordinates
 
@@ -250,30 +261,56 @@ def split_fragment_names(line, residue, resname):
         residue[group][bead]={} 
     return residue, group, bead   
 
-def get_atomistic(frag_location, resname=False):
-    if not resname:
-        resname = frag_location.split('/')[-1][:-4]
-#### read in atomistic fragments into dictionary    
-    residue = {} ## a dictionary of bead in each residue eg residue[group][bead][atom number(1)][residue_name(ASP)/coordinates(coord)/atom name(C)/connectivity(2)/atom_mass(12)]
+@lru_cache(maxsize=None)
+def _get_atomistic_cached(frag_location: str, resname: str):
+    """Parse a fragment PDB once and cache the result.
+
+    Keyed on (frag_location, resname) so each unique residue type is read from
+    disk exactly once, regardless of how many copies exist in the system.
+    """
+    residue = {}
     fragment_mass = {}
     with open(frag_location, 'r') as pdb_input:
-        for line_nr, line in enumerate(pdb_input.readlines()):
+        for line in pdb_input.readlines():
             if line.startswith('['):
                 residue, group, bead = split_fragment_names(line, residue, resname)
-                fragment_mass[bead]=[]
+                fragment_mass[bead] = []
             if line.startswith('ATOM'):
-                line_sep = gen.pdbatom(line) ## splits up pdb line
-                residue[group][bead][line_sep['atom_number']]={'coord':np.array([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf]),
-                                                                'atom':line_sep['atom_name'],'resid':1, 'resid_ori':line_sep['residue_id'],'res_type':line_sep['residue_name'],
-                                                                'frag_mass':1}    
-#### updates fragment mass   
+                line_sep = gen.pdbatom(line)
+                residue[group][bead][line_sep['atom_number']] = {
+                    'coord': np.array([line_sep['x'] * g_var.sf,
+                                       line_sep['y'] * g_var.sf,
+                                       line_sep['z'] * g_var.sf]),
+                    'atom': line_sep['atom_name'], 'resid': 1,
+                    'resid_ori': line_sep['residue_id'],
+                    'res_type': line_sep['residue_name'],
+                    'frag_mass': 1,
+                }
                 if not gen.is_hydrogen(line_sep['atom_name']):
                     if line_sep['atom_name'] in g_var.res_top[resname]['atom_masses']:
-                        residue[group][bead][line_sep['atom_number']]['frag_mass']=g_var.res_top[resname]['atom_masses'][line_sep['atom_name']]  ### updates atom masses with crude approximations
-                        fragment_mass[bead].append([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf,g_var.res_top[resname]['atom_masses'][line_sep['atom_name']]])               
+                        mass = g_var.res_top[resname]['atom_masses'][line_sep['atom_name']]
+                        residue[group][bead][line_sep['atom_number']]['frag_mass'] = mass
+                        fragment_mass[bead].append([line_sep['x'] * g_var.sf,
+                                                    line_sep['y'] * g_var.sf,
+                                                    line_sep['z'] * g_var.sf, mass])
                 else:
-                    fragment_mass[bead].append([line_sep['x']*g_var.sf,line_sep['y']*g_var.sf,line_sep['z']*g_var.sf,1])
+                    fragment_mass[bead].append([line_sep['x'] * g_var.sf,
+                                                line_sep['y'] * g_var.sf,
+                                                line_sep['z'] * g_var.sf, 1])
     return residue, fragment_mass
+
+
+def get_atomistic(frag_location: str, resname: str = False):
+    """Return a per-call deep copy of the cached fragment data.
+
+    Callers mutate the returned dicts (e.g. deleting unused beads in
+    at_mod_p.py), so each call gets its own independent copy while the
+    underlying parse result is only computed once per residue type.
+    """
+    if not resname:
+        resname = frag_location.split('/')[-1][:-4]
+    residue, fragment_mass = _get_atomistic_cached(frag_location, resname)
+    return copy.deepcopy(residue), copy.deepcopy(fragment_mass)
 
 def connectivity(cg, at_frag_centers, cg_frag_centers, group, group_number):
 #### returns the connections between the atomistic and coarse grain beads
@@ -313,7 +350,7 @@ def get_rotation(cg_connect, at_connect, center, resname, group, cg_resid):
             return kabsch_rotate(np.array(at_connect)-center, np.array(cg_connect)-center)
     else:
         print('atom connections: '+str(len(at_connect))+' does not match CG connections: '+str(len(cg_connect)))
-        sys.exit('residue number: '+str(cg_resid)+', residue type: '+str(resname)+', group: '+group)
+        raise CG2ATError('residue number: '+str(cg_resid)+', residue type: '+str(resname)+', group: '+group)
 
 def apply_rotations(atomistic_fragments,cg_resid, group_fit, center, xyz_rot_apply):
     for bead in group_fit:
@@ -354,7 +391,7 @@ def BB_connectivity(at_connections,cg_connections, cg_residues, at_residues, res
 
 ################################################################### Merged system
 
-def merge_indivdual_chain_pdbs(file, end, res_type):
+def merge_individual_chain_pdbs(file, end, res_type):
 #### reads in each chain into merge list
     merge, merged_coords = [],[]
     count = 0
@@ -365,7 +402,7 @@ def merge_indivdual_chain_pdbs(file, end, res_type):
             with open(file+'_'+str(chain)+end, 'r') as pdb_input:
                 merge_temp += read_in.filter_input(pdb_input.readlines(), False)
         else:
-            sys.exit('cannot find chain: '+file+'_'+str(chain)+end)
+            raise InputError('cannot find chain: '+file+'_'+str(chain)+end)
         if res_type+'_aligned' in file:  
             count, restraint_count = at_mod_p.create_disres(merge_temp, chain, file, count, restraint_count)
         merge, merge_coords = fix_chirality(merge,merge_temp,merged_coords, res_type)   
@@ -446,7 +483,7 @@ def read_in_merged_pdbs(merge, merge_coords, location):
             merge_coords += [[line_sep['x'],line_sep['y'],line_sep['z']] for line_sep in read_in_atoms ]
             return merge+read_in_atoms, merge_coords
     else:
-        sys.exit('cannot find minimised residue: \n'+ location) 
+        raise InputError('cannot find minimised residue: '+location) 
 
 def check_overlap_chain(chain, input,res_type):
     if not os.path.exists(g_var.working_dir+res_type+'/'+res_type+'_'+input+str(chain)+'_gmx_checked.pdb'):
@@ -649,7 +686,7 @@ def fix_threaded_lipids(lipid_atoms, merge, merge_coords):
             NP_count = fetch_start_of_residue_np(threaded[0], resname)
             bb = []
             if 'P_count' not in locals():
-                sys.exit('There is an issue with the bond length detection')
+                raise CG2ATError('There is an issue with the bond length detection')
             for at in merge[P_count:]:
                 if at['residue_id'] != merge[P_count]['residue_id']:
                     break

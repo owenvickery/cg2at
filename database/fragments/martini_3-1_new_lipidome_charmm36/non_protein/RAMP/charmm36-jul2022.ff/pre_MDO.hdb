@@ -1,0 +1,20 @@
+PMDO        18
+1       5       H11     C10     C11     O1      O2    
+1       5       H15     C14     C13     C15     O2
+1       5       H12     C11     C10     C12     O6    
+1       2       H21     O6      C11     C10    
+1       5       H13     C12     C11     C13     O5    
+1       2       H20     O5      C12     C11    
+1       5       H14     C13     C12     C14     O4    
+1       2       H19     O4      C13     C12    
+2       6       H15     C15     C14     O3
+1       2       H18     O3      C15     C14    
+2       6       H9      C9      O1      C8     
+2       6       H8      C8      C9      C7     
+2       6       H7      C7      C6      C8
+1       2       H22     O7      C3      C4
+1       1       H1      C1      C2      C6     
+1       1       H4      C5      C4      C6     
+1       1       H3      C4      C5      C3     
+1       1       H2      C2      C1      C3     
+

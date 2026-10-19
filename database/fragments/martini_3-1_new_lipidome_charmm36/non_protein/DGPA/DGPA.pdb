@@ -1,0 +1,146 @@
+[ PO4 ]
+ATOM      1  P   DGPA    1       0.005  -0.286   0.258  1.00  0.00      DGPA
+ATOM      2  O13 DGPA    1       0.656  -0.083   1.541  1.00  0.00      DGPA
+ATOM      3  O14 DGPA    1      -1.232  -1.033   0.144  1.00  0.00      DGPA
+ATOM      4  O12 DGPA    1      -0.442   1.202  -0.040  1.00  0.00      DGPA
+ATOM      5  H12 DGPA    1      -0.646   1.516  -0.924  1.00  0.00      DGPA
+ATOM      6  O11 DGPA    1       1.010  -0.626  -0.915  1.00  0.00      DGPA
+[ GL1 ]
+ATOM      7  C1  DGPA    1       2.286  -0.005  -0.912  1.00  0.00      DGPA
+ATOM      8  HA  DGPA    1       3.041  -0.642  -0.404  1.00  0.00      DGPA
+ATOM      9  HB  DGPA    1       2.227   0.942  -0.334  1.00  0.00      DGPA
+ATOM     10  C2  DGPA    1       2.689   0.389  -2.311  1.00  0.00      DGPA
+ATOM     11  HS  DGPA    1       3.525   1.120  -2.312  1.00  0.00      DGPA
+ATOM     12  O21 DGPA    1       1.620   0.969  -3.072  1.00  0.00      DGPA
+ATOM     13  C21 DGPA    1       1.254   2.186  -2.650  1.00  0.00      DGPA
+ATOM     14  O22 DGPA    1       1.634   2.772  -1.666  1.00  0.00      DGPA
+[ GL2 ]
+ATOM     15  C3  DGPA    1       3.222  -0.885  -2.910  1.00  0.00      DGPA
+ATOM     16  HX  DGPA    1       2.388  -1.609  -2.785  1.00  0.00      DGPA
+ATOM     17  HY  DGPA    1       4.134  -1.335  -2.464  1.00  0.00      DGPA
+ATOM     18  O31 DGPA    1       3.402  -0.515  -4.244  1.00  0.00      DGPA
+ATOM     19  C31 DGPA    1       3.460  -1.494  -5.121  1.00  0.00      DGPA
+ATOM     20  O32 DGPA    1       3.324  -2.692  -4.913  1.00  0.00      DGPA
+[ C1A ]
+ATOM     21  C22 DGPA    1       0.240   2.735  -3.646  1.00  0.00      DGPA
+ATOM     22  H2R DGPA    1       0.516   2.303  -4.632  1.00  0.00      DGPA
+ATOM     23  H2S DGPA    1       0.336   3.839  -3.560  1.00  0.00      DGPA
+ATOM     24  C23 DGPA    1      -1.090   2.206  -3.107  1.00  0.00      DGPA
+ATOM     25  H3R DGPA    1      -1.267   2.276  -2.012  1.00  0.00      DGPA
+ATOM     26  H3S DGPA    1      -1.129   1.104  -3.240  1.00  0.00      DGPA
+ATOM     27  C24 DGPA    1      -2.228   2.900  -3.935  1.00  0.00      DGPA
+ATOM     28  H4R DGPA    1      -2.168   4.004  -3.827  1.00  0.00      DGPA
+ATOM     29  H4S DGPA    1      -3.179   2.499  -3.524  1.00  0.00      DGPA
+[ C2A ]
+ATOM     30  C25 DGPA    1      -2.129   2.574  -5.430  1.00  0.00      DGPA
+ATOM     31  H5R DGPA    1      -1.354   3.095  -6.032  1.00  0.00      DGPA
+ATOM     32  H5S DGPA    1      -3.110   2.848  -5.874  1.00  0.00      DGPA
+ATOM     33  C26 DGPA    1      -1.882   1.048  -5.682  1.00  0.00      DGPA
+ATOM     34  H6R DGPA    1      -2.425   0.432  -4.934  1.00  0.00      DGPA
+ATOM     35  H6S DGPA    1      -0.819   0.726  -5.644  1.00  0.00      DGPA
+ATOM     36  C27 DGPA    1      -2.330   0.459  -7.069  1.00  0.00      DGPA
+ATOM     37  H7R DGPA    1      -1.846   1.058  -7.869  1.00  0.00      DGPA
+ATOM     38  H7S DGPA    1      -3.426   0.629  -7.009  1.00  0.00      DGPA
+ATOM     39  C28 DGPA    1      -2.040  -1.031  -7.312  1.00  0.00      DGPA
+ATOM     40  H8R DGPA    1      -2.621  -1.715  -6.657  1.00  0.00      DGPA
+ATOM     41  H8S DGPA    1      -0.998  -1.270  -7.008  1.00  0.00      DGPA
+[ D3A ]
+ATOM     42  C29 DGPA    1      -2.361  -1.511  -8.714  1.00  0.00      DGPA
+ATOM     43  H9R DGPA    1      -2.104  -2.589  -8.781  1.00  0.00      DGPA
+ATOM     44  H9S DGPA    1      -1.630  -0.991  -9.369  1.00  0.00      DGPA
+ATOM     45 C210 DGPA    1      -3.753  -1.129  -9.318  1.00  0.00      DGPA
+ATOM     46 H10R DGPA    1      -3.916  -0.059  -9.067  1.00  0.00      DGPA
+ATOM     47 H10S DGPA    1      -4.573  -1.599  -8.733  1.00  0.00      DGPA
+ATOM     48 C211 DGPA    1      -3.953  -1.476 -10.799  1.00  0.00      DGPA
+ATOM     49 H11R DGPA    1      -4.088  -2.556 -10.960  1.00  0.00      DGPA
+ATOM     50 C212 DGPA    1      -3.836  -0.648 -11.912  1.00  0.00      DGPA
+ATOM     51 H12R DGPA    1      -3.730  -1.006 -12.946  1.00  0.00      DGPA
+[ C4A ]
+ATOM     52 C213 DGPA    1      -3.499   0.830 -11.892  1.00  0.00      DGPA
+ATOM     53 H13R DGPA    1      -3.391   1.221 -10.858  1.00  0.00      DGPA
+ATOM     54 H13S DGPA    1      -4.289   1.503 -12.287  1.00  0.00      DGPA
+ATOM     55 C214 DGPA    1      -2.147   1.185 -12.577  1.00  0.00      DGPA
+ATOM     56 H14R DGPA    1      -1.369   0.412 -12.401  1.00  0.00      DGPA
+ATOM     57 H14S DGPA    1      -1.757   2.119 -12.120  1.00  0.00      DGPA
+ATOM     58 C215 DGPA    1      -2.312   1.531 -14.041  1.00  0.00      DGPA
+ATOM     59 H15R DGPA    1      -2.961   2.387 -14.324  1.00  0.00      DGPA
+ATOM     60 H15S DGPA    1      -2.701   0.640 -14.580  1.00  0.00      DGPA
+ATOM     61 C216 DGPA    1      -0.940   1.888 -14.652  1.00  0.00      DGPA
+ATOM     62 H16R DGPA    1      -0.393   0.978 -14.978  1.00  0.00      DGPA
+ATOM     63 H16S DGPA    1      -0.287   2.446 -13.946  1.00  0.00      DGPA
+[ C5A ]
+ATOM     64 C217 DGPA    1      -1.099   2.775 -15.918  1.00  0.00      DGPA
+ATOM     65 H17R DGPA    1      -0.360   3.602 -15.848  1.00  0.00      DGPA
+ATOM     66 H17S DGPA    1      -2.158   3.106 -15.967  1.00  0.00      DGPA
+ATOM     67 C218 DGPA    1      -0.817   2.109 -17.321  1.00  0.00      DGPA
+ATOM     68 H18R DGPA    1      -0.771   1.002 -17.398  1.00  0.00      DGPA
+ATOM     69 H18S DGPA    1       0.185   2.455 -17.655  1.00  0.00      DGPA
+ATOM     70 C219 DGPA    1      -1.838   2.610 -18.361  1.00  0.00      DGPA
+ATOM     71 H19R DGPA    1      -1.930   3.717 -18.326  1.00  0.00      DGPA
+ATOM     72 H19S DGPA    1      -2.838   2.195 -18.113  1.00  0.00      DGPA
+ATOM     73 C220 DGPA    1      -1.559   2.140 -19.805  1.00  0.00      DGPA
+ATOM     74 H20R DGPA    1      -1.402   1.040 -19.825  1.00  0.00      DGPA
+ATOM     75 H20S DGPA    1      -2.297   2.533 -20.536  1.00  0.00      DGPA
+ATOM     76 H20T DGPA    1      -0.581   2.577 -20.099  1.00  0.00      DGPA
+[ C1B ]
+ATOM     77  C32 DGPA    1       3.543  -0.904  -6.638  1.00  0.00      DGPA
+ATOM     78  H2X DGPA    1       2.588  -1.283  -7.059  1.00  0.00      DGPA
+ATOM     79  H2Y DGPA    1       4.461  -1.219  -7.180  1.00  0.00      DGPA
+ATOM     80  C33 DGPA    1       3.278   0.596  -6.845  1.00  0.00      DGPA
+ATOM     81  H3X DGPA    1       4.077   1.184  -6.344  1.00  0.00      DGPA
+ATOM     82  H3Y DGPA    1       2.298   0.768  -6.349  1.00  0.00      DGPA
+ATOM     83  C34 DGPA    1       3.216   1.253  -8.241  1.00  0.00      DGPA
+ATOM     84  H4X DGPA    1       4.257   1.324  -8.622  1.00  0.00      DGPA
+ATOM     85  H4Y DGPA    1       2.950   2.323  -8.108  1.00  0.00      DGPA
+[ C2B ]
+ATOM     86  C35 DGPA    1       2.331   0.521  -9.207  1.00  0.00      DGPA
+ATOM     87  H5X DGPA    1       1.312   0.431  -8.772  1.00  0.00      DGPA
+ATOM     88  H5Y DGPA    1       2.807  -0.462  -9.412  1.00  0.00      DGPA
+ATOM     89  C36 DGPA    1       2.197   1.241 -10.573  1.00  0.00      DGPA
+ATOM     90  H6X DGPA    1       3.161   1.608 -10.984  1.00  0.00      DGPA
+ATOM     91  H6Y DGPA    1       1.573   2.123 -10.313  1.00  0.00      DGPA
+ATOM     92  C37 DGPA    1       1.270   0.397 -11.500  1.00  0.00      DGPA
+ATOM     93  H7X DGPA    1       0.718   1.134 -12.122  1.00  0.00      DGPA
+ATOM     94  H7Y DGPA    1       0.564  -0.141 -10.832  1.00  0.00      DGPA
+ATOM     95  C38 DGPA    1       2.108  -0.613 -12.323  1.00  0.00      DGPA
+ATOM     96  H8X DGPA    1       1.447  -1.350 -12.827  1.00  0.00      DGPA
+ATOM     97  H8Y DGPA    1       2.720  -1.178 -11.587  1.00  0.00      DGPA
+[ D3B ]
+ATOM     98  C39 DGPA    1       2.912   0.117 -13.418  1.00  0.00      DGPA
+ATOM     99  H9X DGPA    1       3.635   0.741 -12.850  1.00  0.00      DGPA
+ATOM    100  H9Y DGPA    1       2.324   0.846 -14.016  1.00  0.00      DGPA
+ATOM    101 C310 DGPA    1       3.505  -0.868 -14.474  1.00  0.00      DGPA
+ATOM    102 H10X DGPA    1       2.876  -1.769 -14.308  1.00  0.00      DGPA
+ATOM    103 H10Y DGPA    1       4.594  -1.003 -14.298  1.00  0.00      DGPA
+ATOM    104 C311 DGPA    1       3.166  -0.130 -15.829  1.00  0.00      DGPA
+ATOM    105 H11X DGPA    1       3.883   0.648 -16.131  1.00  0.00      DGPA
+ATOM    106 C312 DGPA    1       2.179  -0.420 -16.676  1.00  0.00      DGPA
+ATOM    107 H12X DGPA    1       2.064   0.129 -17.623  1.00  0.00      DGPA
+[ C4B ]
+ATOM    108 C313 DGPA    1       1.168  -1.555 -16.475  1.00  0.00      DGPA
+ATOM    109 H13X DGPA    1       0.219  -1.256 -16.969  1.00  0.00      DGPA
+ATOM    110 H13Y DGPA    1       0.942  -1.811 -15.417  1.00  0.00      DGPA
+ATOM    111 C314 DGPA    1       1.441  -2.935 -17.219  1.00  0.00      DGPA
+ATOM    112 H14X DGPA    1       2.395  -3.259 -16.752  1.00  0.00      DGPA
+ATOM    113 H14Y DGPA    1       1.748  -2.804 -18.279  1.00  0.00      DGPA
+ATOM    114 C315 DGPA    1       0.387  -3.994 -16.967  1.00  0.00      DGPA
+ATOM    115 H15X DGPA    1       0.334  -4.206 -15.878  1.00  0.00      DGPA
+ATOM    116 H15Y DGPA    1       0.658  -4.949 -17.465  1.00  0.00      DGPA
+ATOM    117 C316 DGPA    1      -1.016  -3.446 -17.350  1.00  0.00      DGPA
+ATOM    118 H16X DGPA    1      -1.423  -2.650 -16.691  1.00  0.00      DGPA
+ATOM    119 H16Y DGPA    1      -1.760  -4.271 -17.311  1.00  0.00      DGPA
+[ C5B ]
+ATOM    120 C317 DGPA    1      -0.988  -2.941 -18.814  1.00  0.00      DGPA
+ATOM    121 H17X DGPA    1      -0.460  -3.693 -19.439  1.00  0.00      DGPA
+ATOM    122 H17Y DGPA    1      -0.423  -1.999 -18.980  1.00  0.00      DGPA
+ATOM    123 C318 DGPA    1      -2.420  -2.620 -19.316  1.00  0.00      DGPA
+ATOM    124 H18X DGPA    1      -2.838  -1.905 -18.575  1.00  0.00      DGPA
+ATOM    125 H18Y DGPA    1      -2.930  -3.607 -19.294  1.00  0.00      DGPA
+ATOM    126 C319 DGPA    1      -2.424  -1.896 -20.710  1.00  0.00      DGPA
+ATOM    127 H19X DGPA    1      -2.020  -2.613 -21.456  1.00  0.00      DGPA
+ATOM    128 H19Y DGPA    1      -1.574  -1.183 -20.762  1.00  0.00      DGPA
+ATOM    129 C320 DGPA    1      -3.678  -1.240 -21.167  1.00  0.00      DGPA
+ATOM    130 H20X DGPA    1      -4.318  -1.785 -21.893  1.00  0.00      DGPA
+ATOM    131 H20Y DGPA    1      -4.301  -0.680 -20.436  1.00  0.00      DGPA
+ATOM    132 H20Z DGPA    1      -3.292  -0.365 -21.733  1.00  0.00      DGPA
+END

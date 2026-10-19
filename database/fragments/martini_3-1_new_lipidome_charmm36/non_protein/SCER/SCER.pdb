@@ -1,0 +1,123 @@
+[ COH ]
+ATOM      1  O1  SCER    1       0.113  -0.861   1.789  1.00  0.00      SCER
+ATOM      2  HO1 SCER    1       0.233  -1.758   1.470  1.00  0.00      SCER
+ATOM      3  C1S SCER    1      -0.903  -0.416   0.928  1.00  0.00      SCER
+ATOM      4  H1S SCER    1      -1.734  -1.130   1.112  1.00  0.00      SCER
+ATOM      5  H1T SCER    1      -1.192   0.604   1.259  1.00  0.00      SCER
+[ OH1 ]
+ATOM      6  C2S SCER    1      -0.399  -0.459  -0.564  1.00  0.00      SCER
+ATOM      7  H2S SCER    1      -1.260  -0.384  -1.262  1.00  0.00      SCER
+ATOM      8  C3S SCER    1       0.364   0.914  -0.862  1.00  0.00      SCER
+ATOM      9  H3S SCER    1       1.308   0.978  -0.280  1.00  0.00      SCER
+ATOM     10  O3  SCER    1      -0.343   2.039  -0.424  1.00  0.00      SCER
+ATOM     11  HO3 SCER    1      -1.225   1.774  -0.155  1.00  0.00      SCER
+[ AM2 ]
+ATOM     12  NF  SCER    1       0.440  -1.622  -0.838  1.00  0.00      SCER
+ATOM     13  HNF SCER    1       1.417  -1.531  -1.013  1.00  0.00      SCER
+ATOM     14  C1F SCER    1       0.044  -2.938  -0.817  1.00  0.00      SCER
+ATOM     15  OF  SCER    1      -1.139  -3.161  -0.693  1.00  0.00      SCER
+[ T1A ]
+ATOM     16  C4S SCER    1       0.591   1.133  -2.350  1.00  0.00      SCER
+ATOM     17  H4S SCER    1      -0.314   1.481  -2.870  1.00  0.00      SCER
+ATOM     18  C5S SCER    1       1.719   0.841  -3.002  1.00  0.00      SCER
+ATOM     19  H5S SCER    1       2.716   0.713  -2.556  1.00  0.00      SCER
+ATOM     20  C6S SCER    1       1.748   1.119  -4.464  1.00  0.00      SCER
+ATOM     21  H6S SCER    1       0.689   1.323  -4.733  1.00  0.00      SCER
+ATOM     22  H6T SCER    1       2.049   0.170  -4.957  1.00  0.00      SCER
+[ C2A ]
+ATOM     23  C7S SCER    1       2.584   2.221  -4.844  1.00  0.00      SCER
+ATOM     24  H7S SCER    1       3.629   1.939  -4.594  1.00  0.00      SCER
+ATOM     25  H7T SCER    1       2.211   3.142  -4.346  1.00  0.00      SCER
+ATOM     26  C8S SCER    1       2.578   2.473  -6.374  1.00  0.00      SCER
+ATOM     27  H8S SCER    1       2.758   3.540  -6.624  1.00  0.00      SCER
+ATOM     28  H8T SCER    1       1.524   2.362  -6.707  1.00  0.00      SCER
+ATOM     29  C9S SCER    1       3.555   1.638  -7.224  1.00  0.00      SCER
+ATOM     30  H9S SCER    1       3.442   0.537  -7.326  1.00  0.00      SCER
+ATOM     31  H9T SCER    1       4.530   1.761  -6.705  1.00  0.00      SCER
+ATOM     32 C10S SCER    1       3.715   2.310  -8.628  1.00  0.00      SCER
+ATOM     33 H10S SCER    1       4.455   1.623  -9.092  1.00  0.00      SCER
+ATOM     34 H10T SCER    1       4.193   3.313  -8.649  1.00  0.00      SCER
+[ C3A ]
+ATOM     35 C11S SCER    1       2.431   2.365  -9.464  1.00  0.00      SCER
+ATOM     36 H11S SCER    1       1.651   3.075  -9.114  1.00  0.00      SCER
+ATOM     37 H11T SCER    1       1.936   1.377  -9.352  1.00  0.00      SCER
+ATOM     38 C12S SCER    1       2.736   2.432 -10.998  1.00  0.00      SCER
+ATOM     39 H12S SCER    1       3.217   1.460 -11.237  1.00  0.00      SCER
+ATOM     40 H12T SCER    1       3.407   3.294 -11.200  1.00  0.00      SCER
+ATOM     41 C13S SCER    1       1.462   2.473 -11.814  1.00  0.00      SCER
+ATOM     42 H13S SCER    1       0.629   3.138 -11.501  1.00  0.00      SCER
+ATOM     43 H13T SCER    1       1.009   1.480 -11.605  1.00  0.00      SCER
+ATOM     44 C14S SCER    1       1.590   2.762 -13.312  1.00  0.00      SCER
+ATOM     45 H14S SCER    1       2.036   3.774 -13.414  1.00  0.00      SCER
+ATOM     46 H14T SCER    1       0.572   2.838 -13.750  1.00  0.00      SCER
+[ C4A ]
+ATOM     47 C15S SCER    1       2.403   1.748 -14.162  1.00  0.00      SCER
+ATOM     48 H15S SCER    1       1.748   0.850 -14.163  1.00  0.00      SCER
+ATOM     49 H15T SCER    1       3.373   1.456 -13.707  1.00  0.00      SCER
+ATOM     50 C16S SCER    1       2.756   2.253 -15.523  1.00  0.00      SCER
+ATOM     51 H16S SCER    1       3.646   2.917 -15.550  1.00  0.00      SCER
+ATOM     52 H16T SCER    1       1.964   2.937 -15.895  1.00  0.00      SCER
+ATOM     53 C17S SCER    1       3.035   1.232 -16.667  1.00  0.00      SCER
+ATOM     54 H17S SCER    1       2.132   0.667 -16.984  1.00  0.00      SCER
+ATOM     55 H17T SCER    1       3.732   0.457 -16.281  1.00  0.00      SCER
+ATOM     56 C18S SCER    1       3.729   1.805 -17.915  1.00  0.00      SCER
+ATOM     57 H18S SCER    1       4.816   1.817 -17.688  1.00  0.00      SCER
+ATOM     58 H18T SCER    1       3.326   2.817 -18.138  1.00  0.00      SCER
+ATOM     59 H18U SCER    1       3.565   1.035 -18.699  1.00  0.00      SCER
+[ C1B ]
+ATOM     60  C2F SCER    1       1.090  -3.968  -0.917  1.00  0.00      SCER
+ATOM     61  H2F SCER    1       0.978  -4.820  -0.212  1.00  0.00      SCER
+ATOM     62  H2G SCER    1       2.109  -3.565  -0.734  1.00  0.00      SCER
+ATOM     63  C3F SCER    1       0.862  -4.469  -2.384  1.00  0.00      SCER
+ATOM     64  H3F SCER    1      -0.198  -4.767  -2.531  1.00  0.00      SCER
+ATOM     65  H3G SCER    1       1.349  -5.459  -2.509  1.00  0.00      SCER
+ATOM     66  C4F SCER    1       1.151  -3.426  -3.475  1.00  0.00      SCER
+ATOM     67  H4F SCER    1       2.142  -2.975  -3.257  1.00  0.00      SCER
+ATOM     68  H4G SCER    1       0.527  -2.523  -3.306  1.00  0.00      SCER
+ATOM     69  C5F SCER    1       1.014  -3.871  -4.920  1.00  0.00      SCER
+ATOM     70  H5F SCER    1      -0.063  -4.062  -5.116  1.00  0.00      SCER
+ATOM     71  H5G SCER    1       1.612  -4.780  -5.148  1.00  0.00      SCER
+ATOM     72  C6F SCER    1       1.368  -2.772  -5.904  1.00  0.00      SCER
+ATOM     73  H6F SCER    1       2.381  -2.364  -5.702  1.00  0.00      SCER
+ATOM     74  H6G SCER    1       0.646  -1.939  -5.762  1.00  0.00      SCER
+[ C2B ]
+ATOM     75  C7F SCER    1       1.309  -3.313  -7.379  1.00  0.00      SCER
+ATOM     76  H7F SCER    1       0.252  -3.617  -7.540  1.00  0.00      SCER
+ATOM     77  H7G SCER    1       1.762  -4.327  -7.346  1.00  0.00      SCER
+ATOM     78  C8F SCER    1       1.860  -2.298  -8.396  1.00  0.00      SCER
+ATOM     79  H8F SCER    1       2.851  -2.022  -7.977  1.00  0.00      SCER
+ATOM     80  H8G SCER    1       1.164  -1.441  -8.272  1.00  0.00      SCER
+ATOM     81  C9F SCER    1       1.950  -2.878  -9.800  1.00  0.00      SCER
+ATOM     82  H9F SCER    1       1.036  -3.444 -10.077  1.00  0.00      SCER
+ATOM     83  H9G SCER    1       2.790  -3.596  -9.687  1.00  0.00      SCER
+ATOM     84 C10F SCER    1       2.263  -1.752 -10.853  1.00  0.00      SCER
+ATOM     85 H10F SCER    1       3.042  -1.105 -10.395  1.00  0.00      SCER
+ATOM     86 H10G SCER    1       1.371  -1.102 -10.978  1.00  0.00      SCER
+[ C3B ]
+ATOM     87 C11F SCER    1       2.760  -2.193 -12.237  1.00  0.00      SCER
+ATOM     88 H11F SCER    1       3.592  -2.873 -11.953  1.00  0.00      SCER
+ATOM     89 H11G SCER    1       3.188  -1.310 -12.758  1.00  0.00      SCER
+ATOM     90 C12F SCER    1       1.744  -2.919 -13.079  1.00  0.00      SCER
+ATOM     91 H12F SCER    1       1.078  -2.155 -13.535  1.00  0.00      SCER
+ATOM     92 H12G SCER    1       1.083  -3.626 -12.533  1.00  0.00      SCER
+ATOM     93 C13F SCER    1       2.187  -3.684 -14.326  1.00  0.00      SCER
+ATOM     94 H13F SCER    1       2.841  -4.531 -14.027  1.00  0.00      SCER
+ATOM     95 H13G SCER    1       2.781  -3.038 -15.007  1.00  0.00      SCER
+ATOM     96 C14F SCER    1       0.946  -4.290 -15.058  1.00  0.00      SCER
+ATOM     97 H14F SCER    1       0.492  -4.985 -14.321  1.00  0.00      SCER
+ATOM     98 H14G SCER    1       1.217  -5.058 -15.814  1.00  0.00      SCER
+[ C4B ]
+ATOM     99 C15F SCER    1      -0.062  -3.274 -15.635  1.00  0.00      SCER
+ATOM    100 H15F SCER    1      -0.556  -2.646 -14.863  1.00  0.00      SCER
+ATOM    101 H15G SCER    1      -0.750  -3.907 -16.236  1.00  0.00      SCER
+ATOM    102 C16F SCER    1       0.457  -2.196 -16.631  1.00  0.00      SCER
+ATOM    103 H16F SCER    1       1.455  -1.904 -16.240  1.00  0.00      SCER
+ATOM    104 H16G SCER    1      -0.108  -1.242 -16.560  1.00  0.00      SCER
+ATOM    105 C17F SCER    1       0.562  -2.749 -18.049  1.00  0.00      SCER
+ATOM    106 H17F SCER    1       1.373  -3.497 -17.922  1.00  0.00      SCER
+ATOM    107 H17G SCER    1       0.906  -2.019 -18.812  1.00  0.00      SCER
+ATOM    108 C18F SCER    1      -0.633  -3.457 -18.727  1.00  0.00      SCER
+ATOM    109 H18F SCER    1      -0.493  -3.688 -19.805  1.00  0.00      SCER
+ATOM    110 H18G SCER    1      -1.592  -2.896 -18.747  1.00  0.00      SCER
+ATOM    111 H18H SCER    1      -0.950  -4.384 -18.202  1.00  0.00      SCER
+END

@@ -1,0 +1,138 @@
+[ CNO ]
+ATOM      1  N   LFPS    1      -1.219   1.456  -1.649  1.00  0.00      LFPS
+ATOM      2  HN1 LFPS    1      -1.497   2.456  -1.637  1.00  0.00      LFPS
+ATOM      3  HN2 LFPS    1      -0.224   1.290  -1.877  1.00  0.00      LFPS
+ATOM      4  HN3 LFPS    1      -1.828   0.962  -2.334  1.00  0.00      LFPS
+ATOM      5  C12 LFPS    1      -1.543   0.866  -0.314  1.00  0.00      LFPS
+ATOM      6 H12A LFPS    1      -1.012   1.421   0.442  1.00  0.00      LFPS
+ATOM      7  C13 LFPS    1      -3.049   1.022   0.010  1.00  0.00      LFPS
+ATOM      8 O13A LFPS    1      -3.763   1.676  -0.799  1.00  0.00      LFPS
+ATOM      9 O13B LFPS    1      -3.445   0.635   1.135  1.00  0.00      LFPS
+ATOM     10  C11 LFPS    1      -1.150  -0.653  -0.338  1.00  0.00      LFPS
+ATOM     11 H11A LFPS    1      -1.598  -1.094  -1.253  1.00  0.00      LFPS
+ATOM     12 H11B LFPS    1      -1.569  -1.210   0.521  1.00  0.00      LFPS
+[ PO4 ]
+ATOM     13  P   LFPS    1       1.302  -0.691   0.717  1.00  0.00      LFPS
+ATOM     14  O13 LFPS    1       1.292   0.741   1.101  1.00  0.00      LFPS
+ATOM     15  O14 LFPS    1       1.107  -1.713   1.758  1.00  0.00      LFPS
+ATOM     16  O12 LFPS    1       0.260  -0.858  -0.454  1.00  0.00      LFPS
+ATOM     17  O11 LFPS    1       2.628  -0.988  -0.104  1.00  0.00      LFPS
+[ GL1 ]
+ATOM     18  C1  LFPS    1       3.238   0.022  -0.924  1.00  0.00      LFPS
+ATOM     19  HA  LFPS    1       3.310   0.979  -0.364  1.00  0.00      LFPS
+ATOM     20  HB  LFPS    1       4.272  -0.303  -1.153  1.00  0.00      LFPS
+ATOM     21  C2  LFPS    1       2.493   0.276  -2.276  1.00  0.00      LFPS
+ATOM     22  HS  LFPS    1       1.451   0.543  -1.978  1.00  0.00      LFPS
+ATOM     23  O21 LFPS    1       2.576  -0.876  -3.124  1.00  0.00      LFPS
+ATOM     24  C21 LFPS    1       1.456  -1.135  -3.760  1.00  0.00      LFPS
+ATOM     25  O22 LFPS    1       0.374  -0.555  -3.569  1.00  0.00      LFPS
+[ GL2 ]
+ATOM     26  C3  LFPS    1       3.054   1.496  -3.067  1.00  0.00      LFPS
+ATOM     27  HX  LFPS    1       4.099   1.263  -3.372  1.00  0.00      LFPS
+ATOM     28  HY  LFPS    1       3.103   2.348  -2.355  1.00  0.00      LFPS
+ATOM     29  O31 LFPS    1       2.197   1.871  -4.184  1.00  0.00      LFPS
+ATOM     30  C31 LFPS    1       2.600   1.498  -5.413  1.00  0.00      LFPS
+ATOM     31  O32 LFPS    1       3.585   0.864  -5.669  1.00  0.00      LFPS
+[ C1A ]
+ATOM     32  C22 LFPS    1       1.658  -2.166  -4.855  1.00  0.00      LFPS
+ATOM     33  H2R LFPS    1       2.086  -1.652  -5.742  1.00  0.00      LFPS
+ATOM     34  H2S LFPS    1       2.382  -2.929  -4.499  1.00  0.00      LFPS
+ATOM     35  C23 LFPS    1       0.259  -2.734  -5.182  1.00  0.00      LFPS
+ATOM     36  H3R LFPS    1      -0.367  -1.906  -5.583  1.00  0.00      LFPS
+ATOM     37  H3S LFPS    1      -0.218  -3.050  -4.222  1.00  0.00      LFPS
+ATOM     38  C24 LFPS    1       0.194  -3.922  -6.159  1.00  0.00      LFPS
+ATOM     39  H4R LFPS    1      -0.851  -4.308  -6.158  1.00  0.00      LFPS
+ATOM     40  H4S LFPS    1       0.844  -4.748  -5.803  1.00  0.00      LFPS
+ATOM     41  C25 LFPS    1       0.500  -3.583  -7.628  1.00  0.00      LFPS
+ATOM     42  H5R LFPS    1       1.463  -3.038  -7.717  1.00  0.00      LFPS
+ATOM     43  H5S LFPS    1      -0.299  -2.906  -7.989  1.00  0.00      LFPS
+ATOM     44  C26 LFPS    1       0.572  -4.861  -8.492  1.00  0.00      LFPS
+ATOM     45  H6R LFPS    1       0.699  -5.726  -7.801  1.00  0.00      LFPS
+ATOM     46  H6S LFPS    1       1.467  -4.834  -9.150  1.00  0.00      LFPS
+[ D2A ]
+ATOM     47  C27 LFPS    1      -0.667  -5.168  -9.354  1.00  0.00      LFPS
+ATOM     48  H7R LFPS    1      -1.468  -5.504  -8.659  1.00  0.00      LFPS
+ATOM     49  H7S LFPS    1      -0.419  -6.023 -10.025  1.00  0.00      LFPS
+ATOM     50  C28 LFPS    1      -1.266  -4.022 -10.199  1.00  0.00      LFPS
+ATOM     51  H8R LFPS    1      -1.617  -3.194  -9.549  1.00  0.00      LFPS
+ATOM     52  H8S LFPS    1      -2.194  -4.450 -10.649  1.00  0.00      LFPS
+ATOM     53  C29 LFPS    1      -0.320  -3.478 -11.233  1.00  0.00      LFPS
+ATOM     54  H9R LFPS    1       0.702  -3.277 -10.866  1.00  0.00      LFPS
+ATOM     55 C210 LFPS    1      -0.589  -3.247 -12.531  1.00  0.00      LFPS
+ATOM     56 H10R LFPS    1       0.192  -2.800 -13.156  1.00  0.00      LFPS
+[ D3A ]
+ATOM     57 C211 LFPS    1      -1.916  -3.507 -13.214  1.00  0.00      LFPS
+ATOM     58 H11R LFPS    1      -2.666  -2.757 -12.890  1.00  0.00      LFPS
+ATOM     59 H11S LFPS    1      -2.293  -4.482 -12.830  1.00  0.00      LFPS
+ATOM     60 C212 LFPS    1      -1.985  -3.641 -14.721  1.00  0.00      LFPS
+ATOM     61 H12R LFPS    1      -2.814  -4.301 -15.006  1.00  0.00      LFPS
+ATOM     62 C213 LFPS    1      -1.301  -3.045 -15.726  1.00  0.00      LFPS
+ATOM     63 H13R LFPS    1      -1.531  -3.385 -16.751  1.00  0.00      LFPS
+ATOM     64 C214 LFPS    1      -0.244  -1.966 -15.642  1.00  0.00      LFPS
+ATOM     65 H14R LFPS    1       0.773  -2.406 -15.694  1.00  0.00      LFPS
+ATOM     66 H14S LFPS    1      -0.313  -1.467 -14.651  1.00  0.00      LFPS
+[ D4A ]
+ATOM     67 C215 LFPS    1      -0.332  -0.880 -16.689  1.00  0.00      LFPS
+ATOM     68 H15R LFPS    1      -0.426   0.139 -16.300  1.00  0.00      LFPS
+ATOM     69 C216 LFPS    1      -0.250  -1.075 -18.025  1.00  0.00      LFPS
+ATOM     70 H16R LFPS    1      -0.092  -2.073 -18.427  1.00  0.00      LFPS
+ATOM     71 C217 LFPS    1      -0.422   0.023 -19.050  1.00  0.00      LFPS
+ATOM     72 H17R LFPS    1       0.537   0.303 -19.547  1.00  0.00      LFPS
+ATOM     73 H17S LFPS    1      -0.849   0.933 -18.583  1.00  0.00      LFPS
+ATOM     74 C218 LFPS    1      -1.368  -0.498 -20.130  1.00  0.00      LFPS
+ATOM     75 H18R LFPS    1      -0.936  -1.394 -20.627  1.00  0.00      LFPS
+ATOM     76 H18S LFPS    1      -1.515   0.289 -20.900  1.00  0.00      LFPS
+ATOM     77 H18T LFPS    1      -2.364  -0.758 -19.708  1.00  0.00      LFPS
+[ C1B ]
+ATOM     78  C32 LFPS    1       1.614   2.047  -6.473  1.00  0.00      LFPS
+ATOM     79  H2X LFPS    1       2.107   2.906  -6.970  1.00  0.00      LFPS
+ATOM     80  H2Y LFPS    1       0.701   2.406  -5.954  1.00  0.00      LFPS
+ATOM     81  C33 LFPS    1       1.208   1.000  -7.539  1.00  0.00      LFPS
+ATOM     82  H3X LFPS    1       0.813   0.104  -7.010  1.00  0.00      LFPS
+ATOM     83  H3Y LFPS    1       2.079   0.672  -8.152  1.00  0.00      LFPS
+ATOM     84  C34 LFPS    1       0.103   1.491  -8.494  1.00  0.00      LFPS
+ATOM     85  H4X LFPS    1       0.485   2.267  -9.190  1.00  0.00      LFPS
+ATOM     86  H4Y LFPS    1      -0.728   1.932  -7.900  1.00  0.00      LFPS
+ATOM     87  C35 LFPS    1      -0.500   0.333  -9.295  1.00  0.00      LFPS
+ATOM     88  H5X LFPS    1      -1.198  -0.176  -8.589  1.00  0.00      LFPS
+ATOM     89  H5Y LFPS    1       0.279  -0.413  -9.563  1.00  0.00      LFPS
+ATOM     90  C36 LFPS    1      -1.287   0.785 -10.543  1.00  0.00      LFPS
+ATOM     91  H6X LFPS    1      -2.066   1.510 -10.219  1.00  0.00      LFPS
+ATOM     92  H6Y LFPS    1      -1.806  -0.107 -10.961  1.00  0.00      LFPS
+[ D2B ]
+ATOM     93  C37 LFPS    1      -0.499   1.459 -11.696  1.00  0.00      LFPS
+ATOM     94  H7X LFPS    1      -0.140   2.457 -11.362  1.00  0.00      LFPS
+ATOM     95  H7Y LFPS    1      -1.224   1.627 -12.525  1.00  0.00      LFPS
+ATOM     96  C38 LFPS    1       0.727   0.676 -12.190  1.00  0.00      LFPS
+ATOM     97  H8X LFPS    1       0.441  -0.336 -12.551  1.00  0.00      LFPS
+ATOM     98  H8Y LFPS    1       1.396   0.526 -11.321  1.00  0.00      LFPS
+ATOM     99  C39 LFPS    1       1.607   1.421 -13.157  1.00  0.00      LFPS
+ATOM    100  H9X LFPS    1       1.986   2.386 -12.818  1.00  0.00      LFPS
+ATOM    101 C310 LFPS    1       2.025   0.921 -14.339  1.00  0.00      LFPS
+ATOM    102 H10X LFPS    1       1.553  -0.001 -14.707  1.00  0.00      LFPS
+[ D3B ]
+ATOM    103 C311 LFPS    1       3.109   1.582 -15.154  1.00  0.00      LFPS
+ATOM    104 H11X LFPS    1       3.763   0.841 -15.677  1.00  0.00      LFPS
+ATOM    105 H11Y LFPS    1       3.797   2.115 -14.462  1.00  0.00      LFPS
+ATOM    106 C312 LFPS    1       2.559   2.656 -16.049  1.00  0.00      LFPS
+ATOM    107 H12X LFPS    1       1.769   3.245 -15.585  1.00  0.00      LFPS
+ATOM    108 C313 LFPS    1       2.940   2.924 -17.321  1.00  0.00      LFPS
+ATOM    109 H13X LFPS    1       3.659   2.296 -17.843  1.00  0.00      LFPS
+ATOM    110 C314 LFPS    1       2.284   3.989 -18.170  1.00  0.00      LFPS
+ATOM    111 H14X LFPS    1       3.019   4.494 -18.836  1.00  0.00      LFPS
+ATOM    112 H14Y LFPS    1       1.788   4.776 -17.561  1.00  0.00      LFPS
+[ C4B ]
+ATOM    113 C315 LFPS    1       1.274   3.185 -18.996  1.00  0.00      LFPS
+ATOM    114 H15X LFPS    1       0.577   2.685 -18.283  1.00  0.00      LFPS
+ATOM    115 H15Y LFPS    1       1.804   2.384 -19.566  1.00  0.00      LFPS
+ATOM    116 C316 LFPS    1       0.415   3.994 -19.983  1.00  0.00      LFPS
+ATOM    117 H16X LFPS    1       1.043   4.293 -20.849  1.00  0.00      LFPS
+ATOM    118 H16Y LFPS    1       0.056   4.907 -19.464  1.00  0.00      LFPS
+ATOM    119 C317 LFPS    1      -0.791   3.149 -20.446  1.00  0.00      LFPS
+ATOM    120 H17X LFPS    1      -1.425   2.956 -19.550  1.00  0.00      LFPS
+ATOM    121 H17Y LFPS    1      -0.371   2.175 -20.785  1.00  0.00      LFPS
+ATOM    122 C318 LFPS    1      -1.670   3.692 -21.584  1.00  0.00      LFPS
+ATOM    123 H18X LFPS    1      -2.719   3.322 -21.517  1.00  0.00      LFPS
+ATOM    124 H18Y LFPS    1      -1.268   3.342 -22.559  1.00  0.00      LFPS
+ATOM    125 H18Z LFPS    1      -1.707   4.800 -21.572  1.00  0.00      LFPS
+END

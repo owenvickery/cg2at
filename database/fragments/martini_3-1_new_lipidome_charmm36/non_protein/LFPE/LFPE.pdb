@@ -1,0 +1,136 @@
+[ NH3 ]
+ATOM      1  N   LFPE    1      -0.862  -1.672  -1.838  1.00  0.00      LFPE
+ATOM      2  HN1 LFPE    1      -0.903  -2.197  -2.732  1.00  0.00      LFPE
+ATOM      3  HN2 LFPE    1       0.080  -1.762  -1.378  1.00  0.00      LFPE
+ATOM      4  HN3 LFPE    1      -1.573  -2.009  -1.160  1.00  0.00      LFPE
+ATOM      5  C12 LFPE    1      -1.016  -0.195  -2.071  1.00  0.00      LFPE
+ATOM      6 H12A LFPE    1      -1.727  -0.027  -2.904  1.00  0.00      LFPE
+ATOM      7 H12B LFPE    1      -0.010   0.181  -2.359  1.00  0.00      LFPE
+ATOM      8  C11 LFPE    1      -1.437   0.563  -0.798  1.00  0.00      LFPE
+ATOM      9 H11A LFPE    1      -2.549   0.622  -0.737  1.00  0.00      LFPE
+ATOM     10 H11B LFPE    1      -1.065   1.604  -0.932  1.00  0.00      LFPE
+[ PO4 ]
+ATOM     11  P   LFPE    1       0.606   0.138   0.821  1.00  0.00      LFPE
+ATOM     12  O13 LFPE    1       1.317  -0.724  -0.159  1.00  0.00      LFPE
+ATOM     13  O14 LFPE    1       0.772  -0.161   2.255  1.00  0.00      LFPE
+ATOM     14  O12 LFPE    1      -0.925  -0.024   0.404  1.00  0.00      LFPE
+ATOM     15  O11 LFPE    1       0.916   1.665   0.504  1.00  0.00      LFPE
+[ GL1 ]
+ATOM     16  C1  LFPE    1       1.913   2.035  -0.454  1.00  0.00      LFPE
+ATOM     17  HA  LFPE    1       1.660   1.588  -1.435  1.00  0.00      LFPE
+ATOM     18  HB  LFPE    1       2.887   1.585  -0.150  1.00  0.00      LFPE
+ATOM     19  C2  LFPE    1       2.113   3.602  -0.635  1.00  0.00      LFPE
+ATOM     20  HS  LFPE    1       2.454   4.009   0.343  1.00  0.00      LFPE
+ATOM     21  O21 LFPE    1       0.939   4.317  -1.055  1.00  0.00      LFPE
+ATOM     22  C21 LFPE    1      -0.091   4.449  -0.258  1.00  0.00      LFPE
+ATOM     23  O22 LFPE    1      -0.186   4.099   0.895  1.00  0.00      LFPE
+[ GL2 ]
+ATOM     24  C3  LFPE    1       3.218   4.017  -1.666  1.00  0.00      LFPE
+ATOM     25  HX  LFPE    1       4.207   3.589  -1.396  1.00  0.00      LFPE
+ATOM     26  HY  LFPE    1       3.332   5.122  -1.556  1.00  0.00      LFPE
+ATOM     27  O31 LFPE    1       2.850   3.754  -3.053  1.00  0.00      LFPE
+ATOM     28  C31 LFPE    1       3.199   2.560  -3.516  1.00  0.00      LFPE
+ATOM     29  O32 LFPE    1       3.795   1.706  -2.885  1.00  0.00      LFPE
+[ C1A ]
+ATOM     30  C22 LFPE    1      -1.238   5.126  -1.032  1.00  0.00      LFPE
+ATOM     31  H2R LFPE    1      -1.142   6.226  -1.006  1.00  0.00      LFPE
+ATOM     32  H2S LFPE    1      -2.129   4.876  -0.410  1.00  0.00      LFPE
+ATOM     33  C23 LFPE    1      -1.400   4.527  -2.466  1.00  0.00      LFPE
+ATOM     34  H3R LFPE    1      -2.449   4.659  -2.806  1.00  0.00      LFPE
+ATOM     35  H3S LFPE    1      -1.236   3.431  -2.381  1.00  0.00      LFPE
+ATOM     36  C24 LFPE    1      -0.454   5.027  -3.589  1.00  0.00      LFPE
+ATOM     37  H4R LFPE    1       0.610   4.970  -3.262  1.00  0.00      LFPE
+ATOM     38  H4S LFPE    1      -0.643   6.082  -3.876  1.00  0.00      LFPE
+ATOM     39  C25 LFPE    1      -0.526   4.144  -4.853  1.00  0.00      LFPE
+ATOM     40  H5R LFPE    1      -0.191   3.133  -4.544  1.00  0.00      LFPE
+ATOM     41  H5S LFPE    1       0.190   4.540  -5.610  1.00  0.00      LFPE
+ATOM     42  C26 LFPE    1      -1.898   4.043  -5.531  1.00  0.00      LFPE
+ATOM     43  H6R LFPE    1      -2.368   5.057  -5.532  1.00  0.00      LFPE
+ATOM     44  H6S LFPE    1      -2.585   3.361  -4.988  1.00  0.00      LFPE
+[ D2A ]
+ATOM     45  C27 LFPE    1      -1.832   3.645  -7.018  1.00  0.00      LFPE
+ATOM     46  H7R LFPE    1      -1.368   4.512  -7.543  1.00  0.00      LFPE
+ATOM     47  H7S LFPE    1      -2.882   3.539  -7.367  1.00  0.00      LFPE
+ATOM     48  C28 LFPE    1      -1.035   2.398  -7.472  1.00  0.00      LFPE
+ATOM     49  H8R LFPE    1       0.056   2.585  -7.346  1.00  0.00      LFPE
+ATOM     50  H8S LFPE    1      -1.213   2.345  -8.569  1.00  0.00      LFPE
+ATOM     51  C29 LFPE    1      -1.410   1.067  -6.884  1.00  0.00      LFPE
+ATOM     52  H9R LFPE    1      -1.140   0.973  -5.819  1.00  0.00      LFPE
+ATOM     53 C210 LFPE    1      -1.993   0.036  -7.550  1.00  0.00      LFPE
+ATOM     54 H10R LFPE    1      -2.151  -0.915  -7.019  1.00  0.00      LFPE
+[ D3A ]
+ATOM     55 C211 LFPE    1      -2.433  -0.050  -8.998  1.00  0.00      LFPE
+ATOM     56 H11R LFPE    1      -2.685   0.946  -9.431  1.00  0.00      LFPE
+ATOM     57 H11S LFPE    1      -3.399  -0.606  -9.057  1.00  0.00      LFPE
+ATOM     58 C212 LFPE    1      -1.442  -0.832  -9.836  1.00  0.00      LFPE
+ATOM     59 H12R LFPE    1      -0.936  -1.607  -9.248  1.00  0.00      LFPE
+ATOM     60 C213 LFPE    1      -1.670  -1.098 -11.150  1.00  0.00      LFPE
+ATOM     61 H13R LFPE    1      -2.390  -1.928 -11.229  1.00  0.00      LFPE
+ATOM     62 C214 LFPE    1      -2.194  -0.001 -12.058  1.00  0.00      LFPE
+ATOM     63 H14R LFPE    1      -1.429   0.808 -12.053  1.00  0.00      LFPE
+ATOM     64 H14S LFPE    1      -3.092   0.423 -11.573  1.00  0.00      LFPE
+[ D4A ]
+ATOM     65 C215 LFPE    1      -2.637  -0.217 -13.491  1.00  0.00      LFPE
+ATOM     66 H15R LFPE    1      -3.341  -1.043 -13.664  1.00  0.00      LFPE
+ATOM     67 C216 LFPE    1      -2.270   0.567 -14.540  1.00  0.00      LFPE
+ATOM     68 H16R LFPE    1      -1.496   1.332 -14.405  1.00  0.00      LFPE
+ATOM     69 C217 LFPE    1      -2.759   0.406 -15.960  1.00  0.00      LFPE
+ATOM     70 H17R LFPE    1      -3.849   0.167 -16.000  1.00  0.00      LFPE
+ATOM     71 H17S LFPE    1      -2.219  -0.478 -16.347  1.00  0.00      LFPE
+ATOM     72 C218 LFPE    1      -2.461   1.579 -16.924  1.00  0.00      LFPE
+ATOM     73 H18R LFPE    1      -2.844   2.557 -16.561  1.00  0.00      LFPE
+ATOM     74 H18S LFPE    1      -2.927   1.389 -17.917  1.00  0.00      LFPE
+ATOM     75 H18T LFPE    1      -1.368   1.666 -17.111  1.00  0.00      LFPE
+[ C1B ]
+ATOM     76  C32 LFPE    1       2.770   2.413  -4.984  1.00  0.00      LFPE
+ATOM     77  H2X LFPE    1       1.674   2.515  -5.068  1.00  0.00      LFPE
+ATOM     78  H2Y LFPE    1       3.224   3.263  -5.527  1.00  0.00      LFPE
+ATOM     79  C33 LFPE    1       3.211   1.054  -5.591  1.00  0.00      LFPE
+ATOM     80  H3X LFPE    1       2.634   0.229  -5.114  1.00  0.00      LFPE
+ATOM     81  H3Y LFPE    1       4.291   0.865  -5.398  1.00  0.00      LFPE
+ATOM     82  C34 LFPE    1       2.976   0.927  -7.104  1.00  0.00      LFPE
+ATOM     83  H4X LFPE    1       3.128  -0.141  -7.384  1.00  0.00      LFPE
+ATOM     84  H4Y LFPE    1       1.916   1.182  -7.314  1.00  0.00      LFPE
+ATOM     85  C35 LFPE    1       3.923   1.778  -7.964  1.00  0.00      LFPE
+ATOM     86  H5X LFPE    1       4.976   1.515  -7.703  1.00  0.00      LFPE
+ATOM     87  H5Y LFPE    1       3.811   2.847  -7.682  1.00  0.00      LFPE
+ATOM     88  C36 LFPE    1       3.717   1.622  -9.493  1.00  0.00      LFPE
+ATOM     89  H6X LFPE    1       4.438   0.862  -9.869  1.00  0.00      LFPE
+ATOM     90  H6Y LFPE    1       3.966   2.590  -9.984  1.00  0.00      LFPE
+[ D2B ]
+ATOM     91  C37 LFPE    1       2.308   1.197  -9.975  1.00  0.00      LFPE
+ATOM     92  H7X LFPE    1       2.015   0.253  -9.468  1.00  0.00      LFPE
+ATOM     93  H7Y LFPE    1       1.568   1.975  -9.684  1.00  0.00      LFPE
+ATOM     94  C38 LFPE    1       2.222   0.929 -11.497  1.00  0.00      LFPE
+ATOM     95  H8X LFPE    1       1.255   0.422 -11.721  1.00  0.00      LFPE
+ATOM     96  H8Y LFPE    1       3.026   0.222 -11.799  1.00  0.00      LFPE
+ATOM     97  C39 LFPE    1       2.314   2.217 -12.263  1.00  0.00      LFPE
+ATOM     98  H9X LFPE    1       1.491   2.918 -12.046  1.00  0.00      LFPE
+ATOM     99 C310 LFPE    1       3.279   2.560 -13.137  1.00  0.00      LFPE
+ATOM    100 H10X LFPE    1       3.280   3.585 -13.546  1.00  0.00      LFPE
+[ D3B ]
+ATOM    101 C311 LFPE    1       4.470   1.717 -13.536  1.00  0.00      LFPE
+ATOM    102 H11X LFPE    1       5.284   2.429 -13.823  1.00  0.00      LFPE
+ATOM    103 H11Y LFPE    1       4.871   1.206 -12.640  1.00  0.00      LFPE
+ATOM    104 C312 LFPE    1       4.306   0.639 -14.597  1.00  0.00      LFPE
+ATOM    105 H12X LFPE    1       5.251   0.137 -14.825  1.00  0.00      LFPE
+ATOM    106 C313 LFPE    1       3.225  -0.149 -14.790  1.00  0.00      LFPE
+ATOM    107 H13X LFPE    1       2.657  -0.334 -13.875  1.00  0.00      LFPE
+ATOM    108 C314 LFPE    1       3.176  -1.347 -15.709  1.00  0.00      LFPE
+ATOM    109 H14X LFPE    1       2.414  -2.063 -15.315  1.00  0.00      LFPE
+ATOM    110 H14Y LFPE    1       4.146  -1.867 -15.608  1.00  0.00      LFPE
+[ C4B ]
+ATOM    111 C315 LFPE    1       2.846  -1.151 -17.225  1.00  0.00      LFPE
+ATOM    112 H15X LFPE    1       1.831  -0.725 -17.386  1.00  0.00      LFPE
+ATOM    113 H15Y LFPE    1       2.827  -2.177 -17.659  1.00  0.00      LFPE
+ATOM    114 C316 LFPE    1       3.833  -0.308 -18.062  1.00  0.00      LFPE
+ATOM    115 H16X LFPE    1       4.874  -0.534 -17.740  1.00  0.00      LFPE
+ATOM    116 H16Y LFPE    1       3.635   0.768 -17.864  1.00  0.00      LFPE
+ATOM    117 C317 LFPE    1       3.768  -0.555 -19.590  1.00  0.00      LFPE
+ATOM    118 H17X LFPE    1       4.593   0.029 -20.059  1.00  0.00      LFPE
+ATOM    119 H17Y LFPE    1       3.985  -1.632 -19.772  1.00  0.00      LFPE
+ATOM    120 C318 LFPE    1       2.440  -0.201 -20.285  1.00  0.00      LFPE
+ATOM    121 H18X LFPE    1       1.614  -0.779 -19.824  1.00  0.00      LFPE
+ATOM    122 H18Y LFPE    1       2.198   0.879 -20.201  1.00  0.00      LFPE
+ATOM    123 H18Z LFPE    1       2.474  -0.443 -21.372  1.00  0.00      LFPE
+END

@@ -4,79 +4,90 @@ import sys, os
 import numpy as np
 import math
 import copy
+from typing import Optional
 import gen, g_var
+from exceptions import CG2ATError, InputError, FragmentNotFoundError
 
 
 
-def read_initial_cg_pdb(test=False):
+def read_initial_cg_pdb(test: bool = False) -> str:
     if not test:
-        print('\nThis script is now hopefully doing the following (Good luck):\n')
-    residue_list={} ## a dictionary of bead in each residue eg residue_list[bead name(BB)][residue_name(PO4)/coordinates(coord)]
-    count=0  ### residue counter initialisation
+        print('\nReading coarse-grained input:\n')
+    residue_list: dict = {}
+    count = 0
+    residue_prev: Optional[dict] = None
+    line_sep_prev: Optional[dict] = None
     with open(g_var.input_directory+'CG_INPUT.pdb', 'r') as pdb_input:
         pdb_lines_atoms, box_vec = filter_input(pdb_input.readlines())
         for line_val, line_sep in enumerate(pdb_lines_atoms):
-            if np.round((line_val/len(pdb_lines_atoms))*100,2).is_integer() and not test:
-                print('Reading in your CG representation: ',np.round((line_val/len(pdb_lines_atoms))*100,2),'%', end='\r')
+            if not test:
+                gen.print_progress('Reading CG input', line_val + 1, len(pdb_lines_atoms))
             line_sep = update_residue_names(line_sep)
-            line_sep['atom_name'], line_sep['residue_name'] = swap(line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id']) ## implements swap group
+            line_sep['atom_name'], line_sep['residue_name'] = swap(
+                line_sep['atom_name'], line_sep['residue_name'], line_sep['residue_id']
+            )
             if 'SKIP' not in [line_sep['atom_name'].upper(), line_sep['residue_name'].upper()]:
-#### set up resnames in dictionaries
                 add_residue_to_dictionary(line_sep)
-#### sets up previous resid id 
-                if 'residue_prev' not in locals(): 
-                    residue_prev=line_sep.copy() 
-#### if resid the same as previous line
-                if residue_prev['residue_id'] == line_sep['residue_id'] and line_sep['residue_name'] == residue_prev['residue_name'] \
-                                                                         and line_sep['atom_name'] not in residue_list:   ### if resid is the same as the previous line, it adds resname and coordinates to the atom name key in residue_list 
-                    residue_list[line_sep['atom_name']]={'residue_name':line_sep['residue_name'],
-                                                        'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']])}
-                    line_sep_prev=line_sep.copy()
-                else: 
+                if residue_prev is None:
+                    residue_prev = line_sep.copy()
+                if (residue_prev['residue_id'] == line_sep['residue_id']
+                        and line_sep['residue_name'] == residue_prev['residue_name']
+                        and line_sep['atom_name'] not in residue_list):
+                    residue_list[line_sep['atom_name']] = {
+                        'residue_name': line_sep['residue_name'],
+                        'coord': np.array([line_sep['x'], line_sep['y'], line_sep['z']]),
+                    }
+                    line_sep_prev = line_sep.copy()
+                else:
                     add_to_cg_database(line_sep_prev, count, residue_list)
-#### updates dictionaries and counters
-                    residue_list={}  ### resets residue list
-                    count+=1 ### moves counter along to next residue
-                    residue_list[line_sep['atom_name']]={'residue_name':line_sep['residue_name'],
-                                                        'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']])} ### it adds resname and coordinates to the atom name key in residue_list
-                    residue_prev=line_sep.copy()    ### updates residue_prev with new resid
-                    line_sep_prev=line_sep.copy()
-                if line_val+1 == len(pdb_lines_atoms):
-                        residue_list[line_sep['atom_name']]={'residue_name':line_sep['residue_name'],
-                                                            'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']])}
-                        add_to_cg_database(line_sep, count, residue_list)
+                    residue_list = {}
+                    count += 1
+                    residue_list[line_sep['atom_name']] = {
+                        'residue_name': line_sep['residue_name'],
+                        'coord': np.array([line_sep['x'], line_sep['y'], line_sep['z']]),
+                    }
+                    residue_prev = line_sep.copy()
+                    line_sep_prev = line_sep.copy()
+                if line_val + 1 == len(pdb_lines_atoms):
+                    residue_list[line_sep['atom_name']] = {
+                        'residue_name': line_sep['residue_name'],
+                        'coord': np.array([line_sep['x'], line_sep['y'], line_sep['z']]),
+                    }
+                    add_to_cg_database(line_sep, count, residue_list)
+    gen.finish_progress('Reading CG input', len(pdb_lines_atoms))
     for key in g_var.cg_residues:
         if len(g_var.cg_residues[key]) == 0:
-            sys.exit('there is a issue with the residue type: '+key)
+            raise CG2ATError('there is a issue with the residue type: ' + key)
     return box_vec[0]
 
 def filter_input(pdb_lines_raw, CG=True):
     pdb_lines_atoms = [gen.pdbatom(j) for j in pdb_lines_raw if j.startswith('ATOM ')] 
     if len(pdb_lines_atoms) == 0:
-        sys.exit('input coarsegrain structure seems to contain no beads')
+        raise InputError('input coarse-grained structure seems to contain no beads')
     if CG:
         box_vec =  [j for j in pdb_lines_raw if j.startswith('CRYST')]
         if len(box_vec) == 0:
-            sys.exit('The input file is missing the Box vectors')
+            raise InputError('The input file is missing the Box vectors')
         return pdb_lines_atoms, box_vec
     return pdb_lines_atoms
 
 
-def add_to_cg_database(line_sep_prev, count, residue_list):
-    if line_sep_prev['residue_name'] in g_var.sol_residues+g_var.ion_residues+g_var.np_residues :
-        g_var.cg_residues[line_sep_prev['residue_name']][count]={} ### then create sub dictionary cg_residues[resname][count]
-        g_var.cg_residues[line_sep_prev['residue_name']][count]=residue_list ### adds residue list to dictionary key cg_residues[resname][count]
+def add_to_cg_database(line_sep_prev: dict, count: int, residue_list: dict) -> None:
+    """Populate g_var.cg_residues with the completed residue_list for this residue."""
+    if line_sep_prev['residue_name'] in g_var.sol_residues + g_var.ion_residues + g_var.np_residues:
+        g_var.cg_residues[line_sep_prev['residue_name']][count] = residue_list
         if line_sep_prev['residue_name'] in g_var.hydration:
-            sol_res_list={}
-            sol_res_list[g_var.hydration[line_sep_prev['residue_name']]]=residue_list[line_sep_prev['atom_name']].copy()
-            sol_res_list[g_var.hydration[line_sep_prev['residue_name']]]['residue_name']=g_var.hydration[line_sep_prev['residue_name']]
-            g_var.cg_residues[g_var.hydration[line_sep_prev['residue_name']]][count]=sol_res_list
+            sol_res_list = {
+                g_var.hydration[line_sep_prev['residue_name']]: {
+                    **residue_list[line_sep_prev['atom_name']].copy(),
+                    'residue_name': g_var.hydration[line_sep_prev['residue_name']],
+                }
+            }
+            g_var.cg_residues[g_var.hydration[line_sep_prev['residue_name']]][count] = sol_res_list
     elif line_sep_prev['residue_name'] in g_var.o_residues:
-        g_var.cg_residues['OTHER'][count]={} ### then create sub dictionary cg_residues['PROTEIN'][count]
-        g_var.cg_residues['OTHER'][count]=residue_list ### adds residue list to dictionary key cg_residues['PROTEIN'][count]
+        g_var.cg_residues['OTHER'][count] = residue_list
     else:
-        g_var.cg_residues['PROTEIN'][count]={} ### then create sub dictionary cg_residues['PROTEIN'][count]
-        g_var.cg_residues['PROTEIN'][count]=residue_list ### adds residue list to dictionary key cg_residues['PROTEIN'][count]
+        g_var.cg_residues['PROTEIN'][count] = residue_list
 
 
 def update_residue_names(line_sep):
@@ -110,7 +121,7 @@ def add_residue_to_dictionary(line_sep):
     elif line_sep['residue_name'] == 'SKIP':
         pass
     else:
-        sys.exit('\n'+line_sep['residue_name']+' is not in the fragment database!') 
+        raise FragmentNotFoundError(line_sep['residue_name']+' is not in the fragment database') 
 
 
 def check_new_box(coord,box, new_box):
@@ -154,10 +165,9 @@ def fix_pbc(box_vec, new_box, box_shift):
     BB_pre_resid = 0
     for residue_type in g_var.cg_residues:
         cut_keys=[]
-        print('{:<100}'.format(''), end='\r')
         for res_val, residue in enumerate(g_var.cg_residues[residue_type]):
-            if np.round((res_val/len(g_var.cg_residues[residue_type]))*100,2).is_integer():
-                print('Fixing PBC of residue type '+residue_type+': ',np.round((res_val/len(g_var.cg_residues[residue_type]))*100,2),'%', end='\r')
+            gen.print_progress('Fixing PBC: ' + residue_type, res_val + 1,
+                               len(g_var.cg_residues[residue_type]))
             for bead_val, bead in enumerate(g_var.cg_residues[residue_type][residue]):
                 bead_info = g_var.cg_residues[residue_type][residue][bead]
                 if g_var.args.box != None and residue_type not in ['PROTEIN', 'OTHER']:
@@ -184,7 +194,7 @@ def fix_pbc(box_vec, new_box, box_shift):
                     g_var.cg_residues[residue_type][residue][bead]['coord'] = g_var.cg_residues[residue_type][residue][bead]['coord']-box_shift
         for key in cut_keys:
             g_var.cg_residues[residue_type].pop(key)
-    print('{:<100}'.format(''), end='\r')
+        gen.finish_progress('Fixing PBC: ' + residue_type, len(g_var.cg_residues[residue_type]))
 
 def swap(atom, residue, resid):
     if residue in g_var.swap_dict:
@@ -199,70 +209,74 @@ def swap(atom, residue, resid):
 
 ##################################################################  User supplied protein ##############
 
-def read_in_atomistic(protein):
-#### reset location and check if pdb exists  
+def read_in_atomistic(protein: str) -> tuple:
+    """Read an atomistic PDB into a nested residue/atom dictionary.
+
+    """
     os.chdir(g_var.start_dir)
     if not os.path.exists(protein):
-        sys.exit('cannot find atomistic protein : '+protein)
-#### read in atomistic fragments into dictionary residue_list[0]=x,y,z,atom_name    
-    atomistic_protein_input={}
-    if g_var.input_directory in protein:
-        chain_count=g_var.chain_count
-    else:
-        chain_count = 0
-#### read in pdb
-    new_chain= False
+        raise InputError('cannot find atomistic protein : ' + protein)
+    atomistic_protein_input: dict = {}
+    chain_count = g_var.chain_count if g_var.input_directory in protein else 0
+    new_chain = False
+    line_sep_prev: Optional[dict] = None
+    prev_atom_coord: Optional[list] = None
+    C_ter: Optional[list] = None
+    C_resid = None
     with open(protein, 'r') as pdb_input:
         pdb_lines_atoms = filter_input(pdb_input.readlines(), False)
-        atomistic_protein_input[chain_count]={}
+        atomistic_protein_input[chain_count] = {}
         for line_nr, line_sep in enumerate(pdb_lines_atoms):
             if line_sep['residue_name'] in g_var.alt_res_name:
                 line_sep['residue_name'] = g_var.alt_res_name[line_sep['residue_name']]
             if not gen.is_hydrogen(line_sep['atom_name']) or line_sep['residue_name'] in g_var.mod_residues:
                 if line_sep['residue_name'] in g_var.p_residues:
-                    if 'line_sep_prev' not in locals():
+                    if line_sep_prev is None:
                         line_sep_prev = line_sep.copy()
                         line_sep_prev['residue_id'] = 'X'
-                    #### sorts out wrong atoms in terminal residues
+                    # sorts out wrong atoms in terminal residues
                     if line_sep['atom_name'] in ['OT', 'O1', 'O2']:
-                        line_sep['atom_name']='O'
-                #### makes C_terminal connecting atom variable  
-                    if 'prev_atom_coord' in locals():
-                        line_sep['x'],line_sep['y'],line_sep['z'] = brute_mic(prev_atom_coord, [line_sep['x'],line_sep['y'],line_sep['z']])
-
-                    if line_sep['residue_id'] !=  line_sep_prev['residue_id']:
-                        dir_list = []
-                        for directions in g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms'].values():
-                            dir_list.append(directions)
+                        line_sep['atom_name'] = 'O'
+                    # PBC fix using previous atom coordinate
+                    if prev_atom_coord is not None:
+                        line_sep['x'], line_sep['y'], line_sep['z'] = brute_mic(
+                            prev_atom_coord, [line_sep['x'], line_sep['y'], line_sep['z']]
+                        )
+                    if line_sep['residue_id'] != line_sep_prev['residue_id']:
+                        dir_list = list(g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms'].values())
                         line_sep_prev = line_sep.copy()
-                        if not np.any(np.array(dir_list) < 0 ) or new_chain:
-                            if len(atomistic_protein_input[chain_count]) != 0 :
-                                chain_count+=1
-                                atomistic_protein_input[chain_count]={}
+                        if not np.any(np.array(dir_list) < 0) or new_chain:
+                            if len(atomistic_protein_input[chain_count]) != 0:
+                                chain_count += 1
+                                atomistic_protein_input[chain_count] = {}
                     if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms']:
                         if g_var.res_top[line_sep['residue_name']]['CONNECT']['atoms'][line_sep['atom_name']] > 0:
-                            C_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
-                            C_resid=line_sep['residue_id']
-                        elif 'C_ter' in locals():
-                            N_resid=line_sep['residue_id']
-                            N_ter=[line_sep['x'],line_sep['y'],line_sep['z']]
-                            dist=gen.calculate_distance(N_ter, C_ter)
+                            C_ter = [line_sep['x'], line_sep['y'], line_sep['z']]
+                            C_resid = line_sep['residue_id']
+                        elif C_ter is not None:
+                            N_resid = line_sep['residue_id']
+                            N_ter = [line_sep['x'], line_sep['y'], line_sep['z']]
+                            dist = gen.calculate_distance(N_ter, C_ter)
                             if C_resid != N_resid and dist > 3.5:
-                                del N_ter, C_ter
-                                chain_count+=1
-                                atomistic_protein_input[chain_count]={} ### new chain key
-
-                    
-                    prev_atom_coord = [line_sep['x'],line_sep['y'],line_sep['z']]
-                    if line_sep['residue_id'] not in atomistic_protein_input[chain_count]:  ## if protein does not exist add to dict
-                        atomistic_protein_input[chain_count][line_sep['residue_id']]={}
-                #### adds atom to dictionary, every atom is given a initial mass of zero 
-                    atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]={'coord':np.array([line_sep['x'],line_sep['y'],line_sep['z']]),'atom':line_sep['atom_name'], 'res_type':line_sep['residue_name'],'frag_mass':0, 'resid':line_sep['residue_id']}
-                #### if atom is in the backbone list then its mass is updated to the correct one
+                                C_ter = None
+                                chain_count += 1
+                                atomistic_protein_input[chain_count] = {}
+                    prev_atom_coord = [line_sep['x'], line_sep['y'], line_sep['z']]
+                    if line_sep['residue_id'] not in atomistic_protein_input[chain_count]:
+                        atomistic_protein_input[chain_count][line_sep['residue_id']] = {}
+                    atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']] = {
+                        'coord': np.array([line_sep['x'], line_sep['y'], line_sep['z']]),
+                        'atom': line_sep['atom_name'],
+                        'res_type': line_sep['residue_name'],
+                        'frag_mass': 0,
+                        'resid': line_sep['residue_id'],
+                    }
                     if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['ATOMS']:
-                        if line_sep['atom_name'] in line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['atom_masses']:
-                            atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass']=g_var.res_top[line_sep['residue_name']]['atom_masses'][line_sep['atom_name']]    
-    return atomistic_protein_input, chain_count+1    
+                        if line_sep['atom_name'] in g_var.res_top[line_sep['residue_name']]['atom_masses']:
+                            atomistic_protein_input[chain_count][line_sep['residue_id']][line_sep['atom_number']]['frag_mass'] = (
+                                g_var.res_top[line_sep['residue_name']]['atom_masses'][line_sep['atom_name']]
+                            )
+    return atomistic_protein_input, chain_count + 1
 
 def duplicate_chain(test=False):
     if len(g_var.args.d) != 0:
@@ -278,4 +292,4 @@ def duplicate_chain(test=False):
                     g_var.atomistic_protein_input_raw[g_var.chain_count]=copy.deepcopy(g_var.atomistic_protein_input_raw[duplicate[0]])
                     g_var.chain_count+=1
             else:
-                sys.exit('your atomistic chain duplication input is incorrrect')   
+                raise InputError('your atomistic chain duplication input is incorrect')

@@ -1,0 +1,136 @@
+[ CNO ]
+ATOM      1  N   DPPS    1       0.353  -2.579   1.149  1.00  0.00      DPPS
+ATOM      2  HN1 DPPS    1      -0.085  -1.776   1.643  1.00  0.00      DPPS
+ATOM      3  HN2 DPPS    1      -0.461  -3.063   0.718  1.00  0.00      DPPS
+ATOM      4  HN3 DPPS    1       0.730  -3.264   1.836  1.00  0.00      DPPS
+ATOM      5  C12 DPPS    1       1.289  -1.967   0.260  1.00  0.00      DPPS
+ATOM      6 H12A DPPS    1       1.791  -2.790  -0.227  1.00  0.00      DPPS
+ATOM      7  C13 DPPS    1       2.338  -1.167   1.005  1.00  0.00      DPPS
+ATOM      8 O13A DPPS    1       2.275  -0.916   2.238  1.00  0.00      DPPS
+ATOM      9 O13B DPPS    1       3.281  -0.733   0.316  1.00  0.00      DPPS
+ATOM     10  C11 DPPS    1       0.574  -0.952  -0.693  1.00  0.00      DPPS
+ATOM     11 H11A DPPS    1      -0.082  -1.534  -1.375  1.00  0.00      DPPS
+ATOM     12 H11B DPPS    1       1.226  -0.301  -1.314  1.00  0.00      DPPS
+[ PO4 ]
+ATOM     13  P   DPPS    1      -1.343   0.876  -0.610  1.00  0.00      DPPS
+ATOM     14  O13 DPPS    1      -1.129   2.213  -0.019  1.00  0.00      DPPS
+ATOM     15  O14 DPPS    1      -2.624   0.292  -0.384  1.00  0.00      DPPS
+ATOM     16  O12 DPPS    1      -0.295  -0.057   0.083  1.00  0.00      DPPS
+ATOM     17  O11 DPPS    1      -0.940   0.918  -2.149  1.00  0.00      DPPS
+[ GL1 ]
+ATOM     18  C1  DPPS    1      -1.154   2.012  -2.946  1.00  0.00      DPPS
+ATOM     19  HA  DPPS    1      -0.208   2.513  -3.242  1.00  0.00      DPPS
+ATOM     20  HB  DPPS    1      -1.819   2.843  -2.629  1.00  0.00      DPPS
+ATOM     21  C2  DPPS    1      -1.582   1.621  -4.394  1.00  0.00      DPPS
+ATOM     22  HS  DPPS    1      -1.967   2.492  -4.966  1.00  0.00      DPPS
+ATOM     23  O21 DPPS    1      -2.576   0.606  -4.283  1.00  0.00      DPPS
+ATOM     24  C21 DPPS    1      -3.832   1.063  -4.315  1.00  0.00      DPPS
+ATOM     25  O22 DPPS    1      -4.162   2.202  -4.141  1.00  0.00      DPPS
+[ GL2 ]
+ATOM     26  C3  DPPS    1      -0.415   1.078  -5.282  1.00  0.00      DPPS
+ATOM     27  HX  DPPS    1       0.290   1.929  -5.396  1.00  0.00      DPPS
+ATOM     28  HY  DPPS    1      -0.645   0.725  -6.310  1.00  0.00      DPPS
+ATOM     29  O31 DPPS    1       0.261   0.052  -4.533  1.00  0.00      DPPS
+ATOM     30  C31 DPPS    1       1.493  -0.251  -5.009  1.00  0.00      DPPS
+ATOM     31  O32 DPPS    1       2.095   0.402  -5.852  1.00  0.00      DPPS
+[ C1A ]
+ATOM     32  C22 DPPS    1      -4.810  -0.076  -4.702  1.00  0.00      DPPS
+ATOM     33  H2R DPPS    1      -5.592  -0.212  -3.924  1.00  0.00      DPPS
+ATOM     34  H2S DPPS    1      -4.197  -1.001  -4.749  1.00  0.00      DPPS
+ATOM     35  C23 DPPS    1      -5.398   0.158  -6.149  1.00  0.00      DPPS
+ATOM     36  H3R DPPS    1      -5.229   1.231  -6.379  1.00  0.00      DPPS
+ATOM     37  H3S DPPS    1      -6.506   0.126  -6.075  1.00  0.00      DPPS
+ATOM     38  C24 DPPS    1      -4.856  -0.721  -7.306  1.00  0.00      DPPS
+ATOM     39  H4R DPPS    1      -5.558  -0.671  -8.166  1.00  0.00      DPPS
+ATOM     40  H4S DPPS    1      -4.846  -1.773  -6.947  1.00  0.00      DPPS
+[ C2A ]
+ATOM     41  C25 DPPS    1      -3.485  -0.434  -7.909  1.00  0.00      DPPS
+ATOM     42  H5R DPPS    1      -3.094  -1.311  -8.468  1.00  0.00      DPPS
+ATOM     43  H5S DPPS    1      -2.706  -0.347  -7.121  1.00  0.00      DPPS
+ATOM     44  C26 DPPS    1      -3.547   0.867  -8.818  1.00  0.00      DPPS
+ATOM     45  H6R DPPS    1      -4.219   1.658  -8.422  1.00  0.00      DPPS
+ATOM     46  H6S DPPS    1      -4.020   0.547  -9.772  1.00  0.00      DPPS
+ATOM     47  C27 DPPS    1      -2.219   1.502  -9.153  1.00  0.00      DPPS
+ATOM     48  H7R DPPS    1      -1.574   0.709  -9.588  1.00  0.00      DPPS
+ATOM     49  H7S DPPS    1      -1.759   1.935  -8.239  1.00  0.00      DPPS
+ATOM     50  C28 DPPS    1      -2.377   2.628 -10.202  1.00  0.00      DPPS
+ATOM     51  H8R DPPS    1      -2.608   3.571  -9.661  1.00  0.00      DPPS
+ATOM     52  H8S DPPS    1      -3.255   2.423 -10.850  1.00  0.00      DPPS
+[ C3A ]
+ATOM     53  C29 DPPS    1      -1.049   2.880 -10.906  1.00  0.00      DPPS
+ATOM     54  H9R DPPS    1      -0.713   2.085 -11.606  1.00  0.00      DPPS
+ATOM     55  H9S DPPS    1      -0.210   3.002 -10.188  1.00  0.00      DPPS
+ATOM     56 C210 DPPS    1      -1.110   4.093 -11.749  1.00  0.00      DPPS
+ATOM     57 H10R DPPS    1      -1.320   4.977 -11.109  1.00  0.00      DPPS
+ATOM     58 H10S DPPS    1      -1.948   4.109 -12.479  1.00  0.00      DPPS
+ATOM     59 C211 DPPS    1       0.258   4.362 -12.341  1.00  0.00      DPPS
+ATOM     60 H11R DPPS    1       0.973   4.427 -11.493  1.00  0.00      DPPS
+ATOM     61 H11S DPPS    1       0.261   5.348 -12.853  1.00  0.00      DPPS
+ATOM     62 C212 DPPS    1       0.774   3.321 -13.309  1.00  0.00      DPPS
+ATOM     63 H12R DPPS    1       0.068   3.351 -14.167  1.00  0.00      DPPS
+ATOM     64 H12S DPPS    1       0.787   2.305 -12.862  1.00  0.00      DPPS
+[ C4A ]
+ATOM     65 C213 DPPS    1       2.176   3.609 -13.893  1.00  0.00      DPPS
+ATOM     66 H13R DPPS    1       2.844   3.668 -13.008  1.00  0.00      DPPS
+ATOM     67 H13S DPPS    1       2.214   4.608 -14.378  1.00  0.00      DPPS
+ATOM     68 C214 DPPS    1       2.668   2.505 -14.844  1.00  0.00      DPPS
+ATOM     69 H14R DPPS    1       2.864   1.527 -14.354  1.00  0.00      DPPS
+ATOM     70 H14S DPPS    1       3.609   2.836 -15.333  1.00  0.00      DPPS
+ATOM     71 C215 DPPS    1       1.691   2.241 -16.013  1.00  0.00      DPPS
+ATOM     72 H15R DPPS    1       0.661   1.943 -15.721  1.00  0.00      DPPS
+ATOM     73 H15S DPPS    1       2.032   1.288 -16.470  1.00  0.00      DPPS
+ATOM     74 C216 DPPS    1       1.502   3.455 -16.969  1.00  0.00      DPPS
+ATOM     75 H16R DPPS    1       0.586   3.205 -17.546  1.00  0.00      DPPS
+ATOM     76 H16S DPPS    1       2.277   3.465 -17.765  1.00  0.00      DPPS
+ATOM     77 H16T DPPS    1       1.435   4.392 -16.377  1.00  0.00      DPPS
+[ C1B ]
+ATOM     78  C32 DPPS    1       1.791  -1.740  -4.404  1.00  0.00      DPPS
+ATOM     79  H2X DPPS    1       0.905  -2.194  -3.912  1.00  0.00      DPPS
+ATOM     80  H2Y DPPS    1       2.550  -1.519  -3.623  1.00  0.00      DPPS
+ATOM     81  C33 DPPS    1       2.499  -2.695  -5.302  1.00  0.00      DPPS
+ATOM     82  H3X DPPS    1       3.074  -3.384  -4.647  1.00  0.00      DPPS
+ATOM     83  H3Y DPPS    1       3.298  -2.054  -5.732  1.00  0.00      DPPS
+ATOM     84  C34 DPPS    1       1.648  -3.534  -6.276  1.00  0.00      DPPS
+ATOM     85  H4X DPPS    1       0.898  -4.143  -5.728  1.00  0.00      DPPS
+ATOM     86  H4Y DPPS    1       2.386  -4.231  -6.726  1.00  0.00      DPPS
+[ C2B ]
+ATOM     87  C35 DPPS    1       0.989  -2.749  -7.441  1.00  0.00      DPPS
+ATOM     88  H5X DPPS    1       1.758  -2.156  -7.981  1.00  0.00      DPPS
+ATOM     89  H5Y DPPS    1       0.165  -2.063  -7.148  1.00  0.00      DPPS
+ATOM     90  C36 DPPS    1       0.390  -3.622  -8.572  1.00  0.00      DPPS
+ATOM     91  H6X DPPS    1      -0.343  -4.264  -8.038  1.00  0.00      DPPS
+ATOM     92  H6Y DPPS    1       1.164  -4.367  -8.857  1.00  0.00      DPPS
+ATOM     93  C37 DPPS    1      -0.121  -2.953  -9.858  1.00  0.00      DPPS
+ATOM     94  H7X DPPS    1      -0.767  -2.083  -9.610  1.00  0.00      DPPS
+ATOM     95  H7Y DPPS    1      -0.828  -3.673 -10.323  1.00  0.00      DPPS
+ATOM     96  C38 DPPS    1       0.995  -2.382 -10.789  1.00  0.00      DPPS
+ATOM     97  H8X DPPS    1       1.711  -3.229 -10.860  1.00  0.00      DPPS
+ATOM     98  H8Y DPPS    1       1.396  -1.569 -10.147  1.00  0.00      DPPS
+[ C3B ]
+ATOM     99  C39 DPPS    1       0.608  -1.910 -12.222  1.00  0.00      DPPS
+ATOM    100  H9X DPPS    1       0.659  -2.733 -12.967  1.00  0.00      DPPS
+ATOM    101  H9Y DPPS    1       1.343  -1.131 -12.519  1.00  0.00      DPPS
+ATOM    102 C310 DPPS    1      -0.779  -1.144 -12.397  1.00  0.00      DPPS
+ATOM    103 H10X DPPS    1      -0.811  -0.332 -11.640  1.00  0.00      DPPS
+ATOM    104 H10Y DPPS    1      -1.587  -1.891 -12.242  1.00  0.00      DPPS
+ATOM    105 C311 DPPS    1      -0.955  -0.424 -13.780  1.00  0.00      DPPS
+ATOM    106 H11X DPPS    1       0.037   0.049 -13.944  1.00  0.00      DPPS
+ATOM    107 H11Y DPPS    1      -1.758   0.340 -13.700  1.00  0.00      DPPS
+ATOM    108 C312 DPPS    1      -1.298  -1.372 -14.923  1.00  0.00      DPPS
+ATOM    109 H12X DPPS    1      -2.396  -1.535 -14.884  1.00  0.00      DPPS
+ATOM    110 H12Y DPPS    1      -0.807  -2.359 -14.784  1.00  0.00      DPPS
+[ C4B ]
+ATOM    111 C313 DPPS    1      -0.946  -0.841 -16.287  1.00  0.00      DPPS
+ATOM    112 H13X DPPS    1       0.089  -0.440 -16.318  1.00  0.00      DPPS
+ATOM    113 H13Y DPPS    1      -1.805  -0.248 -16.669  1.00  0.00      DPPS
+ATOM    114 C314 DPPS    1      -0.987  -1.846 -17.462  1.00  0.00      DPPS
+ATOM    115 H14X DPPS    1      -1.945  -2.405 -17.404  1.00  0.00      DPPS
+ATOM    116 H14Y DPPS    1      -0.074  -2.475 -17.535  1.00  0.00      DPPS
+ATOM    117 C315 DPPS    1      -0.863  -1.064 -18.817  1.00  0.00      DPPS
+ATOM    118 H15X DPPS    1      -1.776  -0.432 -18.852  1.00  0.00      DPPS
+ATOM    119 H15Y DPPS    1      -0.802  -1.775 -19.668  1.00  0.00      DPPS
+ATOM    120 C316 DPPS    1       0.376  -0.181 -18.892  1.00  0.00      DPPS
+ATOM    121 H16X DPPS    1       1.273  -0.837 -18.887  1.00  0.00      DPPS
+ATOM    122 H16Y DPPS    1       0.418   0.580 -18.084  1.00  0.00      DPPS
+ATOM    123 H16Z DPPS    1       0.401   0.409 -19.834  1.00  0.00      DPPS
+END

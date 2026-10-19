@@ -1,0 +1,117 @@
+[ COH ]
+ATOM      1  O1  PCER    1      -1.175   0.739   0.985  1.00  0.00      PCER
+ATOM      2  HO1 PCER    1      -1.445   0.666   1.903  1.00  0.00      PCER
+ATOM      3  C1S PCER    1       0.260   0.676   0.973  1.00  0.00      PCER
+ATOM      4  H1S PCER    1       0.603  -0.041   1.749  1.00  0.00      PCER
+ATOM      5  H1T PCER    1       0.605   1.687   1.278  1.00  0.00      PCER
+[ OH1 ]
+ATOM      6  C2S PCER    1       0.771   0.277  -0.454  1.00  0.00      PCER
+ATOM      7  H2S PCER    1       1.856   0.464  -0.600  1.00  0.00      PCER
+ATOM      8  C3S PCER    1       0.674  -1.205  -0.705  1.00  0.00      PCER
+ATOM      9  H3S PCER    1      -0.375  -1.569  -0.738  1.00  0.00      PCER
+ATOM     10  O3  PCER    1       1.319  -2.057   0.244  1.00  0.00      PCER
+ATOM     11  HO3 PCER    1       1.783  -1.467   0.843  1.00  0.00      PCER
+[ AM2 ]
+ATOM     12  NF  PCER    1       0.070   0.964  -1.531  1.00  0.00      PCER
+ATOM     13  HNF PCER    1      -0.321   0.294  -2.157  1.00  0.00      PCER
+ATOM     14  C1F PCER    1       0.191   2.258  -1.674  1.00  0.00      PCER
+ATOM     15  OF  PCER    1       1.019   3.003  -1.174  1.00  0.00      PCER
+[ T1A ]
+ATOM     16  C4S PCER    1       1.290  -1.612  -2.015  1.00  0.00      PCER
+ATOM     17  H4S PCER    1       0.653  -2.230  -2.665  1.00  0.00      PCER
+ATOM     18  C5S PCER    1       2.586  -1.430  -2.461  1.00  0.00      PCER
+ATOM     19  H5S PCER    1       3.338  -0.871  -1.885  1.00  0.00      PCER
+ATOM     20  C6S PCER    1       3.227  -1.790  -3.800  1.00  0.00      PCER
+ATOM     21  H6S PCER    1       3.410  -0.800  -4.269  1.00  0.00      PCER
+ATOM     22  H6T PCER    1       4.244  -2.223  -3.684  1.00  0.00      PCER
+[ C2A ]
+ATOM     23  C7S PCER    1       2.404  -2.866  -4.476  1.00  0.00      PCER
+ATOM     24  H7S PCER    1       2.312  -3.847  -3.964  1.00  0.00      PCER
+ATOM     25  H7T PCER    1       1.401  -2.407  -4.610  1.00  0.00      PCER
+ATOM     26  C8S PCER    1       2.828  -3.165  -5.902  1.00  0.00      PCER
+ATOM     27  H8S PCER    1       2.975  -2.118  -6.243  1.00  0.00      PCER
+ATOM     28  H8T PCER    1       3.795  -3.705  -5.815  1.00  0.00      PCER
+ATOM     29  C9S PCER    1       1.771  -3.872  -6.778  1.00  0.00      PCER
+ATOM     30  H9S PCER    1       1.646  -4.879  -6.325  1.00  0.00      PCER
+ATOM     31  H9T PCER    1       0.750  -3.436  -6.828  1.00  0.00      PCER
+ATOM     32 C10S PCER    1       2.326  -4.161  -8.147  1.00  0.00      PCER
+ATOM     33 H10S PCER    1       3.344  -4.602  -8.206  1.00  0.00      PCER
+ATOM     34 H10T PCER    1       1.613  -4.768  -8.744  1.00  0.00      PCER
+[ C3A ]
+ATOM     35 C11S PCER    1       2.305  -2.795  -8.815  1.00  0.00      PCER
+ATOM     36 H11S PCER    1       1.458  -2.102  -8.625  1.00  0.00      PCER
+ATOM     37 H11T PCER    1       3.215  -2.322  -8.388  1.00  0.00      PCER
+ATOM     38 C12S PCER    1       2.484  -2.897 -10.341  1.00  0.00      PCER
+ATOM     39 H12S PCER    1       2.674  -1.867 -10.711  1.00  0.00      PCER
+ATOM     40 H12T PCER    1       3.234  -3.634 -10.701  1.00  0.00      PCER
+ATOM     41 C13S PCER    1       1.256  -3.067 -11.280  1.00  0.00      PCER
+ATOM     42 H13S PCER    1       0.711  -3.949 -10.883  1.00  0.00      PCER
+ATOM     43 H13T PCER    1       0.517  -2.250 -11.137  1.00  0.00      PCER
+ATOM     44 C14S PCER    1       1.634  -3.393 -12.743  1.00  0.00      PCER
+ATOM     45 H14S PCER    1       2.333  -4.255 -12.794  1.00  0.00      PCER
+ATOM     46 H14T PCER    1       0.744  -3.639 -13.360  1.00  0.00      PCER
+[ C4A ]
+ATOM     47 C15S PCER    1       2.285  -2.217 -13.578  1.00  0.00      PCER
+ATOM     48 H15S PCER    1       1.540  -1.474 -13.936  1.00  0.00      PCER
+ATOM     49 H15T PCER    1       3.071  -1.747 -12.950  1.00  0.00      PCER
+ATOM     50 C16S PCER    1       3.035  -2.654 -14.860  1.00  0.00      PCER
+ATOM     51 H16S PCER    1       3.893  -3.240 -14.466  1.00  0.00      PCER
+ATOM     52 H16T PCER    1       2.376  -3.327 -15.449  1.00  0.00      PCER
+ATOM     53 C17S PCER    1       3.575  -1.587 -15.879  1.00  0.00      PCER
+ATOM     54 H17S PCER    1       3.894  -0.682 -15.318  1.00  0.00      PCER
+ATOM     55 H17T PCER    1       4.467  -1.988 -16.407  1.00  0.00      PCER
+ATOM     56 C18S PCER    1       2.495  -1.162 -16.848  1.00  0.00      PCER
+ATOM     57 H18S PCER    1       1.607  -0.666 -16.402  1.00  0.00      PCER
+ATOM     58 H18T PCER    1       3.009  -0.515 -17.591  1.00  0.00      PCER
+ATOM     59 H18U PCER    1       2.246  -2.170 -17.245  1.00  0.00      PCER
+[ C1B ]
+ATOM     60  C2F PCER    1      -0.852   2.806  -2.659  1.00  0.00      PCER
+ATOM     61  H2F PCER    1      -1.842   2.579  -2.208  1.00  0.00      PCER
+ATOM     62  H2G PCER    1      -0.874   2.112  -3.526  1.00  0.00      PCER
+ATOM     63  C3F PCER    1      -0.702   4.314  -3.041  1.00  0.00      PCER
+ATOM     64  H3F PCER    1      -0.586   4.939  -2.130  1.00  0.00      PCER
+ATOM     65  H3G PCER    1      -1.581   4.735  -3.574  1.00  0.00      PCER
+ATOM     66  C4F PCER    1       0.641   4.538  -3.826  1.00  0.00      PCER
+ATOM     67  H4F PCER    1       1.603   4.210  -3.377  1.00  0.00      PCER
+ATOM     68  H4G PCER    1       0.805   5.636  -3.792  1.00  0.00      PCER
+[ C2B ]
+ATOM     69  C5F PCER    1       0.472   4.174  -5.293  1.00  0.00      PCER
+ATOM     70  H5F PCER    1      -0.486   4.435  -5.792  1.00  0.00      PCER
+ATOM     71  H5G PCER    1       0.535   3.072  -5.424  1.00  0.00      PCER
+ATOM     72  C6F PCER    1       1.535   4.709  -6.284  1.00  0.00      PCER
+ATOM     73  H6F PCER    1       2.598   4.471  -6.068  1.00  0.00      PCER
+ATOM     74  H6G PCER    1       1.596   5.807  -6.125  1.00  0.00      PCER
+ATOM     75  C7F PCER    1       1.298   4.376  -7.808  1.00  0.00      PCER
+ATOM     76  H7F PCER    1       2.062   4.867  -8.448  1.00  0.00      PCER
+ATOM     77  H7G PCER    1       0.286   4.769  -8.042  1.00  0.00      PCER
+ATOM     78  C8F PCER    1       1.275   2.860  -8.083  1.00  0.00      PCER
+ATOM     79  H8F PCER    1       0.978   2.848  -9.154  1.00  0.00      PCER
+ATOM     80  H8G PCER    1       0.459   2.412  -7.476  1.00  0.00      PCER
+[ C3B ]
+ATOM     81  C9F PCER    1       2.537   2.092  -7.861  1.00  0.00      PCER
+ATOM     82  H9F PCER    1       2.249   1.048  -7.610  1.00  0.00      PCER
+ATOM     83  H9G PCER    1       3.058   2.435  -6.942  1.00  0.00      PCER
+ATOM     84 C10F PCER    1       3.606   2.086  -8.985  1.00  0.00      PCER
+ATOM     85 H10F PCER    1       4.393   1.386  -8.630  1.00  0.00      PCER
+ATOM     86 H10G PCER    1       4.112   3.039  -9.251  1.00  0.00      PCER
+ATOM     87 C11F PCER    1       3.178   1.580 -10.358  1.00  0.00      PCER
+ATOM     88 H11F PCER    1       2.268   0.952 -10.255  1.00  0.00      PCER
+ATOM     89 H11G PCER    1       4.015   1.093 -10.904  1.00  0.00      PCER
+ATOM     90 C12F PCER    1       2.809   2.719 -11.346  1.00  0.00      PCER
+ATOM     91 H12F PCER    1       3.702   3.380 -11.341  1.00  0.00      PCER
+ATOM     92 H12G PCER    1       1.999   3.364 -10.944  1.00  0.00      PCER
+[ C4B ]
+ATOM     93 C13F PCER    1       2.453   2.156 -12.748  1.00  0.00      PCER
+ATOM     94 H13F PCER    1       1.459   1.660 -12.792  1.00  0.00      PCER
+ATOM     95 H13G PCER    1       3.072   1.273 -13.014  1.00  0.00      PCER
+ATOM     96 C14F PCER    1       2.428   3.277 -13.858  1.00  0.00      PCER
+ATOM     97 H14F PCER    1       3.324   3.934 -13.844  1.00  0.00      PCER
+ATOM     98 H14G PCER    1       1.439   3.762 -13.714  1.00  0.00      PCER
+ATOM     99 C15F PCER    1       2.377   2.670 -15.299  1.00  0.00      PCER
+ATOM    100 H15F PCER    1       2.066   1.610 -15.176  1.00  0.00      PCER
+ATOM    101 H15G PCER    1       3.466   2.548 -15.481  1.00  0.00      PCER
+ATOM    102 C16F PCER    1       1.619   3.523 -16.294  1.00  0.00      PCER
+ATOM    103 H16F PCER    1       0.520   3.488 -16.132  1.00  0.00      PCER
+ATOM    104 H16G PCER    1       1.924   4.571 -16.086  1.00  0.00      PCER
+ATOM    105 H16H PCER    1       1.821   3.158 -17.323  1.00  0.00      PCER
+END

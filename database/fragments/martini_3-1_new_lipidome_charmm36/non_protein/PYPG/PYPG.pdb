@@ -1,0 +1,134 @@
+[ GL0 ]
+ATOM      1  C13 PYPG    1      -2.354  -1.612   0.888  1.00  0.00      PYPG
+ATOM      2 H13A PYPG    1      -1.847  -1.987   1.803  1.00  0.00      PYPG
+ATOM      3 H13B PYPG    1      -3.433  -1.855   0.993  1.00  0.00      PYPG
+ATOM      4  OC3 PYPG    1      -1.951  -2.306  -0.315  1.00  0.00      PYPG
+ATOM      5  HO3 PYPG    1      -2.625  -2.035  -0.943  1.00  0.00      PYPG
+ATOM      6  C12 PYPG    1      -2.234  -0.090   0.820  1.00  0.00      PYPG
+ATOM      7 H12A PYPG    1      -2.743   0.324   1.722  1.00  0.00      PYPG
+ATOM      8  OC2 PYPG    1      -2.914   0.406  -0.335  1.00  0.00      PYPG
+ATOM      9  HO2 PYPG    1      -2.659   1.354  -0.351  1.00  0.00      PYPG
+ATOM     10  C11 PYPG    1      -0.843   0.432   0.829  1.00  0.00      PYPG
+ATOM     11 H11A PYPG    1      -0.256   0.268   1.758  1.00  0.00      PYPG
+ATOM     12 H11B PYPG    1      -0.838   1.542   0.805  1.00  0.00      PYPG
+[ PO4 ]
+ATOM     13  P   PYPG    1       1.451   0.423  -0.338  1.00  0.00      PYPG
+ATOM     14  O13 PYPG    1       2.324  -0.788  -0.396  1.00  0.00      PYPG
+ATOM     15  O14 PYPG    1       1.655   1.396   0.784  1.00  0.00      PYPG
+ATOM     16  O12 PYPG    1      -0.111  -0.050  -0.283  1.00  0.00      PYPG
+ATOM     17  O11 PYPG    1       1.462   1.225  -1.688  1.00  0.00      PYPG
+[ GL1 ]
+ATOM     18  C1  PYPG    1       0.330   1.423  -2.544  1.00  0.00      PYPG
+ATOM     19  HA  PYPG    1       0.630   2.237  -3.238  1.00  0.00      PYPG
+ATOM     20  HB  PYPG    1      -0.472   1.851  -1.905  1.00  0.00      PYPG
+ATOM     21  C2  PYPG    1      -0.219   0.184  -3.277  1.00  0.00      PYPG
+ATOM     22  HS  PYPG    1      -0.574  -0.585  -2.558  1.00  0.00      PYPG
+ATOM     23  O21 PYPG    1       0.849  -0.275  -4.099  1.00  0.00      PYPG
+ATOM     24  C21 PYPG    1       0.838  -1.475  -4.540  1.00  0.00      PYPG
+ATOM     25  O22 PYPG    1       0.043  -2.338  -4.284  1.00  0.00      PYPG
+[ GL2 ]
+ATOM     26  C3  PYPG    1      -1.419   0.529  -4.219  1.00  0.00      PYPG
+ATOM     27  HX  PYPG    1      -2.305   0.882  -3.648  1.00  0.00      PYPG
+ATOM     28  HY  PYPG    1      -1.702  -0.461  -4.636  1.00  0.00      PYPG
+ATOM     29  O31 PYPG    1      -1.020   1.410  -5.309  1.00  0.00      PYPG
+ATOM     30  C31 PYPG    1      -1.489   1.253  -6.516  1.00  0.00      PYPG
+ATOM     31  O32 PYPG    1      -2.170   0.347  -6.902  1.00  0.00      PYPG
+[ C1A ]
+ATOM     32  C22 PYPG    1       1.857  -1.638  -5.617  1.00  0.00      PYPG
+ATOM     33  H2R PYPG    1       2.703  -2.290  -5.312  1.00  0.00      PYPG
+ATOM     34  H2S PYPG    1       2.462  -0.753  -5.911  1.00  0.00      PYPG
+ATOM     35  C23 PYPG    1       1.208  -2.204  -6.907  1.00  0.00      PYPG
+ATOM     36  H3R PYPG    1       0.239  -1.701  -7.112  1.00  0.00      PYPG
+ATOM     37  H3S PYPG    1       1.059  -3.305  -6.905  1.00  0.00      PYPG
+ATOM     38  C24 PYPG    1       2.121  -1.928  -8.061  1.00  0.00      PYPG
+ATOM     39  H4R PYPG    1       1.949  -2.776  -8.758  1.00  0.00      PYPG
+ATOM     40  H4S PYPG    1       3.198  -1.959  -7.793  1.00  0.00      PYPG
+[ C2A ]
+ATOM     41  C25 PYPG    1       1.953  -0.523  -8.685  1.00  0.00      PYPG
+ATOM     42  H5R PYPG    1       2.093   0.228  -7.879  1.00  0.00      PYPG
+ATOM     43  H5S PYPG    1       0.911  -0.357  -9.033  1.00  0.00      PYPG
+ATOM     44  C26 PYPG    1       2.800  -0.190  -9.844  1.00  0.00      PYPG
+ATOM     45  H6R PYPG    1       2.853  -0.886 -10.709  1.00  0.00      PYPG
+ATOM     46  H6S PYPG    1       3.850  -0.255  -9.489  1.00  0.00      PYPG
+ATOM     47  C27 PYPG    1       2.510   1.232 -10.363  1.00  0.00      PYPG
+ATOM     48  H7R PYPG    1       2.551   1.744  -9.378  1.00  0.00      PYPG
+ATOM     49  H7S PYPG    1       1.469   1.381 -10.724  1.00  0.00      PYPG
+ATOM     50  C28 PYPG    1       3.501   1.815 -11.499  1.00  0.00      PYPG
+ATOM     51  H8R PYPG    1       3.574   1.179 -12.408  1.00  0.00      PYPG
+ATOM     52  H8S PYPG    1       4.551   1.938 -11.156  1.00  0.00      PYPG
+[ D3A ]
+ATOM     53  C29 PYPG    1       2.980   3.202 -11.848  1.00  0.00      PYPG
+ATOM     54  H9R PYPG    1       3.177   3.882 -11.006  1.00  0.00      PYPG
+ATOM     55 C210 PYPG    1       2.482   3.688 -12.973  1.00  0.00      PYPG
+ATOM     56 H10R PYPG    1       2.125   4.729 -13.002  1.00  0.00      PYPG
+ATOM     57 C211 PYPG    1       2.331   2.909 -14.243  1.00  0.00      PYPG
+ATOM     58 H11R PYPG    1       1.272   3.087 -14.527  1.00  0.00      PYPG
+ATOM     59 H11S PYPG    1       2.637   1.852 -14.096  1.00  0.00      PYPG
+ATOM     60 C212 PYPG    1       3.180   3.438 -15.457  1.00  0.00      PYPG
+ATOM     61 H12R PYPG    1       4.271   3.425 -15.249  1.00  0.00      PYPG
+ATOM     62 H12S PYPG    1       2.798   4.481 -15.498  1.00  0.00      PYPG
+[ C4A ]
+ATOM     63 C213 PYPG    1       2.926   2.644 -16.789  1.00  0.00      PYPG
+ATOM     64 H13R PYPG    1       1.911   2.865 -17.181  1.00  0.00      PYPG
+ATOM     65 H13S PYPG    1       3.078   1.649 -16.319  1.00  0.00      PYPG
+ATOM     66 C214 PYPG    1       4.033   2.934 -17.879  1.00  0.00      PYPG
+ATOM     67 H14R PYPG    1       4.180   4.035 -17.900  1.00  0.00      PYPG
+ATOM     68 H14S PYPG    1       5.025   2.572 -17.532  1.00  0.00      PYPG
+ATOM     69 C215 PYPG    1       3.676   2.673 -19.347  1.00  0.00      PYPG
+ATOM     70 H15R PYPG    1       3.818   1.633 -19.709  1.00  0.00      PYPG
+ATOM     71 H15S PYPG    1       4.410   3.354 -19.829  1.00  0.00      PYPG
+ATOM     72 C216 PYPG    1       2.391   3.303 -19.912  1.00  0.00      PYPG
+ATOM     73 H16R PYPG    1       2.351   3.179 -21.015  1.00  0.00      PYPG
+ATOM     74 H16S PYPG    1       2.406   4.356 -19.556  1.00  0.00      PYPG
+ATOM     75 H16T PYPG    1       1.528   2.831 -19.395  1.00  0.00      PYPG
+[ C1B ]
+ATOM     76  C32 PYPG    1      -0.894   2.252  -7.439  1.00  0.00      PYPG
+ATOM     77  H2X PYPG    1      -1.174   3.235  -7.004  1.00  0.00      PYPG
+ATOM     78  H2Y PYPG    1       0.206   2.183  -7.304  1.00  0.00      PYPG
+ATOM     79  C33 PYPG    1      -1.439   2.069  -8.830  1.00  0.00      PYPG
+ATOM     80  H3X PYPG    1      -2.548   2.134  -8.812  1.00  0.00      PYPG
+ATOM     81  H3Y PYPG    1      -1.232   1.080  -9.291  1.00  0.00      PYPG
+ATOM     82  C34 PYPG    1      -0.948   3.285  -9.772  1.00  0.00      PYPG
+ATOM     83  H4X PYPG    1       0.149   3.140  -9.871  1.00  0.00      PYPG
+ATOM     84  H4Y PYPG    1      -1.211   4.249  -9.287  1.00  0.00      PYPG
+[ C2B ]
+ATOM     85  C35 PYPG    1      -1.656   3.218 -11.150  1.00  0.00      PYPG
+ATOM     86  H5X PYPG    1      -2.712   2.929 -10.963  1.00  0.00      PYPG
+ATOM     87  H5Y PYPG    1      -1.092   2.557 -11.842  1.00  0.00      PYPG
+ATOM     88  C36 PYPG    1      -1.692   4.585 -11.823  1.00  0.00      PYPG
+ATOM     89  H6X PYPG    1      -0.692   5.044 -11.973  1.00  0.00      PYPG
+ATOM     90  H6Y PYPG    1      -2.145   5.404 -11.225  1.00  0.00      PYPG
+ATOM     91  C37 PYPG    1      -2.406   4.745 -13.220  1.00  0.00      PYPG
+ATOM     92  H7X PYPG    1      -3.208   3.979 -13.286  1.00  0.00      PYPG
+ATOM     93  H7Y PYPG    1      -2.764   5.775 -13.434  1.00  0.00      PYPG
+ATOM     94  C38 PYPG    1      -1.439   4.429 -14.350  1.00  0.00      PYPG
+ATOM     95  H8X PYPG    1      -1.203   3.346 -14.421  1.00  0.00      PYPG
+ATOM     96  H8Y PYPG    1      -0.566   5.084 -14.142  1.00  0.00      PYPG
+[ C3B ]
+ATOM     97  C39 PYPG    1      -2.235   4.680 -15.631  1.00  0.00      PYPG
+ATOM     98  H9X PYPG    1      -2.552   5.728 -15.819  1.00  0.00      PYPG
+ATOM     99  H9Y PYPG    1      -3.160   4.076 -15.512  1.00  0.00      PYPG
+ATOM    100 C310 PYPG    1      -1.460   4.284 -16.873  1.00  0.00      PYPG
+ATOM    101 H10X PYPG    1      -1.024   3.267 -16.779  1.00  0.00      PYPG
+ATOM    102 H10Y PYPG    1      -0.607   4.981 -17.020  1.00  0.00      PYPG
+ATOM    103 C311 PYPG    1      -2.438   4.368 -18.022  1.00  0.00      PYPG
+ATOM    104 H11X PYPG    1      -2.922   5.366 -17.962  1.00  0.00      PYPG
+ATOM    105 H11Y PYPG    1      -3.238   3.613 -17.865  1.00  0.00      PYPG
+ATOM    106 C312 PYPG    1      -1.839   4.364 -19.379  1.00  0.00      PYPG
+ATOM    107 H12X PYPG    1      -2.520   4.828 -20.124  1.00  0.00      PYPG
+ATOM    108 H12Y PYPG    1      -0.799   4.754 -19.391  1.00  0.00      PYPG
+[ C4B ]
+ATOM    109 C313 PYPG    1      -1.553   2.910 -19.826  1.00  0.00      PYPG
+ATOM    110 H13X PYPG    1      -0.885   2.363 -19.127  1.00  0.00      PYPG
+ATOM    111 H13Y PYPG    1      -2.593   2.523 -19.896  1.00  0.00      PYPG
+ATOM    112 C314 PYPG    1      -1.017   2.788 -21.266  1.00  0.00      PYPG
+ATOM    113 H14X PYPG    1      -1.809   3.054 -22.000  1.00  0.00      PYPG
+ATOM    114 H14Y PYPG    1      -0.178   3.515 -21.289  1.00  0.00      PYPG
+ATOM    115 C315 PYPG    1      -0.328   1.480 -21.583  1.00  0.00      PYPG
+ATOM    116 H15X PYPG    1       0.074   1.532 -22.617  1.00  0.00      PYPG
+ATOM    117 H15Y PYPG    1       0.610   1.202 -21.056  1.00  0.00      PYPG
+ATOM    118 C316 PYPG    1      -1.326   0.301 -21.649  1.00  0.00      PYPG
+ATOM    119 H16X PYPG    1      -2.103   0.342 -20.856  1.00  0.00      PYPG
+ATOM    120 H16Y PYPG    1      -0.738  -0.642 -21.616  1.00  0.00      PYPG
+ATOM    121 H16Z PYPG    1      -1.881   0.319 -22.610  1.00  0.00      PYPG
+END

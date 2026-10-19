@@ -1,0 +1,134 @@
+[ MLN1 ] ; Monolein-1
+  [ atoms ]
+     C1   CTL2   0.05   1  ;
+     HA   HAL2   0.09   1  ;            HA
+     HB   HAL2   0.09   1  ;            |
+     O11  OHL   -0.65   1  ;            |
+     HO1  HOL    0.42   1  ;       HB---C1---O11--HO1
+     C2   CTL1   0.14   2  ;       HS---C2--------------
+     HS   HAL1   0.09   2  ;            |              |
+     O21  OHL   -0.65   2  ;       HO2--O21          theta3
+     HO2  HOL    0.42   2  ;                           |
+     C3   CTL2   0.08   3  ;                           |
+     HX   HAL2   0.09   3  ;                      HX---C3---HY
+     HY   HAL2   0.09   3  ;                           |   gamma1
+     O31  OSL   -0.49   3  ;                      O32  O31
+     C31  CL     0.90   3  ;                       \\ /    gamma2
+     O32  OBL   -0.63   3  ;                         C31
+     C32  CTL2  -0.22   3  ;                         |     gamma3
+     H2X  HAL2   0.09   3  ;                   H2X---C32---H2Y
+     H2Y  HAL2   0.09   3  ;                         |
+     C33  CTL2  -0.18   4  ;                         |
+     H3X  HAL2   0.09   4  ;                   H3X---C33---H3Y
+     H3Y  HAL2   0.09   4  ;                         |
+     C34  CTL2  -0.18   5  ;                         |
+     H4X  HAL2   0.09   5  ;                   H4X---C34---H4Y
+     H4Y  HAL2   0.09   5  ;                         |
+     C35  CTL2  -0.18   6  ;                         |
+     H5X  HAL2   0.09   6  ;                   H5X---C35---H5Y
+     H5Y  HAL2   0.09   6  ;                         |
+     C36  CTL2  -0.18   7  ;                         |
+     H6X  HAL2   0.09   7  ;                   H6X---C36---H6Y
+     H6Y  HAL2   0.09   7  ;                         |
+     C37  CTL2  -0.18   8  ;                         |
+     H7X  HAL2   0.09   8  ;                   H7X---C37---H7Y
+     H7Y  HAL2   0.09   8  ;                         |
+     C38  CTL2  -0.18   9  ;                         |
+     H8X  HAL2   0.09   9  ;                   H8X---C38---H8Y
+     H8Y  HAL2   0.09   9  ;                         |
+     C39  CEL1  -0.15   10 ;                         |
+     H9X  HEL1   0.15   10 ;                   H9X---C39
+     C310 CEL1  -0.15   11 ;                         ||
+     H10X HEL1   0.15   11 ;                  H10X---C310
+     C311 CTL2  -0.18   12 ;                         |
+     H11X HAL2   0.09   12 ;                  H11X---C311--H11Y
+     H11Y HAL2   0.09   12 ;                         |
+     C312 CTL2  -0.18   13 ;                         |
+     H12X HAL2   0.09   13 ;                  H12X---C312--H12Y
+     H12Y HAL2   0.09   13 ;                         |
+     C313 CTL2  -0.18   14 ;                         |
+     H13X HAL2   0.09   14 ;                  H13X---C313--H13Y
+     H13Y HAL2   0.09   14 ;                         |
+     C314 CTL2  -0.18   15 ;                         |
+     H14X HAL2   0.09   15 ;                  H14X---C314--H14Y
+     H14Y HAL2   0.09   15 ;                         |
+     C315 CTL2  -0.18   16 ;                         |
+     H15X HAL2   0.09   16 ;                  H15X---C315--H15Y
+     H15Y HAL2   0.09   16 ;                         |
+     C316 CTL2  -0.18   17 ;                         |
+     H16X HAL2   0.09   17 ;                  H16X---C316--H16Y
+     H16Y HAL2   0.09   17 ;                         |
+     C317 CTL2  -0.18   18 ;                         |
+     H17X HAL2   0.09   18 ;                  H17X---C317--H17Y
+     H17Y HAL2   0.09   18 ;                         |
+     C318 CTL3  -0.27   19 ;                         |
+     H18X HAL3   0.09   19 ;                  H18X---C318--H18Y
+     H18Y HAL3   0.09   19 ;                         |
+     H18Z HAL3   0.09   19 ;                         H18Z
+  [ bonds ]
+  	 C1   O11
+	 C1   HA
+	 C1   HB
+	 C1	  C2
+	 O11  HO1
+	 C2   O21
+	 C2   HS
+	 C2   C3
+	 O21  H02
+	 C3   HX
+	 C3	  HY
+	 C3   O31
+     O31  C31
+     C31  C32
+     C31  O32
+	 C32  H2X       
+	 C32  H2Y
+     C32  C33
+     C33  H3X       
+	 C33  H3Y
+     C33  C34
+	 C34  H4X
+	 C34  H4Y
+     C34  C35
+	 C35  H5X       
+	 C35  H5Y
+     C35  C36
+	 C36  H6X       
+	 C36  H6Y
+     C36  C37
+	 C37  H7X       
+	 C37  H7Y
+     C37  C38
+     C38  H8X       
+	 C38  H8Y
+     C38  C39
+     C39  H9X
+     C39 C310
+     C310 H10X
+     C310 C311
+     C311 H11X
+     C311 H11Y
+     C311 C312
+     C312 H12X
+     C312 H12Y
+     C312 C313
+     C313 H13X
+     C313 H13Y
+     C313 C314
+     C314 H14X
+     C314 H14Y
+     C314 C315
+     C315 H15X
+     C315 H15Y
+     C315 C316
+     C316 H16X
+     C316 H16Y
+     C316 C317
+     C317 H17X
+     C317 H17Y
+     C317 C318
+     C318 H18X
+     C318 H18Y
+     C318 H18Z
+  [ impropers ] 
+   C31   O31   C32   O32

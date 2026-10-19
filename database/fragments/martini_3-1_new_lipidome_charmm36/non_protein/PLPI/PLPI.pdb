@@ -1,0 +1,151 @@
+[ C1 ]
+ATOM      1  C12 PLPI    1      -0.385   3.061   2.848  1.00  0.00      PLPI
+ATOM      2  H2  PLPI    1      -0.313   3.742   1.973  1.00  0.00      PLPI
+ATOM      3  O2  PLPI    1       0.947   2.639   2.990  1.00  0.00      PLPI
+ATOM      4  HO2 PLPI    1       1.229   2.458   2.090  1.00  0.00      PLPI
+[ C2 ]
+ATOM      5  C13 PLPI    1      -0.838   3.857   4.030  1.00  0.00      PLPI
+ATOM      6  H3  PLPI    1      -1.822   4.234   3.677  1.00  0.00      PLPI
+ATOM      7  O3  PLPI    1       0.015   4.988   4.291  1.00  0.00      PLPI
+ATOM      8  HO3 PLPI    1      -0.369   5.779   3.906  1.00  0.00      PLPI
+ATOM      9  C14 PLPI    1      -0.992   2.956   5.166  1.00  0.00      PLPI
+ATOM     10  H4  PLPI    1      -0.024   2.456   5.383  1.00  0.00      PLPI
+ATOM     11  O4  PLPI    1      -1.272   3.746   6.319  1.00  0.00      PLPI
+ATOM     12  HO4 PLPI    1      -1.726   3.131   6.899  1.00  0.00      PLPI
+[ C3 ]
+ATOM     13  C15 PLPI    1      -1.991   1.864   4.896  1.00  0.00      PLPI
+ATOM     14  H5  PLPI    1      -2.945   2.361   4.617  1.00  0.00      PLPI
+ATOM     15  O5  PLPI    1      -2.258   1.150   6.072  1.00  0.00      PLPI
+ATOM     16  HO5 PLPI    1      -2.136   0.223   5.853  1.00  0.00      PLPI
+ATOM     17  C16 PLPI    1      -1.549   0.990   3.776  1.00  0.00      PLPI
+ATOM     18  H6  PLPI    1      -0.534   0.575   3.951  1.00  0.00      PLPI
+ATOM     19  O6  PLPI    1      -2.533  -0.029   3.561  1.00  0.00      PLPI
+ATOM     20  HO6 PLPI    1      -2.178  -0.728   3.007  1.00  0.00      PLPI
+[ C4 ]
+ATOM     21  C11 PLPI    1      -1.364   1.944   2.597  1.00  0.00      PLPI
+ATOM     22  H1  PLPI    1      -2.350   2.415   2.395  1.00  0.00      PLPI
+[ PO4 ]
+ATOM     23  P   PLPI    1      -0.050   0.023   1.016  1.00  0.00      PLPI
+ATOM     24  O13 PLPI    1      -0.791  -1.161   1.563  1.00  0.00      PLPI
+ATOM     25  O14 PLPI    1       1.326   0.254   1.544  1.00  0.00      PLPI
+ATOM     26  O12 PLPI    1      -1.024   1.285   1.381  1.00  0.00      PLPI
+ATOM     27  O11 PLPI    1      -0.044  -0.066  -0.571  1.00  0.00      PLPI
+[ GL1 ]
+ATOM     28  C1  PLPI    1      -1.081   0.111  -1.520  1.00  0.00      PLPI
+ATOM     29  HA  PLPI    1      -1.492   1.134  -1.379  1.00  0.00      PLPI
+ATOM     30  HB  PLPI    1      -1.890  -0.584  -1.212  1.00  0.00      PLPI
+ATOM     31  C2  PLPI    1      -0.559   0.011  -2.947  1.00  0.00      PLPI
+ATOM     32  HS  PLPI    1       0.076   0.888  -3.195  1.00  0.00      PLPI
+ATOM     33  O21 PLPI    1      -1.664  -0.033  -3.888  1.00  0.00      PLPI
+ATOM     34  C21 PLPI    1      -2.451   0.988  -3.944  1.00  0.00      PLPI
+ATOM     35  O22 PLPI    1      -2.295   2.086  -3.495  1.00  0.00      PLPI
+[ GL2 ]
+ATOM     36  C3  PLPI    1       0.290  -1.178  -3.299  1.00  0.00      PLPI
+ATOM     37  HX  PLPI    1       1.294  -1.118  -2.828  1.00  0.00      PLPI
+ATOM     38  HY  PLPI    1      -0.248  -2.052  -2.874  1.00  0.00      PLPI
+ATOM     39  O31 PLPI    1       0.412  -1.464  -4.680  1.00  0.00      PLPI
+ATOM     40  C31 PLPI    1       1.308  -0.771  -5.310  1.00  0.00      PLPI
+ATOM     41  O32 PLPI    1       2.200  -0.106  -4.786  1.00  0.00      PLPI
+[ C1A ]
+ATOM     42  C22 PLPI    1      -3.591   0.755  -5.005  1.00  0.00      PLPI
+ATOM     43  H2R PLPI    1      -4.169   1.697  -5.116  1.00  0.00      PLPI
+ATOM     44  H2S PLPI    1      -4.284   0.031  -4.524  1.00  0.00      PLPI
+ATOM     45  C23 PLPI    1      -3.118   0.388  -6.453  1.00  0.00      PLPI
+ATOM     46  H3R PLPI    1      -3.963   0.215  -7.152  1.00  0.00      PLPI
+ATOM     47  H3S PLPI    1      -2.512  -0.538  -6.343  1.00  0.00      PLPI
+ATOM     48  C24 PLPI    1      -2.143   1.485  -7.121  1.00  0.00      PLPI
+ATOM     49  H4R PLPI    1      -1.378   1.586  -6.322  1.00  0.00      PLPI
+ATOM     50  H4S PLPI    1      -2.767   2.393  -7.266  1.00  0.00      PLPI
+ATOM     51  C25 PLPI    1      -1.560   0.895  -8.429  1.00  0.00      PLPI
+ATOM     52  H5R PLPI    1      -1.463  -0.212  -8.412  1.00  0.00      PLPI
+ATOM     53  H5S PLPI    1      -0.606   1.405  -8.680  1.00  0.00      PLPI
+ATOM     54  C26 PLPI    1      -2.594   1.188  -9.512  1.00  0.00      PLPI
+ATOM     55  H6R PLPI    1      -2.808   2.278  -9.525  1.00  0.00      PLPI
+ATOM     56  H6S PLPI    1      -3.559   0.735  -9.200  1.00  0.00      PLPI
+[ D2A ]
+ATOM     57  C27 PLPI    1      -2.192   0.777 -10.927  1.00  0.00      PLPI
+ATOM     58  H7R PLPI    1      -2.116  -0.331 -10.889  1.00  0.00      PLPI
+ATOM     59  H7S PLPI    1      -1.183   1.197 -11.125  1.00  0.00      PLPI
+ATOM     60  C28 PLPI    1      -3.110   1.289 -12.154  1.00  0.00      PLPI
+ATOM     61  H8R PLPI    1      -4.172   1.144 -11.862  1.00  0.00      PLPI
+ATOM     62  H8S PLPI    1      -2.928   0.724 -13.093  1.00  0.00      PLPI
+ATOM     63  C29 PLPI    1      -3.035   2.829 -12.353  1.00  0.00      PLPI
+ATOM     64  H91 PLPI    1      -3.623   3.315 -11.560  1.00  0.00      PLPI
+ATOM     65 C210 PLPI    1      -2.424   3.492 -13.322  1.00  0.00      PLPI
+ATOM     66 H101 PLPI    1      -2.522   4.585 -13.388  1.00  0.00      PLPI
+[ D3A ]
+ATOM     67 C211 PLPI    1      -1.639   2.876 -14.443  1.00  0.00      PLPI
+ATOM     68 H11R PLPI    1      -0.934   2.179 -13.942  1.00  0.00      PLPI
+ATOM     69 H11S PLPI    1      -0.918   3.557 -14.944  1.00  0.00      PLPI
+ATOM     70 C212 PLPI    1      -2.413   2.004 -15.410  1.00  0.00      PLPI
+ATOM     71 H121 PLPI    1      -3.483   2.257 -15.405  1.00  0.00      PLPI
+ATOM     72 C213 PLPI    1      -1.997   0.945 -16.182  1.00  0.00      PLPI
+ATOM     73 H131 PLPI    1      -2.733   0.389 -16.781  1.00  0.00      PLPI
+ATOM     74 C214 PLPI    1      -0.564   0.437 -16.269  1.00  0.00      PLPI
+ATOM     75 H14R PLPI    1      -0.709  -0.579 -15.844  1.00  0.00      PLPI
+ATOM     76 H14S PLPI    1       0.160   1.081 -15.725  1.00  0.00      PLPI
+[ C4A ]
+ATOM     77 C215 PLPI    1      -0.075   0.185 -17.682  1.00  0.00      PLPI
+ATOM     78 H15R PLPI    1      -0.015   1.130 -18.263  1.00  0.00      PLPI
+ATOM     79 H15S PLPI    1      -0.798  -0.472 -18.211  1.00  0.00      PLPI
+ATOM     80 C216 PLPI    1       1.280  -0.482 -17.680  1.00  0.00      PLPI
+ATOM     81 H16R PLPI    1       1.638  -0.509 -18.732  1.00  0.00      PLPI
+ATOM     82 H16S PLPI    1       1.112  -1.544 -17.398  1.00  0.00      PLPI
+ATOM     83 C217 PLPI    1       2.343   0.067 -16.749  1.00  0.00      PLPI
+ATOM     84 H17R PLPI    1       2.041  -0.069 -15.688  1.00  0.00      PLPI
+ATOM     85 H17S PLPI    1       2.586   1.146 -16.857  1.00  0.00      PLPI
+ATOM     86 C218 PLPI    1       3.691  -0.762 -16.807  1.00  0.00      PLPI
+ATOM     87 H18R PLPI    1       3.434  -1.834 -16.947  1.00  0.00      PLPI
+ATOM     88 H18S PLPI    1       4.219  -0.445 -17.731  1.00  0.00      PLPI
+ATOM     89 H18T PLPI    1       4.372  -0.750 -15.929  1.00  0.00      PLPI
+[ C1B ]
+ATOM     90  C32 PLPI    1       1.030  -0.702  -6.893  1.00  0.00      PLPI
+ATOM     91  H2X PLPI    1       0.497   0.265  -7.008  1.00  0.00      PLPI
+ATOM     92  H2Y PLPI    1       0.246  -1.420  -7.215  1.00  0.00      PLPI
+ATOM     93  C33 PLPI    1       2.289  -0.894  -7.766  1.00  0.00      PLPI
+ATOM     94  H3X PLPI    1       2.745  -1.868  -7.486  1.00  0.00      PLPI
+ATOM     95  H3Y PLPI    1       2.932  -0.014  -7.550  1.00  0.00      PLPI
+ATOM     96  C34 PLPI    1       2.036  -0.867  -9.351  1.00  0.00      PLPI
+ATOM     97  H4X PLPI    1       3.072  -0.750  -9.734  1.00  0.00      PLPI
+ATOM     98  H4Y PLPI    1       1.502   0.070  -9.619  1.00  0.00      PLPI
+[ C2B ]
+ATOM     99  C35 PLPI    1       1.395  -2.111  -9.761  1.00  0.00      PLPI
+ATOM    100  H5X PLPI    1       0.357  -2.276  -9.399  1.00  0.00      PLPI
+ATOM    101  H5Y PLPI    1       2.085  -2.917  -9.432  1.00  0.00      PLPI
+ATOM    102  C36 PLPI    1       1.274  -2.186 -11.325  1.00  0.00      PLPI
+ATOM    103  H6X PLPI    1       2.220  -1.811 -11.773  1.00  0.00      PLPI
+ATOM    104  H6Y PLPI    1       0.488  -1.481 -11.672  1.00  0.00      PLPI
+ATOM    105  C37 PLPI    1       0.822  -3.510 -11.893  1.00  0.00      PLPI
+ATOM    106  H7X PLPI    1      -0.032  -3.851 -11.268  1.00  0.00      PLPI
+ATOM    107  H7Y PLPI    1       1.629  -4.226 -11.630  1.00  0.00      PLPI
+ATOM    108  C38 PLPI    1       0.447  -3.422 -13.384  1.00  0.00      PLPI
+ATOM    109  H8X PLPI    1       1.374  -2.989 -13.818  1.00  0.00      PLPI
+ATOM    110  H8Y PLPI    1      -0.325  -2.653 -13.600  1.00  0.00      PLPI
+[ C3B ]
+ATOM    111  C39 PLPI    1       0.143  -4.732 -13.928  1.00  0.00      PLPI
+ATOM    112  H9X PLPI    1      -0.511  -5.219 -13.173  1.00  0.00      PLPI
+ATOM    113  H9Y PLPI    1       0.958  -5.444 -14.180  1.00  0.00      PLPI
+ATOM    114 C310 PLPI    1      -0.655  -4.756 -15.312  1.00  0.00      PLPI
+ATOM    115 H10X PLPI    1      -1.596  -4.212 -15.084  1.00  0.00      PLPI
+ATOM    116 H10Y PLPI    1      -0.986  -5.805 -15.472  1.00  0.00      PLPI
+ATOM    117 C311 PLPI    1       0.261  -4.219 -16.451  1.00  0.00      PLPI
+ATOM    118 H11X PLPI    1       1.226  -4.767 -16.412  1.00  0.00      PLPI
+ATOM    119 H11Y PLPI    1       0.459  -3.132 -16.337  1.00  0.00      PLPI
+ATOM    120 C312 PLPI    1      -0.516  -4.485 -17.751  1.00  0.00      PLPI
+ATOM    121 H12X PLPI    1      -1.298  -3.698 -17.711  1.00  0.00      PLPI
+ATOM    122 H12Y PLPI    1      -0.944  -5.509 -17.696  1.00  0.00      PLPI
+[ C4B ]
+ATOM    123 C313 PLPI    1       0.397  -4.105 -19.017  1.00  0.00      PLPI
+ATOM    124 H13X PLPI    1       1.245  -4.815 -18.907  1.00  0.00      PLPI
+ATOM    125 H13Y PLPI    1       0.780  -3.086 -18.793  1.00  0.00      PLPI
+ATOM    126 C314 PLPI    1      -0.273  -4.218 -20.395  1.00  0.00      PLPI
+ATOM    127 H14X PLPI    1      -1.049  -3.425 -20.457  1.00  0.00      PLPI
+ATOM    128 H14Y PLPI    1      -0.769  -5.180 -20.646  1.00  0.00      PLPI
+ATOM    129 C315 PLPI    1       0.706  -3.928 -21.608  1.00  0.00      PLPI
+ATOM    130 H15X PLPI    1       0.227  -4.190 -22.575  1.00  0.00      PLPI
+ATOM    131 H15Y PLPI    1       1.604  -4.577 -21.520  1.00  0.00      PLPI
+ATOM    132 C316 PLPI    1       1.118  -2.470 -21.792  1.00  0.00      PLPI
+ATOM    133 H16X PLPI    1       1.657  -2.125 -20.884  1.00  0.00      PLPI
+ATOM    134 H16Y PLPI    1       1.734  -2.378 -22.713  1.00  0.00      PLPI
+ATOM    135 H16Z PLPI    1       0.225  -1.810 -21.756  1.00  0.00      PLPI
+END

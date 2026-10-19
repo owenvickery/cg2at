@@ -1,0 +1,132 @@
+[ GL0 ]
+ATOM      1  C13 DYPG    1      -2.397  -1.485  -1.844  1.00  0.00      DYPG
+ATOM      2 H13A DYPG    1      -3.492  -1.556  -1.672  1.00  0.00      DYPG
+ATOM      3 H13B DYPG    1      -2.062  -2.510  -1.575  1.00  0.00      DYPG
+ATOM      4  OC3 DYPG    1      -2.193  -1.416  -3.279  1.00  0.00      DYPG
+ATOM      5  HO3 DYPG    1      -1.303  -1.695  -3.505  1.00  0.00      DYPG
+ATOM      6  C12 DYPG    1      -1.781  -0.284  -1.082  1.00  0.00      DYPG
+ATOM      7 H12A DYPG    1      -2.278  -0.207  -0.089  1.00  0.00      DYPG
+ATOM      8  OC2 DYPG    1      -2.039   0.922  -1.793  1.00  0.00      DYPG
+ATOM      9  HO2 DYPG    1      -2.984   1.123  -1.598  1.00  0.00      DYPG
+ATOM     10  C11 DYPG    1      -0.324  -0.429  -0.845  1.00  0.00      DYPG
+ATOM     11 H11A DYPG    1       0.335  -0.228  -1.717  1.00  0.00      DYPG
+ATOM     12 H11B DYPG    1      -0.080  -1.415  -0.396  1.00  0.00      DYPG
+[ PO4 ]
+ATOM     13  P   DYPG    1       1.535   0.747   0.682  1.00  0.00      DYPG
+ATOM     14  O13 DYPG    1       2.053   2.059   0.225  1.00  0.00      DYPG
+ATOM     15  O14 DYPG    1       1.516   0.447   2.135  1.00  0.00      DYPG
+ATOM     16  O12 DYPG    1       0.047   0.638   0.104  1.00  0.00      DYPG
+ATOM     17  O11 DYPG    1       2.316  -0.412  -0.079  1.00  0.00      DYPG
+[ GL1 ]
+ATOM     18  C1  DYPG    1       3.710  -0.306  -0.253  1.00  0.00      DYPG
+ATOM     19  HA  DYPG    1       4.138  -1.213   0.224  1.00  0.00      DYPG
+ATOM     20  HB  DYPG    1       4.191   0.596   0.181  1.00  0.00      DYPG
+ATOM     21  C2  DYPG    1       4.041  -0.433  -1.814  1.00  0.00      DYPG
+ATOM     22  HS  DYPG    1       5.113  -0.716  -1.755  1.00  0.00      DYPG
+ATOM     23  O21 DYPG    1       3.807   0.810  -2.456  1.00  0.00      DYPG
+ATOM     24  C21 DYPG    1       4.605   1.059  -3.447  1.00  0.00      DYPG
+ATOM     25  O22 DYPG    1       5.495   0.394  -3.926  1.00  0.00      DYPG
+[ GL2 ]
+ATOM     26  C3  DYPG    1       3.268  -1.493  -2.530  1.00  0.00      DYPG
+ATOM     27  HX  DYPG    1       2.267  -1.113  -2.825  1.00  0.00      DYPG
+ATOM     28  HY  DYPG    1       3.045  -2.328  -1.832  1.00  0.00      DYPG
+ATOM     29  O31 DYPG    1       3.889  -1.936  -3.738  1.00  0.00      DYPG
+ATOM     30  C31 DYPG    1       3.312  -2.900  -4.415  1.00  0.00      DYPG
+ATOM     31  O32 DYPG    1       2.221  -3.416  -4.217  1.00  0.00      DYPG
+[ C1A ]
+ATOM     32  C22 DYPG    1       4.198   2.430  -4.083  1.00  0.00      DYPG
+ATOM     33  H2R DYPG    1       5.165   2.855  -4.428  1.00  0.00      DYPG
+ATOM     34  H2S DYPG    1       3.675   3.125  -3.392  1.00  0.00      DYPG
+ATOM     35  C23 DYPG    1       3.244   2.247  -5.300  1.00  0.00      DYPG
+ATOM     36  H3R DYPG    1       3.709   1.449  -5.918  1.00  0.00      DYPG
+ATOM     37  H3S DYPG    1       3.096   3.209  -5.836  1.00  0.00      DYPG
+ATOM     38  C24 DYPG    1       1.904   1.727  -4.813  1.00  0.00      DYPG
+ATOM     39  H4R DYPG    1       1.568   2.326  -3.940  1.00  0.00      DYPG
+ATOM     40  H4S DYPG    1       1.976   0.676  -4.458  1.00  0.00      DYPG
+[ C2A ]
+ATOM     41  C25 DYPG    1       0.823   1.871  -5.876  1.00  0.00      DYPG
+ATOM     42  H5R DYPG    1       1.112   1.280  -6.771  1.00  0.00      DYPG
+ATOM     43  H5S DYPG    1       0.785   2.966  -6.055  1.00  0.00      DYPG
+ATOM     44  C26 DYPG    1      -0.430   1.270  -5.250  1.00  0.00      DYPG
+ATOM     45  H6R DYPG    1      -0.794   1.979  -4.477  1.00  0.00      DYPG
+ATOM     46  H6S DYPG    1      -0.178   0.287  -4.798  1.00  0.00      DYPG
+ATOM     47  C27 DYPG    1      -1.516   1.137  -6.321  1.00  0.00      DYPG
+ATOM     48  H7R DYPG    1      -2.076   0.241  -5.977  1.00  0.00      DYPG
+ATOM     49  H7S DYPG    1      -0.995   0.775  -7.233  1.00  0.00      DYPG
+ATOM     50  C28 DYPG    1      -2.523   2.279  -6.418  1.00  0.00      DYPG
+ATOM     51  H8R DYPG    1      -2.618   2.741  -5.412  1.00  0.00      DYPG
+ATOM     52  H8S DYPG    1      -3.469   1.921  -6.877  1.00  0.00      DYPG
+[ D3A ]
+ATOM     53  C29 DYPG    1      -1.875   3.437  -7.229  1.00  0.00      DYPG
+ATOM     54  H9R DYPG    1      -1.091   4.040  -6.748  1.00  0.00      DYPG
+ATOM     55 C210 DYPG    1      -2.261   3.756  -8.495  1.00  0.00      DYPG
+ATOM     56 H10R DYPG    1      -1.623   4.450  -9.062  1.00  0.00      DYPG
+ATOM     57 C211 DYPG    1      -3.343   3.109  -9.293  1.00  0.00      DYPG
+ATOM     58 H11R DYPG    1      -4.322   3.598  -9.100  1.00  0.00      DYPG
+ATOM     59 H11S DYPG    1      -3.587   2.061  -9.019  1.00  0.00      DYPG
+ATOM     60 C212 DYPG    1      -2.982   2.912 -10.732  1.00  0.00      DYPG
+ATOM     61 H12R DYPG    1      -2.042   2.336 -10.863  1.00  0.00      DYPG
+ATOM     62 H12S DYPG    1      -2.766   3.905 -11.179  1.00  0.00      DYPG
+[ C4A ]
+ATOM     63 C213 DYPG    1      -4.090   2.189 -11.578  1.00  0.00      DYPG
+ATOM     64 H13R DYPG    1      -5.076   2.616 -11.295  1.00  0.00      DYPG
+ATOM     65 H13S DYPG    1      -4.054   1.079 -11.551  1.00  0.00      DYPG
+ATOM     66 C214 DYPG    1      -4.055   2.580 -13.087  1.00  0.00      DYPG
+ATOM     67 H14R DYPG    1      -4.094   3.691 -13.102  1.00  0.00      DYPG
+ATOM     68 H14S DYPG    1      -5.066   2.290 -13.443  1.00  0.00      DYPG
+ATOM     69 C215 DYPG    1      -2.979   1.823 -13.918  1.00  0.00      DYPG
+ATOM     70 H15R DYPG    1      -3.211   0.751 -13.738  1.00  0.00      DYPG
+ATOM     71 H15S DYPG    1      -2.062   1.924 -13.298  1.00  0.00      DYPG
+ATOM     72 C216 DYPG    1      -2.629   2.336 -15.307  1.00  0.00      DYPG
+ATOM     73 H16R DYPG    1      -2.066   3.285 -15.175  1.00  0.00      DYPG
+ATOM     74 H16S DYPG    1      -1.895   1.662 -15.798  1.00  0.00      DYPG
+ATOM     75 H16T DYPG    1      -3.587   2.576 -15.817  1.00  0.00      DYPG
+[ C1B ]
+ATOM     76  C32 DYPG    1       4.194  -3.054  -5.662  1.00  0.00      DYPG
+ATOM     77  H2X DYPG    1       4.128  -4.061  -6.126  1.00  0.00      DYPG
+ATOM     78  H2Y DYPG    1       5.214  -3.016  -5.223  1.00  0.00      DYPG
+ATOM     79  C33 DYPG    1       3.778  -1.961  -6.644  1.00  0.00      DYPG
+ATOM     80  H3X DYPG    1       3.323  -1.063  -6.174  1.00  0.00      DYPG
+ATOM     81  H3Y DYPG    1       2.955  -2.416  -7.236  1.00  0.00      DYPG
+ATOM     82  C34 DYPG    1       4.982  -1.531  -7.442  1.00  0.00      DYPG
+ATOM     83  H4X DYPG    1       5.419  -2.462  -7.862  1.00  0.00      DYPG
+ATOM     84  H4Y DYPG    1       5.629  -1.000  -6.712  1.00  0.00      DYPG
+[ C2B ]
+ATOM     85  C35 DYPG    1       4.493  -0.595  -8.678  1.00  0.00      DYPG
+ATOM     86  H5X DYPG    1       5.410  -0.233  -9.191  1.00  0.00      DYPG
+ATOM     87  H5Y DYPG    1       4.021   0.304  -8.227  1.00  0.00      DYPG
+ATOM     88  C36 DYPG    1       3.686  -1.252  -9.668  1.00  0.00      DYPG
+ATOM     89  H6X DYPG    1       2.857  -1.797  -9.167  1.00  0.00      DYPG
+ATOM     90  H6Y DYPG    1       4.183  -2.159 -10.073  1.00  0.00      DYPG
+ATOM     91  C37 DYPG    1       3.194  -0.368 -10.778  1.00  0.00      DYPG
+ATOM     92  H7X DYPG    1       4.163   0.073 -11.097  1.00  0.00      DYPG
+ATOM     93  H7Y DYPG    1       2.707   0.504 -10.291  1.00  0.00      DYPG
+ATOM     94  C38 DYPG    1       2.526  -1.119 -11.955  1.00  0.00      DYPG
+ATOM     95  H8X DYPG    1       1.496  -1.349 -11.610  1.00  0.00      DYPG
+ATOM     96  H8Y DYPG    1       3.026  -2.110 -12.003  1.00  0.00      DYPG
+[ D3B ]
+ATOM     97  C39 DYPG    1       2.431  -0.429 -13.294  1.00  0.00      DYPG
+ATOM     98  H9X DYPG    1       1.939   0.554 -13.253  1.00  0.00      DYPG
+ATOM     99 C310 DYPG    1       2.842  -0.929 -14.454  1.00  0.00      DYPG
+ATOM    100 H10X DYPG    1       2.749  -0.286 -15.342  1.00  0.00      DYPG
+ATOM    101 C311 DYPG    1       3.395  -2.346 -14.586  1.00  0.00      DYPG
+ATOM    102 H11X DYPG    1       3.775  -2.691 -13.601  1.00  0.00      DYPG
+ATOM    103 H11Y DYPG    1       4.252  -2.228 -15.283  1.00  0.00      DYPG
+ATOM    104 C312 DYPG    1       2.394  -3.333 -15.189  1.00  0.00      DYPG
+ATOM    105 H12X DYPG    1       2.919  -4.303 -15.051  1.00  0.00      DYPG
+ATOM    106 H12Y DYPG    1       2.215  -3.141 -16.269  1.00  0.00      DYPG
+[ C4B ]
+ATOM    107 C313 DYPG    1       1.151  -3.331 -14.344  1.00  0.00      DYPG
+ATOM    108 H13X DYPG    1       0.268  -2.843 -14.810  1.00  0.00      DYPG
+ATOM    109 H13Y DYPG    1       1.268  -2.859 -13.346  1.00  0.00      DYPG
+ATOM    110 C314 DYPG    1       0.549  -4.726 -14.110  1.00  0.00      DYPG
+ATOM    111 H14X DYPG    1       1.278  -5.411 -13.627  1.00  0.00      DYPG
+ATOM    112 H14Y DYPG    1       0.583  -5.069 -15.166  1.00  0.00      DYPG
+ATOM    113 C315 DYPG    1      -0.860  -4.833 -13.491  1.00  0.00      DYPG
+ATOM    114 H15X DYPG    1      -0.948  -4.345 -12.497  1.00  0.00      DYPG
+ATOM    115 H15Y DYPG    1      -0.932  -5.927 -13.307  1.00  0.00      DYPG
+ATOM    116 C316 DYPG    1      -1.972  -4.225 -14.249  1.00  0.00      DYPG
+ATOM    117 H16X DYPG    1      -1.911  -3.117 -14.319  1.00  0.00      DYPG
+ATOM    118 H16Y DYPG    1      -2.052  -4.623 -15.283  1.00  0.00      DYPG
+ATOM    119 H16Z DYPG    1      -2.876  -4.440 -13.641  1.00  0.00      DYPG
+END

@@ -1,0 +1,7 @@
+integrator               = steep 
+nsteps                   = 10000
+emtol                    = 10
+emstep                   = 0.01
+nstxout                  = 10
+
+

@@ -6,6 +6,7 @@ import difflib
 from scipy.spatial import cKDTree
 import copy
 import gen, g_var, at_mod, read_in
+from exceptions import CG2ATError, InputError, TopologyError
 
 def build_multi_residue_atomistic_system(cg_residues, sys_type):   
 #### initisation of counters
@@ -20,8 +21,7 @@ def build_multi_residue_atomistic_system(cg_residues, sys_type):
     new_chain = True
     for cg_residue_id, residue_number in enumerate(cg_residues[sys_type]):
 
-        if np.round((cg_residue_id/len(cg_residues[sys_type]))*100,2).is_integer():
-            print('Converting de_novo '+sys_type+': ',np.round((cg_residue_id/len(cg_residues[sys_type]))*100,2),'%', end='\r')
+        gen.print_progress('Converting ' + sys_type, cg_residue_id + 1, len(cg_residues[sys_type]))
         resname = cg_residues[sys_type][residue_number][next(iter(cg_residues[sys_type][residue_number]))]['residue_name']
         if new_chain: 
             if chain_count not in coord_atomistic:
@@ -47,14 +47,21 @@ def build_multi_residue_atomistic_system(cg_residues, sys_type):
                     if group_bead in g_var.res_top[resname]['CONNECT']:
                         at_connect, cg_connect, new_chain = at_mod.BB_connectivity(at_connect,cg_connect, cg_residues[sys_type], group_fit[group_bead], residue_number, group_bead, resname)
                         if sys_type == 'PROTEIN':
-                            g_var.backbone_coords[chain_count].append(np.append(cg_residues[sys_type][residue_number][group_bead]['coord'], 1)) 
+                            # New Martini 3 (explicit backbone N/CA/C/O): use CA, append once per residue
+                            # Old Martini 3 (single BB bead): append BB coord as before
+                            if 'CA' in cg_residues[sys_type][residue_number]:
+                                if group_bead == 'N':
+                                    g_var.backbone_coords[chain_count].append(np.append(cg_residues[sys_type][residue_number]['CA']['coord'], 1))
+                            else:
+                                g_var.backbone_coords[chain_count].append(np.append(cg_residues[sys_type][residue_number][group_bead]['coord'], 1))
                 xyz_rot_apply = at_mod.get_rotation(cg_connect, at_connect, center, resname, group, residue_number)
                 coord_atomistic[chain_count] = at_mod.apply_rotations(coord_atomistic[chain_count],residue_number, group_fit, center, xyz_rot_apply)
         if new_chain:
             g_var.ter_res[sys_type][chain_count][1] = resname
             chain_count+=1
 
-    print('Completed initial conversion of '+sys_type+'\n')        
+    gen.finish_progress('Converting ' + sys_type, len(cg_residues[sys_type]))
+    print('Completed initial conversion of '+sys_type+'\n')
     g_var.system[sys_type]=chain_count
     if sys_type == 'PROTEIN':
         for chain in range(chain_count):
@@ -75,7 +82,7 @@ def ask_if_disulphide(chain, res_1, res_2):
             else:
                 print("Oops!  That was a invalid choice")
         except KeyboardInterrupt:
-            sys.exit('\nInterrupted')
+            raise KeyboardInterrupt
         except BaseException:
             print("Oops!  That was a invalid choice")
 
@@ -173,6 +180,8 @@ def shrink_coordinates(c1,c2):
 def finalise_novo_atomistic(coord_atomistic, sys_type):
     final_at_residues={}
     final_at = {}
+    pdb_output = None
+    cross_vector = None
     for chain in coord_atomistic: 
         at_number=0    
         final_at_residues[chain]={}  
@@ -187,7 +196,7 @@ def finalise_novo_atomistic(coord_atomistic, sys_type):
             if sys_type == 'PROTEIN':
                 if res_index <= len(coord_atomistic[chain])-3:
                     coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl_chiral(residue_id, g_var.cg_residues['PROTEIN'], coord_atomistic[chain][residue_id], False)
-                elif res_index < len(coord_atomistic[chain]) and 'cross_vector' in locals():
+                elif res_index < len(coord_atomistic[chain]) and cross_vector is not None:
                     coord_atomistic[chain][residue_id], cross_vector = fix_carbonyl_chiral(residue_id, g_var.cg_residues['PROTEIN'], coord_atomistic[chain][residue_id], cross_vector)
             order = np.sort(np.array(list(coord_atomistic[chain][residue_id].keys())))
             for at_val, atom in enumerate(order):
@@ -203,7 +212,7 @@ def finalise_novo_atomistic(coord_atomistic, sys_type):
                 x, y, z = gen.trunc_coord(final_at[chain][atom]['coord'])
                 pdb_output.write(g_var.pdbline%((atom,final_at[chain][atom]['atom'],final_at[chain][atom]['res_type'],' ',\
                                 final_at[chain][atom]['resid'],x,y,z,1,0))+'\n')
-    if 'pdb_output' in locals():
+    if pdb_output is not None:
         pdb_output.close()
     return final_at_residues
 
@@ -324,7 +333,7 @@ def sort_chains(sys_type):
         for i in range(len(g_var.cg_chain_group)):
             g_var.group_chains[i] = 0
     else:
-        sys.exit('Failed to parse chain sorting')
+        raise CG2ATError('Failed to parse chain sorting')
 
 
 def check_chain_alignment_coverage(sys_type):
@@ -367,19 +376,21 @@ def align_user_chains(final_coordinates_atomistic):
 
 def center_atomistic():
     cg_com={}
+    protein_mass = None
+    cg_backbone_masses = None
 #### for each protein chain center on cg representation 
     for chain in g_var.atomistic_protein_input_aligned:
         cg_com[chain]=[]
         for part_val, part in enumerate(g_var.atomistic_protein_input_aligned[chain]):
             sls, sle= int(part.split(':')[0]),int(part.split(':')[1])
-            if 'protein_mass' not in locals():
+            if protein_mass is None:
                 protein_mass={}
             if chain in g_var.group_chains:
                 if g_var.group_chains[chain] not in protein_mass:
                     protein_mass[g_var.group_chains[chain]]=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], [])
                 else:
                     protein_mass[g_var.group_chains[chain]]=fetch_backbone_mass(g_var.atomistic_protein_input_aligned[chain][part], protein_mass[g_var.group_chains[chain]])
-                if 'cg_backbone_masses' not in locals():
+                if cg_backbone_masses is None:
                     cg_backbone_masses = {}
                 if g_var.group_chains[chain] not in cg_backbone_masses:
                     cg_backbone_masses[g_var.group_chains[chain]]= g_var.backbone_coords[chain][sls:sle]
@@ -440,12 +451,11 @@ def rotate_protein_monomers(atomistic_protein_centered, final_coordinates_atomis
                     except BaseException:
                         for atom in atomistic_protein_centered[chain][part][residue]:
                             print(atomistic_protein_centered[chain][part][residue][atom])
-                        sys.exit()
+                        raise CG2ATError('Atomistic/CG chain mismatch — see above')
                 if len(at_centers) == len(np.array(g_var.backbone_coords[chain])[sls:sle,:3]):
                     at_com_group, cg_com_group = return_grouped_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle)
                 else:
-                    sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
-                            number of CG residues '+str(len(g_var.backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
+                    raise InputError('In chain '+str(chain)+' the atomistic input does not match the CG. CG residues: '+str(len(g_var.backbone_coords[chain]))+', AT residues: '+str(len(at_centers)))
     return at_com_group, cg_com_group
 
 def apply_rotations_to_chains(final_coordinates_atomistic, atomistic_protein_centered, at_com_group,cg_com_group,cg_com):
@@ -471,8 +481,7 @@ def return_indivdual_rotations(chain, part_val, at_centers, cg_com, at_com_group
         at_com_group[chain].append(at_mod.kabsch_rotate(np.array(at_centers)-cg_com[chain][part_val], 
                              np.array(g_var.backbone_coords[chain])[sls:sle,:3]-cg_com[chain][part_val]))
     else:
-        sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
-                    number of CG residues '+str(len(g_var.backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))    
+        raise InputError('In chain '+str(chain)+' the atomistic input does not match the CG. CG residues: '+str(len(g_var.backbone_coords[chain]))+', AT residues: '+str(len(at_centers)))    
     return at_com_group
 
 def return_grouped_rotations(chain, part_val, at_centers, cg_com, at_com_group, cg_com_group, sls, sle):
@@ -502,7 +511,7 @@ def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_cent
                     for atom in atomistic_protein_centered[part][residue]:   
                         if atomistic_protein_centered[part][residue][atom]['res_type'] != resname:
                             print('de_novo' , resname,'at_user', atomistic_protein_centered[part][residue][atom]['res_type'])
-                            sys.exit('de novo and at user supplied don\'t match')
+                            raise CG2ATError('de novo and user-supplied atomistic structures do not match')
                         atomistic_protein_centered[part][residue][atom]['coord'] = at_mod.rotate_atom(atomistic_protein_centered[part][residue][atom]['coord'], cg_com[part_val], xyz_rot_apply[part_val])
                     complete_user_at[residue]=atomistic_protein_centered[part][residue]
         if not exists:
@@ -512,22 +521,22 @@ def hybridise_protein_inputs(final_coordinates_atomistic, atomistic_protein_cent
 ################################################################## Merge chains ####################    
 
 def correct_amide_h(lines, coords):
+    C = N = O = HN = None
     for at_val, atom in enumerate(lines):
-        if atom['atom_name'] == 'C': 
+        if atom['atom_name'] == 'C':
             C = np.array(coords[at_val])
-        if atom['atom_name'] == 'O':   
-            O = np.array(coords[at_val]) 
-
+        if atom['atom_name'] == 'O':
+            O = np.array(coords[at_val])
         resname = gen.check_alternate_resname(atom['residue_name'])
-        if atom['atom_name'] == g_var.res_top[resname]['amide_h'] and atom['residue_id'] != 0:  
-            HN = np.array(coords[at_val]) 
+        if atom['atom_name'] == g_var.res_top[resname]['amide_h'] and atom['residue_id'] != 0:
+            HN = np.array(coords[at_val])
             HN_index = at_val
         if atom['atom_name'] == 'N' and atom['residue_id'] != 0:
             N = np.array(coords[at_val])
-        if 'C' in locals() and 'N' in locals() and 'O' in locals() and 'HN' in locals():
-            O_C = O-C
+        if C is not None and N is not None and O is not None and HN is not None:
+            O_C = O - C
             coords[at_val] = N - O_C
-            del N, C, O, HN 
+            C = N = O = HN = None
     return coords
 
 def create_disres(coord, chain, file, at_start, count):
@@ -584,9 +593,10 @@ def write_RMSD():
     RMSD={}
     de_novo_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_de_novo.pdb') ## reads in final pdb
     if chain_count != g_var.system['PROTEIN']:
-        sys.exit('number of chains in atomistic protein input ('+str(chain_count)+') does not match CG representation ('+str(g_var.system['PROTEIN'])+')')
+        raise InputError('number of chains in atomistic protein input ('+str(chain_count)+') does not match CG representation ('+str(g_var.system['PROTEIN'])+')')
     RMSD_de_novo = RMSD_measure_de_novo(de_novo_atoms) ## gets rmsd of de novo
 
+    seg_rmsd = None
     if g_var.user_at_input and 'PROTEIN' in g_var.cg_residues: 
         if g_var.args.o in ['all', 'align']: 
             at_input_atoms, chain_count = read_in.read_in_atomistic(g_var.final_dir+'final_cg2at_aligned.pdb')
@@ -596,7 +606,7 @@ def write_RMSD():
     with open(g_var.final_dir+'structure_quality.dat', 'w') as qual_out:   
         line_1   = ' chain    De novo BB RMSD ('+chr(197)+')'
         line_2   = ' -----    -------------------'
-        if 'seg_rmsd' in locals():
+        if seg_rmsd is not None:
             line_1+= '    Aligned BB RMSD ('+chr(197)+')    Seg backbone RMSD ('+chr(197)+')'
             line_2+= '    -------------------    ---------------------'
         qual_out.write(line_1+'\n'+line_2+'\n')
@@ -604,7 +614,7 @@ def write_RMSD():
         write_warning = False
         for chain in RMSD_de_novo:
             line = ' {0:^5}{1:^28}'.format(str(chain), float(RMSD_de_novo[chain]))
-            if 'seg_rmsd' in locals():
+            if seg_rmsd is not None:
                 line += '{0:^18}'.format(float(RMSD_aligned[chain]))
                 if chain in seg_rmsd:
                     line+= '{0:^28}'.format(', '.join(seg_rmsd[chain])) 
@@ -631,12 +641,11 @@ def RMSD_measure_de_novo(structure_atoms):
             if np.any(np.array(at_centers_iter)[:,3] > 0):
                 at_centers.append(np.average(np.array(at_centers_iter)[:,:3], axis=0, weights=np.array(at_centers_iter)[:,3]))
             else:
-                sys.exit('Missing masses for RMSD')
+                raise TopologyError('Missing masses for RMSD')
 
     #### checks that the number of residues in the chain are the same between CG and AT
         if len(at_centers) != len(g_var.backbone_coords[chain]):
-            sys.exit('In chain '+str(chain)+' the atomistic input does not match the CG. \n\
-    number of CG residues '+str(len(g_var.backbone_coords[chain]))+'\nnumber of AT residues '+str(len(at_centers)))
+            raise InputError('In chain '+str(chain)+' the atomistic input does not match the CG. CG residues: '+str(len(g_var.backbone_coords[chain]))+', AT residues: '+str(len(at_centers)))
 
         cg_center = np.mean(np.array(g_var.backbone_coords[chain])[:,:3], axis=0)
         at_align = np.array(at_centers) - (np.mean(np.array(at_centers), axis=0) - cg_center)
@@ -652,9 +661,16 @@ def RMSD_align(coord_set_1, coord_set_2):
         ali.append( at_mod.rotate_atom(atom, center, xyz_rot_apply) )
     return np.array(ali)
 
-def Calculate_RMSD(C1, C2):
-    dist=np.sqrt((C1 - C2)**2)
-    return np.round(np.sqrt(np.mean(dist**2)),3) #### RMSD calculation
+###non-standard RMSD calculation
+#def Calculate_RMSD(C1, C2):
+#    dist=np.sqrt((C1 - C2)**2)
+#    return np.round(np.sqrt(np.mean(dist**2)),3) #### RMSD calculation
+
+#### Standard RMSD calculation (per atom, not per coordinate so divides by N (atoms/residues), not 3N)
+#### RMSD = sqrt( (1/N) * sum_i[(dx_i)^2 + (dy_i)^2 + (dz_i)^2] )
+def Calculate_RMSD(C1, C2):                                       
+    return np.round(np.sqrt(np.mean(np.sum((C1 - C2)**2, axis=1))), 3)    
+
 
 def get_coordinates(input_coord, P_R, chain):
     coord_dict = {}
