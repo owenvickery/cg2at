@@ -2,6 +2,7 @@
 
 import os, sys
 import gen, g_var
+from exceptions import InputError
 
 
 def write_posre_file(residue, posres):
@@ -46,7 +47,7 @@ def read_itp(filename_itp, footer=False):
                         footer=True
         return molecule, posre, footer
     else:
-        sys.exit('Cannot find itp file: '+filename_itp)
+        raise InputError('Cannot find itp file: '+filename_itp)
     
 
 def check_frag_file(directory, molecule):
@@ -98,7 +99,7 @@ def add_posres_file():
     write_posre_file(frag_location, posre)
     if not footer:
         append_ifdef(frag_location+'.itp')
-    sys.exit()
+    return
 
 def compare_forcefield_to_database():
     molecule, posre, footer = read_itp(g_var.args.compare)
@@ -107,5 +108,5 @@ def compare_forcefield_to_database():
         exists = check_frag_file(directory[0], molecule)
         check_fragments_missing_from_itp(directory[0], molecule)
         check_fragments_to_add(directory[0], molecule, exists)
-    sys.exit()
+    return
 

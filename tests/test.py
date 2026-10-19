@@ -9,6 +9,7 @@ import filecmp
 import numpy as np
 from scipy.spatial import cKDTree
 import gen, gro, at_mod, at_mod_p, at_mod_np, read_in, g_var
+from exceptions import CG2ATError
 
 
 
@@ -73,10 +74,10 @@ class TestSum(unittest.TestCase):
     def test_strip_header(self):
         header_types = [ '[BB]', ' [BB]', '[ BB]', '[ BB ]', '[ BB AA ]']
         out = ['BB','BB','BB','BB']
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CG2ATError) as cm:
             for header_val, header in enumerate(header_types):
                 self.assertEqual(gen.strip_header(header), out[header_val])
-        self.assertEqual(cm.exception.code, 'There is a issue in one of the fragment headers: \n[ BB AA ]')
+        self.assertEqual(str(cm.exception), 'There is a issue in one of the fragment headers: \n[ BB AA ]')
 
     # def test_sep_fragments_topology(self):
     #     results = gen.sep_fragments_topology('PHE', run_dir+'database_test/fragments/test_1/protein/PHE/PHE')
@@ -485,18 +486,21 @@ class TestSum(unittest.TestCase):
     #     self.assertEqual(to_print,correct)
 
     def test_write_system_components(self):
-        correct = '\n----------------------------------------------------------------------------------------------------\n                               Script has completed, time for a beer                                \n\nmolecules          number          \n---------          ------          \n PROTEIN              1            \n'
+        correct = '\n'+'-'*100+'\n'+'{0:^100}\n'.format('Conversion complete')+'\n{0:^10}{1:^25}\n'.format('molecules','number')+'{0:^10}{1:^25}\n'.format('---------','------')+'{0:^10}{1:^25}\n'.format('PROTEIN', 1)
         g_var.system = {'PROTEIN':1}
         to_write = gen.write_system_components()
         self.assertEqual(to_write,correct)
 
     def test_database_information(self):
-        output = '\n              The available forcefields within your database are (flag -ff):              \n------------------------------------------------------------------------------------------\n\n                                 charmm36-mar2019-updated                                 \n\n\n          The available fragment libraries within your database are (flag -fg):           \n------------------------------------------------------------------------------------------\n\n                                          test_1                                          \n\n"If all else fails, immortality can always be assured by spectacular error." (John Kenneth Galbraith)\n'
+        output = '\n{0:^90}\n{1:-<90}\n\n'.format('The available force fields within your database are (flag -ff):', '')
+        output += '{0:^90}\n'.format('charmm36-mar2019-updated')
+        output += '\n\n{0:^90}\n{1:-<90}\n\n'.format('The available fragment libraries within your database are (flag -fg):', '')
+        output += '{0:^90}\n'.format('test_1')
         g_var.forcefield_available =['charmm36-mar2019-updated']
         g_var.fragments_available = ['test_1']
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(SystemExit) as cm_exit:
             gen.database_information()
-        self.assertEqual(cm.exception.code, output)
+        self.assertEqual(cm_exit.exception.code, output)
 
     # def test_fragments_in_use(self):
     #     output = '\n\n               The following residues are available in the database: test_1               \n------------------------------------------------------------------------------------------\n\n\n                                   Non protein residues                                   \n                                   --------------------                                   \n                                      CHOL, ION, SOL                                      \n\n                                     Protein residues                                     \n                                     ----------------                                     \n                                           PHE                                            \n\n                                Modified protein residues                                 \n                                -------------------------                                 \n                                                                                          \n\n                                  Other linked residues                                   \n                                  ---------------------                                   \n                                                                                          \n\n                                      Water residues                                      \n                                      --------------                                      \n                                 spc, spce, tip3p, tip4p                                  \n\n------------------------------------------------------------------------------------------\n\n'
@@ -550,10 +554,10 @@ class TestSum(unittest.TestCase):
         line = 'ATOM     31  N   ALA     3      74.248  59.378  51.435  1.00  0.00           N'
         line_sep = gen.pdbatom(line)
         self.assertEqual(line_sep, {'atom_number': 31, 'atom_name': 'N', 'residue_name': 'ALA', 'chain': ' ', 'residue_id': 3, 'x': 74.248, 'y': 59.378, 'z': 51.435})
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CG2ATError) as cm:
             line = 'ATOM     31  N   ALA     3      74.248  59.37833  51.435  1.00  0.00           N'
             line_sep = gen.pdbatom(line)
-        self.assertEqual(cm.exception.code, '\npdb line is wrong:\t'+line)
+        self.assertEqual(str(cm.exception), 'pdb line is wrong: '+line)
 
     # def test_find_gromacs(self):
     #     pass
@@ -578,9 +582,9 @@ class TestSum(unittest.TestCase):
         for l_val, l in enumerate(line_test):
             read_in.add_residue_to_dictionary(l)
         self.assertEqual(g_var.cg_residues, {'CHOL': {}, 'PROTEIN': {}, 'NA': {}, 'W': {}, 'OTHER': {}})
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CG2ATError) as cm:
             read_in.add_residue_to_dictionary({'residue_name':'AAA'})
-        self.assertEqual(cm.exception.code, '\nAAA is not in the fragment database!')
+        self.assertEqual(str(cm.exception), 'AAA is not in the fragment database')
 
     # def test_add_to_cg_database(self):
     #     g_var.cg_residues = {'ION':{}, 'CHOL':{}, 'W':{}, 'DNA':{}, 'PROTEIN':{}, 'OTHER':{}, 'NA':{}}
@@ -633,22 +637,22 @@ class TestSum(unittest.TestCase):
         g_var.args.d = ['0:2', '3:45']
         g_var.chain_count = 2
         g_var.atomistic_protein_input_raw = {0:1, 1:2}
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CG2ATError) as cm:
             read_in.duplicate_chain(True)
         self.assertEqual(g_var.chain_count, 3)
         self.assertEqual(g_var.atomistic_protein_input_raw, {0: 1, 1: 2, 2: 1})      
-        self.assertEqual(cm.exception.code, 'your atomistic chain duplication input is incorrrect')
+        self.assertEqual(str(cm.exception), 'your atomistic chain duplication input is incorrect')
 
     def test_filter_input(self):
         input_no_atom = ['CRYST1  159.804  124.407  103.403  90.00  90.00  90.00 P 1           1\n', 'MODEL        1\n', '\n']
-        with self.assertRaises(SystemExit) as no_atom:
+        with self.assertRaises(CG2ATError) as no_atom:
             read_in.filter_input(input_no_atom)
-        self.assertEqual(no_atom.exception.code, 'input coarsegrain structure seems to contain no beads')
+        self.assertEqual(str(no_atom.exception), 'input coarse-grained structure seems to contain no beads')
         input_no_box =['MODEL        1\n', 'ATOM  17534  W     W   676      54.070   9.145   7.973  1.00  0.00           W\n', '\n']
         g_var.input_directory = run_dir+'/inputs/CG/no_box/'
-        with self.assertRaises(SystemExit) as no_box:
+        with self.assertRaises(CG2ATError) as no_box:
             read_in.filter_input(input_no_box)
-        self.assertEqual(no_box.exception.code, 'The input file is missing the Box vectors')
+        self.assertEqual(str(no_box.exception), 'The input file is missing the Box vectors')
 
     # def test_read_initial_cg_pdb(self):
     #     g_var.p_residues, g_var.np_residues, g_var.sol_residues, g_var.ion_residues = ['PHE'], ['CHOL'], ['W'], ['NA']
@@ -680,9 +684,9 @@ class TestSum(unittest.TestCase):
         atomistic_protein_input, chain_count = read_in.read_in_atomistic(run_dir+'inputs/AT/AT_INPUT_long.pdb')
         self.assertEqual(chain_count, 2)
         self.assertCountEqual(atomistic_protein_input,atomistic_protein_input_correct_long)
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CG2ATError) as cm:
             atomistic_protein_input, chain_count = read_in.read_in_atomistic(run_dir+'inputs/AT/AT_INPUT_long.pdbhh')
-        self.assertEqual(cm.exception.code, 'cannot find atomistic protein : '+run_dir+'inputs/AT/AT_INPUT_long.pdbhh')
+        self.assertEqual(str(cm.exception), 'cannot find atomistic protein : '+run_dir+'inputs/AT/AT_INPUT_long.pdbhh')
 
 #### test at_mod_p
 
@@ -732,9 +736,9 @@ class TestSum(unittest.TestCase):
             raised = True
         self.assertFalse(raised, 'Exception raised')    
 
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CG2ATError) as cm:
             at_mod.sanity_check_atoms([1, 2, 3, 4, 6], 'ALA')
-        self.assertEqual(cm.exception.code, 'atom number '+str(5)+' is missing from fragment library: ALA\n')
+        self.assertEqual(str(cm.exception), 'atom number '+str(5)+' is missing from fragment library: ALA')
 
     def test_sanity_check_beads(self):
         bead_list = ['BB', 'SC1', 'SC2', 'SC3']
@@ -743,9 +747,9 @@ class TestSum(unittest.TestCase):
         bead_list_cg = at_mod.sanity_check_beads(bead_list, cg, res)
         self.assertEqual(bead_list_cg, ['BB', 'SC1', 'SC2', 'SC3'])
         cgf = {'FF': {'residue_name': 'PHE', 'coord': np.array([84.312, 45.09 , 28.573])}, 'SC1': {'residue_name': 'PHE', 'coord': np.array([82.306, 43.106, 29.565])}, 'SC2': {'residue_name': 'PHE', 'coord': np.array([79.798, 42.108, 29.557])}, 'SC3': {'residue_name': 'PHE', 'coord': np.array([81.894, 40.487, 30.077])}}
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CG2ATError) as cm:
             bead_list_cg = at_mod.sanity_check_beads(bead_list, cgf, res)
-        self.assertEqual(cm.exception.code, 'The bead FF is missing from the fragment library: PHE\n')
+        self.assertEqual(str(cm.exception), 'The bead FF is missing from the fragment library: PHE')
 
     def test_sanity_check_protein_other(self):
         g_var.res_top['PHE']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', \
@@ -774,9 +778,9 @@ class TestSum(unittest.TestCase):
         'atom_masses': {'N': 14.007, 'CA': 12.011, 'CB': 12.011, 'CG': 12.011, 'CD1': 12.011, 'CE1': 12.011, 'CZ': 12.011, \
                         'CD2': 12.011, 'CE2': 12.011, 'C': 12.011, 'O': 15.999}, 'amide_h': 'HN'}
         g_var.cg_residues = {'PROTEIN': {0: { 'SC1': {'residue_name': 'PHE', 'coord': np.array([82.306, 43.106, 29.565])}, 'SC2': {'residue_name': 'PHE', 'coord': np.array([79.798, 42.108, 29.557])}, 'SC3': {'residue_name': 'PHE', 'coord': np.array([81.894, 40.487, 30.077])}}}}        
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CG2ATError) as cm:
             at_mod.sanity_check_protein_other('PROTEIN', True)
-        self.assertEqual(cm.exception.code, 'number of atomistic fragments: 4 does not equal number of CG beads: 3')    
+        self.assertEqual(str(cm.exception), 'number of atomistic fragments: 4 does not equal number of CG beads: 3')    
         
     def test_sanity_check(self):
         g_var.res_top['PHE']={'C_TERMINAL': 'default', 'N_TERMINAL': 'default', \
@@ -873,9 +877,9 @@ class TestSum(unittest.TestCase):
     def test_COM_error(self):
         mass = np.array([[43.8669, 44.4825, 45.6372, 14.007], [45.13590000000001, 44.5455, 45.2862]], dtype=object)
         fragment = {'BB': {1: {'coord': np.array([43.8669, 44.4825, 45.6372]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 2: {'coord': np.array([45.1359, 44.5455, 45.2862]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}}}
-        with self.assertRaises(SystemExit) as cm:
+        with self.assertRaises(CG2ATError) as cm:
             result = at_mod.COM(mass, fragment)
-        self.assertEqual(cm.exception.code,  'missing the mass one of the atoms in ALA')  
+        self.assertEqual(str(cm.exception),  'missing the mass one of the atoms in ALA')  
 
     def test_rigid_fit(self):
         group = {'BB': {1: {'coord': np.array([43.8669, 44.4825, 45.6372]), 'atom': 'N', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 14.007}, 2: {'coord': np.array([45.1359, 44.5455, 45.2862]), 'atom': 'CA', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 3: {'coord': np.array([45.1899, 45.0225, 43.9902]), 'atom': 'CB', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 4: {'coord': np.array([45.8379, 45.3195, 46.1592]), 'atom': 'C', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 12.011}, 5: {'coord': np.array([45.4599, 46.3005, 46.5192]), 'atom': 'O', 'resid': 1, 'res_type': 'ALA', 'frag_mass': 15.999}}} 

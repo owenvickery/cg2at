@@ -3,18 +3,21 @@
 import os, sys
 import numpy as np
 import subprocess 
-import multiprocessing as mp
 from shutil import rmtree
 import time
 import gen, g_var, at_mod, read_in, at_mod_p
+from exceptions import CG2ATError, InputError, TopologyError, GromacsError
+
+terminal_PTMs = ['CYST', 'GLYM']
+force_ter = {}   ## (res_type, chain): True if pdb2gmx must run with -ter for a terminal PTM
 
 
 #### collects input structures and creates initial folders
 def collect_input():
     if os.path.exists(g_var.args.c):
-        print('You have selected the following coarse grain input file: ', g_var.args.c)
+        print('You have selected the following coarse-grained input file: ', g_var.args.c)
     else:
-        sys.exit('Cannot find CG input file: '+g_var.args.c)
+        raise InputError('Cannot find CG input file: '+g_var.args.c)
     gen.mkdir_directory(g_var.working_dir)
     gen.mkdir_directory(g_var.final_dir)
     gen.mkdir_directory(g_var.input_directory)
@@ -26,12 +29,12 @@ def collect_input():
             if os.path.exists(file_name):
                 print( file_name )
             else:
-                sys.exit('cannot find atomistic input file: '+file_name)
+                raise InputError('cannot find atomistic input file: '+file_name)
             gen.file_copy_and_check(file_name, g_var.input_directory+gen.path_leaf(file_name)[1])
             os.chdir(g_var.input_directory)
             gromacs([g_var.args.gmx+' editconf -f '+gen.path_leaf(file_name)[1]+' -resnr 0 -o '+g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb', g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb'])
             if not os.path.exists(g_var.input_directory+'AT_INPUT_'+str(file_num)+'.pdb'):
-                sys.exit('\nFailed to process atomistic input file.\nCheck gromacs outputs in '+g_var.input_directory)
+                raise GromacsError('Failed to process atomistic input file. Check gromacs outputs in '+g_var.input_directory)
             else:
                 g_var.user_at_input = True
             os.chdir(g_var.start_dir)
@@ -42,7 +45,7 @@ def collect_input():
         gromacs([g_var.args.gmx+' -version', 'version.txt'])
     gromacs([g_var.args.gmx+' editconf -f '+gen.path_leaf(g_var.args.c)[1]+' -resnr 0 -c -o '+g_var.input_directory+'CG_INPUT.pdb', g_var.input_directory+'CG_INPUT.pdb'])
     if not os.path.exists(g_var.input_directory+'CG_INPUT.pdb'):
-        sys.exit('\nFailed to process coarsegrain input file')      
+        raise GromacsError('Failed to process coarse-grained input file')      
 
 #### gromacs parser
 def gromacs(gro):
@@ -106,7 +109,7 @@ def make_min(residue):#, fragments):
         with open('em_'+residue+'.mdp','w') as em:
             em.write('define = \n integrator = steep\nnsteps = 20000\nemtol = 750\nemstep = 0.001\ncutoff-scheme = Verlet\n')
 
-def pdb2gmx_minimise(chain,pdb2gmx_selections,res_type, q):
+def pdb2gmx_minimise(chain, pdb2gmx_selections, res_type, q=None):
     os.chdir(g_var.working_dir+'/'+res_type)
     if not os.path.exists(res_type+'_de_novo_'+str(chain)+'_gmx.pdb'):
         pdb2gmx_chain(chain, 'de_novo_', res_type, ' << EOF \n1\n'+str(pdb2gmx_selections[chain][0])+'\n'+str(pdb2gmx_selections[chain][1]))
@@ -117,9 +120,10 @@ def pdb2gmx_minimise(chain,pdb2gmx_selections,res_type, q):
         pdb2gmx_chain(chain, 'aligned_', res_type, pdb2gmx_selections[chain])
         at_mod.check_overlap_chain(chain, 'aligned_', res_type)
     minimise_protein_chain(chain, 'de_novo_', res_type)
-    if g_var.user_at_input and res_type == 'PROTEIN': 
+    if g_var.user_at_input and res_type == 'PROTEIN':
         minimise_protein_chain(chain, 'aligned_', res_type)
-    q.put(chain)
+    if q is not None:
+        q.put(chain)
     return chain
 
 
@@ -158,45 +162,69 @@ def ask_ter_question(residue, options, chain):
             if number < len(options):
                 return number
         except KeyboardInterrupt:
-            sys.exit('\nInterrupted')
+            raise KeyboardInterrupt
         except BaseException:
             print("Oops!  That was a invalid choice")
 
+def ptm_no_terminus(ter_residue):
+#### pdb2gmx selection index of the 'None' N-terminus for an N-terminal PTM residue (e.g. CYST, GLYM)
+    try:
+        return str(g_var.termini_selections['n'][g_var.res_top[ter_residue]['RESIDUE'][0]].index('None'))
+    except (KeyError, IndexError, ValueError, AttributeError):
+        return '6'   ## charmm36-cg2at value used by CG2AT-lite
+
 def ask_terminal(sys_info, residue_type):
+#### returns the pdb2gmx terminus selections for each chain.
+#### Without -ter, pdb2gmx default termini are used (no -ter flag), except for chains that start
+#### with a terminal PTM (CYST, GLYM), which need the 'None' N-terminus and so are run with -ter.
     system_ter=[]
     for chain in range(g_var.system[residue_type]):
         chain_ter=[]
         ter_name=['n','c']
+        force_ter[(residue_type, chain)] = False
         for ter_val,  ter_residue in enumerate(sys_info[chain]):
             if g_var.args.ter:
                 chain_ter.append(ask_ter_question(g_var.res_top[ter_residue]['RESIDUE'][0], g_var.termini_selections[ter_name[ter_val]][g_var.res_top[ter_residue]['RESIDUE'][0]], chain))
-            else:
+            elif ter_residue in terminal_PTMs and ter_val == 0:
+                # PTM with no modification
+                chain_ter.extend([ptm_no_terminus(ter_residue), '0'])
+                force_ter[(residue_type, chain)] = True
+            elif len(chain_ter)!=2:
                 chain_ter.append('')
+        if force_ter[(residue_type, chain)]:
+            chain_ter = [sel if sel != '' else '0' for sel in chain_ter]
         system_ter.append(chain_ter)
     return system_ter
 
-def run_parallel_pdb2gmx_min(res_type, sys_info):
-    with mp.Pool(g_var.args.ncpus) as pool:
-        m = mp.Manager()
-        q = m.Queue()
-        os.chdir(g_var.working_dir+res_type)
-        make_min(res_type)
-        gen.folder_copy_and_check(g_var.forcefield_location+g_var.forcefield, g_var.working_dir+res_type+'/'+g_var.forcefield+'/.')
-        gen.file_copy_and_check(g_var.forcefield_location+'/residuetypes.dat', g_var.working_dir+res_type+'/residuetypes.dat')
-        pdb2gmx_selections=ask_terminal(sys_info, res_type)
-        pool_process = pool.starmap_async(pdb2gmx_minimise, [(chain, pdb2gmx_selections,res_type, q) for chain in range(0, g_var.system[res_type])])
-        while not pool_process.ready(): 
-            report_complete('pdb2gmx/minimisation', q.qsize(), g_var.system[res_type])
-    for chain in range(0, g_var.system[res_type]):
-        if not os.path.exists(res_type+'_de_novo_'+str(chain)+'_gmx.pdb') or not os.path.exists(g_var.working_dir+res_type+'/MIN/'+res_type+'_de_novo_'+str(chain)+'.pdb'):
-            print('For some reason parallisation of pdb2gmx failed on chain '+str(chain)+', now rerunning in serial.')
-            pdb2gmx_minimise(chain, pdb2gmx_selections,res_type, q)
-    print('{:<130}'.format(''), end='\r')
-    print('\npdb2gmx/minimisation completed on residue type: '+res_type+'\n')
+def run_parallel_pdb2gmx_min(res_type: str, sys_info: dict) -> None:
+    """Run pdb2gmx and minimisation for every chain of res_type sequentially.
+
+pdb2gmx and minimisation are run serially — GROMACS uses its own internal
+    threading, so a process pool would oversubscribe CPUs and cause failures.
+    """
+    os.chdir(g_var.working_dir + res_type)
+    make_min(res_type)
+    gen.folder_copy_and_check(
+        g_var.forcefield_location + g_var.forcefield,
+        g_var.working_dir + res_type + '/' + g_var.forcefield + '/.',
+    )
+    #### residuetypes.dat: the shared database copy in forcefields/ (full CG2AT layout),
+    #### falling back to a copy inside the force field folder (CG2AT-lite layout)
+    residuetypes = g_var.forcefield_location + 'residuetypes.dat'
+    if not os.path.exists(residuetypes):
+        residuetypes = g_var.forcefield_location + g_var.forcefield + '/residuetypes.dat'
+    gen.file_copy_and_check(residuetypes, g_var.working_dir + res_type + '/residuetypes.dat')
+    pdb2gmx_selections = ask_terminal(sys_info, res_type)
+    total = g_var.system[res_type]
+    for chain in range(total):
+        gen.print_progress(f'pdb2gmx/minimisation ({res_type})', chain + 1, total)
+        pdb2gmx_minimise(chain, pdb2gmx_selections, res_type, None)
+    gen.finish_progress(f'pdb2gmx/minimisation ({res_type})', total)
+    print('pdb2gmx/minimisation completed on residue type: ' + res_type + '\n')
 
 def pdb2gmx_chain(chain, input,res_type, pdb2gmx_selections):
-#### pdb2gmx on on protein chain, creates the topologies    
-    ter = ' -ter ' if g_var.args.ter else ''
+#### pdb2gmx on on protein chain, creates the topologies
+    ter = ' -ter ' if g_var.args.ter or force_ter.get((res_type, chain), False) else ''
     gromacs([g_var.args.gmx+' pdb2gmx -f '+res_type+'_'+input+str(chain)+'.pdb -o '+res_type+'_'+input+str(chain)+'_gmx.pdb -water none \
     -p '+res_type+'_'+input+str(chain)+'.top  -i '+res_type+'_'+str(chain)+'_posre.itp '+g_var.vs+ter+pdb2gmx_selections+'\nEOF', ''+res_type+'_'+input+str(chain)+'_gmx.pdb']) #### single chains
 #### converts the topology file and processes it into a itp file
@@ -218,8 +246,7 @@ def minimise_protein_chain(chain, input, res_type):
 #### minimises chain
     os.chdir('MIN')
     # removed flag -nt 1
-#    print ("")
-    gromacs([g_var.args.gmx+' mdrun -v -deffnm '+res_type+'_'+input+str(chain)+' -c '+res_type+'_'+input+str(chain)+'.pdb -ntmpi 1', res_type+'_'+input+str(chain)+'.pdb '])
+    gromacs([g_var.args.gmx+' mdrun -ntmpi 1 -v -deffnm '+res_type+'_'+input+str(chain)+' -c '+res_type+'_'+input+str(chain)+'.pdb', res_type+'_'+input+str(chain)+'.pdb'])
     os.chdir('..')  
 
 
@@ -261,6 +288,8 @@ def convert_topology(topol, protein_number, res_type):
         read=False
         mol_type=False
         if not os.path.exists(topol+str(protein_number)+'.itp'):
+            if g_var.args.v >= 1:
+                print(f'Generating {res_type} chain {protein_number} itp from topology')
             with open(topol+str(protein_number)+'.itp', 'w') as itp_write:
 
                 for line in open(topol+str(protein_number)+'.top', 'r').readlines():
@@ -292,15 +321,17 @@ def convert_topology(topol, protein_number, res_type):
                     itp_write.write('#ifdef HIGHPOSRES\n#include \"'+res_type+'_'+str(protein_number)+'_high_posre.itp\"\n#endif\n')
                     itp_write.write('#ifdef VERY_HIGHPOSRES\n#include \"'+res_type+'_'+str(protein_number)+'_very_high_posre.itp\"\n#endif\n')
                     itp_write.write('#ifdef ULTRAPOSRES\n#include \"'+res_type+'_'+str(protein_number)+'_ultra_posre.itp\"\n#endif\n')
+                    if g_var.args.refine is not None:
+                        itp_write.write('#ifdef DIHEDRALPOSRES\n#include \"'+res_type+'_'+str(protein_number)+'_dihre.itp\"\n#endif\n')
     else:
-        sys.exit('cannot find : '+topol+'_'+str(protein_number)+'.top')
+        raise InputError('cannot find: '+topol+str(protein_number)+'.top')
 
 def write_topol(residue_type, residue_number, chain):
 #### open topology file
     found=False
     with open('topol_'+residue_type+chain+'.top', 'w') as topol_write:
     #### add standard headers may need to be changed dependant on forcefield
-        topol_write.write('; Include forcefield parameters\n#include \"../FINAL/'+g_var.forcefield+'/forcefield.itp\"\n')
+        topol_write.write('; Include force field parameters\n#include \"../FINAL/'+g_var.forcefield+'/forcefield.itp\"\n')
     #### add location of residue topology file absolute file locations
         if residue_type in g_var.sol_residues+g_var.ion_residues+g_var.np_residues:
             for directory in g_var.sol_directories+g_var.ion_directories+g_var.np_directories:
@@ -308,11 +339,11 @@ def write_topol(residue_type, residue_number, chain):
                     topol_write.write('#include \"'+directory[0]+residue_type+'/'+gen.swap_to_solvent(residue_type)+'.itp\"')
                     found=True
             if not found:
-                sys.exit('cannot find itp : '+residue_type+'/'+gen.swap_to_solvent(residue_type)+'.itp')
+                raise InputError('cannot find itp: '+residue_type+'/'+gen.swap_to_solvent(residue_type)+'.itp')
         elif os.path.exists(g_var.working_dir+'/'+residue_type.split('_')[0]+'/'+residue_type+chain+'.itp'):
             topol_write.write('#include \"'+residue_type+chain+'.itp\"\n')
         else:
-            sys.exit('cannot find itp : '+residue_type+'/'+residue_type+chain)
+            raise InputError('cannot find itp: '+residue_type+'/'+residue_type+chain)
     #### topology section headers
         topol_write.write('\n\n[ system ]\n; Name\nSomething clever....\n\n[ molecules ]\n; Compound        #mols\n')
     #### individual number of residues
@@ -344,7 +375,7 @@ def minimise_merged(residue_type, input_file):
 #### change to min directory and minimise
     os.chdir('MIN') 
     # removed flag -nt '+str(g_var.args.ncpus)+'
-    complete, success = gromacs([g_var.args.gmx+' mdrun -v -pin on  -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb -ntmpi '+str(g_var.args.ncpus), '../'+residue_type+'_merged.pdb '])
+    complete, success = gromacs([g_var.args.gmx+' mdrun -ntmpi 1 -v -pin on -deffnm '+residue_type+'_merged_min -c ../'+residue_type+'_merged.pdb', '../'+residue_type+'_merged.pdb'])
     os.chdir(g_var.working_dir)
     return success
 
@@ -356,7 +387,7 @@ def check_atom_type(line, a_line, atomtypes_itp_lines):
     bond = int(np.where(line_sep[1]==a_line[:,1])[0]) 
     if name == bond: 
         if float(line_sep[5]) != float(a_line[name][5]) or float(line_sep[6]) != float(a_line[name][6]): 
-            sys.exit('\nThere are duplicate atomtypes in your molecules: \n'+line) 
+            raise TopologyError('There are duplicate atomtypes in your molecules: '+line) 
 
 def strip_atomtypes(itp_file): 
     with open(itp_file, 'r') as itp_input: 
@@ -416,14 +447,14 @@ def write_merged_topol():
                     topologies_to_include.append('#include \"'+residue_type+'_'+str(unit)+'.itp\"\n')
                     gen.file_copy_and_check(g_var.working_dir+residue_type+'/'+residue_type+'_de_novo_'+str(unit)+'.itp', residue_type+'_'+str(unit)+'.itp')
                     if residue_type in ['PROTEIN']:
-                        for posres_type in ['_very_low_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_very_high_posre.itp','_ultra_posre.itp','_ca_posre.itp','_posre.itp']:
+                        for posres_type in ['_very_low_posre.itp','_low_posre.itp','_mid_posre.itp','_high_posre.itp','_very_high_posre.itp','_ultra_posre.itp','_ca_posre.itp','_posre.itp','_dihre.itp']:
                             gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_'+str(unit)+posres_type, 'PROTEIN_'+str(unit)+posres_type)
                         gen.file_copy_and_check(g_var.working_dir+'PROTEIN/PROTEIN_disres.itp', 'PROTEIN_disres.itp')  
         if os.path.exists('extra_atomtypes.itp'):
-            topol_write.write('; Include forcefield parameters\n#include \"../FINAL/'+g_var.forcefield+'/forcefield.itp\"\n')
+            topol_write.write('; Include force field parameters\n#include \"../FINAL/'+g_var.forcefield+'/forcefield.itp\"\n')
             topol_write.write('#include \"extra_atomtypes.itp\"\n')
         else:
-            topol_write.write('; Include forcefield parameters\n#include \"../FINAL/'+g_var.forcefield+'/forcefield.itp\"\n')
+            topol_write.write('; Include force field parameters\n#include \"../FINAL/'+g_var.forcefield+'/forcefield.itp\"\n')
         for line in topologies_to_include:
             topol_write.write(line)
 
@@ -454,7 +485,7 @@ def minimise_merged_pdbs(protein):
     os.chdir('MIN')
 #### runs minimises final systems
 # removed flag -nt '+str(g_var.args.ncpus)+'
-    gromacs([g_var.args.gmx+' mdrun -v -pin on  -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb -ntmpi '+str(g_var.args.ncpus), 'merged_cg2at'+protein+'_minimised.pdb '])
+    gromacs([g_var.args.gmx+' mdrun -ntmpi 1 -v -pin on -deffnm merged_cg2at'+protein+'_minimised -c merged_cg2at'+protein+'_minimised.pdb', 'merged_cg2at'+protein+'_minimised.pdb'])
 
    
 def write_steered_mdp(loc, posres, time, timestep):
@@ -481,9 +512,9 @@ def steer_to_aligned(protein_type, fc, input_file ):
             ' -maxwarn '+str(2), 'STEER/merged_cg2at_'+protein_type+'_steer_'+fc+'.tpr'])  
     os.chdir('STEER')
     # removed flag -nt '+str(g_var.args.ncpus)+'
-    complete, equil = gromacs([g_var.args.gmx+' mdrun -v -pin on  -deffnm merged_cg2at_'+protein_type+'_steer_'+fc+
+    complete, equil = gromacs([g_var.args.gmx+' mdrun -ntmpi 1 -v -pin on -deffnm merged_cg2at_'+protein_type+'_steer_'+fc+
                                  ' -c merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb -cpo merged_cg2at_'+protein_type+'_steer_'+fc+'.cpt'
-                                 ,'merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb -nt '+str(g_var.args.ncpus)])
+                                 ,'merged_cg2at_'+protein_type+'_steer_'+fc+'.pdb'])
     print('{:<100}'.format(''), end='\r')
     return equil
 
@@ -492,10 +523,12 @@ def run_nvt(input_file):
     print('\nRunning NVT on de novo system', end='\r')
     os.chdir(g_var.merged_directory)   
     gen.mkdir_directory(g_var.merged_directory+'NVT')
+#### trajectory-guided dihedral restraints use a longer NVT so the backbone can relax into the restrained φ/ψ
+    dihres, nsteps = ('', 5000) if g_var.args.refine is None else (' -DDIHEDRALPOSRES', g_var.args.refine_nvt)
     if g_var.user_at_input and g_var.args.disre and g_var.gmx_version:
-        write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DDISRES -DPOSRESCA', 5000, 0.001)
+        write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DDISRES -DPOSRESCA'+dihres, nsteps, 0.001)
     elif 'PROTEIN' in g_var.system:
-        write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DPOSRESCA', 5000, 0.001)
+        write_steered_mdp(g_var.merged_directory+'nvt.mdp', '-DPOSRESCA'+dihres, nsteps, 0.001)
     else:
         write_steered_mdp(g_var.merged_directory+'nvt.mdp', '', 5000, 0.001)
     gromacs([g_var.args.gmx+' grompp'+
@@ -508,9 +541,9 @@ def run_nvt(input_file):
             ' -maxwarn '+str(2), 'NVT/merged_cg2at_de_novo_nvt.tpr'])   
     os.chdir(g_var.merged_directory+'NVT')
     # removed flag -nt '+str(g_var.args.ncpus)+'
-    gromacs([g_var.args.gmx+' mdrun -v -pin on  -deffnm merged_cg2at_de_novo_nvt'+
+    gromacs([g_var.args.gmx+' mdrun -ntmpi 1 -v -pin on -deffnm merged_cg2at_de_novo_nvt'+
             ' -c merged_cg2at_de_novo_nvt.pdb -cpo merged_cg2at_de_novo_nvt.cpt'
-            , 'merged_cg2at_de_novo_nvt.pdb -nt '+str(g_var.args.ncpus)])  
+            , 'merged_cg2at_de_novo_nvt.pdb'])  
     gen.file_copy_and_check('merged_cg2at_de_novo_nvt.pdb', g_var.final_dir+'final_cg2at_de_novo.pdb')    
     print('Completed NVT, please find final de_novo system: \n'+g_var.final_dir+'final_cg2at_de_novo.pdb')
 
