@@ -1,33 +1,37 @@
 {% set name = "cg2at" %}
+{% set version = "1.0.0" %}  # keep in step with pyproject.toml and database/bin/g_var.py
 
 package:
   name: {{ name|lower }}
-  version: {{ environ['VERSION'] }}
+  version: {{ version }}
 
 source:
-  git_rev: "v0.9"
-  git_url: https://github.com/owenvickery/cg2at
+  git_rev: "v{{ version }}"
+  git_url: https://github.com/pstansfeld/cg2at
 
 requirements:
-  # build:
-  #   script_env: 
-  #   binary_has_prefix_files:
-  #     - CG2AT
   run:
+    - python >=3.9
+    - numpy >=1.26.4
     - scipy
-    - numpy
-    - pathlib
+  run_constrained:
+    # optional, only needed for -refine, cg2at_refine and traj_dih_guide
+    - mdanalysis >=2.0
 
 build:
-  number: {{ environ.get("GIT_DESCRIBE_NUMBER", 0) }} #{{ environ['GIT_DESCRIBE_HASH'] }} 
+  number: {{ environ.get("GIT_DESCRIBE_NUMBER", 0) }}
   script_env:
-    - VERSION
     - CONDA_BLD_PATH
     - package
   noarch: generic
-run:
-  - python
+
+about:
+  home: https://github.com/pstansfeld/cg2at
+  license: GPL-3.0
+  license_file: LICENSE
+  summary: "CG2AT2: fragment-based conversion of coarse-grained (e.g. Martini) systems to atomistic resolution."
 
 extra:
   maintainers:
     - Owen Vickery
+    - Phillip Stansfeld
